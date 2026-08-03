@@ -1,0 +1,44 @@
+# Entradas de Ambiente e Segredos
+.env
+*.env
+
+# Cache do Python e Pytest
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Ambientes Virtuais Python
+.venv/
+venv/
+ENV/
+
+# IDE e Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Flet e Build artifacts
+.flet/
+build/
+dist/
+
+# Cache de Áudio Gerado dinamicamente
+assets/audio_cache/*.mp3
+assets/audio_cache/*.wav
+!assets/audio_cache/.gitkeep
+
+# Estado do Obsidian (configurações locais da workspace, tabs abertas, plugins)
+# A documentação em si (os arquivos .md) PERMANECE versionada no Git para proteção e backup!
+.obsidian/
+Documentacao/.obsidian/
+
+# Arquivos temporários e scratch
+scratch/
+
+# Sistema Operacional
+Thumbs.db
+Desktop.ini
+.DS_Store

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "unit_intro",
+    "number": 0,
+    "title_kr": "한글을 배워요",
+    "title_pt": "Aprenda o Hangul",
+    "description": "Domine as vogais, consoantes e a estrutura silábica do alfabeto coreano.",
+    "is_unlocked": true,
+    "progress": 0.0
+  },
+  {
+    "id": "unit_01",
+    "number": 1,
+    "title_kr": "안녕하세요? 저는 안나예요",
+    "title_pt": "Olá! Eu sou a Anna",
+    "description": "Aprenda os cumprimentos básicos e a se apresentar profissionalmente ou no dia a dia.",
+    "is_unlocked": true,
+    "progress": 0.0
+  },
+  {
+    "id": "unit_02",
+    "number": 2,
+    "title_kr": "전화번호가 뭐예요?",
+    "title_pt": "Qual é o seu telefone?",
+    "description": "Aprenda os números sino-coreanos, nativos e a perguntar por informações básicas.",
+    "is_unlocked": false,
+    "progress": 0.0
+  },
+  {
+    "id": "unit_03",
+    "number": 3,
+    "title_kr": "제 가방은 책상 옆에 있어요",
+    "title_pt": "Minha bolsa está ao lado da mesa",
+    "description": "Localização de objetos, posições e verbos de existência (있다/없다).",
+    "is_unlocked": false,
+    "progress": 0.0
+  }
+]

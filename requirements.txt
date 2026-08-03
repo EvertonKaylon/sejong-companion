@@ -1,0 +1,4 @@
+flet==0.85.3
+pydantic>=2.0.0
+requests>=2.34.2
+flet-audio==0.85.3
