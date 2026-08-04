@@ -311,21 +311,14 @@ class QuizWidget(ft.Container):
             chips = []
             for word in self.selected_words:
                 chip = ft.Container(
-                    content=ft.Row(
-                        controls=[
-                            ft.Text(
-                                word,
-                                size=15,
-                                weight=ft.FontWeight.W_600,
-                                color=self.colors["text"],
-                                no_wrap=False,
-                            ),
-                            ft.Icon(ft.Icons.CLOSE_ROUNDED, size=14, color=self.colors["text_sec"]),
-                        ],
-                        spacing=4,
-                        tight=True,
+                    content=ft.Text(
+                        word,
+                        size=15,
+                        weight=ft.FontWeight.W_600,
+                        color=self.colors["text"],
+                        no_wrap=False,
                     ),
-                    padding=ft.Padding.symmetric(horizontal=12, vertical=6),
+                    padding=ft.Padding.symmetric(horizontal=14, vertical=8),
                     bgcolor="#147C4DFF",
                     border=ft.Border.all(1.5, self.colors["primary"]),
                     border_radius=Styles.BORDER_RADIUS_LG,
