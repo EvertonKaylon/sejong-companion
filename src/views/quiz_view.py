@@ -41,11 +41,25 @@ def quiz_view(page: ft.Page) -> ft.View:
     }
 
     # Container principal de conteúdo que será atualizado dinamicamente
-    main_content = ft.Container(padding=12)
+    main_content = ft.Container(
+        padding=ft.Padding.symmetric(horizontal=10, vertical=6),
+        clip_behavior=ft.ClipBehavior.ANTI_ALIAS,
+    )
 
-    # AppBar com progresso
-    progress_text = ft.Text("Questão 1 de X", size=13, weight=ft.FontWeight.W_500, color=colors["text_sec"])
-    progress_bar = ft.ProgressBar(value=0, color=colors["primary"], bgcolor=colors["border"], height=6, border_radius=3)
+    # AppBar com progresso — título com quebra de linha
+    progress_text = ft.Text(
+        "Questão 1 de X",
+        size=12,
+        weight=ft.FontWeight.W_500,
+        color=colors["text_sec"],
+    )
+    progress_bar = ft.ProgressBar(
+        value=0,
+        color=colors["primary"],
+        bgcolor=colors["border"],
+        height=6,
+        border_radius=3,
+    )
     
     app_bar = ft.AppBar(
         leading=ft.IconButton(
@@ -53,7 +67,13 @@ def quiz_view(page: ft.Page) -> ft.View:
             icon_color=colors["primary"],
             on_click=lambda e: confirm_exit()
         ),
-        title=ft.Text(f"Quiz: {unit_title}", weight=ft.FontWeight.BOLD, size=15, color=colors["text"]),
+        title=ft.Text(
+            f"Quiz: {unit_title}",
+            weight=ft.FontWeight.BOLD,
+            size=14,
+            color=colors["text"],
+            no_wrap=False,
+        ),
         bgcolor=colors["surface"],
         elevation=0
     )
@@ -124,79 +144,135 @@ def quiz_view(page: ft.Page) -> ft.View:
             msg = "Bom esforço! Que tal tentar de novo? 💪"
             sub_msg = "Revise as fichas de estudo e tente novamente para melhorar sua pontuação."
 
+        # ─── Indicador circular de resultado (responsivo) ───
+        ring_size = 100
         results_layout = ft.Container(
             content=ft.Column(
                 controls=[
-                    ft.Container(height=20),
-                    # Círculo com porcentagem de acerto
-                    ft.Stack(
-                        controls=[
-                            ft.ProgressRing(
-                                value=pct,
-                                color=colors["correct"] if pct >= 0.7 else colors["accent"],
-                                bgcolor=colors["border"],
-                                width=120,
-                                height=120,
-                                stroke_width=10
-                            ),
-                            ft.Container(
-                                content=ft.Text(
-                                    f"{int(pct * 100)}%",
-                                    size=26,
-                                    weight=ft.FontWeight.BOLD,
-                                    color=colors["text"]
-                                ),
-                                alignment=ft.Alignment.CENTER,
-                                width=120,
-                                height=120,
-                            )
-                        ],
-                        alignment=ft.Alignment.CENTER
-                    ),
                     ft.Container(height=16),
-                    ft.Text(msg, size=20, weight=ft.FontWeight.BOLD, color=colors["text"], text_align=ft.TextAlign.CENTER),
-                    ft.Text(sub_msg, size=13, color=colors["text_sec"], text_align=ft.TextAlign.CENTER),
-                    ft.Container(height=10),
-                    # Placar resumido
+                    # Círculo com porcentagem de acerto
+                    ft.Container(
+                        content=ft.Stack(
+                            controls=[
+                                ft.ProgressRing(
+                                    value=pct,
+                                    color=colors["correct"] if pct >= 0.7 else colors["accent"],
+                                    bgcolor=colors["border"],
+                                    width=ring_size,
+                                    height=ring_size,
+                                    stroke_width=8
+                                ),
+                                ft.Container(
+                                    content=ft.Text(
+                                        f"{int(pct * 100)}%",
+                                        size=22,
+                                        weight=ft.FontWeight.BOLD,
+                                        color=colors["text"]
+                                    ),
+                                    alignment=ft.Alignment.CENTER,
+                                    width=ring_size,
+                                    height=ring_size,
+                                )
+                            ],
+                        ),
+                        alignment=ft.Alignment.CENTER,
+                    ),
+                    ft.Container(height=12),
+                    ft.Text(
+                        msg,
+                        size=18,
+                        weight=ft.FontWeight.BOLD,
+                        color=colors["text"],
+                        text_align=ft.TextAlign.CENTER,
+                        no_wrap=False,
+                    ),
+                    ft.Text(
+                        sub_msg,
+                        size=13,
+                        color=colors["text_sec"],
+                        text_align=ft.TextAlign.CENTER,
+                        no_wrap=False,
+                    ),
+                    ft.Container(height=8),
+                    # Placar resumido — responsivo com wrap
                     ft.Row(
                         controls=[
-                            ft.Text(f"Acertos: {score}", weight=ft.FontWeight.BOLD, color=colors["correct"], size=15),
-                            ft.Text(f"Erros: {total - score}", weight=ft.FontWeight.BOLD, color=colors["incorrect"], size=15),
+                            ft.Container(
+                                content=ft.Row(
+                                    controls=[
+                                        ft.Icon(ft.Icons.CHECK_CIRCLE_ROUNDED, size=18, color=colors["correct"]),
+                                        ft.Text(f"Acertos: {score}", weight=ft.FontWeight.BOLD, color=colors["correct"], size=14),
+                                    ],
+                                    spacing=4,
+                                    tight=True,
+                                ),
+                                padding=ft.Padding.symmetric(horizontal=12, vertical=6),
+                                bgcolor="#14188150",
+                                border_radius=Styles.BORDER_RADIUS_SM,
+                                border=ft.Border.all(1, colors["correct"]),
+                            ),
+                            ft.Container(
+                                content=ft.Row(
+                                    controls=[
+                                        ft.Icon(ft.Icons.CANCEL_ROUNDED, size=18, color=colors["incorrect"]),
+                                        ft.Text(f"Erros: {total - score}", weight=ft.FontWeight.BOLD, color=colors["incorrect"], size=14),
+                                    ],
+                                    spacing=4,
+                                    tight=True,
+                                ),
+                                padding=ft.Padding.symmetric(horizontal=12, vertical=6),
+                                bgcolor="#14C50337",
+                                border_radius=Styles.BORDER_RADIUS_SM,
+                                border=ft.Border.all(1, colors["incorrect"]),
+                            ),
                         ],
                         alignment=ft.MainAxisAlignment.CENTER,
-                        spacing=20
+                        spacing=10,
+                        wrap=True,
+                        run_spacing=8,
                     ),
-                    ft.Container(height=30),
-                    # Botões de Ação
-                     ft.ElevatedButton(
-                        content="Voltar ao Menu Principal",
-                        icon=ft.Icons.HOME_ROUNDED,
-                        style=ft.ButtonStyle(
-                            color=ft.Colors.WHITE,
-                            bgcolor=colors["primary"],
-                            shape=ft.RoundedRectangleBorder(radius=Styles.BORDER_RADIUS_SM),
-                            padding=14
-                        ),
-                        on_click=lambda e: page.router.navigate_to("/home"),
-                        width=250
+                    ft.Container(height=20),
+                    # Botões de Ação — responsivos com expand
+                    ft.Column(
+                        controls=[
+                            ft.ElevatedButton(
+                                content="Voltar ao Menu Principal",
+                                icon=ft.Icons.HOME_ROUNDED,
+                                style=ft.ButtonStyle(
+                                    color=ft.Colors.WHITE,
+                                    bgcolor=colors["primary"],
+                                    shape=ft.RoundedRectangleBorder(radius=Styles.BORDER_RADIUS_SM),
+                                    padding=ft.Padding.symmetric(horizontal=16, vertical=12),
+                                ),
+                                on_click=lambda e: page.router.navigate_to("/home"),
+                                expand=True,
+                            ),
+                            ft.OutlinedButton(
+                                content="Refazer Desafio",
+                                icon=ft.Icons.REPLAY_ROUNDED,
+                                style=ft.ButtonStyle(
+                                    color=colors["primary"],
+                                    shape=ft.RoundedRectangleBorder(radius=Styles.BORDER_RADIUS_SM),
+                                    padding=ft.Padding.symmetric(horizontal=16, vertical=12),
+                                ),
+                                on_click=lambda e: reset_quiz(),
+                                expand=True,
+                            ),
+                        ],
+                        spacing=8,
+                        horizontal_alignment=ft.CrossAxisAlignment.STRETCH,
                     ),
-                    ft.OutlinedButton(
-                        content="Refazer Desafio",
-                        icon=ft.Icons.REPLAY_ROUNDED,
-                        style=ft.ButtonStyle(
-                            color=colors["primary"],
-                            shape=ft.RoundedRectangleBorder(radius=Styles.BORDER_RADIUS_SM),
-                            padding=14
-                        ),
-                        on_click=lambda e: reset_quiz(),
-                        width=250
-                    )
                 ],
                 alignment=ft.MainAxisAlignment.CENTER,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                spacing=10,
+                spacing=6,
             ),
-            alignment=ft.Alignment.CENTER,
+            padding=14,
+            bgcolor=colors["surface"],
+            border=ft.Border.all(1, colors["border"]),
+            border_radius=Styles.BORDER_RADIUS_MD,
+            shadow=Styles.CARD_SHADOW,
+            clip_behavior=ft.ClipBehavior.ANTI_ALIAS,
         )
 
         # Ocultar barra de progresso no topo nos resultados
@@ -219,7 +295,7 @@ def quiz_view(page: ft.Page) -> ft.View:
             ],
             spacing=4
         ),
-        padding=12
+        padding=ft.Padding.symmetric(horizontal=12, vertical=8),
     )
 
     # Iniciar primeira pergunta (main_content ainda não está na página aqui)

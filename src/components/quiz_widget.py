@@ -3,7 +3,8 @@ from typing import Callable, List
 from ..theme import get_theme_colors, Styles
 
 class QuizWidget(ft.Container):
-    """Widget unificado de quiz que suporta multiple_choice e order_words."""
+    """Widget unificado de quiz que suporta multiple_choice e order_words.
+    Refatorado para responsividade total em viewport 384×715."""
 
     def __init__(self, question_data, is_dark: bool, on_next: Callable, on_answer: Callable):
         self.q_data = question_data
@@ -13,25 +14,29 @@ class QuizWidget(ft.Container):
         self.on_answer = on_answer
         self.answered = False
 
-        # Pergunta (comum aos dois tipos)
+        # Pergunta (comum aos dois tipos) — com quebra de linha automática
         self.question_text = ft.Text(
             value=question_data.question,
-            size=18,
+            size=17,
             weight=ft.FontWeight.BOLD,
             color=self.colors["text"],
             text_align=ft.TextAlign.LEFT,
+            no_wrap=False,
         )
 
         self.explanation_container = ft.Container(visible=False, animate_opacity=200)
         self.next_button = ft.ElevatedButton(
             content="Próxima Pergunta",
+            icon=ft.Icons.ARROW_FORWARD_ROUNDED,
             style=ft.ButtonStyle(
                 color=ft.Colors.WHITE,
                 bgcolor=self.colors["primary"],
                 shape=ft.RoundedRectangleBorder(radius=Styles.BORDER_RADIUS_SM),
+                padding=ft.Padding.symmetric(horizontal=20, vertical=12),
             ),
             visible=False,
-            on_click=self.handle_next
+            on_click=self.handle_next,
+            expand=True,
         )
 
         # Montar layout de acordo com o tipo de questão
@@ -44,47 +49,62 @@ class QuizWidget(ft.Container):
             content=ft.Column(
                 controls=[
                     self.question_text,
-                    ft.Container(height=10),
+                    ft.Container(height=6),
                     quiz_body,
-                    ft.Container(height=10),
+                    ft.Container(height=6),
                     self.explanation_container,
                     ft.Row(
                         controls=[self.next_button],
                         alignment=ft.MainAxisAlignment.END,
                     )
                 ],
-                spacing=12,
+                spacing=8,
             ),
-            padding=14,
+            padding=12,
             bgcolor=self.colors["surface"],
             border=ft.Border.all(1, self.colors["border"]),
             border_radius=Styles.BORDER_RADIUS_MD,
             shadow=Styles.CARD_SHADOW,
+            clip_behavior=ft.ClipBehavior.ANTI_ALIAS,
         )
 
     # ─── MULTIPLE CHOICE ───
 
     def _build_multiple_choice(self):
-        self.options_column = ft.Column(spacing=10)
+        self.options_column = ft.Column(spacing=8)
         self.option_buttons = []
         for i, option in enumerate(self.q_data.options):
+            option_text = ft.Text(
+                option,
+                size=14,
+                weight=ft.FontWeight.W_500,
+                color=self.colors["text"],
+                no_wrap=False,
+                expand=True,
+            )
+            letter_badge = ft.Container(
+                content=ft.Text(
+                    chr(65 + i),
+                    weight=ft.FontWeight.BOLD,
+                    color=ft.Colors.WHITE,
+                    size=12,
+                ),
+                bgcolor=self.colors["primary"],
+                border_radius=Styles.BORDER_RADIUS_SM,
+                width=26,
+                height=26,
+                alignment=ft.Alignment.CENTER,
+            )
             btn = ft.Container(
                 content=ft.Row(
                     controls=[
-                        ft.Container(
-                            content=ft.Text(chr(65 + i), weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE),
-                            bgcolor=self.colors["primary"],
-                            border_radius=Styles.BORDER_RADIUS_SM,
-                            width=28,
-                            height=28,
-                            alignment=ft.Alignment.CENTER,
-                        ),
-                        ft.VerticalDivider(width=1, color=self.colors["border"]),
-                        ft.Text(option, size=15, weight=ft.FontWeight.W_500, color=self.colors["text"])
+                        letter_badge,
+                        option_text,
                     ],
-                    spacing=12,
+                    spacing=10,
+                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
                 ),
-                padding=ft.Padding.symmetric(horizontal=16, vertical=12),
+                padding=ft.Padding.symmetric(horizontal=12, vertical=10),
                 bgcolor=self.colors["card_bg"],
                 border=ft.Border.all(1, self.colors["border"]),
                 border_radius=Styles.BORDER_RADIUS_MD,
@@ -92,6 +112,7 @@ class QuizWidget(ft.Container):
                 on_hover=self.handle_hover,
                 data={"index": i},
                 animate=150,
+                clip_behavior=ft.ClipBehavior.ANTI_ALIAS,
             )
             self.option_buttons.append(btn)
             self.options_column.controls.append(btn)
@@ -132,7 +153,7 @@ class QuizWidget(ft.Container):
     # ─── ORDER WORDS (UNSCRAMBLING) ───
 
     def _build_order_words(self):
-        """Constrói o widget de ordenação de palavras (drag-to-order / click-to-order)."""
+        """Constrói o widget de ordenação de palavras (click-to-order)."""
         import random
 
         self.selected_words: List[str] = []
@@ -145,27 +166,29 @@ class QuizWidget(ft.Container):
                 controls=[
                     ft.Text(
                         "Toque nas palavras para montar a frase...",
-                        size=14,
+                        size=13,
                         italic=True,
-                        color=self.colors["text_sec"]
+                        color=self.colors["text_sec"],
+                        no_wrap=False,
                     )
                 ],
                 wrap=True,
-                spacing=8,
-                run_spacing=8,
+                spacing=6,
+                run_spacing=6,
             ),
-            padding=16,
+            padding=12,
             bgcolor=self.colors["card_bg"],
             border=ft.Border.all(2, self.colors["border"]),
             border_radius=Styles.BORDER_RADIUS_MD,
+            clip_behavior=ft.ClipBehavior.ANTI_ALIAS,
         )
 
         # Chips com palavras disponíveis
         self.word_chips_row = ft.Row(
             controls=[],
             wrap=True,
-            spacing=8,
-            run_spacing=8,
+            spacing=6,
+            run_spacing=6,
             alignment=ft.MainAxisAlignment.CENTER,
         )
         self._refresh_word_chips()
@@ -190,18 +213,18 @@ class QuizWidget(ft.Container):
         return ft.Column(
             controls=[
                 # Rótulo da área de montagem
-                ft.Text("Sua resposta:", size=13, weight=ft.FontWeight.BOLD, color=self.colors["text_sec"]),
+                ft.Text("Sua resposta:", size=12, weight=ft.FontWeight.BOLD, color=self.colors["text_sec"]),
                 self.sentence_display,
-                ft.Container(height=8),
-                ft.Text("Palavras disponíveis:", size=13, weight=ft.FontWeight.BOLD, color=self.colors["text_sec"]),
+                ft.Container(height=4),
+                ft.Text("Palavras disponíveis:", size=12, weight=ft.FontWeight.BOLD, color=self.colors["text_sec"]),
                 self.word_chips_row,
-                ft.Container(height=8),
+                ft.Container(height=4),
                 ft.Row(
                     controls=[self.clear_btn, self.check_btn],
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                 ),
             ],
-            spacing=8,
+            spacing=6,
         )
 
     def _refresh_word_chips(self):
@@ -209,8 +232,14 @@ class QuizWidget(ft.Container):
         self.word_chips_row.controls.clear()
         for word in self.available_words:
             chip = ft.Container(
-                content=ft.Text(word, size=16, weight=ft.FontWeight.W_600, color=self.colors["primary"]),
-                padding=ft.Padding.symmetric(horizontal=18, vertical=10),
+                content=ft.Text(
+                    word,
+                    size=15,
+                    weight=ft.FontWeight.W_600,
+                    color=self.colors["primary"],
+                    no_wrap=False,
+                ),
+                padding=ft.Padding.symmetric(horizontal=14, vertical=8),
                 bgcolor=self.colors["card_bg"],
                 border=ft.Border.all(1.5, self.colors["primary_light"]),
                 border_radius=Styles.BORDER_RADIUS_LG,
@@ -268,14 +297,15 @@ class QuizWidget(ft.Container):
                 controls=[
                     ft.Text(
                         "Toque nas palavras para montar a frase...",
-                        size=14,
+                        size=13,
                         italic=True,
-                        color=self.colors["text_sec"]
+                        color=self.colors["text_sec"],
+                        no_wrap=False,
                     )
                 ],
                 wrap=True,
-                spacing=8,
-                run_spacing=8,
+                spacing=6,
+                run_spacing=6,
             )
         else:
             chips = []
@@ -283,13 +313,19 @@ class QuizWidget(ft.Container):
                 chip = ft.Container(
                     content=ft.Row(
                         controls=[
-                            ft.Text(word, size=16, weight=ft.FontWeight.W_600, color=self.colors["text"]),
+                            ft.Text(
+                                word,
+                                size=15,
+                                weight=ft.FontWeight.W_600,
+                                color=self.colors["text"],
+                                no_wrap=False,
+                            ),
                             ft.Icon(ft.Icons.CLOSE_ROUNDED, size=14, color=self.colors["text_sec"]),
                         ],
                         spacing=4,
                         tight=True,
                     ),
-                    padding=ft.Padding.symmetric(horizontal=14, vertical=8),
+                    padding=ft.Padding.symmetric(horizontal=12, vertical=6),
                     bgcolor="#147C4DFF",
                     border=ft.Border.all(1.5, self.colors["primary"]),
                     border_radius=Styles.BORDER_RADIUS_LG,
@@ -301,8 +337,8 @@ class QuizWidget(ft.Container):
             self.sentence_display.content = ft.Row(
                 controls=chips,
                 wrap=True,
-                spacing=8,
-                run_spacing=8,
+                spacing=6,
+                run_spacing=6,
             )
 
     def _clear_order(self, e):
@@ -332,49 +368,46 @@ class QuizWidget(ft.Container):
             self.sentence_display.border = ft.Border.all(2, self.colors["incorrect"])
             self.sentence_display.bgcolor = "#14C50337"
             # Mostrar resposta correta abaixo
-            correct_text = " ".join(self.q_data.correct_order)
             self.sentence_display.content = ft.Column(
                 controls=[
                     ft.Row(
                         controls=[
                             ft.Container(
-                                content=ft.Row(
-                                    controls=[
-                                        ft.Text(w, size=16, weight=ft.FontWeight.W_600,
-                                               color=self.colors["incorrect"]),
-                                    ],
-                                    spacing=4,
-                                    tight=True,
+                                content=ft.Text(
+                                    w, size=15, weight=ft.FontWeight.W_600,
+                                    color=self.colors["incorrect"], no_wrap=False,
                                 ),
-                                padding=ft.Padding.symmetric(horizontal=14, vertical=8),
+                                padding=ft.Padding.symmetric(horizontal=12, vertical=6),
                                 bgcolor="#14C50337",
                                 border=ft.Border.all(1.5, self.colors["incorrect"]),
                                 border_radius=Styles.BORDER_RADIUS_LG,
                             ) for w in self.selected_words
                         ],
                         wrap=True,
-                        spacing=8,
-                        run_spacing=8,
+                        spacing=6,
+                        run_spacing=6,
                     ),
                     ft.Divider(height=1, color=self.colors["border"]),
-                    ft.Text("Resposta correta:", size=12, weight=ft.FontWeight.BOLD, color=self.colors["correct"]),
+                    ft.Text("Resposta correta:", size=11, weight=ft.FontWeight.BOLD, color=self.colors["correct"]),
                     ft.Row(
                         controls=[
                             ft.Container(
-                                content=ft.Text(w, size=16, weight=ft.FontWeight.W_600,
-                                               color=self.colors["correct"]),
-                                padding=ft.Padding.symmetric(horizontal=14, vertical=8),
+                                content=ft.Text(
+                                    w, size=15, weight=ft.FontWeight.W_600,
+                                    color=self.colors["correct"], no_wrap=False,
+                                ),
+                                padding=ft.Padding.symmetric(horizontal=12, vertical=6),
                                 bgcolor="#14188150",
                                 border=ft.Border.all(1.5, self.colors["correct"]),
                                 border_radius=Styles.BORDER_RADIUS_LG,
                             ) for w in self.q_data.correct_order
                         ],
                         wrap=True,
-                        spacing=8,
-                        run_spacing=8,
+                        spacing=6,
+                        run_spacing=6,
                     ),
                 ],
-                spacing=8,
+                spacing=6,
             )
 
         # Desabilitar controles
@@ -396,29 +429,34 @@ class QuizWidget(ft.Container):
                             ft.Icon(
                                 ft.Icons.CHECK_CIRCLE_ROUNDED if is_correct else ft.Icons.CANCEL_ROUNDED,
                                 color=self.colors["correct"] if is_correct else self.colors["incorrect"],
-                                size=24
+                                size=22
                             ),
                             ft.Text(
                                 "Resposta Correta!" if is_correct else "Resposta Incorreta!",
-                                size=16,
+                                size=15,
                                 weight=ft.FontWeight.BOLD,
-                                color=self.colors["correct"] if is_correct else self.colors["incorrect"]
+                                color=self.colors["correct"] if is_correct else self.colors["incorrect"],
+                                expand=True,
+                                no_wrap=False,
                             )
                         ],
-                        spacing=8
+                        spacing=8,
+                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
                     ),
                     ft.Text(
                         self.q_data.explanation,
-                        size=14,
+                        size=13,
                         color=self.colors["text_sec"],
+                        no_wrap=False,
                     )
                 ],
-                spacing=6,
+                spacing=4,
             ),
             bgcolor=self.colors["card_bg"],
-            padding=14,
+            padding=12,
             border_radius=Styles.BORDER_RADIUS_SM,
             border=ft.Border.all(1, self.colors["border"]),
+            clip_behavior=ft.ClipBehavior.ANTI_ALIAS,
         )
         self.explanation_container.visible = True
         self.explanation_container.opacity = 1
