@@ -31,12 +31,6 @@ def home_view(page: ft.Page) -> ft.View:
         elevation=0,
         actions=[
             ft.IconButton(
-                icon=ft.Icons.PALETTE_OUTLINED,
-                icon_color=colors["secondary"],
-                on_click=lambda _: page.router.navigate_to("/ui_test"),
-                tooltip="Laboratório UI/UX",
-            ),
-            ft.IconButton(
                 icon=ft.Icons.DARK_MODE_ROUNDED if not is_dark else ft.Icons.LIGHT_MODE_ROUNDED,
                 icon_color=colors["primary"],
                 on_click=toggle_theme,
