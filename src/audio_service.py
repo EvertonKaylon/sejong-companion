@@ -6,6 +6,11 @@ import sys
 import flet as ft
 import flet_audio as fa
 import requests
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 
 class AudioService:
@@ -123,7 +128,7 @@ class AudioService:
             return False
 
     def _get_typecast_audio(self, text: str) -> bytes | None:
-        api_key = os.environ.get("TYPECAST_API_KEY", "__pltPmsyd34Q5xTAtN34YS3bXudzqaUSvWmrrxQc3X4f")
+        api_key = os.environ.get("TYPECAST_API_KEY")
         if not api_key:
             return None
 
