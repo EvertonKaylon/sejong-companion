@@ -227,31 +227,41 @@
         "position": "Labial (lábios)",
         "batchim_chars": ["ㅂ", "ㅍ"],
         "sound": "Som implosivo de 'p'",
-        "tip": "Lábios fechados (unreleased stop)."
+        "tip": "Lábios fechados (unreleased stop).",
+        "example_word": "밥",
+        "example_meaning": "Arroz / Refeição"
       },
       {
         "position": "Alveolar (língua)",
         "batchim_chars": ["ㄷ", "ㅌ", "ㅈ", "ㅊ", "ㅅ", "ㅆ", "ㅎ"],
         "sound": "Som implosivo de 't'",
-        "tip": "Língua travada no palato."
+        "tip": "Língua travada no palato.",
+        "example_word": "옷",
+        "example_meaning": "Roupa"
       },
       {
         "position": "Velar (garganta)",
         "batchim_chars": ["ㄱ", "ㅋ", "ㄲ"],
         "sound": "Som implosivo de 'k'",
-        "tip": "Trava na garganta."
+        "tip": "Trava na garganta.",
+        "example_word": "국",
+        "example_meaning": "Sopa"
       },
       {
         "position": "Nasal",
         "batchim_chars": ["ㄴ", "ㅁ", "ㅇ"],
         "sound": "n / m / ng",
-        "tip": "Som contínuo nasal."
+        "tip": "Som contínuo nasal.",
+        "example_word": "김",
+        "example_meaning": "Kim / Alga"
       },
       {
         "position": "Lateral",
         "batchim_chars": ["ㄹ"],
         "sound": "Som de 'l'",
-        "tip": "Som lateral 'l'."
+        "tip": "Som lateral 'l'.",
+        "example_word": "달",
+        "example_meaning": "Lua"
       }
     ]
   },

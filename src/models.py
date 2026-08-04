@@ -49,6 +49,8 @@ class NeutralizationRule(BaseModel):
     batchim_chars: List[str]
     sound: str
     tip: str
+    example_word: Optional[str] = None
+    example_meaning: Optional[str] = None
 
 class LusophoneWarning(BaseModel):
     title: str

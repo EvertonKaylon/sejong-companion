@@ -193,23 +193,49 @@ def hangul_view(page: ft.Page) -> ft.View:
                 )
             )
 
-        # Regras de neutralização
+        # Regras de neutralização com Exemplo Auditivo (Áudio-Visual Gating)
         for rule in bg.neutralization_rules:
             chars_text = " / ".join(rule.batchim_chars)
+            rule_column_controls = [
+                ft.Row(
+                    controls=[
+                        ft.Text(rule.position, size=13, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                        ft.Text(f"[ {chars_text} ]", size=13, weight=ft.FontWeight.BOLD, color=colors["primary"]),
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                ),
+                ft.Text(f"→ {rule.sound}", size=12, color=colors["text_sec"]),
+                ft.Text(f"💡 {rule.tip}", size=11, color=colors["accent"], italic=True),
+            ]
+
+            # Botão / Badge de Exemplo Auditivo
+            if hasattr(rule, 'example_word') and rule.example_word:
+                ex_word = rule.example_word
+                ex_meaning = getattr(rule, 'example_meaning', '')
+                audio_btn = ft.Container(
+                    content=ft.Row(
+                        controls=[
+                            ft.Icon(ft.Icons.VOLUME_UP_ROUNDED, size=16, color=colors["primary"]),
+                            ft.Text(f"Exemplo Auditivo: {ex_word}", size=12, weight=ft.FontWeight.BOLD, color=colors["primary"]),
+                            ft.Text(f"({ex_meaning})" if ex_meaning else "", size=11, color=colors["text_sec"]),
+                        ],
+                        spacing=6,
+                        tight=True,
+                    ),
+                    bgcolor="#14004C97",
+                    border=ft.Border.all(1, colors["primary_light"]),
+                    border_radius=Styles.BORDER_RADIUS_SM,
+                    padding=ft.Padding.symmetric(horizontal=10, vertical=6),
+                    on_click=lambda e, w=ex_word: page.audio_service.play_korean(w),
+                    tooltip="Toque para ouvir a pronúncia exata do 받침",
+                    margin=ft.Margin.only(top=4),
+                )
+                rule_column_controls.append(audio_btn)
+
             batchim_controls.append(
                 ft.Container(
                     content=ft.Column(
-                        controls=[
-                            ft.Row(
-                                controls=[
-                                    ft.Text(rule.position, size=13, weight=ft.FontWeight.BOLD, color=colors["text"]),
-                                    ft.Text(f"[ {chars_text} ]", size=13, weight=ft.FontWeight.BOLD, color=colors["primary"]),
-                                ],
-                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                            ),
-                            ft.Text(f"→ {rule.sound}", size=12, color=colors["text_sec"]),
-                            ft.Text(f"💡 {rule.tip}", size=11, color=colors["accent"], italic=True),
-                        ],
+                        controls=rule_column_controls,
                         spacing=3,
                     ),
                     padding=10,
