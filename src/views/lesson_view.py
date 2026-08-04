@@ -1,6 +1,7 @@
 import flet as ft
 from ..theme import get_theme_colors, Styles
 from ..services import DataService, ProgressService, FullscreenService
+from ..components.vocab_card import VocabCard
 
 def lesson_view(page: ft.Page) -> ft.View:
     is_dark = page.theme_mode == ft.ThemeMode.DARK

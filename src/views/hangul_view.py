@@ -1,6 +1,7 @@
 import flet as ft
 from ..theme import get_theme_colors, Styles
 from ..services import DataService, FullscreenService
+from ..components.hangul_card import HangulCard
 
 def hangul_view(page: ft.Page) -> ft.View:
     is_dark = page.theme_mode == ft.ThemeMode.DARK
