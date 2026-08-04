@@ -295,7 +295,7 @@
     {
       "id": "u1_q6",
       "type": "order_words",
-      "question": "Monte a frase: 'Eu sou estudante.' (저는 학생이에요.)",
+      "question": "Monte a frase: 'Eu sou estudante.'",
       "words": ["학생이에요", "저는"],
       "correct_order": ["저는", "학생이에요"],
       "explanation": "Ordem SOV: Sujeito (저는) + Predicado (학생이에요)."
@@ -303,7 +303,7 @@
     {
       "id": "u1_q7",
       "type": "order_words",
-      "question": "Monte a frase: '안나 é jornalista.' (안나는 기자예요.)",
+      "question": "Monte a frase: '안나 é jornalista.'",
       "words": ["기자예요", "안나는"],
       "correct_order": ["안나는", "기자예요"],
       "explanation": "Estrutura SOV: Tópico (안나는) + Predicado (기자예요)."
@@ -311,7 +311,7 @@
     {
       "id": "u1_q8",
       "type": "order_words",
-      "question": "Monte a frase: 'Eu sou brasileiro(a).' (저는 브라질 사람이에요.)",
+      "question": "Monte a frase: 'Eu sou brasileiro(a).'",
       "words": ["사람이에요", "저는", "브라질"],
       "correct_order": ["저는", "브라질", "사람이에요"],
       "explanation": "Estrutura: Tópico (저는) + País (브라질) + Pessoa+Verbo (사람이에요)."
