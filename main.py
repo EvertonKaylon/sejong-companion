@@ -85,5 +85,5 @@ def main(page: ft.Page):
 
 if __name__ == "__main__":
     print(f"Sejong Companion v{__version__}")
-    # Executa no navegador web, em localhost (127.0.0.1)
-    ft.run(main, view=ft.AppView.WEB_BROWSER, host="127.0.0.1", port=8554, assets_dir="assets")
+    port = int(os.environ.get("PORT", 8554))
+    ft.run(main, view=ft.AppView.WEB_BROWSER, host="0.0.0.0", port=port, assets_dir="assets")
