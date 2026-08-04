@@ -81,25 +81,35 @@ class FullscreenService:
         FullscreenService._is_fullscreen = not FullscreenService._is_fullscreen
 
         # 1. Execução via JavaScript no navegador (Mobile Browser / PWA & Web Desktop)
-        js_code = """
-        if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
-            var docEl = document.documentElement;
-            var req = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
-            if (req) { req.call(docEl); }
-        } else {
-            var exit = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
-            if (exit) { exit.call(document); }
-        }
-        """
-        try:
-            page.run_javascript(js_code)
-        except Exception as e:
-            print(f"Fullscreen JS toggle: {e}")
+        js_code = (
+            "if(!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement){"
+            "var docEl=document.documentElement;"
+            "var req=docEl.requestFullscreen||docEl.webkitRequestFullscreen||docEl.mozRequestFullScreen||docEl.msRequestFullscreen;"
+            "if(req){req.call(docEl);}"
+            "}else{"
+            "var exit=document.exitFullscreen||document.webkitExitFullscreen||document.mozCancelFullScreen||document.msExitFullscreen;"
+            "if(exit){exit.call(document);}"
+            "}"
+        )
 
-        # 2. Atualização de estado nativo (Desktop Flet App)
+        async def _exec_fullscreen():
+            try:
+                if hasattr(page, 'launch_url'):
+                    await page.launch_url(f"javascript:{js_code}")
+            except Exception as ex:
+                print(f"Fullscreen JS error: {ex}")
+
         try:
-            if hasattr(page, "window"):
-                page.window.full_screen = FullscreenService._is_fullscreen
+            if hasattr(page, 'run_task'):
+                page.run_task(_exec_fullscreen)
+        except Exception as e:
+            print(f"Task error: {e}")
+
+        # 2. Atualização de estado nativo (Desktop Flet App se disponível)
+        try:
+            win = getattr(page, "window", None)
+            if win and hasattr(win, "full_screen"):
+                win.full_screen = FullscreenService._is_fullscreen
                 page.update()
         except Exception:
             pass
@@ -107,39 +117,31 @@ class FullscreenService:
     @staticmethod
     def setup_mobile_responsive_viewport(page: ft.Page):
         """Injeta meta-tags de viewport e PWA para o navegador mobile se comportar como App instalado."""
-        js_meta = """
-        (function() {
-            var metaViewport = document.querySelector('meta[name="viewport"]');
-            if (!metaViewport) {
-                metaViewport = document.createElement('meta');
-                metaViewport.name = 'viewport';
-                document.head.appendChild(metaViewport);
-            }
-            metaViewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
+        js_meta = (
+            "(function(){"
+            "var m=document.querySelector('meta[name=\"viewport\"]');"
+            "if(!m){m=document.createElement('meta');m.name='viewport';document.head.appendChild(m);}"
+            "m.content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';"
+            "var t=document.querySelector('meta[name=\"theme-color\"]');"
+            "if(!t){t=document.createElement('meta');t.name='theme-color';document.head.appendChild(t);}"
+            "t.content='#02060E';"
+            "var ap=document.createElement('meta');ap.name='apple-mobile-web-app-capable';ap.content='yes';document.head.appendChild(ap);"
+            "var st=document.createElement('meta');st.name='apple-mobile-web-app-status-bar-style';st.content='black-translucent';document.head.appendChild(st);"
+            "})();"
+        )
 
-            var metaTheme = document.querySelector('meta[name="theme-color"]');
-            if (!metaTheme) {
-                metaTheme = document.createElement('meta');
-                metaTheme.name = 'theme-color';
-                document.head.appendChild(metaTheme);
-            }
-            metaTheme.content = '#02060E';
+        async def _exec_meta():
+            try:
+                if hasattr(page, 'launch_url'):
+                    await page.launch_url(f"javascript:{js_meta}")
+            except Exception as ex:
+                print(f"Viewport JS error: {ex}")
 
-            var metaMobile = document.createElement('meta');
-            metaMobile.name = 'apple-mobile-web-app-capable';
-            metaMobile.content = 'yes';
-            document.head.appendChild(metaMobile);
-
-            var metaStatus = document.createElement('meta');
-            metaStatus.name = 'apple-mobile-web-app-status-bar-style';
-            metaStatus.content = 'black-translucent';
-            document.head.appendChild(metaStatus);
-        })();
-        """
         try:
-            page.run_javascript(js_meta)
+            if hasattr(page, 'run_task'):
+                page.run_task(_exec_meta)
         except Exception as e:
-            print(f"Viewport setup: {e}")
+            print(f"Task meta error: {e}")
 
     @staticmethod
     def create_fullscreen_button(page: ft.Page, colors: dict) -> ft.IconButton:

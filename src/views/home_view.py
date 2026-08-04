@@ -1,7 +1,7 @@
 import flet as ft
 from datetime import datetime
 from ..theme import get_theme_colors, Styles
-from ..services import DataService, ProgressService
+from ..services import DataService, ProgressService, FullscreenService
 
 def home_view(page: ft.Page) -> ft.View:
     is_dark = page.theme_mode == ft.ThemeMode.DARK
