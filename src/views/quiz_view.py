@@ -27,10 +27,59 @@ def quiz_view(page: ft.Page) -> ft.View:
     if not exercises:
         return ft.View(
             route="/quiz",
+            appbar=ft.AppBar(
+                leading=ft.IconButton(
+                    icon=ft.Icons.ARROW_BACK_IOS_NEW_ROUNDED,
+                    icon_color=colors["primary"],
+                    on_click=lambda e: page.router.navigate_to("/home"),
+                ),
+                title=ft.Text("Em Construção", weight=ft.FontWeight.BOLD, size=16, color=colors["text"]),
+                bgcolor=colors["surface"],
+                elevation=0,
+            ),
             controls=[
-                ft.AppBar(title=ft.Text("Erro"), bgcolor=colors["surface"]),
-                ft.Text("Nenhum exercício encontrado para esta unidade.", color=colors["incorrect"])
-            ]
+                ft.Container(
+                    content=ft.Column(
+                        controls=[
+                            ft.Container(height=40),
+                            ft.Icon(ft.Icons.CONSTRUCTION_ROUNDED, size=64, color=colors["accent"]),
+                            ft.Container(height=16),
+                            ft.Text(
+                                "Quiz em Construção 🚧",
+                                size=20,
+                                weight=ft.FontWeight.BOLD,
+                                color=colors["text"],
+                                text_align=ft.TextAlign.CENTER,
+                            ),
+                            ft.Container(height=8),
+                            ft.Text(
+                                "Os exercícios desta unidade ainda estão sendo elaborados.\n\nVolte em breve para novos desafios!",
+                                size=14,
+                                color=colors["text_sec"],
+                                text_align=ft.TextAlign.CENTER,
+                                no_wrap=False,
+                            ),
+                            ft.Container(height=24),
+                            ft.ElevatedButton(
+                                content="Voltar ao Menu",
+                                icon=ft.Icons.HOME_ROUNDED,
+                                style=ft.ButtonStyle(
+                                    color=ft.Colors.WHITE,
+                                    bgcolor=colors["primary"],
+                                    shape=ft.RoundedRectangleBorder(radius=Styles.BORDER_RADIUS_SM),
+                                    padding=ft.Padding.symmetric(horizontal=20, vertical=12),
+                                ),
+                                on_click=lambda e: page.router.navigate_to("/home"),
+                            ),
+                        ],
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                        spacing=0,
+                    ),
+                    padding=24,
+                    alignment=ft.Alignment.CENTER,
+                ),
+            ],
+            bgcolor=colors["bg"],
         )
 
     # Estado local do Quiz
