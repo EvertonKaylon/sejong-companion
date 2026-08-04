@@ -74,43 +74,53 @@ class ProgressService:
 class FullscreenService:
     """Serviço para alternância de Tela Cheia (Fullscreen) e responsividade Mobile/PWA."""
 
-    _is_fullscreen: bool = False
-
     @staticmethod
     def toggle_fullscreen(page: ft.Page):
-        FullscreenService._is_fullscreen = not FullscreenService._is_fullscreen
+        new_state = False
+        try:
+            # 1. Toggle via propriedade oficial Flet
+            if hasattr(page, "window"):
+                current_state = bool(getattr(page.window, "full_screen", False))
+                new_state = not current_state
+                page.window.full_screen = new_state
+                page.update()
+        except Exception as e:
+            print(f"Error toggling page.window.full_screen: {e}")
 
-        # 1. Execução via JavaScript no navegador (Mobile Browser / PWA & Web Desktop)
+        # 2. Tentar via JS launch_url para navegadores Web
         js_code = (
-            "if(!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement){"
-            "var docEl=document.documentElement;"
-            "var req=docEl.requestFullscreen||docEl.webkitRequestFullscreen||docEl.mozRequestFullScreen||docEl.msRequestFullscreen;"
-            "if(req){req.call(docEl);}"
+            "if(!document.fullscreenElement && !document.webkitFullscreenElement){"
+            "var d=document.documentElement;var r=d.requestFullscreen||d.webkitRequestFullscreen;"
+            "if(r){r.call(d);}"
             "}else{"
-            "var exit=document.exitFullscreen||document.webkitExitFullscreen||document.mozCancelFullScreen||document.msExitFullscreen;"
-            "if(exit){exit.call(document);}"
+            "var x=document.exitFullscreen||document.webkitExitFullscreen;"
+            "if(x){x.call(document);}"
             "}"
         )
 
-        async def _exec_fullscreen():
+        async def _exec_js():
             try:
                 if hasattr(page, 'launch_url'):
                     await page.launch_url(f"javascript:{js_code}")
-            except Exception as ex:
-                print(f"Fullscreen JS error: {ex}")
+            except Exception:
+                pass
 
         try:
             if hasattr(page, 'run_task'):
-                page.run_task(_exec_fullscreen)
-        except Exception as e:
-            print(f"Task error: {e}")
+                page.run_task(_exec_js)
+        except Exception:
+            pass
 
-        # 2. Atualização de estado nativo (Desktop Flet App se disponível)
+        # 3. Notificação visual de confirmação ao usuário
         try:
-            win = getattr(page, "window", None)
-            if win and hasattr(win, "full_screen"):
-                win.full_screen = FullscreenService._is_fullscreen
-                page.update()
+            msg = "📱 Modo Tela Cheia Ativado! (Dica: no celular, você também pode 'Adicionar à Tela de Início' para abrir como App Nativo)" if new_state else "📱 Modo Tela Cheia Desativado"
+            snack = ft.SnackBar(
+                content=ft.Text(msg, size=12, weight=ft.FontWeight.BOLD),
+                duration=2500,
+                open=True
+            )
+            page.overlay.append(snack)
+            page.update()
         except Exception:
             pass
 
@@ -134,14 +144,14 @@ class FullscreenService:
             try:
                 if hasattr(page, 'launch_url'):
                     await page.launch_url(f"javascript:{js_meta}")
-            except Exception as ex:
-                print(f"Viewport JS error: {ex}")
+            except Exception:
+                pass
 
         try:
             if hasattr(page, 'run_task'):
                 page.run_task(_exec_meta)
-        except Exception as e:
-            print(f"Task meta error: {e}")
+        except Exception:
+            pass
 
     @staticmethod
     def create_fullscreen_button(page: ft.Page, colors: dict) -> ft.IconButton:
