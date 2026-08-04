@@ -48,30 +48,43 @@ def lesson_view(page: ft.Page) -> ft.View:
         )
 
 
-    # ─── Tab 2: Gramática (lista de seções) ───
+    # ─── Tab 2: Gramática (Formatada & Estruturada em Cards) ───
 
     grammar_controls = []
-    for g_section in unit_data.grammar:
-        # Título da seção
-        grammar_controls.append(
-            ft.Text(g_section.title, size=18, weight=ft.FontWeight.BOLD, color=colors["primary"])
+    for idx, g_section in enumerate(unit_data.grammar, 1):
+        # 1. Cabeçalho da Seção com Badge Numérico
+        section_header = ft.Row(
+            controls=[
+                ft.Container(
+                    content=ft.Text(f"Regra {idx}", size=11, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE),
+                    padding=ft.Padding.symmetric(horizontal=8, vertical=4),
+                    bgcolor=colors["primary"],
+                    border_radius=Styles.BORDER_RADIUS_SM,
+                ),
+                ft.Text(g_section.title, size=16, weight=ft.FontWeight.BOLD, color=colors["text"], expand=True),
+            ],
+            spacing=8,
+            alignment=ft.MainAxisAlignment.START,
         )
-        grammar_controls.append(ft.Container(height=6))
-        
-        # Explicação
-        grammar_controls.append(
-            ft.Text(g_section.explanation, size=14, color=colors["text"])
+
+        # 2. Explicação Formatada em Markdown Rico
+        explanation_box = ft.Container(
+            content=ft.Markdown(
+                value=g_section.explanation,
+                selectable=True,
+                extension_set=ft.MarkdownExtensionSet.GITHUB_WEB,
+            ),
+            padding=12,
+            bgcolor=colors["surface"],
+            border=ft.Border.all(1, colors["border"]),
+            border_radius=Styles.BORDER_RADIUS_SM,
+            margin=ft.Margin.only(top=6, bottom=10),
         )
-        grammar_controls.append(ft.Container(height=12))
-        
-        # Exemplos
-        grammar_controls.append(
-            ft.Text("Exemplos de Uso:", size=14, weight=ft.FontWeight.BOLD, color=colors["text"])
-        )
-        grammar_controls.append(ft.Container(height=6))
-        
+
+        # 3. Bloco de Exemplos Práticos Interativos com Áudio
+        example_cards = []
         for ex in g_section.examples:
-            grammar_controls.append(
+            example_cards.append(
                 ft.Container(
                     content=ft.Row(
                         controls=[
@@ -88,7 +101,7 @@ def lesson_view(page: ft.Page) -> ft.View:
                                 icon_color=colors["primary"],
                                 icon_size=22,
                                 on_click=lambda e, text=ex.kr: page.audio_service.play_korean(text),
-                                tooltip="Ouvir exemplo"
+                                tooltip="Ouvir pronúncia HD"
                             )
                         ],
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
@@ -98,39 +111,76 @@ def lesson_view(page: ft.Page) -> ft.View:
                     border_radius=Styles.BORDER_RADIUS_SM,
                     bgcolor=colors["surface"],
                     border=ft.Border.all(1, colors["border"]),
-                    margin=ft.Margin.only(bottom=8),
-                    on_click=lambda e, text=ex.kr: page.audio_service.play_korean(text)
+                    margin=ft.Margin.only(bottom=4),
+                    on_click=lambda e, text=ex.kr: page.audio_service.play_korean(text),
+                    animate=150,
                 )
             )
-        
-        # Dica para lusófonos, se disponível
+
+        examples_box = ft.Column(
+            controls=[
+                ft.Row(
+                    controls=[
+                        ft.Icon(ft.Icons.RECORD_VOICE_OVER_ROUNDED, size=15, color=colors["secondary"]),
+                        ft.Text("Exemplos Práticos:", size=13, weight=ft.FontWeight.BOLD, color=colors["secondary"]),
+                    ],
+                    spacing=6,
+                ),
+                ft.Column(controls=example_cards, spacing=4),
+            ],
+            spacing=6,
+        )
+
+        # 4. Dica Lusófona (se disponível)
+        lusophone_box = None
         if g_section.lusophone_tip:
-            grammar_controls.append(
-                ft.Container(
-                    content=ft.Row(
-                        controls=[
-                            ft.Text("🇧🇷", size=18),
-                            ft.Text(
-                                g_section.lusophone_tip,
-                                size=13,
-                                color=colors["accent"],
-                                italic=True,
-                                expand=True,
-                            ),
-                        ],
-                        spacing=8,
-                    ),
-                    padding=12,
-                    bgcolor="#0FF5A623",
-                    border_radius=Styles.BORDER_RADIUS_SM,
-                    border=ft.Border.all(1, "#26F5A623"),
-                    margin=ft.Margin.only(bottom=16, top=4)
-                )
+            lusophone_box = ft.Container(
+                content=ft.Row(
+                    controls=[
+                        ft.Text("🇧🇷", size=18),
+                        ft.Column(
+                            controls=[
+                                ft.Text("Dica para Falantes de Português:", size=11, weight=ft.FontWeight.BOLD, color=colors["accent"]),
+                                ft.Text(
+                                    g_section.lusophone_tip,
+                                    size=12,
+                                    color=colors["text"],
+                                    italic=True,
+                                ),
+                            ],
+                            spacing=2,
+                            expand=True,
+                        ),
+                    ],
+                    spacing=8,
+                    vertical_alignment=ft.CrossAxisAlignment.START,
+                ),
+                padding=10,
+                bgcolor="#14F5A623",
+                border_radius=Styles.BORDER_RADIUS_SM,
+                border=ft.Border.all(1, "#33F5A623"),
+                margin=ft.Margin.only(top=8, bottom=2),
             )
-        
-        # Separador entre seções
-        grammar_controls.append(ft.Divider(height=1, color=colors["border"]))
-        grammar_controls.append(ft.Container(height=10))
+
+        # Cartão Completo da Seção de Gramática
+        card_children = [section_header, explanation_box, examples_box]
+        if lusophone_box:
+            card_children.append(lusophone_box)
+
+        grammar_controls.append(
+            ft.Container(
+                content=ft.Column(
+                    controls=card_children,
+                    spacing=4,
+                ),
+                padding=14,
+                bgcolor=colors["card_bg"],
+                border=ft.Border.all(1, colors["border"]),
+                border_radius=Styles.BORDER_RADIUS_MD,
+                shadow=Styles.CARD_SHADOW,
+                margin=ft.Margin.only(bottom=14),
+            )
+        )
 
     grammar_col = ft.Column(
         controls=grammar_controls,
