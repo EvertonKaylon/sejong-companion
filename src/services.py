@@ -71,3 +71,84 @@ class ProgressService:
         return bool(ProgressService._store.get(f"unlocked_{unit_id}", False))
 
 
+class FullscreenService:
+    """Serviço para alternância de Tela Cheia (Fullscreen) e responsividade Mobile/PWA."""
+
+    _is_fullscreen: bool = False
+
+    @staticmethod
+    def toggle_fullscreen(page: ft.Page):
+        FullscreenService._is_fullscreen = not FullscreenService._is_fullscreen
+
+        # 1. Execução via JavaScript no navegador (Mobile Browser / PWA & Web Desktop)
+        js_code = """
+        if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+            var docEl = document.documentElement;
+            var req = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+            if (req) { req.call(docEl); }
+        } else {
+            var exit = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+            if (exit) { exit.call(document); }
+        }
+        """
+        try:
+            page.run_javascript(js_code)
+        except Exception as e:
+            print(f"Fullscreen JS toggle: {e}")
+
+        # 2. Atualização de estado nativo (Desktop Flet App)
+        try:
+            if hasattr(page, "window"):
+                page.window.full_screen = FullscreenService._is_fullscreen
+                page.update()
+        except Exception:
+            pass
+
+    @staticmethod
+    def setup_mobile_responsive_viewport(page: ft.Page):
+        """Injeta meta-tags de viewport e PWA para o navegador mobile se comportar como App instalado."""
+        js_meta = """
+        (function() {
+            var metaViewport = document.querySelector('meta[name="viewport"]');
+            if (!metaViewport) {
+                metaViewport = document.createElement('meta');
+                metaViewport.name = 'viewport';
+                document.head.appendChild(metaViewport);
+            }
+            metaViewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
+
+            var metaTheme = document.querySelector('meta[name="theme-color"]');
+            if (!metaTheme) {
+                metaTheme = document.createElement('meta');
+                metaTheme.name = 'theme-color';
+                document.head.appendChild(metaTheme);
+            }
+            metaTheme.content = '#02060E';
+
+            var metaMobile = document.createElement('meta');
+            metaMobile.name = 'apple-mobile-web-app-capable';
+            metaMobile.content = 'yes';
+            document.head.appendChild(metaMobile);
+
+            var metaStatus = document.createElement('meta');
+            metaStatus.name = 'apple-mobile-web-app-status-bar-style';
+            metaStatus.content = 'black-translucent';
+            document.head.appendChild(metaStatus);
+        })();
+        """
+        try:
+            page.run_javascript(js_meta)
+        except Exception as e:
+            print(f"Viewport setup: {e}")
+
+    @staticmethod
+    def create_fullscreen_button(page: ft.Page, colors: dict) -> ft.IconButton:
+        """Cria um botão com ícone de entrar/sair da Tela Cheia para ser usado nas AppBars."""
+        return ft.IconButton(
+            icon=ft.Icons.FULLSCREEN_ROUNDED,
+            icon_color=colors["primary"],
+            on_click=lambda e: FullscreenService.toggle_fullscreen(page),
+            tooltip="Alternar Modo Tela Cheia (Fullscreen)",
+        )
+
+

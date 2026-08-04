@@ -1,7 +1,6 @@
 import flet as ft
 from ..theme import get_theme_colors, Styles
-from ..services import DataService
-from ..components.hangul_card import HangulCard
+from ..services import DataService, FullscreenService
 
 def hangul_view(page: ft.Page) -> ft.View:
     is_dark = page.theme_mode == ft.ThemeMode.DARK
@@ -27,7 +26,8 @@ def hangul_view(page: ft.Page) -> ft.View:
         ),
         title=ft.Text("Alfabeto 한글", weight=ft.FontWeight.BOLD, size=18, color=colors["text"]),
         bgcolor=colors["surface"],
-        elevation=0
+        elevation=0,
+        actions=[FullscreenService.create_fullscreen_button(page, colors)]
     )
 
     # ─── Aviso Anti-Romanização ───

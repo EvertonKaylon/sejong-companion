@@ -46,12 +46,17 @@ from src.views.lesson_view import lesson_view
 from src.views.quiz_view import quiz_view
 from src.views.ui_test_view import ui_test_view
 
+from src.services import FullscreenService
+
 def main(page: ft.Page):
     # Definir o modo de tema padrão (Escuro - Midnight Blue)
     page.theme_mode = ft.ThemeMode.DARK
         
     # Aplicar o Design System (fontes e configurações de tema)
     apply_app_theme(page)
+
+    # Configurar responsividade mobile / PWA e viewport de tela cheia
+    FullscreenService.setup_mobile_responsive_viewport(page)
 
     # Inicializar o Roteador Global
     router = Router(page)

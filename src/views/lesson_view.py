@@ -1,7 +1,6 @@
 import flet as ft
 from ..theme import get_theme_colors, Styles
-from ..services import DataService, ProgressService
-from ..components.vocab_card import VocabCard
+from ..services import DataService, ProgressService, FullscreenService
 
 def lesson_view(page: ft.Page) -> ft.View:
     is_dark = page.theme_mode == ft.ThemeMode.DARK
@@ -33,6 +32,7 @@ def lesson_view(page: ft.Page) -> ft.View:
         title=ft.Text(unit_data.title, weight=ft.FontWeight.BOLD, size=16, color=colors["text"]),
         bgcolor=colors["surface"],
         elevation=0,
+        actions=[FullscreenService.create_fullscreen_button(page, colors)]
     )
 
     # ─── Tab 1: Lista de Vocabulário ───

@@ -1,7 +1,6 @@
 import flet as ft
 from ..theme import get_theme_colors, Styles
-from ..services import DataService, ProgressService
-from ..components.quiz_widget import QuizWidget
+from ..services import DataService, ProgressService, FullscreenService
 
 def quiz_view(page: ft.Page) -> ft.View:
     is_dark = page.theme_mode == ft.ThemeMode.DARK
@@ -55,7 +54,8 @@ def quiz_view(page: ft.Page) -> ft.View:
         ),
         title=ft.Text(f"Quiz: {unit_title}", weight=ft.FontWeight.BOLD, size=15, color=colors["text"]),
         bgcolor=colors["surface"],
-        elevation=0
+        elevation=0,
+        actions=[FullscreenService.create_fullscreen_button(page, colors)]
     )
 
     def confirm_exit():
