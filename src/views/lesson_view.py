@@ -32,8 +32,7 @@ def lesson_view(page: ft.Page) -> ft.View:
         ),
         title=ft.Text(unit_data.title, weight=ft.FontWeight.BOLD, size=16, color=colors["text"]),
         bgcolor=colors["surface"],
-        elevation=0,
-        actions=[FullscreenService.create_fullscreen_button(page, colors)]
+        elevation=0
     )
 
     # ─── Tab 1: Lista de Vocabulário ───

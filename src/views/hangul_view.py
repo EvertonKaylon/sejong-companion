@@ -27,8 +27,7 @@ def hangul_view(page: ft.Page) -> ft.View:
         ),
         title=ft.Text("Alfabeto 한글", weight=ft.FontWeight.BOLD, size=18, color=colors["text"]),
         bgcolor=colors["surface"],
-        elevation=0,
-        actions=[FullscreenService.create_fullscreen_button(page, colors)]
+        elevation=0
     )
 
     # ─── Aviso Anti-Romanização ───

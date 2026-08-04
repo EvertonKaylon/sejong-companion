@@ -55,8 +55,7 @@ def quiz_view(page: ft.Page) -> ft.View:
         ),
         title=ft.Text(f"Quiz: {unit_title}", weight=ft.FontWeight.BOLD, size=15, color=colors["text"]),
         bgcolor=colors["surface"],
-        elevation=0,
-        actions=[FullscreenService.create_fullscreen_button(page, colors)]
+        elevation=0
     )
 
     def confirm_exit():

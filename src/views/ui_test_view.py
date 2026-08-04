@@ -89,7 +89,6 @@ def ui_test_view(page: ft.Page) -> ft.View:
         bgcolor=colors["surface"],
         elevation=0,
         actions=[
-            FullscreenService.create_fullscreen_button(page, colors),
             ft.IconButton(
                 icon=ft.Icons.DARK_MODE_ROUNDED if not is_dark else ft.Icons.LIGHT_MODE_ROUNDED,
                 icon_color=colors["primary"],

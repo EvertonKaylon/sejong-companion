@@ -30,7 +30,6 @@ def home_view(page: ft.Page) -> ft.View:
         bgcolor=colors["surface"],
         elevation=0,
         actions=[
-            FullscreenService.create_fullscreen_button(page, colors),
             ft.IconButton(
                 icon=ft.Icons.PALETTE_OUTLINED,
                 icon_color=colors["secondary"],
