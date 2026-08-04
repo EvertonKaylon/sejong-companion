@@ -248,21 +248,31 @@ def hangul_view(page: ft.Page) -> ft.View:
 
         batchim_section = ft.Column(controls=batchim_controls, scroll=ft.ScrollMode.AUTO, expand=True)
 
-    # ─── Lista de Sílabas ───
+    # ─── Lista de Sílabas (com botões de áudio interativos) ───
     syllables_col = ft.Column(spacing=8, scroll=ft.ScrollMode.AUTO, expand=True)
     for s in data.syllables:
         syllables_col.controls.append(
             ft.Container(
                 content=ft.Row(
                     controls=[
+                        # Botão quadrado clicável da sílaba
                         ft.Container(
-                            content=ft.Text(s.block, size=24, weight=ft.FontWeight.BOLD, color=colors["primary"]),
+                            content=ft.Column(
+                                controls=[
+                                    ft.Text(s.block, size=26, weight=ft.FontWeight.BOLD, color=colors["primary"]),
+                                    ft.Icon(ft.Icons.VOLUME_UP_ROUNDED, size=13, color=colors["primary_light"])
+                                ],
+                                alignment=ft.MainAxisAlignment.CENTER,
+                                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                                spacing=0,
+                            ),
                             bgcolor=colors["surface"],
-                            border=ft.Border.all(1, colors["border"]),
+                            border=ft.Border.all(1.5, colors["primary"]),
                             border_radius=Styles.BORDER_RADIUS_SM,
-                            width=60,
-                            height=60,
+                            width=64,
+                            height=64,
                             alignment=ft.Alignment.CENTER,
+                            tooltip=f"Ouvir sílaba {s.block}",
                         ),
                         ft.Column(
                             controls=[
@@ -271,13 +281,24 @@ def hangul_view(page: ft.Page) -> ft.View:
                             ],
                             spacing=2,
                             expand=True
+                        ),
+                        ft.IconButton(
+                            icon=ft.Icons.VOLUME_UP_ROUNDED,
+                            icon_color=colors["primary"],
+                            icon_size=24,
+                            on_click=lambda e, block=s.block: page.audio_service.play_korean(block),
+                            tooltip=f"Ouvir sílaba {s.block}"
                         )
                     ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
                 ),
                 padding=12,
                 border_radius=Styles.BORDER_RADIUS_MD,
                 border=ft.Border.all(1, colors["border"]),
                 bgcolor=colors["card_bg"],
+                on_click=lambda e, block=s.block: page.audio_service.play_korean(block),
+                animate=150,
             )
         )
 
