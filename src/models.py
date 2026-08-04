@@ -24,6 +24,9 @@ class HangulVowel(BaseModel):
     name: str  # Nome em 한글 (ex: 아, 어, 오)
     pronunciation: str  # Descrição fonética em português
     mnemonic: str
+    audio_wave_profile: Optional[str] = "default"
+    mouth_shape_id: Optional[str] = None
+    contrast_pair_id: Optional[str] = None
 
 class HangulConsonant(BaseModel):
     char: str
@@ -31,11 +34,15 @@ class HangulConsonant(BaseModel):
     pronunciation: str  # Descrição fonética em português
     type: Optional[str] = "plain"
     base: Optional[str] = None  # Para aspiradas/tensas, a consoante base
+    audio_wave_profile: Optional[str] = "default"
+    mouth_shape_id: Optional[str] = None
+    contrast_pair_id: Optional[str] = None
 
 class HangulSyllable(BaseModel):
     block: str
     spelling: str
     meaning: str
+    snap_anchor: Optional[str] = "square"
 
 class NeutralizationRule(BaseModel):
     position: str
@@ -51,7 +58,7 @@ class LusophoneWarning(BaseModel):
 class BatchimGuide(BaseModel):
     title: str
     explanation: str
-    lusophone_warning: LusophoneWarning
+    lusophone_warning: Optional[LusophoneWarning] = None
     neutralization_rules: List[NeutralizationRule]
 
 class WritingAlert(BaseModel):
@@ -100,6 +107,8 @@ class VocabItem(BaseModel):
     example_pt: str
     category: Optional[str] = None
     neuro_tip: Optional[str] = None
+    snap_anchor: Optional[str] = None  # "square" (com 받침) | "round" (com vogal)
+    magnetic_slot_role: Optional[str] = None  # "SUBJECT" | "OBJECT" | "VERB" | "PARTICLE" | "PREDICATE"
 
 class GrammarExample(BaseModel):
     kr: str

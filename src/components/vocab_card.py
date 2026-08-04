@@ -96,6 +96,49 @@ class VocabCard(ft.Container):
                 )
             )
 
+        # Badges de Papel Sintático e Encaixe Morfofonético (Physics Gating / Implicit)
+        role_badges = []
+        if hasattr(vocab_item, 'magnetic_slot_role') and vocab_item.magnetic_slot_role:
+            role_colors = {
+                "SUBJECT": ("👤 Sujeito", self.colors["role_subject"]),
+                "OBJECT": ("📦 Objeto", self.colors["role_object"]),
+                "VERB": ("⚡ Verbo", self.colors["role_verb"]),
+                "PREDICATE": ("⚡ Predicado", self.colors["role_predicate"]),
+                "PARTICLE": ("🔗 Partícula", self.colors["role_particle"]),
+            }
+            if vocab_item.magnetic_slot_role in role_colors:
+                role_label, role_col = role_colors[vocab_item.magnetic_slot_role]
+                role_badges.append(
+                    ft.Container(
+                        content=ft.Text(role_label, size=10, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE),
+                        padding=ft.Padding.symmetric(horizontal=8, vertical=3),
+                        bgcolor=role_col,
+                        border_radius=Styles.BORDER_RADIUS_SM,
+                    )
+                )
+
+        if hasattr(vocab_item, 'snap_anchor') and vocab_item.snap_anchor:
+            anchor_labels = {
+                "square": "🔲 받침 (Base Quadrada)",
+                "round": "🟢 Vogal (Base Lisa)",
+            }
+            if vocab_item.snap_anchor in anchor_labels:
+                role_badges.append(
+                    ft.Container(
+                        content=ft.Text(anchor_labels[vocab_item.snap_anchor], size=10, weight=ft.FontWeight.W_500, color=self.colors["text_sec"]),
+                        padding=ft.Padding.symmetric(horizontal=8, vertical=3),
+                        bgcolor=self.colors["border"],
+                        border_radius=Styles.BORDER_RADIUS_SM,
+                    )
+                )
+
+        if role_badges:
+            main_controls.insert(0, ft.Row(
+                controls=role_badges,
+                alignment=ft.MainAxisAlignment.START,
+                spacing=6,
+            ))
+
         # Badge de categoria, se disponível
         category_badge = None
         if hasattr(vocab_item, 'category') and vocab_item.category:
@@ -116,7 +159,6 @@ class VocabCard(ft.Container):
                 border_radius=10,
             )
 
-        # Se tiver badge, insere antes do divider
         if category_badge:
             main_controls.insert(0, ft.Row(
                 controls=[category_badge],

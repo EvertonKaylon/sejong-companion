@@ -29,5 +29,19 @@ class TestDataService(unittest.TestCase):
         self.assertGreater(len(unit_one_data.vocabulary), 0)
         self.assertGreater(len(unit_one_data.grammar), 0)
 
+    def test_implicit_sensory_attributes(self):
+        intro_data = DataService.get_unit_intro()
+        for vowel in intro_data.vowels:
+            self.assertIsNotNone(vowels := vowel.audio_wave_profile)
+        for consonant in intro_data.consonants:
+            self.assertIsNotNone(consonant.audio_wave_profile)
+
+    def test_implicit_snap_and_roles(self):
+        unit_one_data = DataService.get_unit_one()
+        has_snap = any(item.snap_anchor is not None for item in unit_one_data.vocabulary)
+        has_role = any(item.magnetic_slot_role is not None for item in unit_one_data.vocabulary)
+        self.assertTrue(has_snap)
+        self.assertTrue(has_role)
+
 if __name__ == "__main__":
     unittest.main()

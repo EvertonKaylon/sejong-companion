@@ -7,50 +7,63 @@
       "meaning": "Olá / Como vai? (formal/polido)",
       "example_kr": "안녕하세요? 저는 안나예요.",
       "example_pt": "Olá! Eu sou a Anna.",
-      "category": "cumprimentos"
+      "category": "cumprimentos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "PREDICATE"
     },
     {
       "word": "안녕",
       "meaning": "Oi / Tchau (informal, entre amigos)",
       "example_kr": "안녕! 잘 지냈어?",
       "example_pt": "Oi! Tudo bem?",
-      "category": "cumprimentos"
+      "category": "cumprimentos",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "PREDICATE"
     },
     {
       "word": "안녕하십니까",
       "meaning": "Como vai? (muito formal/honorífico)",
       "example_kr": "안녕하십니까? 만나서 반갑습니다.",
       "example_pt": "Como vai? Prazer em conhecê-lo.",
-      "category": "cumprimentos"
+      "category": "cumprimentos",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "PREDICATE"
     },
     {
       "word": "저",
       "meaning": "Eu (formal/humilde)",
       "example_kr": "저는 학생이에요.",
       "example_pt": "Eu sou estudante.",
-      "category": "pronomes"
+      "category": "pronomes",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "SUBJECT"
     },
     {
       "word": "은 / 는",
       "meaning": "Partícula de tópico (indica sobre o que se fala)",
       "example_kr": "저는 한국 사람이에요.",
-      "example_pt": "Eu sou coreano (quanto a mim, sou coreano).",
+      "example_pt": "Eu sou coreano.",
       "category": "particulas",
-      "neuro_tip": "⚡ No coreano, 은/는 funciona como um 'marcador de tópico' — diferente do sujeito gramatical! Pense nele como: 'Falando de X...' Ex: 저는 = 'Falando de mim...'"
+      "snap_anchor": "round",
+      "magnetic_slot_role": "PARTICLE"
     },
     {
       "word": "학생",
       "meaning": "Estudante",
       "example_kr": "안나는 학생이에요.",
       "example_pt": "Anna é estudante.",
-      "category": "profissoes"
+      "category": "profissoes",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
     },
     {
       "word": "대학생",
-      "meaning": "Universitário(a) / Estudante universitário",
+      "meaning": "Universitário(a)",
       "example_kr": "저는 대학생이에요.",
       "example_pt": "Eu sou universitário(a).",
-      "category": "profissoes"
+      "category": "profissoes",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
     },
     {
       "word": "선생님",
@@ -58,21 +71,26 @@
       "example_kr": "이분은 선생님이에요.",
       "example_pt": "Esta pessoa é o(a) professor(a).",
       "category": "profissoes",
-      "neuro_tip": "📝 선생님 tem o sufixo honorífico 님. Use 교사 para 'professor' sem honorífico (ex: em documentos)."
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
     },
     {
       "word": "교사",
       "meaning": "Professor(a) (profissão/formal)",
       "example_kr": "저는 교사예요.",
       "example_pt": "Eu sou professor(a).",
-      "category": "profissoes"
+      "category": "profissoes",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
     },
     {
       "word": "기자",
       "meaning": "Jornalista",
       "example_kr": "저는 기자예요.",
       "example_pt": "Eu sou jornalista.",
-      "category": "profissoes"
+      "category": "profissoes",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
     },
     {
       "word": "사진작가",
@@ -80,157 +98,107 @@
       "example_kr": "저는 사진작가예요.",
       "example_pt": "Eu sou fotógrafo(a).",
       "category": "profissoes",
-      "neuro_tip": "📸 사진 = foto, 작가 = escritor/artista. Literalmente: 'artista de fotos'."
-    },
-    {
-      "word": "심리학자",
-      "meaning": "Psicólogo(a)",
-      "example_kr": "제 친구는 심리학자예요.",
-      "example_pt": "Meu amigo é psicólogo(a).",
-      "category": "profissoes",
-      "neuro_tip": "🧠 심리 = psicologia/mente, 학자 = estudioso. Atenção: a pronúncia de ㄹ antes de ㅎ muda para 'ni'!"
-    },
-    {
-      "word": "엔지니어",
-      "meaning": "Engenheiro(a) (termo geral/emprestado)",
-      "example_kr": "저는 엔지니어예요.",
-      "example_pt": "Eu sou engenheiro(a).",
-      "category": "profissoes"
-    },
-    {
-      "word": "토목 공학자",
-      "meaning": "Engenheiro(a) Civil",
-      "example_kr": "저는 토목 공학자예요.",
-      "example_pt": "Eu sou engenheiro(a) civil.",
-      "category": "profissoes"
-    },
-    {
-      "word": "전기 공학자",
-      "meaning": "Engenheiro(a) Elétrico(a)",
-      "example_kr": "저는 전기 공학자예요.",
-      "example_pt": "Eu sou engenheiro(a) elétrico(a).",
-      "category": "profissoes"
-    },
-    {
-      "word": "기계 공학자",
-      "meaning": "Engenheiro(a) Mecânico(a)",
-      "example_kr": "저는 기계 공학자예요.",
-      "example_pt": "Eu sou engenheiro(a) mecânico(a).",
-      "category": "profissoes"
-    },
-    {
-      "word": "화학 공학자",
-      "meaning": "Engenheiro(a) Químico(a)",
-      "example_kr": "저는 화학 공학자예요.",
-      "example_pt": "Eu sou engenheiro(a) químico(a).",
-      "category": "profissoes"
-    },
-    {
-      "word": "컴퓨터 공학자",
-      "meaning": "Engenheiro(a) de Computação",
-      "example_kr": "저는 컴퓨터 공학자예요.",
-      "example_pt": "Eu sou engenheiro(a) de computação.",
-      "category": "profissoes"
-    },
-    {
-      "word": "마케팅 전문가",
-      "meaning": "Especialista em Marketing",
-      "example_kr": "저는 마케팅 전문가예요.",
-      "example_pt": "Eu sou especialista em marketing.",
-      "category": "profissoes",
-      "neuro_tip": "📊 전문가 = 'especialista'. Use com qualquer área: 디지털 마케팅 전문가 (marketing digital), SNS 마케팅 전문가 (marketing de redes sociais)."
-    },
-    {
-      "word": "인사 관리자",
-      "meaning": "Profissional de RH / Gestor(a) de Recursos Humanos",
-      "example_kr": "저는 인사 관리자예요.",
-      "example_pt": "Eu sou gestor(a) de RH.",
-      "category": "profissoes",
-      "neuro_tip": "👥 인사 = pessoal/RH, 관리자 = gestor. Outro uso de 인사: 인사하다 = cumprimentar!"
-    },
-    {
-      "word": "환경 전문가",
-      "meaning": "Especialista em Meio Ambiente",
-      "example_kr": "저는 환경 전문가예요.",
-      "example_pt": "Eu sou especialista em meio ambiente.",
-      "category": "profissoes"
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
     },
     {
       "word": "회사원",
       "meaning": "Funcionário(a) de empresa",
       "example_kr": "저는 회사원이에요.",
       "example_pt": "Eu sou funcionário(a) de empresa.",
-      "category": "profissoes"
+      "category": "profissoes",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
     },
     {
       "word": "요리사",
       "meaning": "Cozinheiro(a) / Chef",
       "example_kr": "저는 요리사예요.",
       "example_pt": "Eu sou cozinheiro(a).",
-      "category": "profissoes"
+      "category": "profissoes",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
     },
     {
       "word": "가수",
       "meaning": "Cantor(a)",
       "example_kr": "저는 가수예요.",
       "example_pt": "Eu sou cantor(a).",
-      "category": "profissoes"
+      "category": "profissoes",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
     },
     {
       "word": "한국",
       "meaning": "Coreia do Sul",
       "example_kr": "한국 노래 (K-pop)",
       "example_pt": "Música coreana.",
-      "category": "paises"
+      "category": "paises",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
     },
     {
       "word": "브라질",
       "meaning": "Brasil",
       "example_kr": "저는 브라질 사람이에요.",
       "example_pt": "Eu sou brasileiro(a).",
-      "category": "paises"
+      "category": "paises",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
     },
     {
       "word": "사람",
       "meaning": "Pessoa",
       "example_kr": "브라질 사람",
       "example_pt": "Pessoa do Brasil (Brasileiro/a).",
-      "category": "substantivos"
+      "category": "substantivos",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
     },
     {
       "word": "이름",
       "meaning": "Nome",
       "example_kr": "이름이 뭐예요?",
       "example_pt": "Qual é o seu nome?",
-      "category": "substantivos"
+      "category": "substantivos",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
     },
     {
       "word": "친구",
       "meaning": "Amigo(a)",
       "example_kr": "제 친구는 대학생이에요.",
       "example_pt": "Meu amigo é universitário.",
-      "category": "substantivos"
+      "category": "substantivos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "SUBJECT"
     },
     {
       "word": "네 / 예",
       "meaning": "Sim",
       "example_kr": "네, 저는 학생이에요.",
       "example_pt": "Sim, eu sou estudante.",
-      "category": "expressoes"
+      "category": "expressoes",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "PREDICATE"
     },
     {
       "word": "아니요",
       "meaning": "Não",
       "example_kr": "아니요, 저는 회사원이에요.",
       "example_pt": "Não, eu sou funcionário de empresa.",
-      "category": "expressoes"
+      "category": "expressoes",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "PREDICATE"
     },
     {
       "word": "만나서 반갑습니다",
       "meaning": "Prazer em conhecê-lo(a)",
       "example_kr": "안녕하세요? 만나서 반갑습니다.",
       "example_pt": "Olá! Prazer em conhecê-lo(a).",
-      "category": "cumprimentos"
+      "category": "cumprimentos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "PREDICATE"
     }
   ],
   "grammar": [
@@ -250,13 +218,9 @@
         {
           "kr": "저는 기자예요.",
           "pt": "Eu sou jornalista."
-        },
-        {
-          "kr": "저는 컴퓨터 공학자예요.",
-          "pt": "Eu sou engenheiro(a) de computação."
         }
       ],
-      "lusophone_tip": "🇧🇷 Diferente do português, o coreano NÃO tem gênero gramatical. '교사예요' pode significar 'sou professor' ou 'sou professora'. O contexto decide!"
+      "lusophone_tip": "Diferente do português, o coreano NÃO tem gênero gramatical. '교사예요' pode significar 'sou professor' ou 'sou professora'."
     },
     {
       "id": "g2_topico",
@@ -270,24 +234,20 @@
         {
           "kr": "안나는 대학생이에요.",
           "pt": "Quanto à Anna, é universitária."
-        },
-        {
-          "kr": "이분은 선생님이에요.",
-          "pt": "Quanto a esta pessoa, é o(a) professor(a)."
         }
       ],
-      "lusophone_tip": "🇧🇷 Em português dizemos 'Eu sou X' (SVO). Em coreano: '저는 X예요' (SOV). O verbo SEMPRE vem no final! Treine a suspensão: sujeito ➔ informação ➔ verbo."
+      "lusophone_tip": "Em português dizemos 'Eu sou X' (SVO). Em coreano: '저는 X예요' (SOV). O verbo SEMPRE vem no final!"
     }
   ],
   "cultural_notes": [
     {
       "title": "Níveis de Formalidade nos Cumprimentos",
-      "content": "O coreano tem vários níveis de formalidade. Para iniciantes:\n\n• 안녕 — Informal (só entre amigos da mesma idade)\n• 안녕하세요 — Polido (uso diário, seguro na maioria das situações)\n• 안녕하십니까 — Muito formal (entrevistas, apresentações, TV)\n\n🇧🇷 No Brasil, usamos 'Oi' e 'Olá' quase sem distinção. Na Coreia, usar o nível errado pode ser ofensivo!",
+      "content": "O coreano tem vários níveis de formalidade:\n• 안녕 — Informal (só entre amigos)\n• 안녕하세요 — Polido (uso diário, seguro)\n• 안녕하십니까 — Muito formal (entrevistas, apresentações)",
       "icon": "🎎"
     },
     {
       "title": "O Sufixo Honorífico 님",
-      "content": "님 é adicionado a títulos e nomes para demonstrar respeito:\n• 선생 (professor) → 선생님 (professor/a, com respeito)\n• 사장 (presidente) → 사장님 (presidente, com respeito)\n\nÉ semelhante ao 'Sr./Sra.' do português, mas obrigatório em contextos formais.",
+      "content": "님 é adicionado a títulos e nomes para demonstrar respeito:\n• 선생 → 선생님",
       "icon": "🙇"
     }
   ],
@@ -298,7 +258,7 @@
       "question": "Complete a lacuna: 저는 학생___.",
       "options": ["예요", "이에요", "하고", "입니다"],
       "correct_index": 1,
-      "explanation": "Como 학생 termina com 받침 (consoante final ㅇ), usamos '이에요'."
+      "explanation": "Como 학생 termina com 받침, usamos '이에요'."
     },
     {
       "id": "u1_q2",
@@ -306,7 +266,7 @@
       "question": "Como se diz 'Pessoa do Brasil' (Brasileiro/a) em coreano?",
       "options": ["브라질 이에요", "브라질 사람", "한국 사람", "브라질 사람예요"],
       "correct_index": 1,
-      "explanation": "Nome do país + 사람 (pessoa) indica nacionalidade. Portanto, 브라질 사람."
+      "explanation": "Nome do país + 사람 (pessoa) indica nacionalidade."
     },
     {
       "id": "u1_q3",
@@ -314,7 +274,7 @@
       "question": "민수 termina na vogal ㅜ. Qual a forma correta para dizer 'Sou 민수'?",
       "options": ["민수이에요", "민수예요", "민수은", "민수"],
       "correct_index": 1,
-      "explanation": "Como 민수 termina em vogal, usamos '예요', ficando '민수예요'."
+      "explanation": "Como 민수 termina em vogal, usamos '예요'."
     },
     {
       "id": "u1_q4",
@@ -322,15 +282,15 @@
       "question": "Qual destes é o termo correto para 'Fotógrafo(a)' em coreano?",
       "options": ["심리학자", "사진작가", "기자", "환경 전문가"],
       "correct_index": 1,
-      "explanation": "사진작가: 사진 = foto + 작가 = artista/autor. Literalmente 'artista de fotos'."
+      "explanation": "사진작가: foto + artista."
     },
     {
       "id": "u1_q5",
       "type": "multiple_choice",
-      "question": "Complete: 저는 기자___. (기자 termina em vogal)",
+      "question": "Complete: 저는 기자___.",
       "options": ["이에요", "예요", "는", "입니다"],
       "correct_index": 1,
-      "explanation": "기자 termina em vogal (ㅏ), por isso usamos '예요'. Resultado: 저는 기자예요."
+      "explanation": "기자 termina em vogal (ㅏ), usamos '예요'."
     },
     {
       "id": "u1_q6",
@@ -338,7 +298,7 @@
       "question": "Monte a frase: 'Eu sou estudante.' (저는 학생이에요.)",
       "words": ["학생이에요", "저는"],
       "correct_order": ["저는", "학생이에요"],
-      "explanation": "Em coreano, a ordem é SOV: Sujeito (저는) + Complemento+Verbo (학생이에요). O verbo SEMPRE vai no final!"
+      "explanation": "Ordem SOV: Sujeito (저는) + Predicado (학생이에요)."
     },
     {
       "id": "u1_q7",
@@ -346,7 +306,7 @@
       "question": "Monte a frase: '안나 é jornalista.' (안나는 기자예요.)",
       "words": ["기자예요", "안나는"],
       "correct_order": ["안나는", "기자예요"],
-      "explanation": "Estrutura SOV: Tópico (안나는) + Predicado (기자예요). Lembre: o verbo sempre fecha a frase coreana!"
+      "explanation": "Estrutura SOV: Tópico (안나는) + Predicado (기자예요)."
     },
     {
       "id": "u1_q8",
@@ -354,7 +314,7 @@
       "question": "Monte a frase: 'Eu sou brasileiro(a).' (저는 브라질 사람이에요.)",
       "words": ["사람이에요", "저는", "브라질"],
       "correct_order": ["저는", "브라질", "사람이에요"],
-      "explanation": "Estrutura: Tópico (저는) + País (브라질) + Pessoa+Verbo (사람이에요). Perceba como 브라질 사람 forma um bloco ('pessoa do Brasil') antes do verbo."
+      "explanation": "Estrutura: Tópico (저는) + País (브라질) + Pessoa+Verbo (사람이에요)."
     },
     {
       "id": "u1_q9",
@@ -362,7 +322,7 @@
       "question": "Qual cumprimento é adequado para usar com um professor ou chefe?",
       "options": ["안녕!", "안녕하세요?", "뭐해?", "야!"],
       "correct_index": 1,
-      "explanation": "안녕하세요? é a forma polida e segura para superiores hierárquicos, professores e desconhecidos."
+      "explanation": "안녕하세요? é a forma polida e segura."
     }
   ]
 }

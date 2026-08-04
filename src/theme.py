@@ -117,12 +117,19 @@ class Colors:
     DARK_BORDER = "#1E293B"
     DARK_CARD_BG = "#0B172E"
 
-    # Cores de Estado
+    # Cores de Estado e Papel Gramatical (Physics Gating SOV)
     CORRECT = "#188150"          # Verde acessível (4.89:1)
     INCORRECT = DESTRUCTIVE_500  # Carmesim (#C50337)
     NEUTRAL = NEUTRAL_500
     INFO = PRIMARY
     WARNING = WARNING_500
+
+    # Cores Semânticas de Papel Sintático (Sintaxe SOV)
+    ROLE_SUBJECT = "#3B82F6"     # Sujeito (Azul)
+    ROLE_OBJECT = "#10B981"      # Objeto (Verde Esmeralda)
+    ROLE_VERB = "#8B5CF6"        # Verbo (Violeta)
+    ROLE_PREDICATE = "#8B5CF6"   # Predicado (Violeta)
+    ROLE_PARTICLE = "#F59E0B"    # Partícula (Âmbar)
 
 class Styles:
     # Bordas — escala do design system
@@ -193,6 +200,11 @@ def get_theme_colors(is_dark: bool):
         "incorrect": Colors.INCORRECT,
         "info": Colors.INFO,
         "warning": Colors.WARNING,
+        "role_subject": Colors.ROLE_SUBJECT,
+        "role_object": Colors.ROLE_OBJECT,
+        "role_verb": Colors.ROLE_VERB,
+        "role_predicate": Colors.ROLE_PREDICATE,
+        "role_particle": Colors.ROLE_PARTICLE,
     }
 
 def apply_app_theme(page: ft.Page):

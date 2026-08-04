@@ -104,13 +104,16 @@ class HangulCard(ft.Container):
 
     def toggle_flip(self, e):
         self.flipped = not self.flipped
+        # Áudio-Visual Gating: Tocar no card ativa o áudio nativo imediatamente
+        if self.on_audio_click:
+            sound_query = getattr(self.char_data, 'char', None) or getattr(self.char_data, 'name', '')
+            self.on_audio_click(sound_query)
+
         if self.flipped:
             self.char_text.visible = False
             self.detail_col.visible = True
             self.bgcolor = self.colors["surface"]
             self.border = ft.Border.all(2, self.colors["primary"])
-            if self.on_audio_click:
-                self.on_audio_click(self.char_data.name)
         else:
             self.char_text.visible = True
             self.detail_col.visible = False

@@ -1,251 +1,282 @@
 {
   "unit_id": "unit_intro",
   "title": "Introdução ao Hangul",
-  "anti_romanization_notice": {
-    "title": "🚫 Por que NÃO usamos romanização?",
-    "content": "Este app segue a metodologia do Instituto Sejong, do CCCB e da neurociência da aprendizagem:\n\n• A romanização cria uma MULETA COGNITIVA que impede o cérebro de mapear som ↔ 한글 diretamente\n• Estudos de neuroimagem mostram que aprendizes que usam romanização ativam a rede do alfabeto latino ao ler 한글, criando interferência\n• O 한글 foi projetado para ser aprendido em horas, não em meses — confie no processo!\n\n🧠 Seu cérebro precisa criar conexões diretas: caractere coreano ➔ som. Sem intermediários!",
-    "icon": "🧠"
-  },
   "vowels": [
     {
       "char": "ㅏ",
       "name": "아",
       "pronunciation": "Som de 'a' aberto como em 'casa'.",
-      "mnemonic": "Um traço vertical apontando para a direita (como a luz do sol nascendo no leste)."
+      "mnemonic": "Um traço vertical apontando para a direita (luz do sol no leste).",
+      "audio_wave_profile": "open_vowel",
+      "mouth_shape_id": "mouth_a",
+      "contrast_pair_id": "ㅓ"
     },
     {
       "char": "ㅓ",
       "name": "어",
       "pronunciation": "Som de 'ó' aberto (como em 'pó'). Abra a boca para falar 'a' mas diga 'ó'.",
-      "mnemonic": "Um traço vertical apontando para a esquerda (a luz se pondo no oeste)."
+      "mnemonic": "Um traço vertical apontando para a esquerda (sol no oeste).",
+      "audio_wave_profile": "mid_open_vowel",
+      "mouth_shape_id": "mouth_eo",
+      "contrast_pair_id": "ㅏ"
     },
     {
       "char": "ㅗ",
       "name": "오",
       "pronunciation": "Som de 'ô' fechado (como em 'olho'). Faça um bico leve.",
-      "mnemonic": "Um traço horizontal com um pequeno traço para cima (apontando para o céu)."
+      "mnemonic": "Um traço horizontal com um pequeno traço para cima (céu).",
+      "audio_wave_profile": "closed_rounded_vowel",
+      "mouth_shape_id": "mouth_o",
+      "contrast_pair_id": "ㅜ"
     },
     {
       "char": "ㅜ",
       "name": "우",
       "pronunciation": "Som de 'u' (como em 'uva'). Faça um bico bem pronunciado.",
-      "mnemonic": "Um traço horizontal com um pequeno traço para baixo (apontando para a terra)."
+      "mnemonic": "Um traço horizontal com um pequeno traço para baixo (terra).",
+      "audio_wave_profile": "deep_rounded_vowel",
+      "mouth_shape_id": "mouth_u",
+      "contrast_pair_id": "ㅗ"
     },
     {
       "char": "ㅡ",
       "name": "으",
       "pronunciation": "Som neutro. Sorria (dentes cerrados) e tente fazer o som de 'u' sem mover os lábios.",
-      "mnemonic": "Apenas um traço horizontal, representando a terra plana."
+      "mnemonic": "Apenas um traço horizontal, representando a terra plana.",
+      "audio_wave_profile": "flat_vowel",
+      "mouth_shape_id": "mouth_eu",
+      "contrast_pair_id": "ㅣ"
     },
     {
       "char": "ㅣ",
       "name": "이",
       "pronunciation": "Som de 'i' normal (como em 'igreja').",
-      "mnemonic": "Apenas um traço vertical, representando o ser humano de pé."
+      "mnemonic": "Apenas um traço vertical, representando o ser humano de pé.",
+      "audio_wave_profile": "high_front_vowel",
+      "mouth_shape_id": "mouth_i",
+      "contrast_pair_id": "ㅡ"
     }
   ],
   "consonants": [
     {
       "char": "ㄱ",
       "name": "기역",
-      "pronunciation": "Som entre 'g' (início) e 'k' (final). Como 'g' em 'gato'.",
-      "type": "plain"
+      "pronunciation": "Som entre 'g' e 'k'.",
+      "type": "plain",
+      "audio_wave_profile": "soft_plosive",
+      "contrast_pair_id": "ㅋ"
     },
     {
       "char": "ㄴ",
       "name": "니은",
       "pronunciation": "Som de 'n' como em 'navio'.",
-      "type": "plain"
+      "type": "plain",
+      "audio_wave_profile": "nasal_soft"
     },
     {
       "char": "ㄷ",
       "name": "디귿",
-      "pronunciation": "Som entre 'd' e 't'. Como 'd' em 'dado'.",
-      "type": "plain"
+      "pronunciation": "Som entre 'd' e 't'.",
+      "type": "plain",
+      "audio_wave_profile": "dental_soft",
+      "contrast_pair_id": "ㅌ"
     },
     {
       "char": "ㄹ",
       "name": "리을",
-      "pronunciation": "Som de 'r' brando (como 'cara') ou 'l' (no fim de sílabas).",
-      "type": "plain"
+      "pronunciation": "Som de 'r' brando (como 'cara') ou 'l'.",
+      "type": "plain",
+      "audio_wave_profile": "liquid_soft"
     },
     {
       "char": "ㅁ",
       "name": "미음",
       "pronunciation": "Som de 'm' como em 'massa'.",
-      "type": "plain"
+      "type": "plain",
+      "audio_wave_profile": "labial_nasal"
     },
     {
       "char": "ㅂ",
       "name": "비읍",
-      "pronunciation": "Som entre 'b' e 'p'. Como 'b' em 'bola'.",
-      "type": "plain"
+      "pronunciation": "Som entre 'b' e 'p'.",
+      "type": "plain",
+      "audio_wave_profile": "labial_soft",
+      "contrast_pair_id": "ㅍ"
     },
     {
       "char": "ㅅ",
       "name": "시옷",
-      "pronunciation": "Som de 's' (como 'sapo'). Se seguido de ㅣ, soa como 'ch' ('xi').",
-      "type": "plain"
+      "pronunciation": "Som de 's' (como 'sapo').",
+      "type": "plain",
+      "audio_wave_profile": "fricative_soft",
+      "contrast_pair_id": "ㅆ"
     },
     {
       "char": "ㅇ",
       "name": "이응",
-      "pronunciation": "Não tem som no início da sílaba (consoante muda). Soa como 'ng' (como 'sing' em inglês) no final.",
-      "type": "plain"
+      "pronunciation": "Consoante muda no início / 'ng' no final.",
+      "type": "plain",
+      "audio_wave_profile": "velar_nasal"
     },
     {
       "char": "ㅈ",
       "name": "지읒",
-      "pronunciation": "Som de 'dj' suave (como em 'jeans' em inglês).",
-      "type": "plain"
+      "pronunciation": "Som de 'dj' suave.",
+      "type": "plain",
+      "audio_wave_profile": "affricate_soft",
+      "contrast_pair_id": "ㅊ"
     },
     {
       "char": "ㅎ",
       "name": "히읗",
-      "pronunciation": "Som de 'h' aspirado (como em 'house' em inglês).",
-      "type": "plain"
+      "pronunciation": "Som de 'h' aspirado.",
+      "type": "plain",
+      "audio_wave_profile": "glottal_aspirated"
     }
   ],
   "aspirated_consonants": [
     {
       "char": "ㅋ",
       "name": "키읔",
-      "pronunciation": "Som forte de 'k' com sopro de ar (aspiração). Coloque a mão na frente da boca e sinta o ar saindo forte.",
+      "pronunciation": "Som forte de 'k' com sopro de ar (aspiração).",
       "base": "ㄱ",
-      "type": "aspirated"
+      "type": "aspirated",
+      "audio_wave_profile": "air_burst_strong",
+      "contrast_pair_id": "ㄱ"
     },
     {
       "char": "ㅌ",
       "name": "티읕",
-      "pronunciation": "Som forte de 't' com aspiração. Como um 't' explosivo com sopro.",
+      "pronunciation": "Som forte de 't' com aspiração.",
       "base": "ㄷ",
-      "type": "aspirated"
+      "type": "aspirated",
+      "audio_wave_profile": "air_burst_strong",
+      "contrast_pair_id": "ㄷ"
     },
     {
       "char": "ㅍ",
       "name": "피읖",
-      "pronunciation": "Som forte de 'p' com aspiração. Sinta o ar explodir dos lábios.",
+      "pronunciation": "Som forte de 'p' com aspiração.",
       "base": "ㅂ",
-      "type": "aspirated"
+      "type": "aspirated",
+      "audio_wave_profile": "air_burst_strong",
+      "contrast_pair_id": "ㅂ"
     },
     {
       "char": "ㅊ",
       "name": "치읓",
-      "pronunciation": "Som forte de 'tch' com aspiração. Como 'cheese' em inglês mas com mais ar.",
+      "pronunciation": "Som forte de 'tch' com aspiração.",
       "base": "ㅈ",
-      "type": "aspirated"
+      "type": "aspirated",
+      "audio_wave_profile": "air_burst_strong",
+      "contrast_pair_id": "ㅈ"
     }
   ],
   "tense_consonants": [
     {
       "char": "ㄲ",
       "name": "쌍기역",
-      "pronunciation": "Som tenso de 'k'. Tensione a garganta, sem sopro de ar. Pense em engolir o som antes de soltá-lo.",
+      "pronunciation": "Som tenso de 'k', garganta tensionada.",
       "base": "ㄱ",
-      "type": "tense"
+      "type": "tense",
+      "audio_wave_profile": "glottal_tense_haptic",
+      "contrast_pair_id": "ㄱ"
     },
     {
       "char": "ㄸ",
       "name": "쌍디귿",
-      "pronunciation": "Som tenso de 't'. Bloqueie o ar com a língua, tensione, e solte sem sopro.",
+      "pronunciation": "Som tenso de 't', sem sopro.",
       "base": "ㄷ",
-      "type": "tense"
+      "type": "tense",
+      "audio_wave_profile": "glottal_tense_haptic",
+      "contrast_pair_id": "ㄷ"
     },
     {
       "char": "ㅃ",
       "name": "쌍비읍",
-      "pronunciation": "Som tenso de 'p'. Feche os lábios com força extra e solte sem ar.",
+      "pronunciation": "Som tenso de 'p', lábios fechados com força.",
       "base": "ㅂ",
-      "type": "tense"
+      "type": "tense",
+      "audio_wave_profile": "glottal_tense_haptic",
+      "contrast_pair_id": "ㅂ"
     },
     {
       "char": "ㅆ",
       "name": "쌍시옷",
-      "pronunciation": "Som tenso de 's'. Como 'ss' intenso, quase um 'z' invertido, mas sem vibração.",
+      "pronunciation": "Som tenso de 's'.",
       "base": "ㅅ",
-      "type": "tense"
+      "type": "tense",
+      "audio_wave_profile": "glottal_tense_haptic",
+      "contrast_pair_id": "ㅅ"
     },
     {
       "char": "ㅉ",
       "name": "쌍지읒",
-      "pronunciation": "Som tenso de 'tch'. Como 'tchau' mas com a garganta tensa e sem sopro.",
+      "pronunciation": "Som tenso de 'tch'.",
       "base": "ㅈ",
-      "type": "tense"
+      "type": "tense",
+      "audio_wave_profile": "glottal_tense_haptic",
+      "contrast_pair_id": "ㅈ"
     }
   ],
   "batchim_guide": {
     "title": "O 받침 — A Consoante Final",
-    "explanation": "O 받침 é a consoante na parte inferior de um bloco silábico coreano. É a 'base' que sustenta a sílaba.\n\nExemplo: 밥 (arroz) → ㅂ + ㅏ + ㅂ (받침)\n\nRegra Fundamental: O 받침 é implosivo — o som é interrompido, não solto com ar.",
-    "lusophone_warning": {
-      "title": "⚠️ ALERTA: O 'i' Fantasma (Vogal Epentética)",
-      "content": "O MAIOR erro de lusófonos aprendendo coreano!\n\nNo português, tendemos a adicionar um 'i' depois de consoantes finais:\n• 밥 vira *'ba-pi'* ❌\n• 김치 vira *'ki-mi-chi'* ❌\n• 학생 vira *'ha-ki-seng'* ❌\n\nIsso acontece porque o português raramente termina sílabas em consoantes oclusivas.\n\n✅ COMO CORRIGIR:\n1. Ao pronunciar o 받침, INTERROMPA o som. Não solte ar.\n2. Feche a boca (ㅂ/ㅍ), encoste a língua (ㄷ/ㅌ/ㅈ/ㅊ/ㅅ/ㅆ/ㅎ), ou trave a garganta (ㄱ/ㅋ).\n3. Pense em 'engolir' a consoante final.\n\n🎯 Exercício: Diga 밥 e PARE. Não adicione nenhuma vogal depois!",
-      "icon": "👻"
-    },
+    "explanation": "O 받침 é a consoante na parte inferior de um bloco silábico coreano.",
     "neutralization_rules": [
       {
         "position": "Labial (lábios)",
         "batchim_chars": ["ㅂ", "ㅍ"],
         "sound": "Som implosivo de 'p'",
-        "tip": "Feche os lábios e segure. NÃO adicione 'i'!"
+        "tip": "Lábios fechados (unreleased stop)."
       },
       {
         "position": "Alveolar (língua)",
         "batchim_chars": ["ㄷ", "ㅌ", "ㅈ", "ㅊ", "ㅅ", "ㅆ", "ㅎ"],
         "sound": "Som implosivo de 't'",
-        "tip": "Encoste a ponta da língua no céu da boca e trave."
+        "tip": "Língua travada no palato."
       },
       {
         "position": "Velar (garganta)",
         "batchim_chars": ["ㄱ", "ㅋ", "ㄲ"],
         "sound": "Som implosivo de 'k'",
-        "tip": "Trave a parte de trás da língua contra o palato mole."
+        "tip": "Trava na garganta."
       },
       {
         "position": "Nasal",
         "batchim_chars": ["ㄴ", "ㅁ", "ㅇ"],
         "sound": "n / m / ng",
-        "tip": "Estes são naturais para lusófonos! Som contínuo nasal."
+        "tip": "Som contínuo nasal."
       },
       {
         "position": "Lateral",
         "batchim_chars": ["ㄹ"],
         "sound": "Som de 'l'",
-        "tip": "Som de 'l' como em 'sal'. Também natural para nós."
+        "tip": "Som lateral 'l'."
       }
     ]
   },
   "syllables": [
-    { "block": "가", "spelling": "ㄱ + ㅏ", "meaning": "Ir (verbo coloq.)" },
-    { "block": "나", "spelling": "ㄴ + ㅏ", "meaning": "Eu (casual)" },
-    { "block": "다", "spelling": "ㄷ + ㅏ", "meaning": "Tudo / Todos" },
-    { "block": "너", "spelling": "ㄴ + ㅓ", "meaning": "Você (casual)" },
-    { "block": "밥", "spelling": "ㅂ + ㅏ + ㅂ", "meaning": "Arroz/Refeição ⚠️ Sem 'i' fantasma!" },
-    { "block": "김", "spelling": "ㄱ + ㅣ + ㅁ", "meaning": "Kim (sobrenome) / Alga" },
-    { "block": "한", "spelling": "ㅎ + ㅏ + ㄴ", "meaning": "Um / Coreano" }
+    { "block": "가", "spelling": "ㄱ + ㅏ", "meaning": "Ir", "snap_anchor": "round" },
+    { "block": "나", "spelling": "ㄴ + ㅏ", "meaning": "Eu (casual)", "snap_anchor": "round" },
+    { "block": "다", "spelling": "ㄷ + ㅏ", "meaning": "Tudo", "snap_anchor": "round" },
+    { "block": "너", "spelling": "ㄴ + ㅓ", "meaning": "Você", "snap_anchor": "round" },
+    { "block": "밥", "spelling": "ㅂ + ㅏ + ㅂ", "meaning": "Arroz / Refeição", "snap_anchor": "square" },
+    { "block": "김", "spelling": "ㄱ + ㅣ + ㅁ", "meaning": "Kim / Alga", "snap_anchor": "square" },
+    { "block": "한", "spelling": "ㅎ + ㅏ + ㄴ", "meaning": "Coreano", "snap_anchor": "square" }
   ],
-  "writing_alert": {
-    "title": "✍️ Dica Neurocientífica: Escreva à Mão!",
-    "content": "Pesquisas em neurociência mostram que escrever o 한글 à mão ativa a Área de Exner e o Giro Fusiforme (VWFA) no cérebro, responsáveis por:\n\n• Memorização da forma visual dos caracteres\n• Decodificação espacial dos blocos silábicos\n• Automatização da leitura\n\n📝 Pegue papel e caneta e pratique cada caractere 5-10 vezes. O app complementa, mas NÃO substitui a escrita manual!",
-    "icon": "🧠"
-  },
   "exercises": [
     {
       "id": "intro_q1",
       "type": "multiple_choice",
-      "question": "Qual é a pronúncia aproximada da vogal ㅓ?",
-      "options": [
-        "Som de 'u' como em uva",
-        "Som de 'ó' aberto como em pó",
-        "Som de 'ô' fechado como em olho",
-        "Som de 'a' aberto como em casa"
-      ],
+      "question": "Qual é o som da vogal ㅓ?",
+      "options": ["Som de 'u'", "Som de 'ó' aberto", "Som de 'ô' fechado", "Som de 'a'"],
       "correct_index": 1,
-      "explanation": "A vogal ㅓ tem som de 'ó' aberto. Lembre: abra a boca para dizer 'a', mas produza o som de 'ó'."
+      "explanation": "A vogal ㅓ tem som de 'ó' aberto."
     },
     {
       "id": "intro_q2",
       "type": "multiple_choice",
-      "question": "Selecione o caractere correspondente à consoante 리을 (som de 'r/l'):",
+      "question": "Selecione a consoante 리을 (som de 'r/l'):",
       "options": ["ㄱ", "ㄷ", "ㄹ", "ㅁ"],
       "correct_index": 2,
       "explanation": "ㄹ é a consoante 리을."
@@ -253,36 +284,36 @@
     {
       "id": "intro_q3",
       "type": "multiple_choice",
-      "question": "Qual sílaba significa 'ir' em coreano?",
+      "question": "Qual sílaba representa 'ir'?",
       "options": ["나", "가", "다", "너"],
       "correct_index": 1,
-      "explanation": "가 (ㄱ + ㅏ) significa 'ir' no coreano coloquial."
+      "explanation": "가 representa 'ir'."
     },
     {
       "id": "intro_q4",
       "type": "multiple_choice",
-      "question": "Qual é a diferença entre ㄱ (plana), ㅋ (aspirada) e ㄲ (tensa)?",
+      "question": "Qual a relação fonética entre ㄱ, ㅋ e ㄲ?",
       "options": [
-        "Nenhuma — são o mesmo som",
-        "ㄱ é suave, ㅋ tem sopro de ar forte, ㄲ é tensa sem sopro",
-        "ㄱ é tensa, ㅋ é suave, ㄲ tem sopro",
-        "São usadas apenas em palavras diferentes, sem diferença de som"
+        "Mesmo som",
+        "ㄱ é simples, ㅋ é aspirada (sopro), ㄲ é tensa (glotalizada)",
+        "Nenhuma relação",
+        "Apenas maiúsculas e minúsculas"
       ],
       "correct_index": 1,
-      "explanation": "O coreano tem uma tripartição: plana (neutra), aspirada (com sopro forte de ar) e tensa (garganta tensionada, sem sopro). Essa distinção NÃO existe no português!"
+      "explanation": "Tripartição fonêmica coreana: simples / aspirada / tensa."
     },
     {
       "id": "intro_q5",
       "type": "multiple_choice",
-      "question": "🚨 Como um brasileiro NÃO deve pronunciar 밥 (arroz)?",
+      "question": "Como é a articulação correta do 받침 em 밥?",
       "options": [
-        "Travando o som do ㅂ final nos lábios",
-        "Adicionando um 'i' depois do ㅂ final",
-        "Trocando o ㅂ final por ㅁ",
-        "Pronunciando o ㅂ final como 'b'"
+        "Adicionar som 'i' no final",
+        "Travar os lábios sem soltar ar (unreleased stop)",
+        "Pronunciar como 'ba-pi'",
+        "Omitir o som do ㅂ"
       ],
       "correct_index": 1,
-      "explanation": "O erro clássico de lusófonos! No português, tendemos a adicionar um 'i' fantasma depois de consoantes finais. O correto é travar o som: fechar os lábios no ㅂ sem soltar ar."
+      "explanation": "O 받침 é implosivo — o som para nos lábios fechados."
     }
   ]
 }
