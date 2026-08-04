@@ -272,5 +272,5 @@ def home_view(page: ft.Page) -> ft.View:
         ],
         scroll=ft.ScrollMode.AUTO,
         bgcolor=colors["bg"],
-        padding=16
+        padding=12
     )

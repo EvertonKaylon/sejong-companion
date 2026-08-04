@@ -310,7 +310,7 @@ def hangul_view(page: ft.Page) -> ft.View:
     tabs = ft.Tabs(
         selected_index=0,
         animation_duration=200,
-        height=620,  # Altura fixa para se integrar perfeitamente a view scrollavel
+        expand=True,
         length=len(tab_headers),
         content=ft.Column(
             expand=True,
@@ -347,7 +347,7 @@ def hangul_view(page: ft.Page) -> ft.View:
             ),
             on_click=lambda e: page.router.navigate_to("/quiz", "unit_intro"),
         ),
-        padding=ft.Padding.symmetric(horizontal=16, vertical=12),
+        padding=ft.Padding.symmetric(horizontal=12, vertical=10),
         bgcolor=colors["surface"],
         border=ft.Border.only(top=ft.BorderSide(1, colors["border"])),
     )
@@ -356,15 +356,25 @@ def hangul_view(page: ft.Page) -> ft.View:
         route="/hangul",
         appbar=app_bar,
         controls=[
-            anti_roman_banner,
-            writing_banner,
             ft.Container(
-                content=ft.Text("Toque nos cards para ver detalhes fonéticos e dicas mnemônicas.", size=12, color=colors["text_sec"], italic=True),
-                padding=ft.Padding.only(left=16, right=16, top=4, bottom=4)
+                content=ft.Column(
+                    controls=[
+                        anti_roman_banner,
+                        writing_banner,
+                        ft.Container(
+                            content=ft.Text("Toque nos cards para ver detalhes fonéticos e dicas mnemônicas.", size=11, color=colors["text_sec"], italic=True),
+                            padding=ft.Padding.symmetric(horizontal=12, vertical=2)
+                        ),
+                        tabs,
+                    ],
+                    expand=True,
+                    spacing=4,
+                ),
+                expand=True,
             ),
-            tabs,
             quiz_button
         ],
-        scroll=ft.ScrollMode.AUTO,
-        bgcolor=colors["bg"]
+        scroll=None,
+        bgcolor=colors["bg"],
+        padding=0
     )

@@ -180,7 +180,7 @@ def lesson_view(page: ft.Page) -> ft.View:
     tabs = ft.Tabs(
         selected_index=0,
         animation_duration=200,
-        height=580,  # Altura fixa para se integrar perfeitamente a view scrollavel
+        expand=True,
         length=len(tab_headers),
         content=ft.Column(
             expand=True,
@@ -212,7 +212,7 @@ def lesson_view(page: ft.Page) -> ft.View:
             ),
             on_click=lambda e: page.router.navigate_to("/quiz", unit_id),
         ),
-        padding=ft.Padding.symmetric(horizontal=16, vertical=12),
+        padding=ft.Padding.symmetric(horizontal=12, vertical=10),
         bgcolor=colors["surface"],
         border=ft.Border.only(top=ft.BorderSide(1, colors["border"])),
     )
@@ -221,9 +221,13 @@ def lesson_view(page: ft.Page) -> ft.View:
         route=f"/lesson",
         appbar=app_bar,
         controls=[
-            tabs,
+            ft.Container(
+                content=tabs,
+                expand=True,
+            ),
             exercise_button
         ],
-        scroll=ft.ScrollMode.AUTO,
-        bgcolor=colors["bg"]
+        scroll=None,
+        bgcolor=colors["bg"],
+        padding=0
     )

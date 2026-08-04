@@ -55,6 +55,10 @@ def main(page: ft.Page):
     # Aplicar o Design System (fontes e configurações de tema)
     apply_app_theme(page)
 
+    # Configurações de layout responsivo mobile (384x715)
+    page.padding = 0
+    page.spacing = 0
+
     # Configurar responsividade mobile / PWA e viewport de tela cheia
     FullscreenService.setup_mobile_responsive_viewport(page)
 

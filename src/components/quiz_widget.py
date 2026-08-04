@@ -55,7 +55,7 @@ class QuizWidget(ft.Container):
                 ],
                 spacing=12,
             ),
-            padding=18,
+            padding=14,
             bgcolor=self.colors["surface"],
             border=ft.Border.all(1, self.colors["border"]),
             border_radius=Styles.BORDER_RADIUS_MD,

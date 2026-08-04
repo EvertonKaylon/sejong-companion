@@ -41,7 +41,7 @@ def quiz_view(page: ft.Page) -> ft.View:
     }
 
     # Container principal de conteúdo que será atualizado dinamicamente
-    main_content = ft.Container(padding=16)
+    main_content = ft.Container(padding=12)
 
     # AppBar com progresso
     progress_text = ft.Text("Questão 1 de X", size=13, weight=ft.FontWeight.W_500, color=colors["text_sec"])
@@ -219,7 +219,7 @@ def quiz_view(page: ft.Page) -> ft.View:
             ],
             spacing=4
         ),
-        padding=16
+        padding=12
     )
 
     # Iniciar primeira pergunta (main_content ainda não está na página aqui)
