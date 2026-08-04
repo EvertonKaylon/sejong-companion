@@ -250,37 +250,17 @@ def hangul_view(page: ft.Page) -> ft.View:
 
     # ─── Ganada (가나다) — Sequência Alfabética Tradicional ───
 
-    ganada_data = [
-        ("가", "ga / ka"),
-        ("나", "na"),
-        ("다", "da / ta"),
-        ("라", "ra / la"),
-        ("마", "ma"),
-        ("바", "ba / pa"),
-        ("사", "sa"),
-        ("아", "a"),
-        ("자", "ja / tcha"),
-        ("차", "cha"),
-        ("카", "ka aspirado"),
-        ("타", "ta aspirado"),
-        ("파", "pa aspirado"),
-        ("하", "ha"),
-    ]
+    # ─── Ganada (가나다) — Sequência Alfabética Tradicional (ZERO Romanização) ───
+
+    ganada_chars = ["가", "나", "다", "라", "마", "바", "사", "아", "자", "차", "카", "타", "파", "하"]
 
     ganada_chips = []
-    for char, romanization in ganada_data:
+    for char in ganada_chars:
         ganada_chips.append(
             ft.Container(
-                content=ft.Column(
-                    controls=[
-                        ft.Text(char, size=24, weight=ft.FontWeight.BOLD, color=colors["primary"]),
-                        ft.Text(romanization, size=9, color=colors["text_sec"], text_align=ft.TextAlign.CENTER, no_wrap=False),
-                    ],
-                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                    spacing=2,
-                ),
-                width=76,
-                height=70,
+                content=ft.Text(char, size=24, weight=ft.FontWeight.BOLD, color=colors["primary"]),
+                width=60,
+                height=60,
                 alignment=ft.Alignment.CENTER,
                 bgcolor=colors["surface"],
                 border=ft.Border.all(1.5, colors["primary"]),
