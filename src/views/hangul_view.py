@@ -248,8 +248,220 @@ def hangul_view(page: ft.Page) -> ft.View:
 
         batchim_section = ft.Column(controls=batchim_controls, scroll=ft.ScrollMode.AUTO, expand=True)
 
-    # ─── Lista de Sílabas (com botões de áudio interativos) ───
+    # ─── Ganada (가나다) — Sequência Alfabética Tradicional ───
+
+    ganada_data = [
+        ("가", "ga / ka"),
+        ("나", "na"),
+        ("다", "da / ta"),
+        ("라", "ra / la"),
+        ("마", "ma"),
+        ("바", "ba / pa"),
+        ("사", "sa"),
+        ("아", "a"),
+        ("자", "ja / tcha"),
+        ("차", "cha"),
+        ("카", "ka aspirado"),
+        ("타", "ta aspirado"),
+        ("파", "pa aspirado"),
+        ("하", "ha"),
+    ]
+
+    ganada_chips = []
+    for char, romanization in ganada_data:
+        ganada_chips.append(
+            ft.Container(
+                content=ft.Column(
+                    controls=[
+                        ft.Text(char, size=24, weight=ft.FontWeight.BOLD, color=colors["primary"]),
+                        ft.Text(romanization, size=9, color=colors["text_sec"], text_align=ft.TextAlign.CENTER, no_wrap=False),
+                    ],
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    spacing=2,
+                ),
+                width=76,
+                height=70,
+                alignment=ft.Alignment.CENTER,
+                bgcolor=colors["surface"],
+                border=ft.Border.all(1.5, colors["primary"]),
+                border_radius=Styles.BORDER_RADIUS_SM,
+                on_click=lambda e, c=char: page.audio_service.play_korean(c),
+                animate=150,
+                tooltip=f"Ouvir {char}",
+            )
+        )
+
+    ganada_section = ft.Column(
+        controls=[
+            ft.Container(
+                content=ft.Row(
+                    controls=[
+                        ft.Text("🔤", size=18),
+                        ft.Text("Sequência Ganada (가나다)", size=15, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                    ],
+                    spacing=8,
+                ),
+                margin=ft.Margin.only(bottom=4),
+            ),
+            ft.Text(
+                "A ordem alfabética coreana combina as 14 consoantes básicas com a vogal ㅏ (a). Toque para ouvir!",
+                size=12, color=colors["text_sec"], no_wrap=False,
+            ),
+            ft.Container(height=6),
+            # Explicação do bloco silábico
+            ft.Container(
+                content=ft.Column(
+                    controls=[
+                        ft.Text("Estrutura do Bloco Silábico:", size=12, weight=ft.FontWeight.BOLD, color=colors["secondary"]),
+                        ft.Text("• Consoante + Vogal → 가 (ㄱ + ㅏ)", size=12, color=colors["text_sec"]),
+                        ft.Text("• Consoante + Vogal + 받침 → 강 (ㄱ + ㅏ + ㅇ)", size=12, color=colors["text_sec"]),
+                    ],
+                    spacing=2,
+                ),
+                padding=10,
+                bgcolor=colors["surface"],
+                border=ft.Border.all(1, colors["border"]),
+                border_radius=Styles.BORDER_RADIUS_SM,
+                margin=ft.Margin.only(bottom=8),
+            ),
+            ft.Row(
+                controls=ganada_chips,
+                wrap=True,
+                spacing=6,
+                run_spacing=6,
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
+        ],
+        spacing=4,
+    )
+
+    # ─── Números Coreanos (1–10) ───
+
+    numbers_data = [
+        ("1", "일", "하나"),
+        ("2", "이", "둘"),
+        ("3", "삼", "셋"),
+        ("4", "사", "넷"),
+        ("5", "오", "다섯"),
+        ("6", "육", "여섯"),
+        ("7", "칠", "일곱"),
+        ("8", "팔", "여덟"),
+        ("9", "구", "아홉"),
+        ("10", "십", "열"),
+    ]
+
+    number_rows = []
+    for num, sino, native in numbers_data:
+        number_rows.append(
+            ft.Container(
+                content=ft.Row(
+                    controls=[
+                        # Número
+                        ft.Container(
+                            content=ft.Text(num, size=16, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE),
+                            width=32, height=32,
+                            alignment=ft.Alignment.CENTER,
+                            bgcolor=colors["primary"],
+                            border_radius=Styles.BORDER_RADIUS_SM,
+                        ),
+                        # Sino-Coreano
+                        ft.Container(
+                            content=ft.Column(
+                                controls=[
+                                    ft.Text("한자어", size=9, color=colors["text_sec"]),
+                                    ft.Text(sino, size=18, weight=ft.FontWeight.BOLD, color=colors["secondary"]),
+                                ],
+                                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                                spacing=0,
+                            ),
+                            expand=True,
+                            alignment=ft.Alignment.CENTER,
+                            on_click=lambda e, s=sino: page.audio_service.play_korean(s),
+                        ),
+                        ft.VerticalDivider(width=1, color=colors["border"]),
+                        # Coreano Nativo
+                        ft.Container(
+                            content=ft.Column(
+                                controls=[
+                                    ft.Text("고유어", size=9, color=colors["text_sec"]),
+                                    ft.Text(native, size=18, weight=ft.FontWeight.BOLD, color=colors["accent"]),
+                                ],
+                                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                                spacing=0,
+                            ),
+                            expand=True,
+                            alignment=ft.Alignment.CENTER,
+                            on_click=lambda e, n=native: page.audio_service.play_korean(n),
+                        ),
+                    ],
+                    spacing=8,
+                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                ),
+                padding=ft.Padding.symmetric(horizontal=10, vertical=8),
+                bgcolor=colors["card_bg"],
+                border=ft.Border.all(1, colors["border"]),
+                border_radius=Styles.BORDER_RADIUS_SM,
+                on_click=lambda e, s=sino, n=native: page.audio_service.play_korean(f"{s}, {n}"),
+                animate=150,
+            )
+        )
+
+    numbers_section = ft.Column(
+        controls=[
+            ft.Container(height=16),
+            ft.Container(
+                content=ft.Row(
+                    controls=[
+                        ft.Text("🔢", size=18),
+                        ft.Text("Números Coreanos (1–10)", size=15, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                    ],
+                    spacing=8,
+                ),
+                margin=ft.Margin.only(bottom=4),
+            ),
+            ft.Container(
+                content=ft.Column(
+                    controls=[
+                        ft.Text("O coreano possui dois sistemas numéricos:", size=12, weight=ft.FontWeight.BOLD, color=colors["secondary"]),
+                        ft.Text("• 한자어 (Sino-Coreano): usado para datas, dinheiro, telefone e minutos.", size=12, color=colors["text_sec"], no_wrap=False),
+                        ft.Text("• 고유어 (Nativo): usado para horas, idade e contar objetos.", size=12, color=colors["text_sec"], no_wrap=False),
+                    ],
+                    spacing=2,
+                ),
+                padding=10,
+                bgcolor=colors["surface"],
+                border=ft.Border.all(1, colors["border"]),
+                border_radius=Styles.BORDER_RADIUS_SM,
+                margin=ft.Margin.only(bottom=8),
+            ),
+            ft.Column(controls=number_rows, spacing=4),
+        ],
+        spacing=4,
+    )
+
+    # ─── Lista de Sílabas Originais ───
+    original_syllables_header = ft.Column(
+        controls=[
+            ft.Container(height=16),
+            ft.Container(
+                content=ft.Row(
+                    controls=[
+                        ft.Text("📝", size=18),
+                        ft.Text("Sílabas de Exemplo", size=15, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                    ],
+                    spacing=8,
+                ),
+                margin=ft.Margin.only(bottom=6),
+            ),
+        ],
+        spacing=0,
+    )
+
     syllables_col = ft.Column(spacing=8, scroll=ft.ScrollMode.AUTO, expand=True)
+    syllables_col.controls.append(ganada_section)
+    syllables_col.controls.append(numbers_section)
+    syllables_col.controls.append(original_syllables_header)
+
     for s in data.syllables:
         syllables_col.controls.append(
             ft.Container(
@@ -274,16 +486,10 @@ def hangul_view(page: ft.Page) -> ft.View:
                             spacing=2,
                             expand=True
                         ),
-                        ft.IconButton(
-                            icon=ft.Icons.VOLUME_UP_ROUNDED,
-                            icon_color=colors["primary"],
-                            icon_size=24,
-                            on_click=lambda e, block=s.block: page.audio_service.play_korean(block),
-                            tooltip=f"Ouvir sílaba {s.block}"
-                        )
                     ],
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    alignment=ft.MainAxisAlignment.START,
                     vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                    spacing=12,
                 ),
                 padding=12,
                 border_radius=Styles.BORDER_RADIUS_MD,
