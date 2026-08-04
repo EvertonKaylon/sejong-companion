@@ -255,22 +255,14 @@ def hangul_view(page: ft.Page) -> ft.View:
             ft.Container(
                 content=ft.Row(
                     controls=[
-                        # Botão quadrado clicável da sílaba
+                        # Botão quadrado clicável da sílaba (limpo sem ícone interno)
                         ft.Container(
-                            content=ft.Column(
-                                controls=[
-                                    ft.Text(s.block, size=26, weight=ft.FontWeight.BOLD, color=colors["primary"]),
-                                    ft.Icon(ft.Icons.VOLUME_UP_ROUNDED, size=13, color=colors["primary_light"])
-                                ],
-                                alignment=ft.MainAxisAlignment.CENTER,
-                                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                                spacing=0,
-                            ),
+                            content=ft.Text(s.block, size=26, weight=ft.FontWeight.BOLD, color=colors["primary"]),
                             bgcolor=colors["surface"],
                             border=ft.Border.all(1.5, colors["primary"]),
                             border_radius=Styles.BORDER_RADIUS_SM,
-                            width=64,
-                            height=64,
+                            width=60,
+                            height=60,
                             alignment=ft.Alignment.CENTER,
                             tooltip=f"Ouvir sílaba {s.block}",
                         ),
