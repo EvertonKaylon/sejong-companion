@@ -73,18 +73,33 @@ def lesson_view(page: ft.Page) -> ft.View:
         for ex in g_section.examples:
             grammar_controls.append(
                 ft.Container(
-                    content=ft.Column(
+                    content=ft.Row(
                         controls=[
-                            ft.Text(ex.kr, size=15, weight=ft.FontWeight.BOLD, color=colors["primary"]),
-                            ft.Text(ex.pt, size=13, color=colors["text_sec"])
+                            ft.Column(
+                                controls=[
+                                    ft.Text(ex.kr, size=15, weight=ft.FontWeight.BOLD, color=colors["primary"]),
+                                    ft.Text(ex.pt, size=13, color=colors["text_sec"])
+                                ],
+                                spacing=2,
+                                expand=True
+                            ),
+                            ft.IconButton(
+                                icon=ft.Icons.VOLUME_UP_ROUNDED,
+                                icon_color=colors["primary"],
+                                icon_size=22,
+                                on_click=lambda e, text=ex.kr: page.audio_service.play_korean(text),
+                                tooltip="Ouvir exemplo"
+                            )
                         ],
-                        spacing=2
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
                     ),
                     padding=10,
                     border_radius=Styles.BORDER_RADIUS_SM,
                     bgcolor=colors["surface"],
                     border=ft.Border.all(1, colors["border"]),
-                    margin=ft.Margin.only(bottom=8)
+                    margin=ft.Margin.only(bottom=8),
+                    on_click=lambda e, text=ex.kr: page.audio_service.play_korean(text)
                 )
             )
         

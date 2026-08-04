@@ -59,7 +59,9 @@ class AudioService:
     def play_korean(self, text: str):
         text = text.strip() if text else ""
         if text:
-            self.page.run_task(self.play_korean_async, text)
+            # Sanitizar barras e caracteres de formato (ex: "은 / 는" -> "은 는")
+            clean_text = text.replace(" / ", " ").replace("/", " ")
+            self.page.run_task(self.play_korean_async, clean_text)
 
     async def play_korean_async(self, text: str):
         if self._is_loading:
@@ -121,7 +123,7 @@ class AudioService:
             return False
 
     def _get_typecast_audio(self, text: str) -> bytes | None:
-        api_key = os.environ.get("TYPECAST_API_KEY")
+        api_key = os.environ.get("TYPECAST_API_KEY", "__pltPmsyd34Q5xTAtN34YS3bXudzqaUSvWmrrxQc3X4f")
         if not api_key:
             return None
 

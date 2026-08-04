@@ -35,30 +35,38 @@ class VocabCard(ft.Container):
             color=self.colors["text_sec"]
         )
         
-        # Ícone de áudio
+        # Ícone de áudio destacado no topo à direita
         self.audio_icon = ft.IconButton(
             icon=ft.Icons.VOLUME_UP_ROUNDED,
             icon_color=self.colors["primary"],
-            icon_size=24,
+            icon_size=26,
             on_click=self.play_audio_animation,
             tooltip="Ouvir pronúncia"
         )
 
+        # Cabeçalho: Palavra em 한글 (expansível) + Botão de Áudio no topo direito
+        header_row = ft.Row(
+            controls=[
+                ft.Container(
+                    content=word_txt,
+                    expand=True,
+                ),
+                self.audio_icon
+            ],
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+        )
+
+        # Significado em Português
+        meaning_container = ft.Container(
+            content=meaning_txt,
+            margin=ft.Margin.only(top=-2, bottom=4)
+        )
+
         # Montagem do conteúdo principal
         main_controls = [
-            ft.Row(
-                controls=[
-                    word_txt,
-                    ft.Row(
-                        controls=[
-                            meaning_txt,
-                            self.audio_icon
-                        ],
-                        spacing=8,
-                    )
-                ],
-                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-            ),
+            header_row,
+            meaning_container,
             ft.Divider(height=1, color=self.colors["border"]),
             ft.Column(
                 controls=[
@@ -132,13 +140,6 @@ class VocabCard(ft.Container):
                     )
                 )
 
-        if role_badges:
-            main_controls.insert(0, ft.Row(
-                controls=role_badges,
-                alignment=ft.MainAxisAlignment.START,
-                spacing=6,
-            ))
-
         # Badge de categoria, se disponível
         category_badge = None
         if hasattr(vocab_item, 'category') and vocab_item.category:
@@ -159,24 +160,32 @@ class VocabCard(ft.Container):
                 border_radius=10,
             )
 
+        meta_badges = []
         if category_badge:
+            meta_badges.append(category_badge)
+        meta_badges.extend(role_badges)
+
+        if meta_badges:
             main_controls.insert(0, ft.Row(
-                controls=[category_badge],
-                alignment=ft.MainAxisAlignment.END,
+                controls=meta_badges,
+                alignment=ft.MainAxisAlignment.START,
+                spacing=6,
+                wrap=True,
             ))
 
         super().__init__(
             content=ft.Column(
                 controls=main_controls,
-                spacing=10,
+                spacing=8,
             ),
             bgcolor=self.colors["card_bg"],
             border=ft.Border.all(1, self.colors["border"]),
             border_radius=Styles.BORDER_RADIUS_MD,
-            padding=16,
+            padding=14,
             shadow=Styles.CARD_SHADOW,
             margin=ft.Margin.only(bottom=12),
             animate=150,
+            on_click=self.play_audio_animation,
             on_hover=self.on_vocab_hover
         )
 
