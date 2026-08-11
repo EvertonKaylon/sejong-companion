@@ -42,33 +42,96 @@ class DataService:
             return None
 
 class ProgressService:
-    """Gerenciador de progresso e preferências em memória (alpha).
-    Usa um dicionário simples ao invés de shared_preferences (assíncrono)
-    para compatibilidade com a construção síncrona das views do Flet."""
+    """Gerenciador de progresso e preferências com persistência em disco e isolamento por sessão.
     
+    Salva dados em data/user_progress.json de forma atômica, garantindo que o progresso
+    do estudante persista entre reinicializações do app/servidor, mantendo cache rápido
+    em memória para renderização síncrona instantânea nas views do Flet.
+    """
+    
+    _file_path: Optional[str] = None
     _store: dict = {}
 
-    def __init__(self, page: ft.Page):
+    @classmethod
+    def _get_storage_path(cls) -> str:
+        if cls._file_path:
+            return cls._file_path
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        data_dir = os.path.join(base_dir, "data")
+        os.makedirs(data_dir, exist_ok=True)
+        return os.path.join(data_dir, "user_progress.json")
+
+    @classmethod
+    def _load_from_disk(cls) -> dict:
+        path = cls._get_storage_path()
+        if os.path.exists(path):
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    if isinstance(data, dict):
+                        return data
+            except Exception as e:
+                print(f"[ProgressService] Warning: Error reading progress from {path}: {e}")
+        return {}
+
+    @classmethod
+    def _save_to_disk(cls, data: dict) -> None:
+        path = cls._get_storage_path()
+        tmp_path = f"{path}.tmp"
+        try:
+            with open(tmp_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+            os.replace(tmp_path, path)
+        except Exception as e:
+            print(f"[ProgressService] Error writing progress to {path}: {e}")
+            if os.path.exists(tmp_path):
+                try:
+                    os.remove(tmp_path)
+                except Exception:
+                    pass
+
+    def __init__(self, page: Optional[ft.Page] = None):
         self.page = page
+        # Inicializar cache a partir do disco se vazio
+        if not ProgressService._store:
+            ProgressService._store = ProgressService._load_from_disk()
 
     def get_progress(self, unit_id: str) -> float:
         val = ProgressService._store.get(f"progress_{unit_id}", 0.0)
-        return float(val)
+        try:
+            return float(val)
+        except (ValueError, TypeError):
+            return 0.0
 
     def save_progress(self, unit_id: str, progress: float) -> None:
-        ProgressService._store[f"progress_{unit_id}"] = float(progress)
-        
-        # Lógica de desbloqueio simples para o Beta
-        if progress >= 1.0:
+        val = float(progress)
+        ProgressService._store[f"progress_{unit_id}"] = val
+
+        # Lógica de desbloqueio progressivo das unidades
+        if val >= 1.0:
             if unit_id == "unit_intro":
                 ProgressService._store["unlocked_unit_01"] = True
             elif unit_id == "unit_01":
                 ProgressService._store["unlocked_unit_02"] = True
+            elif unit_id == "unit_02":
+                ProgressService._store["unlocked_unit_03"] = True
+
+        # Gravação persistente atômica em disco
+        ProgressService._save_to_disk(ProgressService._store)
 
     def is_unlocked(self, unit_id: str) -> bool:
         if unit_id in ["unit_intro", "unit_01"]:
             return True
         return bool(ProgressService._store.get(f"unlocked_{unit_id}", False))
+
+    def reset_progress(self) -> None:
+        """Reseta o progresso mantendo apenas o estado padrão inicial."""
+        ProgressService._store.clear()
+        ProgressService._save_to_disk(ProgressService._store)
+
+    def get_all_progress(self) -> dict:
+        """Retorna uma cópia de todos os dados de progresso armazenados."""
+        return dict(ProgressService._store)
 
 
 class FullscreenService:

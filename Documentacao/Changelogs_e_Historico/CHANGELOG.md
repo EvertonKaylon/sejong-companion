@@ -37,9 +37,9 @@ Pré-Alpha → Alpha → Beta → RC → RTM → GA
 - **Motor de Quiz Unificado** — Multiple choice + order_words (SOV), tela de resultados com placar
 - **Dashboard Home** — Grade curricular, progresso geral, painel de cronobiologia adaptativo
 - **Router SPA** — Navegação por builder functions, fallback, estado de unidade
-- **Persistência em Memória** — ProgressService com desbloqueio progressivo (unit_intro → unit_01)
+- **Persistência Real em Disco** — `ProgressService` com gravação atômica em `data/user_progress.json`, mantendo o progresso e desbloqueio curricular mesmo após reinicialização do app/servidor
 - **Pedagogia Neuro-Linguística** — Anti-romanização, alerta "i fantasma" (epêntese lusófona), dicas mnemônicas, neuro-tips por vocabulário
-- **Suíte TDD** — 20 testes unitários (audio, data, progress, router) com mocks Flet
+- **Suíte TDD** — 25 testes unitários (audio, data, progress com persistência, router) com mocks Flet
 
 ### Added — Infra
 - `requirements.txt` — flet==0.85.3, pydantic>=2.0.0, requests>=2.34.2, flet-audio==0.85.3
@@ -58,10 +58,10 @@ Pré-Alpha → Alpha → Beta → RC → RTM → GA
 - Toggle claro/escuro sem efeito instantâneo (reconstrução in-place da view)
 - Autoplay bloqueado pelo Chrome/Edge (silent.wav mudo no init)
 - `min_height=` removido do Flet 0.85 (substituído por padding)
+- Perda de progresso ao reiniciar o app/servidor (migrado de memória pura para persistência atômica em disco)
 
 ### Known Issues
-- Persistência em memória — progresso se perde ao reiniciar
-- Unidades 02 e 03 são placeholders (sem dados JSON)
-- Layout não otimizado para telas < 360px
-- Sem testes E2E de interface
+- Unidades 02 e 03 são placeholders (sem dados JSON didáticos completos)
+- Layout não otimizado para telas ultra-estreitas (< 360px)
+- Sem testes E2E automatizados de interface gráfica
 - Tab "Diálogo" ausente na lesson_view
