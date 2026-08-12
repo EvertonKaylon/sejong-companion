@@ -82,11 +82,24 @@ class TestProgressService(unittest.TestCase):
         self.assertEqual(self.service.get_progress("unit_01"), 0.0)
         self.assertFalse(self.service.is_unlocked("unit_02"))
 
+        # Verificar que o reset foi persistido em disco (simular reinicialização)
+        ProgressService._store.clear()
+        new_service = ProgressService(MockPage())
+        self.assertEqual(new_service.get_progress("unit_01"), 0.0)
+        self.assertFalse(new_service.is_unlocked("unit_02"))
+
     def test_get_all_progress(self):
         self.service.save_progress("unit_intro", 0.75)
         all_data = self.service.get_all_progress()
         self.assertIn("progress_unit_intro", all_data)
         self.assertEqual(all_data["progress_unit_intro"], 0.75)
+
+    def test_get_all_progress_returns_copy(self):
+        """Garante que mutações no retorno não afetam o store interno."""
+        self.service.save_progress("unit_intro", 0.75)
+        all_data = self.service.get_all_progress()
+        all_data["progress_unit_intro"] = 9999  # Mutação no retorno
+        self.assertEqual(self.service.get_progress("unit_intro"), 0.75)  # Store intacto
 
 if __name__ == "__main__":
     unittest.main()

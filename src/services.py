@@ -42,24 +42,32 @@ class DataService:
             return None
 
 class ProgressService:
-    """Gerenciador de progresso e preferências com persistência em disco e isolamento por sessão.
+    """Gerenciador de progresso e preferências com persistência em disco.
     
     Salva dados em data/user_progress.json de forma atômica, garantindo que o progresso
     do estudante persista entre reinicializações do app/servidor, mantendo cache rápido
     em memória para renderização síncrona instantânea nas views do Flet.
+    
+    Nota: Em modo web multi-usuário, todas as sessões compartilham o mesmo arquivo.
+    Isolamento por sessão será implementado na fase Beta.
     """
     
     _file_path: Optional[str] = None
     _store: dict = {}
+
+    # Cadeia de desbloqueio progressivo: ao completar a chave, desbloqueia o valor
+    _UNLOCK_CHAIN: dict = {
+        "unit_intro": "unit_01",
+        "unit_01": "unit_02",
+        "unit_02": "unit_03",
+    }
 
     @classmethod
     def _get_storage_path(cls) -> str:
         if cls._file_path:
             return cls._file_path
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        data_dir = os.path.join(base_dir, "data")
-        os.makedirs(data_dir, exist_ok=True)
-        return os.path.join(data_dir, "user_progress.json")
+        return os.path.join(base_dir, "data", "user_progress.json")
 
     @classmethod
     def _load_from_disk(cls) -> dict:
@@ -77,6 +85,7 @@ class ProgressService:
     @classmethod
     def _save_to_disk(cls, data: dict) -> None:
         path = cls._get_storage_path()
+        os.makedirs(os.path.dirname(path), exist_ok=True)
         tmp_path = f"{path}.tmp"
         try:
             with open(tmp_path, "w", encoding="utf-8") as f:
@@ -107,14 +116,10 @@ class ProgressService:
         val = float(progress)
         ProgressService._store[f"progress_{unit_id}"] = val
 
-        # Lógica de desbloqueio progressivo das unidades
-        if val >= 1.0:
-            if unit_id == "unit_intro":
-                ProgressService._store["unlocked_unit_01"] = True
-            elif unit_id == "unit_01":
-                ProgressService._store["unlocked_unit_02"] = True
-            elif unit_id == "unit_02":
-                ProgressService._store["unlocked_unit_03"] = True
+        # Desbloqueio progressivo via cadeia data-driven
+        if val >= 1.0 and unit_id in ProgressService._UNLOCK_CHAIN:
+            next_unit = ProgressService._UNLOCK_CHAIN[unit_id]
+            ProgressService._store[f"unlocked_{next_unit}"] = True
 
         # Gravação persistente atômica em disco
         ProgressService._save_to_disk(ProgressService._store)
