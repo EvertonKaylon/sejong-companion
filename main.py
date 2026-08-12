@@ -1,3 +1,4 @@
+import argparse
 import os
 from src import __version__
 
@@ -20,20 +21,29 @@ def load_local_env():
 
 
 load_local_env()
-# Rodando só em 127.0.0.1 (localhost) por padrão. Testei "0.0.0.0" e "*"
-# aqui e os dois quebram em algum ponto no Windows:
-#   - "0.0.0.0" faz o Flet tentar ABRIR o navegador em http://0.0.0.0:...,
-#     que não é um endereço válido de destino -> ERR_ADDRESS_INVALID.
-#   - "*" evita esse problema (Flet mostra 127.0.0.1 no navegador), mas o
-#     Windows não aceita "*" como endereço de bind -> getaddrinfo failed.
-# "127.0.0.1" não tem nenhum desses problemas: bind confiável + navegador
-# abre certinho. A única perda é acesso pelo celular/rede local.
-#
-# Se algum dia precisar testar no celular (mesma rede Wi-Fi), troque a
-# linha abaixo para "0.0.0.0" temporariamente. O navegador do PC pode não
-# abrir sozinho nesse modo (aí você abre manualmente http://localhost:8554
-# no PC), e no celular você digita o IP local do PC, ex: http://192.168.15.140:8554
-os.environ["FLET_SERVER_IP"] = "0.0.0.0"
+
+# --- Deploy em nuvem (Render/HuggingFace) vs. execução local (Windows) ---
+# A plataforma de deploy injeta a env var PORT antes de subir o processo;
+# localmente ela nunca existe, então caímos no default 8554 lá embaixo. Uso
+# essa distinção pra decidir host/FLET_SERVER_IP, porque nuvem e Windows
+# local precisam de valores opostos e incompatíveis entre si:
+#   - Nuvem: precisa bindar em "0.0.0.0" (todas as interfaces) pra ser
+#     alcançável de fora do container.
+#   - Local/Windows: "0.0.0.0" faz o Flet tentar abrir o navegador em
+#     http://0.0.0.0:..., que não é um endereço válido de destino ->
+#     ERR_ADDRESS_INVALID. "*" evita esse problema (Flet mostra 127.0.0.1
+#     no navegador), mas o Windows não aceita "*" como endereço de bind ->
+#     getaddrinfo failed. "127.0.0.1" é o único que não quebra nenhum dos
+#     dois pontos -- a única perda é acesso via celular/rede local (troque
+#     pra "0.0.0.0" manualmente aqui se precisar testar no celular).
+_IS_CLOUD_DEPLOY = "PORT" in os.environ
+_HOST = "0.0.0.0" if _IS_CLOUD_DEPLOY else "127.0.0.1"
+
+# FLET_SERVER_IP sobrescreve o host= passado pra ft.app() internamente (ver
+# flet/app.py:run_async, "env_host = os.getenv('FLET_SERVER_IP')") -- os
+# dois precisam ficar sincronizados, ou um valor divergente aqui reabre o
+# ERR_ADDRESS_INVALID mesmo com o host= "certo" na chamada de ft.app().
+os.environ["FLET_SERVER_IP"] = _HOST
 
 import flet as ft
 import flet_audio
@@ -86,4 +96,26 @@ def main(page: ft.Page):
 if __name__ == "__main__":
     print(f"Sejong Companion v{__version__}")
     port = int(os.environ.get("PORT", 8554))
-    ft.app(main, host="0.0.0.0", port=port, assets_dir="assets")
+
+    parser = argparse.ArgumentParser(description="Sejong Companion")
+    parser.add_argument(
+        "--browser",
+        action="store_true",
+        help=(
+            "Abre no navegador (AppView.WEB_BROWSER) em vez da janela desktop "
+            "nativa (o padrão do ft.app() quando view= não é passado). Use "
+            "isso pra testar responsividade mobile/PWA -- o viewport injetado "
+            "por FullscreenService só faz sentido em contexto de página HTML "
+            "de verdade, não na janela nativa (ver bugfix em src/services.py)."
+        ),
+    )
+    args = parser.parse_args()
+
+    if _IS_CLOUD_DEPLOY:
+        # Deploy headless: sempre navegador -- não tem display pra abrir
+        # janela nativa num container Linux (Render/HuggingFace).
+        view = ft.AppView.WEB_BROWSER
+    else:
+        view = ft.AppView.WEB_BROWSER if args.browser else ft.AppView.FLET_APP
+
+    ft.app(main, host=_HOST, port=port, assets_dir="assets", view=view)

@@ -180,6 +180,19 @@ class FullscreenService:
         )
 
         async def _exec_js():
+            # BUGFIX (11/08): page.launch_url() NÃO executa JS na página -- ele delega
+            # pro plugin Flutter url_launcher, que trata a string como uma URL/link
+            # externo. Em contexto web isso pelo menos tenta rodar como "javascript:"
+            # URI; em janela desktop nativa (AppView.FLET_APP, o padrão do ft.app()
+            # quando não se passa view=) não existe documento HTML nenhum, e o
+            # Windows não sabe abrir um link "javascript:...". Isso derruba a conexão
+            # do cliente Flutter, que reconecta automaticamente, recriando a sessão
+            # e disparando este mesmo código de novo -- loop infinito de
+            # "RuntimeError: Session closed" / "attempt to fetch destroyed session".
+            # Guard com page.web (mesmo padrão usado internamente pelo próprio Flet
+            # para o fluxo de OAuth) resolve na raiz.
+            if not getattr(page, "web", False):
+                return
             try:
                 if hasattr(page, 'launch_url'):
                     await page.launch_url(f"javascript:{js_code}")
@@ -222,6 +235,15 @@ class FullscreenService:
         )
 
         async def _exec_meta():
+            # BUGFIX (11/08): mesma causa raiz do _exec_js em toggle_fullscreen (ver
+            # comentário lá). Esta função em especial roda incondicionalmente em TODA
+            # sessão (chamada direto em main.py), então era a origem do loop de
+            # reconexão infinita reportado ao rodar `python main.py` no Windows sem
+            # view=WEB_BROWSER (ft.app() abre janela desktop nativa por padrão).
+            # Meta tags de viewport/PWA também só fazem sentido em navegador --
+            # não existe <head> HTML numa janela desktop nativa.
+            if not getattr(page, "web", False):
+                return
             try:
                 if hasattr(page, 'launch_url'):
                     await page.launch_url(f"javascript:{js_meta}")
@@ -243,5 +265,4 @@ class FullscreenService:
             on_click=lambda e: FullscreenService.toggle_fullscreen(page),
             tooltip="Alternar Modo Tela Cheia (Fullscreen)",
         )
-
 
