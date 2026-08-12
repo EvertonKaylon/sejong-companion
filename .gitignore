@@ -43,6 +43,7 @@ Thumbs.db
 Desktop.ini
 .DS_Store
 
-# Dados de progresso do estudante (gerado em runtime)
+# Dados de progresso do estudante (gerados em runtime, por sessão)
 data/user_progress.json
 data/user_progress.json.tmp
+data/sessions/

@@ -42,18 +42,15 @@ class DataService:
             return None
 
 class ProgressService:
-    """Gerenciador de progresso e preferências com persistência em disco.
+    """Gerenciador de progresso com persistência em disco e isolamento por sessão.
     
-    Salva dados em data/user_progress.json de forma atômica, garantindo que o progresso
-    do estudante persista entre reinicializações do app/servidor, mantendo cache rápido
-    em memória para renderização síncrona instantânea nas views do Flet.
-    
-    Nota: Em modo web multi-usuário, todas as sessões compartilham o mesmo arquivo.
-    Isolamento por sessão será implementado na fase Beta.
+    Cada sessão Flet (aba do navegador / conexão) recebe um UUID único, garantindo
+    que múltiplos usuários simultâneos em modo web não compartilhem progresso.
+    Os dados são persistidos em data/sessions/{session_id}.json de forma atômica.
     """
     
-    _file_path: Optional[str] = None
-    _store: dict = {}
+    _file_path_override: Optional[str] = None  # Override para testes
+    _sessions: dict = {}  # {session_id: store_dict}
 
     # Cadeia de desbloqueio progressivo: ao completar a chave, desbloqueia o valor
     _UNLOCK_CHAIN: dict = {
@@ -62,16 +59,26 @@ class ProgressService:
         "unit_02": "unit_03",
     }
 
-    @classmethod
-    def _get_storage_path(cls) -> str:
-        if cls._file_path:
-            return cls._file_path
-        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        return os.path.join(base_dir, "data", "user_progress.json")
+    @staticmethod
+    def _get_session_id(page) -> str:
+        """Obtém ou gera um UUID único para a sessão desta page."""
+        if page is None:
+            return "__default__"
+        if not hasattr(page, '_sejong_session_id'):
+            import uuid
+            page._sejong_session_id = uuid.uuid4().hex[:12]
+        return page._sejong_session_id
 
     @classmethod
-    def _load_from_disk(cls) -> dict:
-        path = cls._get_storage_path()
+    def _get_storage_path(cls, session_id: str) -> str:
+        if cls._file_path_override:
+            return cls._file_path_override
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        return os.path.join(base_dir, "data", "sessions", f"{session_id}.json")
+
+    @classmethod
+    def _load_from_disk(cls, session_id: str) -> dict:
+        path = cls._get_storage_path(session_id)
         if os.path.exists(path):
             try:
                 with open(path, "r", encoding="utf-8") as f:
@@ -79,12 +86,12 @@ class ProgressService:
                     if isinstance(data, dict):
                         return data
             except Exception as e:
-                print(f"[ProgressService] Warning: Error reading progress from {path}: {e}")
+                print(f"[ProgressService] Warning: Error reading session {session_id}: {e}")
         return {}
 
     @classmethod
-    def _save_to_disk(cls, data: dict) -> None:
-        path = cls._get_storage_path()
+    def _save_to_disk(cls, session_id: str, data: dict) -> None:
+        path = cls._get_storage_path(session_id)
         os.makedirs(os.path.dirname(path), exist_ok=True)
         tmp_path = f"{path}.tmp"
         try:
@@ -92,21 +99,27 @@ class ProgressService:
                 json.dump(data, f, indent=2, ensure_ascii=False)
             os.replace(tmp_path, path)
         except Exception as e:
-            print(f"[ProgressService] Error writing progress to {path}: {e}")
+            print(f"[ProgressService] Error writing session {session_id}: {e}")
             if os.path.exists(tmp_path):
                 try:
                     os.remove(tmp_path)
                 except Exception:
                     pass
 
-    def __init__(self, page: Optional[ft.Page] = None):
+    def __init__(self, page=None):
         self.page = page
-        # Inicializar cache a partir do disco se vazio
-        if not ProgressService._store:
-            ProgressService._store = ProgressService._load_from_disk()
+        self._session_id = self._get_session_id(page)
+        # Inicializar store desta sessão a partir do disco, se ainda não carregada
+        if self._session_id not in ProgressService._sessions:
+            ProgressService._sessions[self._session_id] = self._load_from_disk(self._session_id)
+
+    @property
+    def _store(self) -> dict:
+        """Retorna o store isolado desta sessão."""
+        return ProgressService._sessions.setdefault(self._session_id, {})
 
     def get_progress(self, unit_id: str) -> float:
-        val = ProgressService._store.get(f"progress_{unit_id}", 0.0)
+        val = self._store.get(f"progress_{unit_id}", 0.0)
         try:
             return float(val)
         except (ValueError, TypeError):
@@ -114,29 +127,29 @@ class ProgressService:
 
     def save_progress(self, unit_id: str, progress: float) -> None:
         val = float(progress)
-        ProgressService._store[f"progress_{unit_id}"] = val
+        self._store[f"progress_{unit_id}"] = val
 
         # Desbloqueio progressivo via cadeia data-driven
         if val >= 1.0 and unit_id in ProgressService._UNLOCK_CHAIN:
             next_unit = ProgressService._UNLOCK_CHAIN[unit_id]
-            ProgressService._store[f"unlocked_{next_unit}"] = True
+            self._store[f"unlocked_{next_unit}"] = True
 
         # Gravação persistente atômica em disco
-        ProgressService._save_to_disk(ProgressService._store)
+        ProgressService._save_to_disk(self._session_id, self._store)
 
     def is_unlocked(self, unit_id: str) -> bool:
         if unit_id in ["unit_intro", "unit_01"]:
             return True
-        return bool(ProgressService._store.get(f"unlocked_{unit_id}", False))
+        return bool(self._store.get(f"unlocked_{unit_id}", False))
 
     def reset_progress(self) -> None:
-        """Reseta o progresso mantendo apenas o estado padrão inicial."""
-        ProgressService._store.clear()
-        ProgressService._save_to_disk(ProgressService._store)
+        """Reseta o progresso da sessão atual."""
+        self._store.clear()
+        ProgressService._save_to_disk(self._session_id, self._store)
 
     def get_all_progress(self) -> dict:
-        """Retorna uma cópia de todos os dados de progresso armazenados."""
-        return dict(ProgressService._store)
+        """Retorna uma cópia dos dados de progresso desta sessão."""
+        return dict(self._store)
 
 
 class FullscreenService:
