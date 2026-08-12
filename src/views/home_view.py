@@ -258,12 +258,22 @@ def home_view(page: ft.Page) -> ft.View:
     return ft.View(
         route="/home",
         appbar=app_bar,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         controls=[
-            welcome_text,
-            neuro_tip_card,
-            progress_summary,
-            ft.Text("Grade Curricular", size=15, weight=ft.FontWeight.BOLD, color=colors["text"]),
-            ft.Column(controls=unit_cards)
+            ft.Container(
+                content=ft.Column(
+                    controls=[
+                        welcome_text,
+                        neuro_tip_card,
+                        progress_summary,
+                        ft.Text("Grade Curricular", size=15, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                        ft.Column(controls=unit_cards)
+                    ],
+                ),
+                max_width=600,
+                width=float("inf"),
+                alignment=ft.Alignment.TOP_CENTER,
+            )
         ],
         scroll=ft.ScrollMode.AUTO,
         bgcolor=colors["bg"],

@@ -13,6 +13,7 @@ def hangul_view(page: ft.Page) -> ft.View:
     if not data:
         return ft.View(
             route="/hangul",
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             controls=[
                 ft.AppBar(title=ft.Text("Erro"), bgcolor=colors["surface"]),
                 ft.Text("Erro ao carregar dados do 한글.", color=colors["incorrect"])
@@ -492,7 +493,8 @@ def hangul_view(page: ft.Page) -> ft.View:
     vowels_col = ft.Column(
         controls=[vowels_wrap],
         scroll=ft.ScrollMode.AUTO,
-        expand=True
+        expand=True,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
 
     consonants_col = ft.Column(
@@ -504,7 +506,8 @@ def hangul_view(page: ft.Page) -> ft.View:
             tense_section,
         ],
         scroll=ft.ScrollMode.AUTO,
-        expand=True
+        expand=True,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
 
     tabs = ft.Tabs(
@@ -555,6 +558,7 @@ def hangul_view(page: ft.Page) -> ft.View:
     return ft.View(
         route="/hangul",
         appbar=app_bar,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         controls=[
             ft.Container(
                 content=ft.Column(
@@ -562,17 +566,27 @@ def hangul_view(page: ft.Page) -> ft.View:
                         anti_roman_banner,
                         writing_banner,
                         ft.Container(
-                            content=ft.Text("Toque nos cards para ver detalhes fonéticos e dicas mnemônicas.", size=11, color=colors["text_sec"], italic=True),
-                            padding=ft.Padding.symmetric(horizontal=12, vertical=2)
+                            content=ft.Text("Toque nos cards para ver detalhes fonéticos e dicas mnemônicas.", size=11, color=colors["text_sec"], italic=True, text_align=ft.TextAlign.CENTER),
+                            padding=ft.Padding.symmetric(horizontal=12, vertical=2),
+                            alignment=ft.Alignment.CENTER,
                         ),
                         tabs,
                     ],
                     expand=True,
                     spacing=4,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 ),
+                max_width=600,
+                width=float("inf"),
+                alignment=ft.Alignment.TOP_CENTER,
                 expand=True,
             ),
-            quiz_button
+            ft.Container(
+                content=quiz_button,
+                max_width=600,
+                width=float("inf"),
+                alignment=ft.Alignment.CENTER,
+            )
         ],
         scroll=None,
         bgcolor=colors["bg"],

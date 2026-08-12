@@ -442,17 +442,28 @@ def ui_test_view(page: ft.Page) -> ft.View:
     return ft.View(
         route="/ui_test",
         appbar=app_bar,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         controls=[
-            logo_container,
-            ft.Container(height=12),
-            palette_card,
-            ft.Container(height=12),
-            typography_card,
-            ft.Container(height=12),
-            quiz_card,
-            ft.Container(height=12),
-            audio_card,
-            ft.Container(height=24),
+            ft.Container(
+                content=ft.Column(
+                    controls=[
+                        logo_container,
+                        ft.Container(height=12),
+                        palette_card,
+                        ft.Container(height=12),
+                        typography_card,
+                        ft.Container(height=12),
+                        quiz_card,
+                        ft.Container(height=12),
+                        audio_card,
+                        ft.Container(height=24),
+                    ],
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                ),
+                max_width=600,
+                width=float("inf"),
+                alignment=ft.Alignment.TOP_CENTER,
+            )
         ],
         scroll=ft.ScrollMode.AUTO,
         bgcolor=colors["bg"],

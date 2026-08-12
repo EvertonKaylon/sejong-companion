@@ -28,6 +28,7 @@ def quiz_view(page: ft.Page) -> ft.View:
     if not exercises:
         return ft.View(
             route="/quiz",
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             appbar=ft.AppBar(
                 leading=ft.IconButton(
                     icon=ft.Icons.ARROW_BACK_IOS_NEW_ROUNDED,
@@ -78,6 +79,7 @@ def quiz_view(page: ft.Page) -> ft.View:
                     ),
                     padding=Responsive.value(w, compact=14, medium=24),
                     alignment=ft.Alignment.CENTER,
+                    max_width=600,
                 ),
             ],
             bgcolor=colors["bg"],
@@ -355,9 +357,20 @@ def quiz_view(page: ft.Page) -> ft.View:
     return ft.View(
         route="/quiz",
         appbar=app_bar,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         controls=[
-            progress_header,
-            main_content
+            ft.Container(
+                content=ft.Column(
+                    controls=[
+                        progress_header,
+                        main_content
+                    ],
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                ),
+                max_width=600,
+                width=float("inf"),
+                alignment=ft.Alignment.TOP_CENTER,
+            )
         ],
         scroll=ft.ScrollMode.AUTO,
         bgcolor=colors["bg"]

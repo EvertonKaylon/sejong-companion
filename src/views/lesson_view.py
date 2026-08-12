@@ -19,6 +19,7 @@ def lesson_view(page: ft.Page) -> ft.View:
     if not unit_data:
         return ft.View(
             route="/lesson",
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             appbar=ft.AppBar(
                 leading=ft.IconButton(
                     icon=ft.Icons.ARROW_BACK_IOS_NEW_ROUNDED,
@@ -69,6 +70,7 @@ def lesson_view(page: ft.Page) -> ft.View:
                     ),
                     padding=Responsive.value(w, compact=14, medium=24),
                     alignment=ft.Alignment.CENTER,
+                    max_width=600,
                 ),
             ],
             bgcolor=colors["bg"],
@@ -87,7 +89,7 @@ def lesson_view(page: ft.Page) -> ft.View:
 
     # ─── Tab 1: Lista de Vocabulário ───
 
-    vocab_col = ft.Column(spacing=8, scroll=ft.ScrollMode.AUTO, expand=True)
+    vocab_col = ft.Column(spacing=8, scroll=ft.ScrollMode.AUTO, expand=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
     for item in unit_data.vocabulary:
         vocab_col.controls.append(
             VocabCard(
@@ -236,7 +238,8 @@ def lesson_view(page: ft.Page) -> ft.View:
         controls=grammar_controls,
         spacing=4,
         scroll=ft.ScrollMode.AUTO,
-        expand=True
+        expand=True,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
 
     # ─── Tab 3: Notas Culturais ───
@@ -275,7 +278,8 @@ def lesson_view(page: ft.Page) -> ft.View:
         ],
         spacing=8,
         scroll=ft.ScrollMode.AUTO,
-        expand=True
+        expand=True,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
 
     # ─── Abas (Tabs) ───
@@ -335,12 +339,21 @@ def lesson_view(page: ft.Page) -> ft.View:
     return ft.View(
         route=f"/lesson",
         appbar=app_bar,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         controls=[
             ft.Container(
                 content=tabs,
                 expand=True,
+                max_width=600,
+                width=float("inf"),
+                alignment=ft.Alignment.TOP_CENTER,
             ),
-            exercise_button
+            ft.Container(
+                content=exercise_button,
+                max_width=600,
+                width=float("inf"),
+                alignment=ft.Alignment.CENTER,
+            )
         ],
         scroll=None,
         bgcolor=colors["bg"],
