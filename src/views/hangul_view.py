@@ -1,6 +1,6 @@
 import flet as ft
 from ..theme import get_theme_colors, Styles, Responsive
-from ..services import DataService, FullscreenService
+from ..services import DataService
 from ..components.hangul_card import HangulCard
 
 def hangul_view(page: ft.Page) -> ft.View:
@@ -41,20 +41,20 @@ def hangul_view(page: ft.Page) -> ft.View:
                 controls=[
                     ft.Row(
                         controls=[
-                            ft.Text(notice.icon, size=24),
-                            ft.Text(notice.title, size=14, weight=ft.FontWeight.BOLD, color=colors["incorrect"]),
+                            ft.Text(notice.icon, size=22),
+                            ft.Text(notice.title, size=13, weight=ft.FontWeight.BOLD, color=colors["incorrect"]),
                         ],
                         spacing=8,
                     ),
                     ft.Text(notice.content, size=12, color=colors["text_sec"]),
                 ],
-                spacing=6,
+                spacing=4,
             ),
-            padding=Responsive.value(w, compact=8, medium=14),
+            padding=Responsive.value(w, compact=10, medium=12),
             bgcolor="#0DC50337",
             border=ft.Border.all(1, "#33C50337"),
             border_radius=Styles.BORDER_RADIUS_MD,
-            margin=ft.Margin.only(left=Responsive.value(w, compact=6, medium=16), right=Responsive.value(w, compact=6, medium=16), top=10, bottom=6),
+            margin=ft.Margin.only(bottom=8),
         )
 
     # ─── Aviso de Escrita Manual ───
@@ -66,34 +66,62 @@ def hangul_view(page: ft.Page) -> ft.View:
                 controls=[
                     ft.Row(
                         controls=[
-                            ft.Text(wa.icon, size=24),
-                            ft.Text(wa.title, size=14, weight=ft.FontWeight.BOLD, color=colors["secondary"]),
+                            ft.Text(wa.icon, size=22),
+                            ft.Text(wa.title, size=13, weight=ft.FontWeight.BOLD, color=colors["secondary"]),
                         ],
                         spacing=8,
                     ),
                     ft.Text(wa.content, size=12, color=colors["text_sec"]),
                 ],
-                spacing=6,
+                spacing=4,
             ),
-            padding=Responsive.value(w, compact=8, medium=14),
+            padding=Responsive.value(w, compact=10, medium=12),
             bgcolor="#0D188150",
             border=ft.Border.all(1, "#33188150"),
             border_radius=Styles.BORDER_RADIUS_MD,
-            margin=ft.Margin.only(left=Responsive.value(w, compact=6, medium=16), right=Responsive.value(w, compact=6, medium=16), bottom=6),
+            margin=ft.Margin.only(bottom=8),
         )
 
     # ─── Grid de Vogais ───
+    card_size = Responsive.value(w, compact=100, medium=140)
+
     vowels_wrap = ft.Row(
-        controls=[HangulCard(v, is_dark, on_audio_click=lambda w: page.audio_service.play_korean(w), size=Responsive.value(w, compact=100, medium=140)) for v in data.vowels],
+        controls=[HangulCard(v, is_dark, on_audio_click=lambda w: page.audio_service.play_korean(w), size=card_size) for v in data.vowels],
         spacing=10,
         run_spacing=10,
         wrap=True,
         alignment=ft.MainAxisAlignment.CENTER,
     )
 
+    vowels_col = ft.Container(
+        content=ft.Column(
+            controls=[
+                ft.Container(height=4),
+                vowels_wrap,
+                ft.Container(height=12),
+            ],
+            scroll=ft.ScrollMode.AUTO,
+            expand=True,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        ),
+        padding=ft.Padding.symmetric(horizontal=4, vertical=6),
+        alignment=ft.Alignment.TOP_CENTER,
+    )
+
     # ─── Grid de Consoantes Planas ───
+    plain_header = ft.Container(
+        content=ft.Row(
+            controls=[
+                ft.Text("🌱", size=18),
+                ft.Text("Consoantes Planas (기본)", size=15, weight=ft.FontWeight.BOLD, color=colors["text"]),
+            ],
+            spacing=8,
+        ),
+        margin=ft.Margin.only(top=4, bottom=6),
+    )
+
     consonants_wrap = ft.Row(
-        controls=[HangulCard(c, is_dark, on_audio_click=lambda w: page.audio_service.play_korean(w), size=Responsive.value(w, compact=100, medium=140)) for c in data.consonants],
+        controls=[HangulCard(c, is_dark, on_audio_click=lambda w: page.audio_service.play_korean(w), size=card_size) for c in data.consonants],
         spacing=10,
         run_spacing=10,
         wrap=True,
@@ -114,18 +142,19 @@ def hangul_view(page: ft.Page) -> ft.View:
                         ],
                         spacing=8,
                     ),
-                    margin=ft.Margin.only(bottom=8),
+                    margin=ft.Margin.only(bottom=4),
                 ),
                 ft.Text("Produzidas com sopro forte de ar. Coloque a mão na frente da boca para sentir!", size=12, color=colors["text_sec"]),
                 ft.Container(height=8),
                 ft.Row(
-                    controls=[HangulCard(c, is_dark, on_audio_click=lambda w: page.audio_service.play_korean(w), size=Responsive.value(w, compact=100, medium=140)) for c in data.aspirated_consonants],
+                    controls=[HangulCard(c, is_dark, on_audio_click=lambda w: page.audio_service.play_korean(w), size=card_size) for c in data.aspirated_consonants],
                     spacing=10,
                     run_spacing=10,
                     wrap=True,
                     alignment=ft.MainAxisAlignment.CENTER,
                 ),
-            ]
+            ],
+            spacing=2,
         )
 
     # ─── Grid de Consoantes Tensas ───
@@ -142,19 +171,35 @@ def hangul_view(page: ft.Page) -> ft.View:
                         ],
                         spacing=8,
                     ),
-                    margin=ft.Margin.only(bottom=8),
+                    margin=ft.Margin.only(bottom=4),
                 ),
                 ft.Text("Produzidas com tensão na garganta, SEM sopro de ar. Essa distinção não existe no português!", size=12, color=colors["text_sec"]),
                 ft.Container(height=8),
                 ft.Row(
-                    controls=[HangulCard(c, is_dark, on_audio_click=lambda w: page.audio_service.play_korean(w), size=Responsive.value(w, compact=100, medium=140)) for c in data.tense_consonants],
+                    controls=[HangulCard(c, is_dark, on_audio_click=lambda w: page.audio_service.play_korean(w), size=card_size) for c in data.tense_consonants],
                     spacing=10,
                     run_spacing=10,
                     wrap=True,
                     alignment=ft.MainAxisAlignment.CENTER,
                 ),
-            ]
+            ],
+            spacing=2,
         )
+
+    consonants_col = ft.Container(
+        content=ft.Column(
+            controls=[
+                plain_header,
+                consonants_wrap,
+                aspirated_section,
+                tense_section,
+                ft.Container(height=12),
+            ],
+            scroll=ft.ScrollMode.AUTO,
+            expand=True,
+        ),
+        padding=ft.Padding.symmetric(horizontal=4, vertical=6),
+    )
 
     # ─── 받침 Guide ───
     batchim_section = ft.Container()
@@ -162,10 +207,10 @@ def hangul_view(page: ft.Page) -> ft.View:
         bg = data.batchim_guide
         
         batchim_controls = [
-            ft.Text(bg.title, size=18, weight=ft.FontWeight.BOLD, color=colors["primary"]),
-            ft.Container(height=6),
-            ft.Text(bg.explanation, size=13, color=colors["text_sec"]),
-            ft.Container(height=12),
+            ft.Text(bg.title, size=17, weight=ft.FontWeight.BOLD, color=colors["primary"]),
+            ft.Container(height=2),
+            ft.Text(bg.explanation, size=12, color=colors["text_sec"]),
+            ft.Container(height=8),
         ]
 
         # Aviso do 'i' fantasma
@@ -177,21 +222,21 @@ def hangul_view(page: ft.Page) -> ft.View:
                         controls=[
                             ft.Row(
                                 controls=[
-                                    ft.Text(lw.icon, size=28),
-                                    ft.Text(lw.title, size=14, weight=ft.FontWeight.BOLD, color=colors["incorrect"]),
+                                    ft.Text(lw.icon, size=24),
+                                    ft.Text(lw.title, size=13, weight=ft.FontWeight.BOLD, color=colors["incorrect"]),
                                 ],
                                 spacing=8,
                             ),
-                            ft.Container(height=4),
+                            ft.Container(height=2),
                             ft.Text(lw.content, size=12, color=colors["text"]),
                         ],
                         spacing=4,
                     ),
-                    padding=Responsive.value(w, compact=8, medium=14),
+                    padding=12,
                     bgcolor="#0DC50337",
                     border=ft.Border.all(1, "#33C50337"),
                     border_radius=Styles.BORDER_RADIUS_MD,
-                    margin=ft.Margin.only(bottom=12),
+                    margin=ft.Margin.only(bottom=10),
                 )
             )
 
@@ -240,29 +285,37 @@ def hangul_view(page: ft.Page) -> ft.View:
                         controls=rule_column_controls,
                         spacing=3,
                     ),
-                    padding=10,
+                    padding=12,
                     bgcolor=colors["card_bg"],
                     border=ft.Border.all(1, colors["border"]),
-                    border_radius=Styles.BORDER_RADIUS_SM,
+                    border_radius=Styles.BORDER_RADIUS_MD,
                     margin=ft.Margin.only(bottom=8),
                 )
             )
 
-        batchim_section = ft.Column(controls=batchim_controls, scroll=ft.ScrollMode.AUTO, expand=True)
-
-    # ─── Ganada (가나다) — Sequência Alfabética Tradicional ───
+        batchim_section = ft.Container(
+            content=ft.Column(
+                controls=batchim_controls,
+                scroll=ft.ScrollMode.AUTO,
+                expand=True,
+            ),
+            padding=ft.Padding.symmetric(horizontal=4, vertical=6),
+        )
 
     # ─── Ganada (가나다) — Sequência Alfabética Tradicional (ZERO Romanização) ───
 
     ganada_chars = ["가", "나", "다", "라", "마", "바", "사", "아", "자", "차", "카", "타", "파", "하"]
 
+    chip_size = Responsive.value(w, compact=46, medium=60)
+    chip_font_size = Responsive.value(w, compact=18, medium=24)
+
     ganada_chips = []
     for char in ganada_chars:
         ganada_chips.append(
             ft.Container(
-                content=ft.Text(char, size=Responsive.value(w, compact=18, medium=24), weight=ft.FontWeight.BOLD, color=colors["primary"]),
-                width=Responsive.value(w, compact=46, medium=60),
-                height=Responsive.value(w, compact=46, medium=60),
+                content=ft.Text(char, size=chip_font_size, weight=ft.FontWeight.BOLD, color=colors["primary"]),
+                width=chip_size,
+                height=chip_size,
                 alignment=ft.Alignment.CENTER,
                 bgcolor=colors["surface"],
                 border=ft.Border.all(1.5, colors["primary"]),
@@ -300,10 +353,10 @@ def hangul_view(page: ft.Page) -> ft.View:
                     ],
                     spacing=2,
                 ),
-                padding=10,
+                padding=12,
                 bgcolor=colors["surface"],
                 border=ft.Border.all(1, colors["border"]),
-                border_radius=Styles.BORDER_RADIUS_SM,
+                border_radius=Styles.BORDER_RADIUS_MD,
                 margin=ft.Margin.only(bottom=8),
             ),
             ft.Row(
@@ -340,7 +393,7 @@ def hangul_view(page: ft.Page) -> ft.View:
                     controls=[
                         # Número
                         ft.Container(
-                            content=ft.Text(num, size=16, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE),
+                            content=ft.Text(num, size=15, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE),
                             width=32, height=32,
                             alignment=ft.Alignment.CENTER,
                             bgcolor=colors["primary"],
@@ -351,7 +404,7 @@ def hangul_view(page: ft.Page) -> ft.View:
                             content=ft.Column(
                                 controls=[
                                     ft.Text("한자어", size=9, color=colors["text_sec"]),
-                                    ft.Text(sino, size=18, weight=ft.FontWeight.BOLD, color=colors["secondary"]),
+                                    ft.Text(sino, size=17, weight=ft.FontWeight.BOLD, color=colors["secondary"]),
                                 ],
                                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                                 spacing=0,
@@ -366,7 +419,7 @@ def hangul_view(page: ft.Page) -> ft.View:
                             content=ft.Column(
                                 controls=[
                                     ft.Text("고유어", size=9, color=colors["text_sec"]),
-                                    ft.Text(native, size=18, weight=ft.FontWeight.BOLD, color=colors["accent"]),
+                                    ft.Text(native, size=17, weight=ft.FontWeight.BOLD, color=colors["accent"]),
                                 ],
                                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                                 spacing=0,
@@ -382,7 +435,7 @@ def hangul_view(page: ft.Page) -> ft.View:
                 padding=ft.Padding.symmetric(horizontal=10, vertical=8),
                 bgcolor=colors["card_bg"],
                 border=ft.Border.all(1, colors["border"]),
-                border_radius=Styles.BORDER_RADIUS_SM,
+                border_radius=Styles.BORDER_RADIUS_MD,
                 on_click=lambda e, s=sino, n=native: page.audio_service.play_korean(f"{s}, {n}"),
                 animate=150,
             )
@@ -390,7 +443,7 @@ def hangul_view(page: ft.Page) -> ft.View:
 
     numbers_section = ft.Column(
         controls=[
-            ft.Container(height=16),
+            ft.Container(height=12),
             ft.Container(
                 content=ft.Row(
                     controls=[
@@ -410,10 +463,10 @@ def hangul_view(page: ft.Page) -> ft.View:
                     ],
                     spacing=2,
                 ),
-                padding=10,
+                padding=12,
                 bgcolor=colors["surface"],
                 border=ft.Border.all(1, colors["border"]),
-                border_radius=Styles.BORDER_RADIUS_SM,
+                border_radius=Styles.BORDER_RADIUS_MD,
                 margin=ft.Margin.only(bottom=8),
             ),
             ft.Column(controls=number_rows, spacing=4),
@@ -424,7 +477,7 @@ def hangul_view(page: ft.Page) -> ft.View:
     # ─── Lista de Sílabas Originais ───
     original_syllables_header = ft.Column(
         controls=[
-            ft.Container(height=16),
+            ft.Container(height=12),
             ft.Container(
                 content=ft.Row(
                     controls=[
@@ -439,30 +492,29 @@ def hangul_view(page: ft.Page) -> ft.View:
         spacing=0,
     )
 
-    syllables_col = ft.Column(spacing=8, scroll=ft.ScrollMode.AUTO, expand=True)
-    syllables_col.controls.append(ganada_section)
-    syllables_col.controls.append(numbers_section)
-    syllables_col.controls.append(original_syllables_header)
+    syllable_box_size = Responsive.value(w, compact=46, medium=60)
+    syllable_font_size = Responsive.value(w, compact=20, medium=26)
 
+    syllable_cards = []
     for s in data.syllables:
-        syllables_col.controls.append(
+        syllable_cards.append(
             ft.Container(
                 content=ft.Row(
                     controls=[
-                        # Botão quadrado clicável da sílaba (limpo sem ícone interno)
+                        # Botão quadrado clicável da sílaba
                         ft.Container(
-                            content=ft.Text(s.block, size=Responsive.value(w, compact=20, medium=26), weight=ft.FontWeight.BOLD, color=colors["primary"]),
+                            content=ft.Text(s.block, size=syllable_font_size, weight=ft.FontWeight.BOLD, color=colors["primary"]),
                             bgcolor=colors["surface"],
                             border=ft.Border.all(1.5, colors["primary"]),
                             border_radius=Styles.BORDER_RADIUS_SM,
-                            width=Responsive.value(w, compact=46, medium=60),
-                            height=Responsive.value(w, compact=46, medium=60),
+                            width=syllable_box_size,
+                            height=syllable_box_size,
                             alignment=ft.Alignment.CENTER,
                             tooltip=f"Ouvir sílaba {s.block}",
                         ),
                         ft.Column(
                             controls=[
-                                ft.Text(f"Composição: {s.spelling}", size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                                ft.Text(f"Composição: {s.spelling}", size=13, weight=ft.FontWeight.BOLD, color=colors["text"]),
                                 ft.Text(f"Significado: {s.meaning}", size=12, color=colors["text_sec"])
                             ],
                             spacing=2,
@@ -482,6 +534,22 @@ def hangul_view(page: ft.Page) -> ft.View:
             )
         )
 
+    syllables_col = ft.Container(
+        content=ft.Column(
+            controls=[
+                ganada_section,
+                numbers_section,
+                original_syllables_header,
+                *syllable_cards,
+                ft.Container(height=12),
+            ],
+            spacing=8,
+            scroll=ft.ScrollMode.AUTO,
+            expand=True,
+        ),
+        padding=ft.Padding.symmetric(horizontal=4, vertical=6),
+    )
+
     # ─── Abas (Tabs) ───
     tab_headers = [
         ft.Tab(label="Vogais", icon=ft.Icons.FONT_DOWNLOAD_OUTLINED),
@@ -489,26 +557,6 @@ def hangul_view(page: ft.Page) -> ft.View:
         ft.Tab(label="받침", icon=ft.Icons.LAYERS_ROUNDED),
         ft.Tab(label="Sílabas", icon=ft.Icons.GRID_VIEW_ROUNDED),
     ]
-
-    vowels_col = ft.Column(
-        controls=[vowels_wrap],
-        scroll=ft.ScrollMode.AUTO,
-        expand=True,
-        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-    )
-
-    consonants_col = ft.Column(
-        controls=[
-            ft.Text("Consoantes Planas (기본)", size=15, weight=ft.FontWeight.BOLD, color=colors["text"]),
-            ft.Container(height=8),
-            consonants_wrap,
-            aspirated_section,
-            tense_section,
-        ],
-        scroll=ft.ScrollMode.AUTO,
-        expand=True,
-        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-    )
 
     tabs = ft.Tabs(
         selected_index=0,
@@ -537,7 +585,7 @@ def hangul_view(page: ft.Page) -> ft.View:
         )
     )
 
-    # Botão de Teste
+    # Botão de Teste Fixo Inferior
     quiz_button = ft.Container(
         content=ft.ElevatedButton(
             content="Testar Conhecimentos (Desafio)",
@@ -567,7 +615,7 @@ def hangul_view(page: ft.Page) -> ft.View:
                         writing_banner,
                         ft.Container(
                             content=ft.Text("Toque nos cards para ver detalhes fonéticos e dicas mnemônicas.", size=11, color=colors["text_sec"], italic=True, text_align=ft.TextAlign.CENTER),
-                            padding=ft.Padding.symmetric(horizontal=12, vertical=2),
+                            padding=ft.Padding.symmetric(horizontal=4, vertical=2),
                             alignment=ft.Alignment.CENTER,
                         ),
                         tabs,
@@ -577,6 +625,7 @@ def hangul_view(page: ft.Page) -> ft.View:
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 ),
                 width=min(w, 600),
+                padding=ft.Padding.symmetric(horizontal=12, vertical=4),
                 alignment=ft.Alignment.TOP_CENTER,
                 expand=True,
             ),
