@@ -1,5 +1,26 @@
 import flet as ft
 
+class Responsive:
+    """Breakpoints e tokens responsivos para adaptar layout por largura de tela.
+    
+    Alvo mínimo: Galaxy Fold fechado (280px).
+    """
+    COMPACT = 360   # Telas ultra-estreitas (Galaxy Fold 280px, iPhone SE 320px)
+    MEDIUM = 480    # Smartphones padrão
+    EXPANDED = 768  # Tablets
+
+    @staticmethod
+    def value(width: float, compact, medium=None, expanded=None):
+        """Retorna o valor adequado ao breakpoint da largura fornecida.
+        
+        Exemplo: Responsive.value(page.width, compact=110, medium=140)
+        """
+        if width < Responsive.COMPACT:
+            return compact
+        if medium is not None and width < Responsive.MEDIUM:
+            return medium
+        return expanded if expanded is not None else (medium if medium is not None else compact)
+
 class Colors:
     # ============================================================
     # DESIGN SYSTEM — escalas completas de cor

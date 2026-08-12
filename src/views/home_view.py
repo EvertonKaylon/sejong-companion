@@ -1,11 +1,12 @@
 import flet as ft
 from datetime import datetime
-from ..theme import get_theme_colors, Styles
+from ..theme import get_theme_colors, Styles, Responsive
 from ..services import DataService, ProgressService, FullscreenService
 
 def home_view(page: ft.Page) -> ft.View:
     is_dark = page.theme_mode == ft.ThemeMode.DARK
     colors = get_theme_colors(is_dark)
+    w = page.width or 400
     progress_service = ProgressService(page)
 
     curriculum = DataService.get_curriculum()
@@ -157,7 +158,7 @@ def home_view(page: ft.Page) -> ft.View:
         bgcolor=colors["surface"],
         border=ft.Border.all(1, colors["border"]),
         border_radius=Styles.BORDER_RADIUS_MD,
-        padding=16,
+        padding=Responsive.value(w, compact=10, medium=16),
         margin=ft.Margin.only(bottom=16)
     )
 

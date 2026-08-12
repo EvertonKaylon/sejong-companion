@@ -1,11 +1,12 @@
 import flet as ft
-from ..theme import get_theme_colors, Styles
+from ..theme import get_theme_colors, Styles, Responsive
 from ..services import DataService, ProgressService, FullscreenService
 from ..components.quiz_widget import QuizWidget
 
 def quiz_view(page: ft.Page) -> ft.View:
     is_dark = page.theme_mode == ft.ThemeMode.DARK
     colors = get_theme_colors(is_dark)
+    w = page.width or 400
     progress_service = ProgressService(page)
 
     unit_id = page.router.current_unit_id
@@ -75,7 +76,7 @@ def quiz_view(page: ft.Page) -> ft.View:
                         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                         spacing=0,
                     ),
-                    padding=24,
+                    padding=Responsive.value(w, compact=14, medium=24),
                     alignment=ft.Alignment.CENTER,
                 ),
             ],
@@ -194,7 +195,7 @@ def quiz_view(page: ft.Page) -> ft.View:
             sub_msg = "Revise as fichas de estudo e tente novamente para melhorar sua pontuação."
 
         # ─── Indicador circular de resultado (responsivo) ───
-        ring_size = 100
+        ring_size = Responsive.value(w, compact=72, medium=100)
         results_layout = ft.Container(
             content=ft.Column(
                 controls=[

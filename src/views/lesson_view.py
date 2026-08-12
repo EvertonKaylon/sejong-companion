@@ -1,11 +1,12 @@
 import flet as ft
-from ..theme import get_theme_colors, Styles
+from ..theme import get_theme_colors, Styles, Responsive
 from ..services import DataService, ProgressService, FullscreenService
 from ..components.vocab_card import VocabCard
 
 def lesson_view(page: ft.Page) -> ft.View:
     is_dark = page.theme_mode == ft.ThemeMode.DARK
     colors = get_theme_colors(is_dark)
+    w = page.width or 400
     progress_service = ProgressService(page)
 
     unit_id = page.router.current_unit_id
@@ -66,7 +67,7 @@ def lesson_view(page: ft.Page) -> ft.View:
                         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                         spacing=0,
                     ),
-                    padding=24,
+                    padding=Responsive.value(w, compact=14, medium=24),
                     alignment=ft.Alignment.CENTER,
                 ),
             ],

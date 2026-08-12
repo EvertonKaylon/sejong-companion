@@ -1,11 +1,13 @@
 import flet as ft
 import asyncio
 from ..theme import get_theme_colors, Styles
+from ..theme import Responsive
 
 def splash_view(page: ft.Page) -> ft.View:
     # A tela de abertura (splash) abre no Modo Escuro (Midnight Blue) por padrão
     is_dark = True
     colors = get_theme_colors(is_dark)
+    w = page.width or 400
 
     from ..theme import Colors
 
@@ -19,7 +21,7 @@ def splash_view(page: ft.Page) -> ft.View:
                     font_family="Seollip-che",
                     weight=ft.FontWeight.W_900,
                     color=Colors.ACCENT if is_dark else Colors.PRIMARY_DARK,
-                    style=ft.TextStyle(letter_spacing=3),
+                    style=ft.TextStyle(letter_spacing=Responsive.value(w, compact=1, medium=3)),
                 ),
                 ft.Text(
                     "COMPANION",
@@ -27,14 +29,14 @@ def splash_view(page: ft.Page) -> ft.View:
                     font_family="Pretendard",
                     weight=ft.FontWeight.BOLD,
                     color=Colors.SECONDARY_LIGHT if is_dark else Colors.PRIMARY,
-                    style=ft.TextStyle(letter_spacing=6),
+                    style=ft.TextStyle(letter_spacing=Responsive.value(w, compact=2, medium=6)),
                 ),
             ],
             spacing=2,
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         ),
-        padding=ft.Padding.symmetric(horizontal=24, vertical=16),
+        padding=ft.Padding.symmetric(horizontal=Responsive.value(w, compact=12, medium=24), vertical=16),
         bgcolor="#14004C97" if not is_dark else "#1E7C4DFF",
         border=ft.Border.all(3, Colors.PRIMARY if not is_dark else Colors.SECONDARY),
         border_radius=Styles.BORDER_RADIUS_MD,

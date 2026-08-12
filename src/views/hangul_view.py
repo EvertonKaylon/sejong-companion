@@ -1,11 +1,12 @@
 import flet as ft
-from ..theme import get_theme_colors, Styles
+from ..theme import get_theme_colors, Styles, Responsive
 from ..services import DataService, FullscreenService
 from ..components.hangul_card import HangulCard
 
 def hangul_view(page: ft.Page) -> ft.View:
     is_dark = page.theme_mode == ft.ThemeMode.DARK
     colors = get_theme_colors(is_dark)
+    w = page.width or 400
 
     # Carregar dados do Hangul
     data = DataService.get_unit_intro()
@@ -48,11 +49,11 @@ def hangul_view(page: ft.Page) -> ft.View:
                 ],
                 spacing=6,
             ),
-            padding=14,
+            padding=Responsive.value(w, compact=8, medium=14),
             bgcolor="#0DC50337",
             border=ft.Border.all(1, "#33C50337"),
             border_radius=Styles.BORDER_RADIUS_MD,
-            margin=ft.Margin.only(left=16, right=16, top=10, bottom=6),
+            margin=ft.Margin.only(left=Responsive.value(w, compact=6, medium=16), right=Responsive.value(w, compact=6, medium=16), top=10, bottom=6),
         )
 
     # ─── Aviso de Escrita Manual ───
@@ -73,16 +74,16 @@ def hangul_view(page: ft.Page) -> ft.View:
                 ],
                 spacing=6,
             ),
-            padding=14,
+            padding=Responsive.value(w, compact=8, medium=14),
             bgcolor="#0D188150",
             border=ft.Border.all(1, "#33188150"),
             border_radius=Styles.BORDER_RADIUS_MD,
-            margin=ft.Margin.only(left=16, right=16, bottom=6),
+            margin=ft.Margin.only(left=Responsive.value(w, compact=6, medium=16), right=Responsive.value(w, compact=6, medium=16), bottom=6),
         )
 
     # ─── Grid de Vogais ───
     vowels_wrap = ft.Row(
-        controls=[HangulCard(v, is_dark, on_audio_click=lambda w: page.audio_service.play_korean(w)) for v in data.vowels],
+        controls=[HangulCard(v, is_dark, on_audio_click=lambda w: page.audio_service.play_korean(w), size=Responsive.value(w, compact=100, medium=140)) for v in data.vowels],
         spacing=10,
         run_spacing=10,
         wrap=True,
@@ -91,7 +92,7 @@ def hangul_view(page: ft.Page) -> ft.View:
 
     # ─── Grid de Consoantes Planas ───
     consonants_wrap = ft.Row(
-        controls=[HangulCard(c, is_dark, on_audio_click=lambda w: page.audio_service.play_korean(w)) for c in data.consonants],
+        controls=[HangulCard(c, is_dark, on_audio_click=lambda w: page.audio_service.play_korean(w), size=Responsive.value(w, compact=100, medium=140)) for c in data.consonants],
         spacing=10,
         run_spacing=10,
         wrap=True,
@@ -117,7 +118,7 @@ def hangul_view(page: ft.Page) -> ft.View:
                 ft.Text("Produzidas com sopro forte de ar. Coloque a mão na frente da boca para sentir!", size=12, color=colors["text_sec"]),
                 ft.Container(height=8),
                 ft.Row(
-                    controls=[HangulCard(c, is_dark, on_audio_click=lambda w: page.audio_service.play_korean(w)) for c in data.aspirated_consonants],
+                    controls=[HangulCard(c, is_dark, on_audio_click=lambda w: page.audio_service.play_korean(w), size=Responsive.value(w, compact=100, medium=140)) for c in data.aspirated_consonants],
                     spacing=10,
                     run_spacing=10,
                     wrap=True,
@@ -145,7 +146,7 @@ def hangul_view(page: ft.Page) -> ft.View:
                 ft.Text("Produzidas com tensão na garganta, SEM sopro de ar. Essa distinção não existe no português!", size=12, color=colors["text_sec"]),
                 ft.Container(height=8),
                 ft.Row(
-                    controls=[HangulCard(c, is_dark, on_audio_click=lambda w: page.audio_service.play_korean(w)) for c in data.tense_consonants],
+                    controls=[HangulCard(c, is_dark, on_audio_click=lambda w: page.audio_service.play_korean(w), size=Responsive.value(w, compact=100, medium=140)) for c in data.tense_consonants],
                     spacing=10,
                     run_spacing=10,
                     wrap=True,
@@ -185,7 +186,7 @@ def hangul_view(page: ft.Page) -> ft.View:
                         ],
                         spacing=4,
                     ),
-                    padding=14,
+                    padding=Responsive.value(w, compact=8, medium=14),
                     bgcolor="#0DC50337",
                     border=ft.Border.all(1, "#33C50337"),
                     border_radius=Styles.BORDER_RADIUS_MD,
@@ -258,9 +259,9 @@ def hangul_view(page: ft.Page) -> ft.View:
     for char in ganada_chars:
         ganada_chips.append(
             ft.Container(
-                content=ft.Text(char, size=24, weight=ft.FontWeight.BOLD, color=colors["primary"]),
-                width=60,
-                height=60,
+                content=ft.Text(char, size=Responsive.value(w, compact=18, medium=24), weight=ft.FontWeight.BOLD, color=colors["primary"]),
+                width=Responsive.value(w, compact=46, medium=60),
+                height=Responsive.value(w, compact=46, medium=60),
                 alignment=ft.Alignment.CENTER,
                 bgcolor=colors["surface"],
                 border=ft.Border.all(1.5, colors["primary"]),
@@ -449,12 +450,12 @@ def hangul_view(page: ft.Page) -> ft.View:
                     controls=[
                         # Botão quadrado clicável da sílaba (limpo sem ícone interno)
                         ft.Container(
-                            content=ft.Text(s.block, size=26, weight=ft.FontWeight.BOLD, color=colors["primary"]),
+                            content=ft.Text(s.block, size=Responsive.value(w, compact=20, medium=26), weight=ft.FontWeight.BOLD, color=colors["primary"]),
                             bgcolor=colors["surface"],
                             border=ft.Border.all(1.5, colors["primary"]),
                             border_radius=Styles.BORDER_RADIUS_SM,
-                            width=60,
-                            height=60,
+                            width=Responsive.value(w, compact=46, medium=60),
+                            height=Responsive.value(w, compact=46, medium=60),
                             alignment=ft.Alignment.CENTER,
                             tooltip=f"Ouvir sílaba {s.block}",
                         ),

@@ -2,17 +2,21 @@ import flet as ft
 from ..theme import get_theme_colors, Styles
 
 class HangulCard(ft.Container):
-    def __init__(self, char_data, is_dark: bool, on_audio_click=None):
+    def __init__(self, char_data, is_dark: bool, on_audio_click=None, size=140):
+        self.card_size = size
         self.char_data = char_data
         self.is_dark = is_dark
         self.colors = get_theme_colors(is_dark)
         self.flipped = False
         self.on_audio_click = on_audio_click
         
+        # Escalar fontes proporcionalmente ao tamanho do card
+        _scale = self.card_size / 140
+        
         # Frente: Caractere Coreano
         self.char_text = ft.Text(
             value=char_data.char,
-            size=60,
+            size=max(32, int(60 * _scale)),
             weight=ft.FontWeight.BOLD,
             color=self.colors["primary"],
             text_align=ft.TextAlign.CENTER,
@@ -24,7 +28,7 @@ class HangulCard(ft.Container):
         detail_controls = [
             ft.Text(
                 name_text,
-                size=18,
+                size=max(12, int(18 * _scale)),
                 weight=ft.FontWeight.BOLD,
                 color=self.colors["text"]
             ),
@@ -90,8 +94,8 @@ class HangulCard(ft.Container):
                     )
                 ]
             ),
-            width=140,
-            height=140,
+            width=self.card_size,
+            height=self.card_size,
             bgcolor=self.colors["card_bg"],
             border=ft.Border.all(1, self.colors["border"]),
             border_radius=Styles.BORDER_RADIUS_MD,
