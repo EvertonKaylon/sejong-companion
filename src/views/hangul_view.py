@@ -608,31 +608,41 @@ def hangul_view(page: ft.Page) -> ft.View:
         appbar=app_bar,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         controls=[
-            ft.Container(
-                content=ft.Column(
-                    controls=[
-                        anti_roman_banner,
-                        writing_banner,
-                        ft.Container(
-                            content=ft.Text("Toque nos cards para ver detalhes fonéticos e dicas mnemônicas.", size=11, color=colors["text_sec"], italic=True, text_align=ft.TextAlign.CENTER),
-                            padding=ft.Padding.symmetric(horizontal=4, vertical=2),
-                            alignment=ft.Alignment.CENTER,
+            ft.Row(
+                controls=[
+                    ft.Container(
+                        content=ft.Column(
+                            controls=[
+                                anti_roman_banner,
+                                writing_banner,
+                                ft.Container(
+                                    content=ft.Text("Toque nos cards para ver detalhes fonéticos e dicas mnemônicas.", size=11, color=colors["text_sec"], italic=True, text_align=ft.TextAlign.CENTER),
+                                    padding=ft.Padding.symmetric(horizontal=4, vertical=2),
+                                    alignment=ft.Alignment.CENTER,
+                                ),
+                                tabs,
+                            ],
+                            expand=True,
+                            spacing=4,
+                            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                         ),
-                        tabs,
-                    ],
-                    expand=True,
-                    spacing=4,
-                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                ),
-                width=min(w, 600),
-                padding=ft.Padding.symmetric(horizontal=12, vertical=4),
-                alignment=ft.Alignment.TOP_CENTER,
+                        width=min(w, 600),
+                        padding=ft.Padding.symmetric(horizontal=12, vertical=4),
+                        expand=True,
+                    )
+                ],
+                alignment=ft.MainAxisAlignment.CENTER,
                 expand=True,
             ),
-            ft.Container(
-                content=quiz_button,
-                width=min(w, 600),
-                alignment=ft.Alignment.CENTER,
+            ft.Row(
+                controls=[
+                    ft.Container(
+                        content=quiz_button,
+                        width=min(w, 600),
+                        alignment=ft.Alignment.CENTER,
+                    )
+                ],
+                alignment=ft.MainAxisAlignment.CENTER,
             )
         ],
         scroll=None,

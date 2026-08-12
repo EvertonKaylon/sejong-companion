@@ -260,21 +260,27 @@ def home_view(page: ft.Page) -> ft.View:
         appbar=app_bar,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         controls=[
-            ft.Container(
-                content=ft.Column(
-                    controls=[
-                        welcome_text,
-                        neuro_tip_card,
-                        progress_summary,
-                        ft.Text("Grade Curricular", size=15, weight=ft.FontWeight.BOLD, color=colors["text"]),
-                        ft.Column(controls=unit_cards)
-                    ],
-                ),
-                width=min(w, 600),
-                alignment=ft.Alignment.TOP_CENTER,
+            ft.Row(
+                controls=[
+                    ft.Container(
+                        content=ft.Column(
+                            controls=[
+                                welcome_text,
+                                neuro_tip_card,
+                                progress_summary,
+                                ft.Text("Grade Curricular", size=15, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                                ft.Column(controls=unit_cards)
+                            ],
+                            spacing=0,
+                        ),
+                        width=min(w, 600),
+                        padding=ft.Padding.symmetric(horizontal=12, vertical=8),
+                    )
+                ],
+                alignment=ft.MainAxisAlignment.CENTER,
             )
         ],
         scroll=ft.ScrollMode.AUTO,
         bgcolor=colors["bg"],
-        padding=12
+        padding=0
     )

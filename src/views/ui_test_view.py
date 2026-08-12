@@ -444,27 +444,32 @@ def ui_test_view(page: ft.Page) -> ft.View:
         appbar=app_bar,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         controls=[
-            ft.Container(
-                content=ft.Column(
-                    controls=[
-                        logo_container,
-                        ft.Container(height=12),
-                        palette_card,
-                        ft.Container(height=12),
-                        typography_card,
-                        ft.Container(height=12),
-                        quiz_card,
-                        ft.Container(height=12),
-                        audio_card,
-                        ft.Container(height=24),
-                    ],
-                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                ),
-                width=min(page.width or 400, 600),
-                alignment=ft.Alignment.TOP_CENTER,
+            ft.Row(
+                controls=[
+                    ft.Container(
+                        content=ft.Column(
+                            controls=[
+                                logo_container,
+                                ft.Container(height=12),
+                                palette_card,
+                                ft.Container(height=12),
+                                typography_card,
+                                ft.Container(height=12),
+                                quiz_card,
+                                ft.Container(height=12),
+                                audio_card,
+                                ft.Container(height=24),
+                            ],
+                            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                        ),
+                        width=min(page.width or 400, 600),
+                        padding=16,
+                    )
+                ],
+                alignment=ft.MainAxisAlignment.CENTER,
             )
         ],
         scroll=ft.ScrollMode.AUTO,
         bgcolor=colors["bg"],
-        padding=16,
+        padding=0,
     )

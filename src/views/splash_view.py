@@ -83,7 +83,19 @@ def splash_view(page: ft.Page) -> ft.View:
 
     return ft.View(
         route="/splash",
-        controls=[logo_layout],
+        controls=[
+            ft.Row(
+                controls=[
+                    ft.Container(
+                        content=logo_layout,
+                        width=min(w, 600),
+                        alignment=ft.Alignment.CENTER,
+                    )
+                ],
+                alignment=ft.MainAxisAlignment.CENTER,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            )
+        ],
         bgcolor=colors["bg"],
         vertical_alignment=ft.MainAxisAlignment.CENTER,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,

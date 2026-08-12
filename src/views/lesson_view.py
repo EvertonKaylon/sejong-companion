@@ -31,49 +31,56 @@ def lesson_view(page: ft.Page) -> ft.View:
                 elevation=0,
             ),
             controls=[
-                ft.Container(
-                    content=ft.Column(
-                        controls=[
-                            ft.Container(height=40),
-                            ft.Icon(ft.Icons.CONSTRUCTION_ROUNDED, size=64, color=colors["accent"]),
-                            ft.Container(height=16),
-                            ft.Text(
-                                "Conteúdo em Construção 🚧",
-                                size=20,
-                                weight=ft.FontWeight.BOLD,
-                                color=colors["text"],
-                                text_align=ft.TextAlign.CENTER,
+                ft.Row(
+                    controls=[
+                        ft.Container(
+                            content=ft.Column(
+                                controls=[
+                                    ft.Container(height=40),
+                                    ft.Icon(ft.Icons.CONSTRUCTION_ROUNDED, size=64, color=colors["accent"]),
+                                    ft.Container(height=16),
+                                    ft.Text(
+                                        "Conteúdo em Construção 🚧",
+                                        size=20,
+                                        weight=ft.FontWeight.BOLD,
+                                        color=colors["text"],
+                                        text_align=ft.TextAlign.CENTER,
+                                    ),
+                                    ft.Container(height=8),
+                                    ft.Text(
+                                        "Esta lição está sendo preparada com muito carinho pela equipe Sejong Companion.\n\nEm breve, novos conteúdos estarão disponíveis!",
+                                        size=14,
+                                        color=colors["text_sec"],
+                                        text_align=ft.TextAlign.CENTER,
+                                        no_wrap=False,
+                                    ),
+                                    ft.Container(height=24),
+                                    ft.ElevatedButton(
+                                        content="Voltar ao Menu",
+                                        icon=ft.Icons.HOME_ROUNDED,
+                                        style=ft.ButtonStyle(
+                                            color=ft.Colors.WHITE,
+                                            bgcolor=colors["primary"],
+                                            shape=ft.RoundedRectangleBorder(radius=Styles.BORDER_RADIUS_SM),
+                                            padding=ft.Padding.symmetric(horizontal=20, vertical=12),
+                                        ),
+                                        on_click=lambda e: page.router.navigate_to("/home"),
+                                    ),
+                                ],
+                                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                                spacing=0,
                             ),
-                            ft.Container(height=8),
-                            ft.Text(
-                                "Esta lição está sendo preparada com muito carinho pela equipe Sejong Companion.\n\nEm breve, novos conteúdos estarão disponíveis!",
-                                size=14,
-                                color=colors["text_sec"],
-                                text_align=ft.TextAlign.CENTER,
-                                no_wrap=False,
-                            ),
-                            ft.Container(height=24),
-                            ft.ElevatedButton(
-                                content="Voltar ao Menu",
-                                icon=ft.Icons.HOME_ROUNDED,
-                                style=ft.ButtonStyle(
-                                    color=ft.Colors.WHITE,
-                                    bgcolor=colors["primary"],
-                                    shape=ft.RoundedRectangleBorder(radius=Styles.BORDER_RADIUS_SM),
-                                    padding=ft.Padding.symmetric(horizontal=20, vertical=12),
-                                ),
-                                on_click=lambda e: page.router.navigate_to("/home"),
-                            ),
-                        ],
-                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                        spacing=0,
-                    ),
-                    padding=Responsive.value(w, compact=14, medium=24),
-                    alignment=ft.Alignment.CENTER,
-                    width=min(w, 600),
-                ),
+                            padding=Responsive.value(w, compact=14, medium=24),
+                            alignment=ft.Alignment.CENTER,
+                            width=min(w, 600),
+                        )
+                    ],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    expand=True,
+                )
             ],
             bgcolor=colors["bg"],
+            padding=0,
         )
 
     app_bar = ft.AppBar(
@@ -341,16 +348,27 @@ def lesson_view(page: ft.Page) -> ft.View:
         appbar=app_bar,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         controls=[
-            ft.Container(
-                content=tabs,
+            ft.Row(
+                controls=[
+                    ft.Container(
+                        content=tabs,
+                        expand=True,
+                        width=min(w, 600),
+                        padding=ft.Padding.symmetric(horizontal=12, vertical=4),
+                    )
+                ],
+                alignment=ft.MainAxisAlignment.CENTER,
                 expand=True,
-                width=min(w, 600),
-                alignment=ft.Alignment.TOP_CENTER,
             ),
-            ft.Container(
-                content=exercise_button,
-                width=min(w, 600),
-                alignment=ft.Alignment.CENTER,
+            ft.Row(
+                controls=[
+                    ft.Container(
+                        content=exercise_button,
+                        width=min(w, 600),
+                        alignment=ft.Alignment.CENTER,
+                    )
+                ],
+                alignment=ft.MainAxisAlignment.CENTER,
             )
         ],
         scroll=None,

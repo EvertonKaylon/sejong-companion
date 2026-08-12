@@ -68,6 +68,7 @@ def main(page: ft.Page):
     # Configurações de layout responsivo mobile (384x715)
     page.padding = 0
     page.spacing = 0
+    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
 
     # Configurar responsividade mobile / PWA e viewport de tela cheia
     FullscreenService.setup_mobile_responsive_viewport(page)
@@ -84,7 +85,7 @@ def main(page: ft.Page):
     router.register_route("/hangul", hangul_view)
     router.register_route("/lesson", lesson_view)
     router.register_route("/quiz", quiz_view)
-    router.register_route("/ui_test", ui_test_view)
+    #router.register_route("/ui_test", ui_test_view)
 
     # Inicializar o servico de audio global
     from src.audio_service import AudioService
