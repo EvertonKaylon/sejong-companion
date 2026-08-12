@@ -79,7 +79,7 @@ def quiz_view(page: ft.Page) -> ft.View:
                     ),
                     padding=Responsive.value(w, compact=14, medium=24),
                     alignment=ft.Alignment.CENTER,
-                    max_width=600,
+                    width=min(w, 600),
                 ),
             ],
             bgcolor=colors["bg"],
@@ -367,8 +367,7 @@ def quiz_view(page: ft.Page) -> ft.View:
                     ],
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 ),
-                max_width=600,
-                width=float("inf"),
+                width=min(w, 600),
                 alignment=ft.Alignment.TOP_CENTER,
             )
         ],

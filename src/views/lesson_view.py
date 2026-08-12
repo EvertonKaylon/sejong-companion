@@ -70,7 +70,7 @@ def lesson_view(page: ft.Page) -> ft.View:
                     ),
                     padding=Responsive.value(w, compact=14, medium=24),
                     alignment=ft.Alignment.CENTER,
-                    max_width=600,
+                    width=min(w, 600),
                 ),
             ],
             bgcolor=colors["bg"],
@@ -344,14 +344,12 @@ def lesson_view(page: ft.Page) -> ft.View:
             ft.Container(
                 content=tabs,
                 expand=True,
-                max_width=600,
-                width=float("inf"),
+                width=min(w, 600),
                 alignment=ft.Alignment.TOP_CENTER,
             ),
             ft.Container(
                 content=exercise_button,
-                max_width=600,
-                width=float("inf"),
+                width=min(w, 600),
                 alignment=ft.Alignment.CENTER,
             )
         ],

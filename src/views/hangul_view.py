@@ -576,15 +576,13 @@ def hangul_view(page: ft.Page) -> ft.View:
                     spacing=4,
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 ),
-                max_width=600,
-                width=float("inf"),
+                width=min(w, 600),
                 alignment=ft.Alignment.TOP_CENTER,
                 expand=True,
             ),
             ft.Container(
                 content=quiz_button,
-                max_width=600,
-                width=float("inf"),
+                width=min(w, 600),
                 alignment=ft.Alignment.CENTER,
             )
         ],

@@ -270,8 +270,7 @@ def home_view(page: ft.Page) -> ft.View:
                         ft.Column(controls=unit_cards)
                     ],
                 ),
-                max_width=600,
-                width=float("inf"),
+                width=min(w, 600),
                 alignment=ft.Alignment.TOP_CENTER,
             )
         ],

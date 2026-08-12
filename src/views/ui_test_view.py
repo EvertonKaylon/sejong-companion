@@ -460,8 +460,7 @@ def ui_test_view(page: ft.Page) -> ft.View:
                     ],
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 ),
-                max_width=600,
-                width=float("inf"),
+                width=min(page.width or 400, 600),
                 alignment=ft.Alignment.TOP_CENTER,
             )
         ],
