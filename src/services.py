@@ -1,9 +1,9 @@
 import json
 import os
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, date
 import flet as ft
-from .models import Unit, UnitIntroData, UnitOneData, UnitData, MemoryNode
+from .models import FlashcardItem, Unit, UnitIntroData, UnitOneData, UnitData, MemoryNode
 
 class DataService:
     @staticmethod
@@ -47,6 +47,81 @@ class DataService:
             print(f"Error loading {unit_id}: {type(e).__name__}")
             return None
 
+    @staticmethod
+    def _flashcard_difficulty(unit_number: int, word: str, category: str) -> str:
+        """Classifica o material sem exigir uma segunda cópia dos JSONs.
+
+        Itens básicos permanecem fáceis mesmo quando reaparecem em unidades
+        posteriores. Estruturas gramaticais avançadas e o conteúdo das últimas
+        unidades entram na trilha difícil.
+        """
+        normalized = f"{word} {category}".lower()
+        easy_terms = ("cumpr", "pronom", "numero", "수", "인사", "나라")
+        hard_markers = ("았", "었", "겠", "싶", "까요", "불규칙", "ㅂ", "classificador", "단위")
+        if any(term in normalized for term in easy_terms) or unit_number <= 2:
+            return "easy"
+        if any(marker in normalized for marker in hard_markers) or unit_number >= 6:
+            return "hard"
+        return "medium"
+
+    @staticmethod
+    def get_all_flashcards(difficulty: Optional[str] = None) -> List[FlashcardItem]:
+        """Compila o vocabulário das unidades 01–10 em cartões consistentes."""
+        cards: List[FlashcardItem] = []
+        for number in range(1, 11):
+            unit_id = f"unit_{number:02d}"
+            unit = DataService.get_unit(unit_id)
+            if not unit:
+                continue
+            for index, vocab in enumerate(unit.vocabulary):
+                level = DataService._flashcard_difficulty(number, vocab.word, vocab.category or "")
+                if difficulty and difficulty != level:
+                    continue
+                cards.append(FlashcardItem(
+                    id=f"{unit_id}:vocab:{index}",
+                    unit_id=unit_id,
+                    korean=vocab.word,
+                    portuguese=vocab.meaning,
+                    difficulty=level,
+                    category=vocab.category or "vocabulário",
+                    example_kr=vocab.example_kr,
+                    example_pt=vocab.example_pt,
+                    lusophone_tip=vocab.neuro_tip,
+                ))
+        return cards
+
+    @staticmethod
+    def get_sentence_builder_challenges(difficulty: str) -> List[dict]:
+        """Extrai desafios SOV existentes para não duplicar o currículo."""
+        if difficulty not in {"easy", "medium", "hard"}:
+            return []
+        challenges: List[dict] = []
+        for number in range(1, 11):
+            unit_id = f"unit_{number:02d}"
+            unit = DataService.get_unit(unit_id)
+            if not unit:
+                continue
+            for exercise in unit.exercises:
+                if exercise.type != "drag_and_drop_sov" or not exercise.correct_order:
+                    continue
+                category = "sintaxe"
+                level = DataService._flashcard_difficulty(number, " ".join(exercise.correct_order), category)
+                if level != difficulty:
+                    continue
+                prompt = exercise.question.split(":", 1)[-1].strip()
+                challenges.append({
+                    "id": f"builder:{unit_id}:{exercise.id}",
+                    "unit_id": unit_id,
+                    "difficulty": level,
+                    "prompt_pt": prompt,
+                    "answer": " ".join(exercise.correct_order),
+                    "words": list(exercise.words or exercise.correct_order),
+                    "correct_order": list(exercise.correct_order),
+                    "sov_breakdown": [item.model_dump() for item in (exercise.sov_items or [])],
+                    "explanation": exercise.explanation or "",
+                })
+        return challenges
+
 class ProgressService:
     """Gerenciador de progresso com persistência em disco e isolamento por sessão.
     
@@ -57,6 +132,8 @@ class ProgressService:
     
     _file_path_override: Optional[str] = None  # Override para testes
     _sessions: dict = {}  # {session_id: store_dict}
+    DAILY_XP = 10
+    MILESTONE_XP = 50
 
     # Cadeia de desbloqueio progressivo: ao completar a chave, desbloqueia o valor
     _UNLOCK_CHAIN: dict = {
@@ -194,6 +271,124 @@ class ProgressService:
             return "none"  # Nunca estudada
         return node.vitality_level()
 
+    # ─── Revisão diária por item ───
+
+    def get_item_memory_node(self, item_id: str) -> MemoryNode:
+        """Obtém a memória individual sem colidir com nós legados de unidade."""
+        key = f"memory_item_{item_id}"
+        raw = self._store.get(key)
+        if raw and isinstance(raw, dict):
+            return MemoryNode(**raw)
+        return MemoryNode(unit_id=item_id)
+
+    def _save_item_memory_node(self, item_id: str, node: MemoryNode) -> None:
+        self._store[f"memory_item_{item_id}"] = node.model_dump()
+        ProgressService._save_to_disk(self._session_id, self._store)
+
+    def get_due_reviews(self) -> List[dict]:
+        """Retorna apenas cartões já estudados com retenção abaixo de 75%."""
+        due_reviews: List[dict] = []
+        cards = {card.id: card for card in DataService.get_all_flashcards()}
+        for key, raw in self._store.items():
+            if not key.startswith("memory_item_") or not isinstance(raw, dict):
+                continue
+            item_id = key.removeprefix("memory_item_")
+            card = cards.get(item_id)
+            if not card:
+                continue
+            try:
+                node = MemoryNode(**raw)
+                retention = node.calculate_stability()
+            except Exception:
+                continue
+            if node.last_reviewed and retention < 0.75:
+                due_reviews.append({
+                    "item": card,
+                    "retention": retention,
+                    "half_life": node.half_life,
+                    "last_reviewed": node.last_reviewed,
+                })
+        return sorted(due_reviews, key=lambda review: review["retention"])
+
+    def record_item_recall(self, item_id: str, rating: str, response_time_ms: int = 2000) -> MemoryNode:
+        """Atualiza HLR com os multiplicadores explícitos da autoavaliação."""
+        rating = rating.lower().strip()
+        multipliers = {"again": 0.3, "hard": 0.3, "good": 1.5, "easy": 2.2}
+        if rating not in multipliers:
+            raise ValueError("rating deve ser again, hard, good ou easy")
+        node = self.get_item_memory_node(item_id)
+        node.half_life = max(0.01, node.half_life * multipliers[rating])
+        if rating in {"again", "hard"}:
+            node.error_count += 1
+        elif node.error_count:
+            node.error_count -= 1
+        node.last_reviewed = datetime.now().isoformat()
+        self._save_item_memory_node(item_id, node)
+        self.record_daily_activity()
+        return node
+
+    def get_daily_streak(self) -> int:
+        """Compatibilidade para o contador de dias estudados.
+
+        O nome histórico é preservado para não quebrar a aplicação, mas ele
+        não representa uma sequência consecutiva: faltar um dia nunca reduz
+        este número.
+        """
+        return int(self._store.get("study_days", self._store.get("daily_streak", 0)) or 0)
+
+    def get_study_days(self, year: Optional[int] = None) -> int:
+        """Conta dias distintos de estudo; por padrão, no ano atual."""
+        target_year = year or date.today().year
+        dates = self._store.get("study_dates", [])
+        if isinstance(dates, list):
+            return sum(1 for value in set(dates) if str(value).startswith(f"{target_year}-"))
+        return 0
+
+    def get_total_xp(self) -> int:
+        """XP de presença, acumulado e nunca penalizado por ausências."""
+        return int(self._store.get("total_xp", 0) or 0)
+
+    @classmethod
+    def _is_milestone(cls, study_days: int) -> bool:
+        """Marcos: 7 dias e, depois, 15, 20, 25, 30..."""
+        return study_days == 7 or (study_days >= 15 and study_days % 5 == 0)
+
+    def record_daily_activity(self) -> int:
+        """Registra presença uma vez ao dia, sem quebrar sequência por falta.
+
+        Cada novo dia soma o XP padrão. Os marcos de disciplina recebem XP
+        extra, sem depender de acertos, velocidade ou quantidade de cartões.
+        """
+        today = date.today()
+        today_value = today.isoformat()
+        recorded_dates = self._store.get("study_dates", [])
+        recorded_dates = recorded_dates if isinstance(recorded_dates, list) else []
+        # Dados anteriores tinham apenas a última data + streak. Mantemos a
+        # contagem legada como piso, sem fingir conhecer as datas antigas.
+        total_days = self.get_daily_streak()
+        if today_value in recorded_dates or self._store.get("last_activity_date") == today_value:
+            return total_days
+
+        recorded_dates.append(today_value)
+        total_days += 1
+        bonus = ProgressService.MILESTONE_XP if self._is_milestone(total_days) else 0
+        earned = ProgressService.DAILY_XP + bonus
+        self._store["study_dates"] = recorded_dates
+        self._store["study_days"] = total_days
+        # Mantém o nome antigo para instalações que já persistiam esse campo.
+        self._store["daily_streak"] = total_days
+        self._store["last_activity_date"] = today.isoformat()
+        self._store["total_xp"] = self.get_total_xp() + earned
+        self._store["last_activity_reward"] = {
+            "date": today_value,
+            "base_xp": ProgressService.DAILY_XP,
+            "bonus_xp": bonus,
+            "total_xp": earned,
+            "milestone": total_days if bonus else None,
+        }
+        ProgressService._save_to_disk(self._session_id, self._store)
+        return total_days
+
 
 class FullscreenService:
     """Serviço para alternância de Tela Cheia (Fullscreen) e responsividade Mobile/PWA."""
@@ -308,4 +503,3 @@ class FullscreenService:
             on_click=lambda e: FullscreenService.toggle_fullscreen(page),
             tooltip="Alternar Modo Tela Cheia (Fullscreen)",
         )
-

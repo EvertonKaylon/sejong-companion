@@ -117,8 +117,14 @@
       "title": "Partícula de Sujeito: 이 / 가",
       "explanation": "A partícula **이/가** é adicionada ao substantivo para indicar que ele é o sujeito da frase.\n\n- Usa-se **이** quando o substantivo termina em consoante (받침).\n- Usa-se **가** quando o substantivo termina em vogal.",
       "examples": [
-        {"kr": "선생님이", "pt": "O professor (sujeito)"},
-        {"kr": "의사가", "pt": "O médico (sujeito)"}
+        {
+          "kr": "선생님이",
+          "pt": "O professor (sujeito)"
+        },
+        {
+          "kr": "의사가",
+          "pt": "O médico (sujeito)"
+        }
       ],
       "lusophone_tip": "No português, identificamos o sujeito pela ordem das palavras. No coreano, são as partículas que cumprem esse papel. Memorizar se a palavra termina com ou sem 받침 é essencial!"
     },
@@ -127,8 +133,14 @@
       "title": "Negação com o verbo ser: 이/가 아니에요",
       "explanation": "A estrutura **이/가 아니에요** é usada para dizer 'não ser' algo.\n\nComo no caso da partícula de sujeito, escolhe-se **이** ou **가** com base na presença de 받침 no substantivo anterior, e depois adiciona-se **아니에요**.",
       "examples": [
-        {"kr": "저는 학생이 아니에요.", "pt": "Eu não sou estudante."},
-        {"kr": "투안은 의사가 아니에요.", "pt": "Tuan não é médico."}
+        {
+          "kr": "저는 학생이 아니에요.",
+          "pt": "Eu não sou estudante."
+        },
+        {
+          "kr": "투안은 의사가 아니에요.",
+          "pt": "Tuan não é médico."
+        }
       ],
       "lusophone_tip": "Diferente do português, onde basta adicionar 'não' antes do verbo (ex: não sou), no coreano, o substantivo negado deve receber a partícula de sujeito (이/가) antes de '아니에요'."
     }
@@ -145,7 +157,12 @@
       "id": "u2_q1",
       "type": "multiple_choice",
       "question": "Qual é a partícula correta para '학생' (estudante)?",
-      "options": ["이", "가", "는", "은"],
+      "options": [
+        "이",
+        "가",
+        "는",
+        "은"
+      ],
       "correct_index": 0,
       "explanation": "'학생' termina em consoante (받침 'ㅇ'), logo, utiliza-se a partícula '이'."
     },
@@ -153,7 +170,12 @@
       "id": "u2_q2",
       "type": "multiple_choice",
       "question": "Qual é a partícula correta para '의사' (médico)?",
-      "options": ["이", "가", "을", "를"],
+      "options": [
+        "이",
+        "가",
+        "을",
+        "를"
+      ],
       "correct_index": 1,
       "explanation": "'의사' termina em vogal, logo, utiliza-se a partícula '가'."
     },
@@ -161,7 +183,12 @@
       "id": "u2_q3",
       "type": "multiple_choice",
       "question": "Como dizer 'Não sou médico'?",
-      "options": ["의사이 아니에요.", "의사가 아니에요.", "의사는 아니에요.", "의사 아니에요가."],
+      "options": [
+        "의사이 아니에요.",
+        "의사가 아니에요.",
+        "의사는 아니에요.",
+        "의사 아니에요가."
+      ],
       "correct_index": 1,
       "explanation": "Como '의사' termina em vogal, usamos '가 아니에요'."
     },
@@ -169,7 +196,12 @@
       "id": "u2_q4",
       "type": "multiple_choice",
       "question": "Como se diz 'Coreia do Sul' em coreano?",
-      "options": ["미국", "한국", "중국", "일본"],
+      "options": [
+        "미국",
+        "한국",
+        "중국",
+        "일본"
+      ],
       "correct_index": 1,
       "explanation": "'한국' significa Coreia do Sul."
     },
@@ -177,7 +209,12 @@
       "id": "u2_q5",
       "type": "multiple_choice",
       "question": "O que significa '중국'?",
-      "options": ["Japão", "Vietnã", "China", "Brasil"],
+      "options": [
+        "Japão",
+        "Vietnã",
+        "China",
+        "Brasil"
+      ],
       "correct_index": 2,
       "explanation": "'중국' significa China."
     },
@@ -185,33 +222,182 @@
       "id": "u2_q6",
       "type": "multiple_choice",
       "question": "Como se lê o número '3' em números sino-coreanos?",
-      "options": ["일", "이", "삼", "사"],
+      "options": [
+        "일",
+        "이",
+        "삼",
+        "사"
+      ],
       "correct_index": 2,
       "explanation": "O número 3 é '삼'."
     },
     {
       "id": "u2_q7",
-      "type": "order_words",
+      "type": "drag_and_drop_sov",
       "question": "Ordene a frase: Tuan não é estudante.",
-      "words": ["학생이", "아니에요.", "투안은"],
-      "correct_order": ["투안은", "학생이", "아니에요."],
-      "explanation": "Sujeito (투안은) + Substantivo com partícula 이/가 (학생이) + Verbo de negação (아니에요)."
+      "words": [
+        "학생이",
+        "아니에요.",
+        "투안은"
+      ],
+      "correct_order": [
+        "투안은",
+        "학생이",
+        "아니에요."
+      ],
+      "explanation": "Sujeito (투안은) + Substantivo com partícula 이/가 (학생이) + Verbo de negação (아니에요).",
+      "sov_items": [
+        {
+          "word": "학생이",
+          "role": "COMPLEMENT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "아니에요.",
+          "role": "PREDICATE",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "투안은",
+          "role": "SUBJECT",
+          "snap_anchor": "square"
+        }
+      ],
+      "sov_slots": [
+        {
+          "role": "SUBJECT",
+          "label": "주어 (S)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "COMPLEMENT",
+          "label": "보어 (Comp)",
+          "accepted_roles": [
+            "COMPLEMENT"
+          ]
+        },
+        {
+          "role": "PREDICATE",
+          "label": "서술어 (Pred)",
+          "accepted_roles": [
+            "PREDICATE"
+          ]
+        }
+      ]
     },
     {
       "id": "u2_q8",
-      "type": "order_words",
+      "type": "drag_and_drop_sov",
       "question": "Ordene a frase: Eu não sou médico.",
-      "words": ["저는", "아니에요.", "의사가"],
-      "correct_order": ["저는", "의사가", "아니에요."],
-      "explanation": "Sujeito (저는) + Substantivo (의사가) + Verbo de negação (아니에요)."
+      "words": [
+        "저는",
+        "아니에요.",
+        "의사가"
+      ],
+      "correct_order": [
+        "저는",
+        "의사가",
+        "아니에요."
+      ],
+      "explanation": "Sujeito (저는) + Substantivo (의사가) + Verbo de negação (아니에요).",
+      "sov_items": [
+        {
+          "word": "저는",
+          "role": "SUBJECT",
+          "snap_anchor": "square"
+        },
+        {
+          "word": "아니에요.",
+          "role": "PREDICATE",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "의사가",
+          "role": "COMPLEMENT",
+          "snap_anchor": "round"
+        }
+      ],
+      "sov_slots": [
+        {
+          "role": "SUBJECT",
+          "label": "주어 (S)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "COMPLEMENT",
+          "label": "보어 (Comp)",
+          "accepted_roles": [
+            "COMPLEMENT"
+          ]
+        },
+        {
+          "role": "PREDICATE",
+          "label": "서술어 (Pred)",
+          "accepted_roles": [
+            "PREDICATE"
+          ]
+        }
+      ]
     },
     {
       "id": "u2_q9",
-      "type": "order_words",
+      "type": "drag_and_drop_sov",
       "question": "Ordene a frase: Tuan é vietnamita.",
-      "words": ["사람이에요.", "투안 씨는", "베트남"],
-      "correct_order": ["투안 씨는", "베트남", "사람이에요."],
-      "explanation": "Sujeito (투안 씨는) + País (베트남) + 사람이에요."
+      "words": [
+        "사람이에요.",
+        "투안 씨는",
+        "베트남"
+      ],
+      "correct_order": [
+        "투안 씨는",
+        "베트남",
+        "사람이에요."
+      ],
+      "explanation": "Sujeito (투안 씨는) + País (베트남) + 사람이에요.",
+      "sov_items": [
+        {
+          "word": "사람이에요.",
+          "role": "PREDICATE",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "투안 씨는",
+          "role": "SUBJECT",
+          "snap_anchor": "square"
+        },
+        {
+          "word": "베트남",
+          "role": "COMPLEMENT",
+          "snap_anchor": "square"
+        }
+      ],
+      "sov_slots": [
+        {
+          "role": "SUBJECT",
+          "label": "주어 (S)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "COMPLEMENT",
+          "label": "보어 (Comp)",
+          "accepted_roles": [
+            "COMPLEMENT"
+          ]
+        },
+        {
+          "role": "PREDICATE",
+          "label": "서술어 (Pred)",
+          "accepted_roles": [
+            "PREDICATE"
+          ]
+        }
+      ]
     }
   ]
 }

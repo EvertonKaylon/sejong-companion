@@ -157,64 +157,280 @@
       "id": "ex_06_1",
       "type": "multiple_choice",
       "question": "Qual é a forma correta do número '1' quando usado com um classificador (como '개')?",
-      "options": ["하나", "한", "둘", "두"],
+      "options": [
+        "하나",
+        "한",
+        "둘",
+        "두"
+      ],
       "correct_index": 1
     },
     {
       "id": "ex_06_2",
       "type": "multiple_choice",
       "question": "Qual classificador é usado para contar PESSOAS?",
-      "options": ["개", "병", "잔", "명"],
+      "options": [
+        "개",
+        "병",
+        "잔",
+        "명"
+      ],
       "correct_index": 3
     },
     {
       "id": "ex_06_3",
       "type": "multiple_choice",
       "question": "Qual é a tradução de '다섯'?",
-      "options": ["Dois (2)", "Três (3)", "Quatro (4)", "Cinco (5)"],
+      "options": [
+        "Dois (2)",
+        "Três (3)",
+        "Quatro (4)",
+        "Cinco (5)"
+      ],
       "correct_index": 3
     },
     {
       "id": "ex_06_4",
       "type": "multiple_choice",
       "question": "Complete a frase: 사과 한 __ 주세요.",
-      "options": ["개", "명", "잔", "병"],
+      "options": [
+        "개",
+        "명",
+        "잔",
+        "병"
+      ],
       "correct_index": 0
     },
     {
       "id": "ex_06_5",
       "type": "multiple_choice",
       "question": "Como se pede educadamente 'por favor, dê' em coreano?",
-      "options": ["가세요", "주세요", "오세요", "마셔요"],
+      "options": [
+        "가세요",
+        "주세요",
+        "오세요",
+        "마셔요"
+      ],
       "correct_index": 1
     },
     {
       "id": "ex_06_6",
       "type": "multiple_choice",
       "question": "Como se diz '3 garrafas de água'?",
-      "options": ["물 셋 병", "물 세 병", "물 두 병", "물 한 병"],
+      "options": [
+        "물 셋 병",
+        "물 세 병",
+        "물 두 병",
+        "물 한 병"
+      ],
       "correct_index": 1
     },
     {
       "id": "ex_06_7",
-      "type": "order_words",
+      "type": "drag_and_drop_sov",
       "question": "Organize as palavras para formar: 'Dê-me cinco maçãs, por favor.'",
-      "words": ["다섯", "주세요.", "개", "사과"],
-      "correct_order": ["사과", "다섯", "개", "주세요."]
+      "words": [
+        "다섯",
+        "주세요.",
+        "개",
+        "사과"
+      ],
+      "correct_order": [
+        "사과",
+        "다섯",
+        "개",
+        "주세요."
+      ],
+      "sov_items": [
+        {
+          "word": "다섯",
+          "role": "QUANTITY",
+          "snap_anchor": "square"
+        },
+        {
+          "word": "주세요.",
+          "role": "VERB",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "개",
+          "role": "COUNTER",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "사과",
+          "role": "OBJECT",
+          "snap_anchor": "round"
+        }
+      ],
+      "sov_slots": [
+        {
+          "role": "OBJECT",
+          "label": "목적어 (O)",
+          "accepted_roles": [
+            "OBJECT"
+          ]
+        },
+        {
+          "role": "QUANTITY",
+          "label": "수량 (Qty)",
+          "accepted_roles": [
+            "QUANTITY"
+          ]
+        },
+        {
+          "role": "COUNTER",
+          "label": "단위 (Count)",
+          "accepted_roles": [
+            "COUNTER"
+          ]
+        },
+        {
+          "role": "VERB",
+          "label": "동사 (V)",
+          "accepted_roles": [
+            "VERB"
+          ]
+        }
+      ]
     },
     {
       "id": "ex_06_8",
-      "type": "order_words",
+      "type": "drag_and_drop_sov",
       "question": "Organize as palavras para formar: 'Há dois estudantes.'",
-      "words": ["있어요.", "학생이", "두", "명"],
-      "correct_order": ["학생이", "두", "명", "있어요."]
+      "words": [
+        "있어요.",
+        "학생이",
+        "두",
+        "명"
+      ],
+      "correct_order": [
+        "학생이",
+        "두",
+        "명",
+        "있어요."
+      ],
+      "sov_items": [
+        {
+          "word": "있어요.",
+          "role": "PREDICATE",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "학생이",
+          "role": "SUBJECT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "두",
+          "role": "QUANTITY",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "명",
+          "role": "COUNTER",
+          "snap_anchor": "square"
+        }
+      ],
+      "sov_slots": [
+        {
+          "role": "SUBJECT",
+          "label": "주어 (S)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "QUANTITY",
+          "label": "수량 (Qty)",
+          "accepted_roles": [
+            "QUANTITY"
+          ]
+        },
+        {
+          "role": "COUNTER",
+          "label": "단위 (Count)",
+          "accepted_roles": [
+            "COUNTER"
+          ]
+        },
+        {
+          "role": "PREDICATE",
+          "label": "서술어 (Pred)",
+          "accepted_roles": [
+            "PREDICATE"
+          ]
+        }
+      ]
     },
     {
       "id": "ex_06_9",
-      "type": "order_words",
+      "type": "drag_and_drop_sov",
       "question": "Organize as palavras para formar: 'Dê-me duas xícaras de café, por favor.'",
-      "words": ["주세요.", "커피", "두", "잔"],
-      "correct_order": ["커피", "두", "잔", "주세요."]
+      "words": [
+        "주세요.",
+        "커피",
+        "두",
+        "잔"
+      ],
+      "correct_order": [
+        "커피",
+        "두",
+        "잔",
+        "주세요."
+      ],
+      "sov_items": [
+        {
+          "word": "주세요.",
+          "role": "VERB",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "커피",
+          "role": "OBJECT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "두",
+          "role": "QUANTITY",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "잔",
+          "role": "COUNTER",
+          "snap_anchor": "square"
+        }
+      ],
+      "sov_slots": [
+        {
+          "role": "OBJECT",
+          "label": "목적어 (O)",
+          "accepted_roles": [
+            "OBJECT"
+          ]
+        },
+        {
+          "role": "QUANTITY",
+          "label": "수량 (Qty)",
+          "accepted_roles": [
+            "QUANTITY"
+          ]
+        },
+        {
+          "role": "COUNTER",
+          "label": "단위 (Count)",
+          "accepted_roles": [
+            "COUNTER"
+          ]
+        },
+        {
+          "role": "VERB",
+          "label": "동사 (V)",
+          "accepted_roles": [
+            "VERB"
+          ]
+        }
+      ]
     }
   ]
 }

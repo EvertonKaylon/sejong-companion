@@ -157,64 +157,238 @@
       "id": "ex_05_1",
       "type": "multiple_choice",
       "question": "Selecione a palavra correta para 'mercado'.",
-      "options": ["식당", "회사", "시장", "학교"],
+      "options": [
+        "식당",
+        "회사",
+        "시장",
+        "학교"
+      ],
       "correct_index": 2
     },
     {
       "id": "ex_05_2",
       "type": "multiple_choice",
       "question": "Preencha a lacuna: 저는 학교__ 가요.",
-      "options": ["를", "에", "은", "가"],
+      "options": [
+        "를",
+        "에",
+        "은",
+        "가"
+      ],
       "correct_index": 1
     },
     {
       "id": "ex_05_3",
       "type": "multiple_choice",
       "question": "Qual é a tradução de '과일'?",
-      "options": ["Fruta", "Água", "Pão", "Leite"],
+      "options": [
+        "Fruta",
+        "Água",
+        "Pão",
+        "Leite"
+      ],
       "correct_index": 0
     },
     {
       "id": "ex_05_4",
       "type": "multiple_choice",
       "question": "Complete: 빵__ 우유를 먹어요.",
-      "options": ["가", "를", "하고", "에"],
+      "options": [
+        "가",
+        "를",
+        "하고",
+        "에"
+      ],
       "correct_index": 2
     },
     {
       "id": "ex_05_5",
       "type": "multiple_choice",
       "question": "Como se diz 'ir' em coreano?",
-      "options": ["오다", "먹다", "사다", "가다"],
+      "options": [
+        "오다",
+        "먹다",
+        "사다",
+        "가다"
+      ],
       "correct_index": 3
     },
     {
       "id": "ex_05_6",
       "type": "multiple_choice",
       "question": "Selecione a palavra que significa 'comprar'.",
-      "options": ["가다", "사다", "오다", "마시다"],
+      "options": [
+        "가다",
+        "사다",
+        "오다",
+        "마시다"
+      ],
       "correct_index": 1
     },
     {
       "id": "ex_05_7",
-      "type": "order_words",
+      "type": "drag_and_drop_sov",
       "question": "Organize as palavras para formar a frase: 'Eu vou à escola.'",
-      "words": ["학교에", "가요.", "저는"],
-      "correct_order": ["저는", "학교에", "가요."]
+      "words": [
+        "학교에",
+        "가요.",
+        "저는"
+      ],
+      "correct_order": [
+        "저는",
+        "학교에",
+        "가요."
+      ],
+      "sov_items": [
+        {
+          "word": "학교에",
+          "role": "LOCATION",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "가요.",
+          "role": "VERB",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "저는",
+          "role": "SUBJECT",
+          "snap_anchor": "square"
+        }
+      ],
+      "sov_slots": [
+        {
+          "role": "SUBJECT",
+          "label": "주어 (S)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "LOCATION",
+          "label": "장소 (Loc)",
+          "accepted_roles": [
+            "LOCATION"
+          ]
+        },
+        {
+          "role": "VERB",
+          "label": "동사 (V)",
+          "accepted_roles": [
+            "VERB"
+          ]
+        }
+      ]
     },
     {
       "id": "ex_05_8",
-      "type": "order_words",
+      "type": "drag_and_drop_sov",
       "question": "Organize as palavras para formar a frase: 'Compro pão e leite.'",
-      "words": ["사요.", "빵하고", "우유를"],
-      "correct_order": ["빵하고", "우유를", "사요."]
+      "words": [
+        "사요.",
+        "빵하고",
+        "우유를"
+      ],
+      "correct_order": [
+        "빵하고",
+        "우유를",
+        "사요."
+      ],
+      "sov_items": [
+        {
+          "word": "사요.",
+          "role": "VERB",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "빵하고",
+          "role": "OBJECT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "우유를",
+          "role": "OBJECT",
+          "snap_anchor": "square"
+        }
+      ],
+      "sov_slots": [
+        {
+          "role": "OBJECT",
+          "label": "목적어 (O)",
+          "accepted_roles": [
+            "OBJECT"
+          ]
+        },
+        {
+          "role": "OBJECT",
+          "label": "목적어 (O)",
+          "accepted_roles": [
+            "OBJECT"
+          ]
+        },
+        {
+          "role": "VERB",
+          "label": "동사 (V)",
+          "accepted_roles": [
+            "VERB"
+          ]
+        }
+      ]
     },
     {
       "id": "ex_05_9",
-      "type": "order_words",
+      "type": "drag_and_drop_sov",
       "question": "Organize as palavras para formar a frase: 'O amigo vai ao mercado.'",
-      "words": ["시장에", "친구가", "가요."],
-      "correct_order": ["친구가", "시장에", "가요."]
+      "words": [
+        "시장에",
+        "친구가",
+        "가요."
+      ],
+      "correct_order": [
+        "친구가",
+        "시장에",
+        "가요."
+      ],
+      "sov_items": [
+        {
+          "word": "시장에",
+          "role": "LOCATION",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "친구가",
+          "role": "SUBJECT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "가요.",
+          "role": "VERB",
+          "snap_anchor": "round"
+        }
+      ],
+      "sov_slots": [
+        {
+          "role": "SUBJECT",
+          "label": "주어 (S)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "LOCATION",
+          "label": "장소 (Loc)",
+          "accepted_roles": [
+            "LOCATION"
+          ]
+        },
+        {
+          "role": "VERB",
+          "label": "동사 (V)",
+          "accepted_roles": [
+            "VERB"
+          ]
+        }
+      ]
     }
   ]
 }

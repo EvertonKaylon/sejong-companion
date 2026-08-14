@@ -256,7 +256,12 @@
       "id": "u1_q1",
       "type": "multiple_choice",
       "question": "Complete a lacuna: 저는 학생___.",
-      "options": ["예요", "이에요", "하고", "입니다"],
+      "options": [
+        "예요",
+        "이에요",
+        "하고",
+        "입니다"
+      ],
       "correct_index": 1,
       "explanation": "Como 학생 termina com 받침, usamos '이에요'."
     },
@@ -264,7 +269,12 @@
       "id": "u1_q2",
       "type": "multiple_choice",
       "question": "Como se diz 'Pessoa do Brasil' (Brasileiro/a) em coreano?",
-      "options": ["브라질 이에요", "브라질 사람", "한국 사람", "브라질 사람예요"],
+      "options": [
+        "브라질 이에요",
+        "브라질 사람",
+        "한국 사람",
+        "브라질 사람예요"
+      ],
       "correct_index": 1,
       "explanation": "Nome do país + 사람 (pessoa) indica nacionalidade."
     },
@@ -272,7 +282,12 @@
       "id": "u1_q3",
       "type": "multiple_choice",
       "question": "민수 termina na vogal ㅜ. Qual a forma correta para dizer 'Sou 민수'?",
-      "options": ["민수이에요", "민수예요", "민수은", "민수"],
+      "options": [
+        "민수이에요",
+        "민수예요",
+        "민수은",
+        "민수"
+      ],
       "correct_index": 1,
       "explanation": "Como 민수 termina em vogal, usamos '예요'."
     },
@@ -280,7 +295,12 @@
       "id": "u1_q4",
       "type": "multiple_choice",
       "question": "Qual destes é o termo correto para 'Fotógrafo(a)' em coreano?",
-      "options": ["심리학자", "사진작가", "기자", "환경 전문가"],
+      "options": [
+        "심리학자",
+        "사진작가",
+        "기자",
+        "환경 전문가"
+      ],
       "correct_index": 1,
       "explanation": "사진작가: foto + artista."
     },
@@ -288,39 +308,165 @@
       "id": "u1_q5",
       "type": "multiple_choice",
       "question": "Complete: 저는 기자___.",
-      "options": ["이에요", "예요", "는", "입니다"],
+      "options": [
+        "이에요",
+        "예요",
+        "는",
+        "입니다"
+      ],
       "correct_index": 1,
       "explanation": "기자 termina em vogal (ㅏ), usamos '예요'."
     },
     {
       "id": "u1_q6",
-      "type": "order_words",
+      "type": "drag_and_drop_sov",
       "question": "Monte a frase: 'Eu sou estudante.'",
-      "words": ["학생이에요", "저는"],
-      "correct_order": ["저는", "학생이에요"],
-      "explanation": "Ordem SOV: Sujeito (저는) + Predicado (학생이에요)."
+      "words": [
+        "학생이에요",
+        "저는"
+      ],
+      "correct_order": [
+        "저는",
+        "학생이에요"
+      ],
+      "explanation": "Ordem SOV: Sujeito (저는) + Predicado (학생이에요).",
+      "sov_items": [
+        {
+          "word": "학생이에요",
+          "role": "PREDICATE",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "저는",
+          "role": "SUBJECT",
+          "snap_anchor": "square"
+        }
+      ],
+      "sov_slots": [
+        {
+          "role": "SUBJECT",
+          "label": "주어 (S)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "PREDICATE",
+          "label": "서술어 (Pred)",
+          "accepted_roles": [
+            "PREDICATE"
+          ]
+        }
+      ]
     },
     {
       "id": "u1_q7",
-      "type": "order_words",
+      "type": "drag_and_drop_sov",
       "question": "Monte a frase: '안나 é jornalista.'",
-      "words": ["기자예요", "안나는"],
-      "correct_order": ["안나는", "기자예요"],
-      "explanation": "Estrutura SOV: Tópico (안나는) + Predicado (기자예요)."
+      "words": [
+        "기자예요",
+        "안나는"
+      ],
+      "correct_order": [
+        "안나는",
+        "기자예요"
+      ],
+      "explanation": "Estrutura SOV: Tópico (안나는) + Predicado (기자예요).",
+      "sov_items": [
+        {
+          "word": "기자예요",
+          "role": "PREDICATE",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "안나는",
+          "role": "SUBJECT",
+          "snap_anchor": "square"
+        }
+      ],
+      "sov_slots": [
+        {
+          "role": "SUBJECT",
+          "label": "주어 (S)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "PREDICATE",
+          "label": "서술어 (Pred)",
+          "accepted_roles": [
+            "PREDICATE"
+          ]
+        }
+      ]
     },
     {
       "id": "u1_q8",
-      "type": "order_words",
+      "type": "drag_and_drop_sov",
       "question": "Monte a frase: 'Eu sou brasileiro(a).'",
-      "words": ["사람이에요", "저는", "브라질"],
-      "correct_order": ["저는", "브라질", "사람이에요"],
-      "explanation": "Estrutura: Tópico (저는) + País (브라질) + Pessoa+Verbo (사람이에요)."
+      "words": [
+        "사람이에요",
+        "저는",
+        "브라질"
+      ],
+      "correct_order": [
+        "저는",
+        "브라질",
+        "사람이에요"
+      ],
+      "explanation": "Estrutura: Tópico (저는) + País (브라질) + Pessoa+Verbo (사람이에요).",
+      "sov_items": [
+        {
+          "word": "사람이에요",
+          "role": "PREDICATE",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "저는",
+          "role": "SUBJECT",
+          "snap_anchor": "square"
+        },
+        {
+          "word": "브라질",
+          "role": "COMPLEMENT",
+          "snap_anchor": "square"
+        }
+      ],
+      "sov_slots": [
+        {
+          "role": "SUBJECT",
+          "label": "주어 (S)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "COMPLEMENT",
+          "label": "보어 (Comp)",
+          "accepted_roles": [
+            "COMPLEMENT"
+          ]
+        },
+        {
+          "role": "PREDICATE",
+          "label": "서술어 (Pred)",
+          "accepted_roles": [
+            "PREDICATE"
+          ]
+        }
+      ]
     },
     {
       "id": "u1_q9",
       "type": "multiple_choice",
       "question": "Qual cumprimento é adequado para usar com um professor ou chefe?",
-      "options": ["안녕!", "안녕하세요?", "뭐해?", "야!"],
+      "options": [
+        "안녕!",
+        "안녕하세요?",
+        "뭐해?",
+        "야!"
+      ],
       "correct_index": 1,
       "explanation": "안녕하세요? é a forma polida e segura."
     }

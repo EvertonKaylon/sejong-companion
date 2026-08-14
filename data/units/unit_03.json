@@ -117,8 +117,14 @@
       "title": "Pronomes Demonstrativos: 이 / 그 / 저",
       "explanation": "Essas palavras são usadas para apontar algo.\n\n- **이**: perto de quem fala (este, esta).\n- **그**: perto de quem ouve (esse, essa).\n- **저**: longe de ambos (aquele, aquela).",
       "examples": [
-        {"kr": "이 책", "pt": "Este livro (perto de mim)"},
-        {"kr": "저 가방", "pt": "Aquela bolsa (longe de nós)"}
+        {
+          "kr": "이 책",
+          "pt": "Este livro (perto de mim)"
+        },
+        {
+          "kr": "저 가방",
+          "pt": "Aquela bolsa (longe de nós)"
+        }
       ],
       "lusophone_tip": "Assim como no português temos este/esse/aquele, o coreano tem 이/그/저. Eles sempre acompanham um substantivo."
     },
@@ -127,8 +133,14 @@
       "title": "Localização: 에 있다 / 없다",
       "explanation": "A partícula **에** indica o local onde algo está existindo.\nOs verbos **있다** (ter/estar) e **없다** (não ter/não estar) indicam existência.\n\nEstrutura: [Local] + **에** + **있어요/없어요**.",
       "examples": [
-        {"kr": "가방이 책상 위에 있어요.", "pt": "A bolsa está em cima da mesa."},
-        {"kr": "펜이 가방 안에 없어요.", "pt": "A caneta não está dentro da bolsa."}
+        {
+          "kr": "가방이 책상 위에 있어요.",
+          "pt": "A bolsa está em cima da mesa."
+        },
+        {
+          "kr": "펜이 가방 안에 없어요.",
+          "pt": "A caneta não está dentro da bolsa."
+        }
       ],
       "lusophone_tip": "No coreano, você primeiro diz o local e a posição (ex: mesa cima) e depois adiciona '에 있어요'. A ordem é o inverso do português!"
     }
@@ -145,7 +157,12 @@
       "id": "u3_q1",
       "type": "multiple_choice",
       "question": "Como se diz 'bolsa' ou 'mochila'?",
-      "options": ["가방", "책상", "의자", "컴퓨터"],
+      "options": [
+        "가방",
+        "책상",
+        "의자",
+        "컴퓨터"
+      ],
       "correct_index": 0,
       "explanation": "'가방' significa bolsa ou mochila."
     },
@@ -153,7 +170,12 @@
       "id": "u3_q2",
       "type": "multiple_choice",
       "question": "Qual pronome usar para apontar algo perto de você (quem fala)?",
-      "options": ["그", "저", "이", "여"],
+      "options": [
+        "그",
+        "저",
+        "이",
+        "여"
+      ],
       "correct_index": 2,
       "explanation": "'이' é usado para algo perto de quem fala."
     },
@@ -161,7 +183,12 @@
       "id": "u3_q3",
       "type": "multiple_choice",
       "question": "O que significa '책상 위에'?",
-      "options": ["Embaixo da mesa", "Ao lado da mesa", "Em cima da mesa", "Dentro da mesa"],
+      "options": [
+        "Embaixo da mesa",
+        "Ao lado da mesa",
+        "Em cima da mesa",
+        "Dentro da mesa"
+      ],
       "correct_index": 2,
       "explanation": "'위' significa 'em cima'."
     },
@@ -169,7 +196,12 @@
       "id": "u3_q4",
       "type": "multiple_choice",
       "question": "Qual a tradução de '의자가 없어요'?",
-      "options": ["A cadeira está aqui.", "Não tem cadeira.", "A cadeira é boa.", "Tem mesa."],
+      "options": [
+        "A cadeira está aqui.",
+        "Não tem cadeira.",
+        "A cadeira é boa.",
+        "Tem mesa."
+      ],
       "correct_index": 1,
       "explanation": "'없어요' significa não existir, não ter."
     },
@@ -177,7 +209,12 @@
       "id": "u3_q5",
       "type": "multiple_choice",
       "question": "Se um objeto está longe tanto de quem fala quanto de quem escuta, usamos:",
-      "options": ["이", "그", "저", "내"],
+      "options": [
+        "이",
+        "그",
+        "저",
+        "내"
+      ],
       "correct_index": 2,
       "explanation": "'저' é para longe de ambos (aquele/aquela)."
     },
@@ -185,33 +222,210 @@
       "id": "u3_q6",
       "type": "multiple_choice",
       "question": "Onde está a caneta em '가방 안에 있어요'?",
-      "options": ["Dentro da bolsa", "Fora da bolsa", "Atrás da bolsa", "Na frente da bolsa"],
+      "options": [
+        "Dentro da bolsa",
+        "Fora da bolsa",
+        "Atrás da bolsa",
+        "Na frente da bolsa"
+      ],
       "correct_index": 0,
       "explanation": "'안' significa 'dentro'."
     },
     {
       "id": "u3_q7",
-      "type": "order_words",
+      "type": "drag_and_drop_sov",
       "question": "Ordene: A bolsa está em cima da escrivaninha.",
-      "words": ["위에", "가방이", "책상", "있어요."],
-      "correct_order": ["가방이", "책상", "위에", "있어요."],
-      "explanation": "Sujeito (가방이) + Local (책상 위에) + Verbo (있어요)."
+      "words": [
+        "위에",
+        "가방이",
+        "책상",
+        "있어요."
+      ],
+      "correct_order": [
+        "가방이",
+        "책상",
+        "위에",
+        "있어요."
+      ],
+      "explanation": "Sujeito (가방이) + Local (책상 위에) + Verbo (있어요).",
+      "sov_items": [
+        {
+          "word": "위에",
+          "role": "LOCATION",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "가방이",
+          "role": "SUBJECT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "책상",
+          "role": "LOCATION",
+          "snap_anchor": "square"
+        },
+        {
+          "word": "있어요.",
+          "role": "PREDICATE",
+          "snap_anchor": "round"
+        }
+      ],
+      "sov_slots": [
+        {
+          "role": "SUBJECT",
+          "label": "주어 (S)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "LOCATION",
+          "label": "장소 (Loc)",
+          "accepted_roles": [
+            "LOCATION"
+          ]
+        },
+        {
+          "role": "LOCATION",
+          "label": "장소 (Loc)",
+          "accepted_roles": [
+            "LOCATION"
+          ]
+        },
+        {
+          "role": "PREDICATE",
+          "label": "서술어 (Pred)",
+          "accepted_roles": [
+            "PREDICATE"
+          ]
+        }
+      ]
     },
     {
       "id": "u3_q8",
-      "type": "order_words",
+      "type": "drag_and_drop_sov",
       "question": "Ordene: Não há livro dentro da bolsa.",
-      "words": ["없어요.", "책이", "가방", "안에"],
-      "correct_order": ["책이", "가방", "안에", "없어요."],
-      "explanation": "Sujeito (책이) + Local (가방 안에) + Verbo (없어요)."
+      "words": [
+        "없어요.",
+        "책이",
+        "가방",
+        "안에"
+      ],
+      "correct_order": [
+        "책이",
+        "가방",
+        "안에",
+        "없어요."
+      ],
+      "explanation": "Sujeito (책이) + Local (가방 안에) + Verbo (없어요).",
+      "sov_items": [
+        {
+          "word": "없어요.",
+          "role": "PREDICATE",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "책이",
+          "role": "SUBJECT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "가방",
+          "role": "LOCATION",
+          "snap_anchor": "square"
+        },
+        {
+          "word": "안에",
+          "role": "LOCATION",
+          "snap_anchor": "round"
+        }
+      ],
+      "sov_slots": [
+        {
+          "role": "SUBJECT",
+          "label": "주어 (S)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "LOCATION",
+          "label": "장소 (Loc)",
+          "accepted_roles": [
+            "LOCATION"
+          ]
+        },
+        {
+          "role": "LOCATION",
+          "label": "장소 (Loc)",
+          "accepted_roles": [
+            "LOCATION"
+          ]
+        },
+        {
+          "role": "PREDICATE",
+          "label": "서술어 (Pred)",
+          "accepted_roles": [
+            "PREDICATE"
+          ]
+        }
+      ]
     },
     {
       "id": "u3_q9",
-      "type": "order_words",
+      "type": "drag_and_drop_sov",
       "question": "Ordene: Este computador está aqui.",
-      "words": ["있어요.", "컴퓨터가", "이"],
-      "correct_order": ["이", "컴퓨터가", "있어요."],
-      "explanation": "Demonstrativo (이) + Sujeito (컴퓨터가) + Verbo (있어요)."
+      "words": [
+        "있어요.",
+        "컴퓨터가",
+        "이"
+      ],
+      "correct_order": [
+        "이",
+        "컴퓨터가",
+        "있어요."
+      ],
+      "explanation": "Demonstrativo (이) + Sujeito (컴퓨터가) + Verbo (있어요).",
+      "sov_items": [
+        {
+          "word": "있어요.",
+          "role": "PREDICATE",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "컴퓨터가",
+          "role": "SUBJECT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "이",
+          "role": "MODIFIER",
+          "snap_anchor": "round"
+        }
+      ],
+      "sov_slots": [
+        {
+          "role": "MODIFIER",
+          "label": "수식어 (Mod)",
+          "accepted_roles": [
+            "MODIFIER"
+          ]
+        },
+        {
+          "role": "SUBJECT",
+          "label": "주어 (S)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "PREDICATE",
+          "label": "서술어 (Pred)",
+          "accepted_roles": [
+            "PREDICATE"
+          ]
+        }
+      ]
     }
   ]
 }

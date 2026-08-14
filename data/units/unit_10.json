@@ -2,18 +2,114 @@
   "unit_id": "unit_10",
   "title": "우리 같이 영화를 볼까요?",
   "vocabulary": [
-    {"word": "같이", "meaning": "juntos(as)", "example_kr": "우리 같이 밥을 먹어요.", "example_pt": "Vamos comer juntos.", "category": "부사", "snap_anchor": "round", "magnetic_slot_role": "SUBJECT"},
-    {"word": "영화", "meaning": "filme", "example_kr": "무슨 영화를 볼까요?", "example_pt": "Qual filme devemos assistir?", "category": "명사", "snap_anchor": "round", "magnetic_slot_role": "OBJECT"},
-    {"word": "음악", "meaning": "música", "example_kr": "음악을 듣고 싶어요.", "example_pt": "Quero ouvir música.", "category": "명사", "snap_anchor": "square", "magnetic_slot_role": "OBJECT"},
-    {"word": "사진", "meaning": "foto", "example_kr": "사진을 찍어요.", "example_pt": "Tiro uma foto.", "category": "명사", "snap_anchor": "square", "magnetic_slot_role": "OBJECT"},
-    {"word": "시간", "meaning": "tempo, hora", "example_kr": "오늘 시간 있어요?", "example_pt": "Você tem tempo hoje?", "category": "명사", "snap_anchor": "square", "magnetic_slot_role": "OBJECT"},
-    {"word": "약속", "meaning": "compromisso, promessa, planos", "example_kr": "내일 약속이 있어요.", "example_pt": "Tenho um compromisso amanhã.", "category": "명사", "snap_anchor": "square", "magnetic_slot_role": "SUBJECT"},
-    {"word": "일", "meaning": "trabalho, tarefa", "example_kr": "일이 많아요.", "example_pt": "Há muito trabalho.", "category": "명사", "snap_anchor": "square", "magnetic_slot_role": "SUBJECT"},
-    {"word": "바쁘다", "meaning": "estar ocupado", "example_kr": "요즘 아주 바빠요.", "example_pt": "Estou muito ocupado ultimamente.", "category": "형용사", "snap_anchor": "round", "magnetic_slot_role": "PREDICATE"},
-    {"word": "괜찮다", "meaning": "estar bem, não ter problema", "example_kr": "내일은 괜찮아요.", "example_pt": "Amanhã está bom para mim.", "category": "형용사", "snap_anchor": "round", "magnetic_slot_role": "PREDICATE"},
-    {"word": "재미있다", "meaning": "ser divertido, interessante", "example_kr": "이 영화가 재미있어요.", "example_pt": "Esse filme é divertido.", "category": "형용사", "snap_anchor": "round", "magnetic_slot_role": "PREDICATE"},
-    {"word": "재미없다", "meaning": "não ser divertido", "example_kr": "그 책은 재미없어요.", "example_pt": "Aquele livro não é divertido.", "category": "형용사", "snap_anchor": "round", "magnetic_slot_role": "PREDICATE"},
-    {"word": "피곤하다", "meaning": "estar cansado", "example_kr": "일이 많아서 피곤해요.", "example_pt": "Estou cansado porque tenho muito trabalho.", "category": "형용사", "snap_anchor": "round", "magnetic_slot_role": "PREDICATE"}
+    {
+      "word": "같이",
+      "meaning": "juntos(as)",
+      "example_kr": "우리 같이 밥을 먹어요.",
+      "example_pt": "Vamos comer juntos.",
+      "category": "부사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "영화",
+      "meaning": "filme",
+      "example_kr": "무슨 영화를 볼까요?",
+      "example_pt": "Qual filme devemos assistir?",
+      "category": "명사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "음악",
+      "meaning": "música",
+      "example_kr": "음악을 듣고 싶어요.",
+      "example_pt": "Quero ouvir música.",
+      "category": "명사",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "사진",
+      "meaning": "foto",
+      "example_kr": "사진을 찍어요.",
+      "example_pt": "Tiro uma foto.",
+      "category": "명사",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "시간",
+      "meaning": "tempo, hora",
+      "example_kr": "오늘 시간 있어요?",
+      "example_pt": "Você tem tempo hoje?",
+      "category": "명사",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "약속",
+      "meaning": "compromisso, promessa, planos",
+      "example_kr": "내일 약속이 있어요.",
+      "example_pt": "Tenho um compromisso amanhã.",
+      "category": "명사",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "일",
+      "meaning": "trabalho, tarefa",
+      "example_kr": "일이 많아요.",
+      "example_pt": "Há muito trabalho.",
+      "category": "명사",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "바쁘다",
+      "meaning": "estar ocupado",
+      "example_kr": "요즘 아주 바빠요.",
+      "example_pt": "Estou muito ocupado ultimamente.",
+      "category": "형용사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "PREDICATE"
+    },
+    {
+      "word": "괜찮다",
+      "meaning": "estar bem, não ter problema",
+      "example_kr": "내일은 괜찮아요.",
+      "example_pt": "Amanhã está bom para mim.",
+      "category": "형용사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "PREDICATE"
+    },
+    {
+      "word": "재미있다",
+      "meaning": "ser divertido, interessante",
+      "example_kr": "이 영화가 재미있어요.",
+      "example_pt": "Esse filme é divertido.",
+      "category": "형용사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "PREDICATE"
+    },
+    {
+      "word": "재미없다",
+      "meaning": "não ser divertido",
+      "example_kr": "그 책은 재미없어요.",
+      "example_pt": "Aquele livro não é divertido.",
+      "category": "형용사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "PREDICATE"
+    },
+    {
+      "word": "피곤하다",
+      "meaning": "estar cansado",
+      "example_kr": "일이 많아서 피곤해요.",
+      "example_pt": "Estou cansado porque tenho muito trabalho.",
+      "category": "형용사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "PREDICATE"
+    }
   ],
   "grammar": [
     {
@@ -21,8 +117,14 @@
       "title": "-고 싶다 (Querer fazer algo)",
       "explanation": "A expressão **-고 싶다** é usada para expressar desejo ou vontade de fazer uma ação.\nEla é anexada diretamente à raiz do verbo.\n* **가다** (ir) + **-고 싶다** = **가고 싶어요** (quero ir)\n* **먹다** (comer) + **-고 싶다** = **먹고 싶어요** (quero comer)",
       "examples": [
-        {"kr": "저는 한국에 가고 싶어요.", "pt": "Eu quero ir para a Coreia."},
-        {"kr": "오늘은 피자를 먹고 싶어요.", "pt": "Hoje eu quero comer pizza."}
+        {
+          "kr": "저는 한국에 가고 싶어요.",
+          "pt": "Eu quero ir para a Coreia."
+        },
+        {
+          "kr": "오늘은 피자를 먹고 싶어요.",
+          "pt": "Hoje eu quero comer pizza."
+        }
       ],
       "lusophone_tip": "Note que '-고 싶다' é usado quando o sujeito é a primeira pessoa (Eu) ou em perguntas para a segunda pessoa (Você). Para falar do desejo de uma terceira pessoa, usamos outra estrutura (-고 싶어하다)."
     },
@@ -31,8 +133,14 @@
       "title": "-(으)ㄹ까요? (Vamos...? / O que você acha de...?)",
       "explanation": "A terminação **-(으)ㄹ까요?** é usada para sugerir algo a alguém ou pedir a opinião da outra pessoa sobre fazermos algo juntos.\n* Se a raiz do verbo não tem consoante final (batchim) ou termina em **ㄹ**, usamos **-ㄹ까요?** (ex: 보다 → **볼까요?**).\n* Se a raiz do verbo termina em consoante (batchim), usamos **-을까요?** (ex: 먹다 → **먹을까요?**).",
       "examples": [
-        {"kr": "우리 같이 영화를 볼까요?", "pt": "Vamos assistir a um filme juntos?"},
-        {"kr": "내일 만날까요?", "pt": "Vamos nos encontrar amanhã?"}
+        {
+          "kr": "우리 같이 영화를 볼까요?",
+          "pt": "Vamos assistir a um filme juntos?"
+        },
+        {
+          "kr": "내일 만날까요?",
+          "pt": "Vamos nos encontrar amanhã?"
+        }
       ],
       "lusophone_tip": "É uma forma muito educada e comum de convidar amigos ou colegas para fazer algo, parecida com o nosso 'Vamos...?' ou 'Que tal...?'."
     }
@@ -49,64 +157,252 @@
       "id": "ex_10_01",
       "type": "multiple_choice",
       "question": "Como se diz 'quero comer' em coreano?",
-      "options": ["먹을까요", "먹고 싶어요", "먹어요", "먹었어요"],
+      "options": [
+        "먹을까요",
+        "먹고 싶어요",
+        "먹어요",
+        "먹었어요"
+      ],
       "correct_index": 1
     },
     {
       "id": "ex_10_02",
       "type": "multiple_choice",
       "question": "Qual é a forma correta para sugerir 'Vamos beber café?'",
-      "options": ["커피를 마시고 싶어요?", "커피를 마실까요?", "커피를 마셔요?", "커피를 마셨을까요?"],
+      "options": [
+        "커피를 마시고 싶어요?",
+        "커피를 마실까요?",
+        "커피를 마셔요?",
+        "커피를 마셨을까요?"
+      ],
       "correct_index": 1
     },
     {
       "id": "ex_10_03",
       "type": "multiple_choice",
       "question": "O que significa '같이'?",
-      "options": ["Agora", "Hoje", "Juntos", "Muito"],
+      "options": [
+        "Agora",
+        "Hoje",
+        "Juntos",
+        "Muito"
+      ],
       "correct_index": 2
     },
     {
       "id": "ex_10_04",
       "type": "multiple_choice",
       "question": "Escolha a frase que significa 'Não tenho tempo hoje.'",
-      "options": ["오늘 시간이 없어요.", "오늘 시간이 있어요.", "오늘 약속이 없어요.", "오늘 약속이 있어요."],
+      "options": [
+        "오늘 시간이 없어요.",
+        "오늘 시간이 있어요.",
+        "오늘 약속이 없어요.",
+        "오늘 약속이 있어요."
+      ],
       "correct_index": 0
     },
     {
       "id": "ex_10_05",
       "type": "multiple_choice",
       "question": "Qual terminação gramatical expressa desejo ('querer')?",
-      "options": ["-았/었-", "-(으)ㄹ까요", "에서", "-고 싶다"],
+      "options": [
+        "-았/었-",
+        "-(으)ㄹ까요",
+        "에서",
+        "-고 싶다"
+      ],
       "correct_index": 3
     },
     {
       "id": "ex_10_06",
       "type": "multiple_choice",
       "question": "Como você responderia 'Amanhã está bom para mim'?",
-      "options": ["내일은 바빠요.", "내일은 피곤해요.", "내일은 괜찮아요.", "내일은 재미있어요."],
+      "options": [
+        "내일은 바빠요.",
+        "내일은 피곤해요.",
+        "내일은 괜찮아요.",
+        "내일은 재미있어요."
+      ],
       "correct_index": 2
     },
     {
       "id": "ex_10_07",
-      "type": "order_words",
+      "type": "drag_and_drop_sov",
       "question": "Coloque as palavras em ordem para formar: 'Nós vamos assistir a um filme coreano juntos?'",
-      "words": ["한국영화를", "볼까요?", "같이", "우리는"],
-      "correct_order": ["우리는", "같이", "한국영화를", "볼까요?"]
+      "words": [
+        "한국영화를",
+        "볼까요?",
+        "같이",
+        "우리는"
+      ],
+      "correct_order": [
+        "우리는",
+        "같이",
+        "한국영화를",
+        "볼까요?"
+      ],
+      "sov_items": [
+        {
+          "word": "한국영화를",
+          "role": "OBJECT",
+          "snap_anchor": "square"
+        },
+        {
+          "word": "볼까요?",
+          "role": "VERB",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "같이",
+          "role": "MODIFIER",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "우리는",
+          "role": "SUBJECT",
+          "snap_anchor": "square"
+        }
+      ],
+      "sov_slots": [
+        {
+          "role": "SUBJECT",
+          "label": "주어 (S)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "MODIFIER",
+          "label": "수식어 (Mod)",
+          "accepted_roles": [
+            "MODIFIER"
+          ]
+        },
+        {
+          "role": "OBJECT",
+          "label": "목적어 (O)",
+          "accepted_roles": [
+            "OBJECT"
+          ]
+        },
+        {
+          "role": "VERB",
+          "label": "동사 (V)",
+          "accepted_roles": [
+            "VERB"
+          ]
+        }
+      ]
     },
     {
       "id": "ex_10_08",
-      "type": "order_words",
+      "type": "drag_and_drop_sov",
       "question": "Coloque as palavras em ordem para formar: 'Quero comer bibimbap.'",
-      "words": ["먹고", "비빔밥을", "싶어요."],
-      "correct_order": ["비빔밥을", "먹고", "싶어요."]
+      "words": [
+        "먹고",
+        "비빔밥을",
+        "싶어요."
+      ],
+      "correct_order": [
+        "비빔밥을",
+        "먹고",
+        "싶어요."
+      ],
+      "sov_items": [
+        {
+          "word": "먹고",
+          "role": "CONNECTIVE",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "비빔밥을",
+          "role": "OBJECT",
+          "snap_anchor": "square"
+        },
+        {
+          "word": "싶어요.",
+          "role": "PREDICATE",
+          "snap_anchor": "round"
+        }
+      ],
+      "sov_slots": [
+        {
+          "role": "OBJECT",
+          "label": "목적어 (O)",
+          "accepted_roles": [
+            "OBJECT"
+          ]
+        },
+        {
+          "role": "CONNECTIVE",
+          "label": "연결 동사 (Link)",
+          "accepted_roles": [
+            "CONNECTIVE"
+          ]
+        },
+        {
+          "role": "PREDICATE",
+          "label": "서술어 (Pred)",
+          "accepted_roles": [
+            "PREDICATE"
+          ]
+        }
+      ]
     },
     {
       "id": "ex_10_09",
-      "type": "order_words",
+      "type": "drag_and_drop_sov",
       "question": "Coloque as palavras em ordem para formar: 'Vamos nos encontrar amanhã?'",
-      "words": ["우리", "만날까요?", "내일"],
-      "correct_order": ["우리", "내일", "만날까요?"]
+      "words": [
+        "우리",
+        "만날까요?",
+        "내일"
+      ],
+      "correct_order": [
+        "우리",
+        "내일",
+        "만날까요?"
+      ],
+      "sov_items": [
+        {
+          "word": "우리",
+          "role": "SUBJECT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "만날까요?",
+          "role": "VERB",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "내일",
+          "role": "TIME",
+          "snap_anchor": "square"
+        }
+      ],
+      "sov_slots": [
+        {
+          "role": "SUBJECT",
+          "label": "주어 (S)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "TIME",
+          "label": "시간 (Time)",
+          "accepted_roles": [
+            "TIME"
+          ]
+        },
+        {
+          "role": "VERB",
+          "label": "동사 (V)",
+          "accepted_roles": [
+            "VERB"
+          ]
+        }
+      ]
     }
   ]
 }

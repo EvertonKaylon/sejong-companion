@@ -182,6 +182,9 @@ def quiz_view(page: ft.Page) -> ft.View:
     def render_results():
         # Salvar o progresso como concluído (100%) no local storage
         progress_service.save_progress(unit_id, 1.0)
+        # Uma sessão concluída também conta como estudo do dia. O serviço
+        # registra apenas uma vez por data, sem penalizar ausências.
+        progress_service.record_daily_activity()
         
         total = len(exercises)
         score = state["score"]

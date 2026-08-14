@@ -119,6 +119,7 @@ def build_oclusive_lab(page: ft.Page, colors: dict, w: float) -> ft.Column:
             alignment=ft.MainAxisAlignment.CENTER,
         ),
         margin=ft.Margin.only(bottom=8),
+        alignment=ft.Alignment.CENTER,
     )
 
     # Explicação
@@ -130,6 +131,7 @@ def build_oclusive_lab(page: ft.Page, colors: dict, w: float) -> ft.Column:
                     size=12,
                     weight=ft.FontWeight.BOLD,
                     color=colors["secondary"],
+                    text_align=ft.TextAlign.CENTER,
                 ),
                 ft.Text(
                     "• Simples: produzida sem esforço extra (som neutro)\n"
@@ -138,9 +140,11 @@ def build_oclusive_lab(page: ft.Page, colors: dict, w: float) -> ft.Column:
                     size=11,
                     color=colors["text_sec"],
                     no_wrap=False,
+                    text_align=ft.TextAlign.CENTER,
                 ),
             ],
             spacing=2,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         ),
         padding=12,
         bgcolor=colors["surface"],
@@ -185,6 +189,7 @@ def build_oclusive_lab(page: ft.Page, colors: dict, w: float) -> ft.Column:
                             size=12,
                             weight=ft.FontWeight.BOLD,
                             color=colors["text"],
+                            text_align=ft.TextAlign.CENTER,
                         ),
                         ft.Row(
                             controls=buttons,
@@ -217,14 +222,17 @@ def build_oclusive_lab(page: ft.Page, colors: dict, w: float) -> ft.Column:
                         ),
                     ],
                     spacing=8,
+                    alignment=ft.MainAxisAlignment.CENTER,
                 ),
                 margin=ft.Margin.only(bottom=4),
+                alignment=ft.Alignment.CENTER,
             ),
             explanation,
             legend,
             *triad_cards,
         ],
         spacing=4,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
 
 

@@ -26,7 +26,7 @@ Pré-Alpha → Alpha → Beta → RC → RTM → GA
 ## [0.3.0-alpha] — 2026-08-14
 
 ### Classificação: Alpha
-> Milestone de Conteúdo & Inteligência de Memória: Currículo completo do Sejong Korean 1A (Unidades 01 a 10), Algoritmo HLR de Ebbinghaus, Laboratório Fonético Oclusivo e Mecânica Drag & Drop SOV.
+> Milestone de Conteúdo & Inteligência de Memória: Currículo completo do Sejong Korean 1A (Unidades 01 a 10), Algoritmo HLR de Ebbinghaus, Laboratório Fonético Oclusivo, Mecânica Drag & Drop SOV Semântica com Rejeição Elástica em Tempo Real, Active Recall Dashboard e Flashcards Gamificados com Criador de Frases.
 
 ### Added — Features
 - **Currículo Sejong 1A Completo (10 Unidades)** — Criadas as unidades didáticas `unit_02.json` até `unit_10.json` com vocabulário, gramática formatada em Markdown, dicas lusófonas e exercícios interativos.
@@ -35,11 +35,13 @@ Pré-Alpha → Alpha → Beta → RC → RTM → GA
 - **Orbes de Vitalidade SRS na Home** — Indicadores visuais nos cartões de unidade para memorização Alta ($\ge 75\%$), Média ($35\%-75\%$) e Baixa/Urgente ($< 35\%$).
 - **Cadeia de Desbloqueio Progressivo de 10 Unidades** — Expansão do fluxo didático contínuo de `unit_intro` até `unit_10` com persistência atômica.
 - **Laboratório Fonético Oclusivo** — Componente `oclusive_lab.py` na aba de Consoantes para as 4 tríades (ㄱ/ㅋ/ㄲ, ㄷ/ㅌ/ㄸ, ㅂ/ㅍ/ㅃ, ㅈ/ㅊ/ㅉ) com feedback visual por cor e pronúncia em áudio HD.
-- **Mecânica Drag & Drop SOV com Rejeição Elástica** — Exercícios de sintaxe com `ft.Draggable` e `ft.DragTarget` em slots magnéticos de Sujeito (S), Objeto (O) e Verbo (V), com animação elástica de rejeição (*shake* + realce carmesim).
+- **Drag & Drop Sintático SOV Semântico com Rejeição Elástica em Tempo Real** — Slots semânticos (`주어`, `목적어`, `동사`, `장소`, `서술어`) com validação de papéis no ato do drop. Ao soltar no slot incorreto, ocorre *shake* elástico oscilatório (`-0.04 → +0.04 → 0.0`), alerta visual e devolução imediata da palavra ao pool sem bloquear a questão.
+- **Active Recall Dashboard / Revisão do Dia (`/review`)** — Rota e tela dedicada de revisão com agregação inteligente de itens com retenção $R < 75\%$, autoavaliação (Errei / Bom / Fácil), streaks diários (🔥) e ganho de XP.
+- **Flashcards Gamificados & Sentence Builder (`/flashcards`)** — Hub com 3 níveis de dificuldade (Fácil, Médio, Difícil), flip cards táteis com pronúncia em áudio HD e módulo criador de frases com validação sintática imediata.
 - **Padronização de Layout Dead-Center** — Componente `centered_content` garantindo alinhamento central absoluto em telas widescreen e ultra-wide.
 
 ### Added — Suíte de Testes
-- **41 Testes Unitários (100% OK)** — Cobertura ampliada para carregamento dinâmico de 10 unidades (`test_data_service.py`), estabilidade/decaimento HLR, vitalidade e cadeia de desbloqueio (`test_progress_service.py`).
+- **53 Testes Unitários Automatizados (100% OK)** — Cobertura completa para carregamento de 10 unidades (`test_data_service.py`), estabilidade HLR e cadeia de desbloqueio (`test_progress_service.py`), contratos semânticos de SOV (`test_sov_drag_drop.py`), além de agregação SRS e classificação de flashcards (`test_active_recall.py`).
 
 ---
 

@@ -163,6 +163,42 @@ def home_view(page: ft.Page) -> ft.View:
         margin=ft.Margin.only(bottom=16)
     )
 
+    # ─── ACESSOS DE REVISÃO E FLASHCARDS ───
+    due_count = len(progress_service.get_due_reviews())
+    review_ready = due_count > 0
+    review_card = ft.Container(
+        content=ft.Row(
+            controls=[
+                ft.Container(content=ft.Text("🔥", size=26), width=44, height=44, alignment=ft.Alignment.CENTER,
+                             bgcolor="#14F5A623", border_radius=Styles.BORDER_RADIUS_SM),
+                ft.Column(controls=[
+                    ft.Text("Revisão do Dia · 일일 복습", size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                    ft.Text(f"{due_count} item(ns) com retenção abaixo de 75%" if review_ready else "Tudo em dia! ✨ Faça uma revisão preventiva.",
+                            size=11, color=colors["text_sec"]),
+                ], spacing=2, expand=True),
+                ft.Icon(ft.Icons.ARROW_FORWARD_IOS_ROUNDED, size=16, color=colors["primary"]),
+            ], vertical_alignment=ft.CrossAxisAlignment.CENTER, spacing=10,
+        ),
+        bgcolor=colors["card_bg"], border=ft.Border.all(1, colors["warning"] if review_ready else colors["correct"]),
+        border_radius=Styles.BORDER_RADIUS_MD, padding=12, margin=ft.Margin.only(bottom=9),
+        on_click=lambda e: page.router.navigate_to("/review"),
+    )
+    flashcards_card = ft.Container(
+        content=ft.Row(
+            controls=[
+                ft.Container(content=ft.Text("🃏", size=24), width=44, height=44, alignment=ft.Alignment.CENTER,
+                             bgcolor="#147C4DFF", border_radius=Styles.BORDER_RADIUS_SM),
+                ft.Column(controls=[
+                    ft.Text("Flashcards & Criação de Texto · 문장", size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                    ft.Text("Treine por nível e monte frases em coreano.", size=11, color=colors["text_sec"]),
+                ], spacing=2, expand=True),
+                ft.Icon(ft.Icons.ARROW_FORWARD_IOS_ROUNDED, size=16, color=colors["primary"]),
+            ], vertical_alignment=ft.CrossAxisAlignment.CENTER, spacing=10,
+        ),
+        bgcolor=colors["card_bg"], border=ft.Border.all(1, colors["secondary"]), border_radius=Styles.BORDER_RADIUS_MD,
+        padding=12, margin=ft.Margin.only(bottom=16), on_click=lambda e: page.router.navigate_to("/flashcards"),
+    )
+
     # ─── CARDS DAS UNIDADES ───
 
     unit_cards = []
@@ -305,6 +341,8 @@ def home_view(page: ft.Page) -> ft.View:
                         welcome_text,
                         neuro_tip_card,
                         progress_summary,
+                        review_card,
+                        flashcards_card,
                         ft.Text("Grade Curricular", size=15, weight=ft.FontWeight.BOLD, color=colors["text"]),
                         ft.Column(controls=unit_cards),
                     ],

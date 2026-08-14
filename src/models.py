@@ -1,7 +1,8 @@
 import math
+from collections import Counter
 from typing import List, Optional
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 
 # Curriculum Models
 class Unit(BaseModel):
@@ -72,6 +73,28 @@ class WritingAlert(BaseModel):
 
 # ─── Quiz Models (Genérico — suporta múltiplos tipos) ───
 
+class SovWordItem(BaseModel):
+    """Palavra arrastável e seu papel sintático no exercício SOV."""
+    word: str
+    role: str
+    snap_anchor: Optional[str] = "square"
+
+
+class SovSlotDefinition(BaseModel):
+    """Contrato semântico de um slot de montagem de frase."""
+    role: str
+    label: str
+    accepted_roles: List[str]
+
+
+def is_role_accepted(word_role: str, accepted_roles: List[str]) -> bool:
+    """Retorna se o papel da palavra pode ser encaixado no slot.
+
+    ``ANY`` é reservado para compatibilidade com conteúdos legados e não é
+    usado pelos exercícios SOV semânticos.
+    """
+    return "ANY" in accepted_roles or word_role in accepted_roles
+
 class QuizQuestion(BaseModel):
     """Modelo unificado de questão de quiz.
     - type='multiple_choice': usa options + correct_index
@@ -88,6 +111,30 @@ class QuizQuestion(BaseModel):
     # Campos para order_words / drag_and_drop_sov (unscrambling)
     words: Optional[List[str]] = None
     correct_order: Optional[List[str]] = None
+    # Metadados obrigatórios para a variante de drag-and-drop semântico.
+    sov_items: Optional[List[SovWordItem]] = None
+    sov_slots: Optional[List[SovSlotDefinition]] = None
+
+    @model_validator(mode="after")
+    def validate_sov_metadata(self):
+        """Impede que uma questão SOV chegue à UI sem seu contrato semântico."""
+        if self.type != "drag_and_drop_sov":
+            return self
+        if not self.sov_items or not self.sov_slots:
+            raise ValueError("drag_and_drop_sov requer sov_items e sov_slots")
+        if not self.correct_order:
+            raise ValueError("drag_and_drop_sov requer correct_order")
+        if len(self.sov_items) != len(self.sov_slots):
+            raise ValueError("sov_items e sov_slots devem ter o mesmo tamanho")
+        if Counter(item.word for item in self.sov_items) != Counter(self.correct_order):
+            raise ValueError("correct_order deve conter exatamente as palavras de sov_items")
+        if any(not slot.accepted_roles for slot in self.sov_slots):
+            raise ValueError("todo slot SOV precisa aceitar ao menos um papel")
+        item_roles = {item.role for item in self.sov_items}
+        for slot in self.sov_slots:
+            if "ANY" not in slot.accepted_roles and not item_roles.intersection(slot.accepted_roles):
+                raise ValueError(f"slot SOV sem papel disponível: {slot.label}")
+        return self
 
 class UnitIntroData(BaseModel):
     unit_id: str
@@ -195,3 +242,32 @@ class MemoryNode(BaseModel):
             return "medium"
         else:
             return "low"
+
+
+# ─── Active recall / flashcards ───
+
+class FlashcardItem(BaseModel):
+    """Cartão de estudo derivado do conteúdo oficial de uma unidade.
+
+    O conteúdo continua sendo data-driven (``data/units``); este modelo apenas
+    apresenta uma forma uniforme para a revisão espaçada e a interface.
+    """
+    id: str
+    unit_id: str
+    korean: str
+    portuguese: str
+    difficulty: str  # easy | medium | hard
+    category: str = "vocabulário"
+    example_kr: Optional[str] = None
+    example_pt: Optional[str] = None
+    lusophone_tip: Optional[str] = None
+    sov_breakdown: Optional[List[dict]] = None
+
+
+class ReviewSessionState(BaseModel):
+    """Estado serializável de uma sessão de revisão diária."""
+    due_cards: List[FlashcardItem] = []
+    current_index: int = 0
+    streak: int = 0
+    xp_earned: int = 0
+    history: List[dict] = []

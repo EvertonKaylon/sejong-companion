@@ -2,18 +2,114 @@
   "unit_id": "unit_09",
   "title": "공원에서 산책했어요",
   "vocabulary": [
-    {"word": "공원", "meaning": "parque", "example_kr": "공원에서 운동해요.", "example_pt": "Faço exercícios no parque.", "category": "장소", "snap_anchor": "square", "magnetic_slot_role": "SUBJECT"},
-    {"word": "영화관", "meaning": "cinema", "example_kr": "영화관에 갔어요.", "example_pt": "Fui ao cinema.", "category": "장소", "snap_anchor": "square", "magnetic_slot_role": "SUBJECT"},
-    {"word": "도서관", "meaning": "biblioteca", "example_kr": "도서관에서 책을 읽어요.", "example_pt": "Leio um livro na biblioteca.", "category": "장소", "snap_anchor": "square", "magnetic_slot_role": "SUBJECT"},
-    {"word": "식당", "meaning": "restaurante", "example_kr": "식당에서 밥을 먹어요.", "example_pt": "Como comida no restaurante.", "category": "장소", "snap_anchor": "square", "magnetic_slot_role": "SUBJECT"},
-    {"word": "주말", "meaning": "fim de semana", "example_kr": "주말에 뭐 했어요?", "example_pt": "O que você fez no fim de semana?", "category": "시간", "snap_anchor": "square", "magnetic_slot_role": "SUBJECT"},
-    {"word": "산책하다", "meaning": "caminhar, passear", "example_kr": "아침에 산책했어요.", "example_pt": "Caminhei de manhã.", "category": "동사", "snap_anchor": "round", "magnetic_slot_role": "VERB"},
-    {"word": "보다", "meaning": "ver, assistir", "example_kr": "영화를 봤어요.", "example_pt": "Assisti a um filme.", "category": "동사", "snap_anchor": "round", "magnetic_slot_role": "VERB"},
-    {"word": "쇼핑하다", "meaning": "fazer compras", "example_kr": "시장에서 쇼핑했어요.", "example_pt": "Fiz compras no mercado.", "category": "동사", "snap_anchor": "round", "magnetic_slot_role": "VERB"},
-    {"word": "쉬다", "meaning": "descansar", "example_kr": "집에서 쉬었어요.", "example_pt": "Descansei em casa.", "category": "동사", "snap_anchor": "round", "magnetic_slot_role": "VERB"},
-    {"word": "읽다", "meaning": "ler", "example_kr": "책을 읽었어요.", "example_pt": "Li um livro.", "category": "동사", "snap_anchor": "round", "magnetic_slot_role": "VERB"},
-    {"word": "만나다", "meaning": "encontrar", "example_kr": "친구를 만났어요.", "example_pt": "Encontrei um amigo.", "category": "동사", "snap_anchor": "round", "magnetic_slot_role": "VERB"},
-    {"word": "놀다", "meaning": "brincar, divertir-se, sair com amigos", "example_kr": "어제 친구하고 놀았어요.", "example_pt": "Ontem saí com meu amigo.", "category": "동사", "snap_anchor": "round", "magnetic_slot_role": "VERB"}
+    {
+      "word": "공원",
+      "meaning": "parque",
+      "example_kr": "공원에서 운동해요.",
+      "example_pt": "Faço exercícios no parque.",
+      "category": "장소",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "영화관",
+      "meaning": "cinema",
+      "example_kr": "영화관에 갔어요.",
+      "example_pt": "Fui ao cinema.",
+      "category": "장소",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "도서관",
+      "meaning": "biblioteca",
+      "example_kr": "도서관에서 책을 읽어요.",
+      "example_pt": "Leio um livro na biblioteca.",
+      "category": "장소",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "식당",
+      "meaning": "restaurante",
+      "example_kr": "식당에서 밥을 먹어요.",
+      "example_pt": "Como comida no restaurante.",
+      "category": "장소",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "주말",
+      "meaning": "fim de semana",
+      "example_kr": "주말에 뭐 했어요?",
+      "example_pt": "O que você fez no fim de semana?",
+      "category": "시간",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "산책하다",
+      "meaning": "caminhar, passear",
+      "example_kr": "아침에 산책했어요.",
+      "example_pt": "Caminhei de manhã.",
+      "category": "동사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "보다",
+      "meaning": "ver, assistir",
+      "example_kr": "영화를 봤어요.",
+      "example_pt": "Assisti a um filme.",
+      "category": "동사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "쇼핑하다",
+      "meaning": "fazer compras",
+      "example_kr": "시장에서 쇼핑했어요.",
+      "example_pt": "Fiz compras no mercado.",
+      "category": "동사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "쉬다",
+      "meaning": "descansar",
+      "example_kr": "집에서 쉬었어요.",
+      "example_pt": "Descansei em casa.",
+      "category": "동사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "읽다",
+      "meaning": "ler",
+      "example_kr": "책을 읽었어요.",
+      "example_pt": "Li um livro.",
+      "category": "동사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "만나다",
+      "meaning": "encontrar",
+      "example_kr": "친구를 만났어요.",
+      "example_pt": "Encontrei um amigo.",
+      "category": "동사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "놀다",
+      "meaning": "brincar, divertir-se, sair com amigos",
+      "example_kr": "어제 친구하고 놀았어요.",
+      "example_pt": "Ontem saí com meu amigo.",
+      "category": "동사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    }
   ],
   "grammar": [
     {
@@ -21,8 +117,14 @@
       "title": "에서 (Local da ação)",
       "explanation": "A partícula **에서** é anexada a substantivos de lugar para indicar o local onde ocorre uma ação ou atividade.\nNão confunda com **에**, que indica direção (ir para) ou existência (estar em).\n* **공원** (parque) + **에서** = **공원에서** (no parque)\n* **식당** (restaurante) + **에서** = **식당에서** (no restaurante)",
       "examples": [
-        {"kr": "저는 공원에서 산책해요.", "pt": "Eu passeio no parque."},
-        {"kr": "도서관에서 공부해요.", "pt": "Estudo na biblioteca."}
+        {
+          "kr": "저는 공원에서 산책해요.",
+          "pt": "Eu passeio no parque."
+        },
+        {
+          "kr": "도서관에서 공부해요.",
+          "pt": "Estudo na biblioteca."
+        }
       ],
       "lusophone_tip": "Em português usamos 'em', 'no' ou 'na' para locais. Em coreano, se há uma ação ocorrendo no local (como estudar, comer, encontrar), use '에서'. Se o verbo é de movimento (가다/오다) ou existência (있다/없다), use '에'."
     },
@@ -31,8 +133,14 @@
       "title": "-았/었- (Passado)",
       "explanation": "Para expressar ações ou estados no passado, adicionamos **-았-** ou **-었-** à raiz do verbo ou adjetivo, e depois a terminação polida **어요**.\n* Se a última vogal da raiz for **ㅏ** ou **ㅗ**, usa-se **-았어요** (ex: 보다 → 보 + 았어요 = **봤어요**).\n* Para as demais vogais, usa-se **-었어요** (ex: 먹다 → 먹 + 었어요 = **먹었어요**).\n* Para verbos terminados em **하다**, a forma muda para **했어요** (ex: 산책하다 → **산책했어요**).",
       "examples": [
-        {"kr": "어제 친구를 만났어요.", "pt": "Encontrei um amigo ontem."},
-        {"kr": "주말에 집에서 쉬었어요.", "pt": "Descansei em casa no fim de semana."}
+        {
+          "kr": "어제 친구를 만났어요.",
+          "pt": "Encontrei um amigo ontem."
+        },
+        {
+          "kr": "주말에 집에서 쉬었어요.",
+          "pt": "Descansei em casa no fim de semana."
+        }
       ],
       "lusophone_tip": "Preste atenção à contração das vogais. Se a raiz do verbo termina em vogal e o sufixo também começa com vogal, elas geralmente se fundem: 가다 + 았어요 = 갔어요 (fui)."
     }
@@ -49,64 +157,252 @@
       "id": "ex_09_01",
       "type": "multiple_choice",
       "question": "Qual partícula deve ser usada para completar a frase: '식당___ 밥을 먹어요.' (Como no restaurante)?",
-      "options": ["에", "에서", "가", "를"],
+      "options": [
+        "에",
+        "에서",
+        "가",
+        "를"
+      ],
       "correct_index": 1
     },
     {
       "id": "ex_09_02",
       "type": "multiple_choice",
       "question": "Qual é a forma no passado do verbo '가다' (ir)?",
-      "options": ["갔어요", "가았어요", "가어요", "겠어요"],
+      "options": [
+        "갔어요",
+        "가았어요",
+        "가어요",
+        "겠어요"
+      ],
       "correct_index": 0
     },
     {
       "id": "ex_09_03",
       "type": "multiple_choice",
       "question": "Como se diz 'biblioteca' em coreano?",
-      "options": ["공원", "영화관", "도서관", "식당"],
+      "options": [
+        "공원",
+        "영화관",
+        "도서관",
+        "식당"
+      ],
       "correct_index": 2
     },
     {
       "id": "ex_09_04",
       "type": "multiple_choice",
       "question": "Selecione a frase correta para 'Descansei em casa ontem.'",
-      "options": ["어제 집에서 쉬어요.", "어제 집에 쉬었어요.", "어제 집에서 쉬었어요.", "오늘 집에서 쉬었어요."],
+      "options": [
+        "어제 집에서 쉬어요.",
+        "어제 집에 쉬었어요.",
+        "어제 집에서 쉬었어요.",
+        "오늘 집에서 쉬었어요."
+      ],
       "correct_index": 2
     },
     {
       "id": "ex_09_05",
       "type": "multiple_choice",
       "question": "Qual é a forma no passado do verbo '하다' (fazer)?",
-      "options": ["하았어요", "했어요", "해었어요", "하어요"],
+      "options": [
+        "하았어요",
+        "했어요",
+        "해었어요",
+        "하어요"
+      ],
       "correct_index": 1
     },
     {
       "id": "ex_09_06",
       "type": "multiple_choice",
       "question": "Como se diz 'Passeamos no parque'?",
-      "options": ["공원에서 산책했어요.", "공원에 산책했어요.", "공원 산책했어요.", "산책 공원에서 했어요."],
+      "options": [
+        "공원에서 산책했어요.",
+        "공원에 산책했어요.",
+        "공원 산책했어요.",
+        "산책 공원에서 했어요."
+      ],
       "correct_index": 0
     },
     {
       "id": "ex_09_07",
-      "type": "order_words",
+      "type": "drag_and_drop_sov",
       "question": "Coloque as palavras em ordem para formar: 'Eu assisti a um filme no cinema.'",
-      "words": ["영화를", "영화관에서", "저는", "봤어요."],
-      "correct_order": ["저는", "영화관에서", "영화를", "봤어요."]
+      "words": [
+        "영화를",
+        "영화관에서",
+        "저는",
+        "봤어요."
+      ],
+      "correct_order": [
+        "저는",
+        "영화관에서",
+        "영화를",
+        "봤어요."
+      ],
+      "sov_items": [
+        {
+          "word": "영화를",
+          "role": "OBJECT",
+          "snap_anchor": "square"
+        },
+        {
+          "word": "영화관에서",
+          "role": "LOCATION",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "저는",
+          "role": "SUBJECT",
+          "snap_anchor": "square"
+        },
+        {
+          "word": "봤어요.",
+          "role": "VERB",
+          "snap_anchor": "round"
+        }
+      ],
+      "sov_slots": [
+        {
+          "role": "SUBJECT",
+          "label": "주어 (S)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "LOCATION",
+          "label": "장소 (Loc)",
+          "accepted_roles": [
+            "LOCATION"
+          ]
+        },
+        {
+          "role": "OBJECT",
+          "label": "목적어 (O)",
+          "accepted_roles": [
+            "OBJECT"
+          ]
+        },
+        {
+          "role": "VERB",
+          "label": "동사 (V)",
+          "accepted_roles": [
+            "VERB"
+          ]
+        }
+      ]
     },
     {
       "id": "ex_09_08",
-      "type": "order_words",
+      "type": "drag_and_drop_sov",
       "question": "Coloque as palavras em ordem para formar: 'Eu encontrei um amigo no fim de semana.'",
-      "words": ["주말에", "만났어요.", "친구를"],
-      "correct_order": ["주말에", "친구를", "만났어요."]
+      "words": [
+        "주말에",
+        "만났어요.",
+        "친구를"
+      ],
+      "correct_order": [
+        "주말에",
+        "친구를",
+        "만났어요."
+      ],
+      "sov_items": [
+        {
+          "word": "주말에",
+          "role": "TIME",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "만났어요.",
+          "role": "VERB",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "친구를",
+          "role": "OBJECT",
+          "snap_anchor": "square"
+        }
+      ],
+      "sov_slots": [
+        {
+          "role": "TIME",
+          "label": "시간 (Time)",
+          "accepted_roles": [
+            "TIME"
+          ]
+        },
+        {
+          "role": "OBJECT",
+          "label": "목적어 (O)",
+          "accepted_roles": [
+            "OBJECT"
+          ]
+        },
+        {
+          "role": "VERB",
+          "label": "동사 (V)",
+          "accepted_roles": [
+            "VERB"
+          ]
+        }
+      ]
     },
     {
       "id": "ex_09_09",
-      "type": "order_words",
+      "type": "drag_and_drop_sov",
       "question": "Coloque as palavras em ordem para formar: 'O que você fez ontem?'",
-      "words": ["어제", "했어요?", "뭐"],
-      "correct_order": ["어제", "뭐", "했어요?"]
+      "words": [
+        "어제",
+        "했어요?",
+        "뭐"
+      ],
+      "correct_order": [
+        "어제",
+        "뭐",
+        "했어요?"
+      ],
+      "sov_items": [
+        {
+          "word": "어제",
+          "role": "TIME",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "했어요?",
+          "role": "VERB",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "뭐",
+          "role": "OBJECT",
+          "snap_anchor": "round"
+        }
+      ],
+      "sov_slots": [
+        {
+          "role": "TIME",
+          "label": "시간 (Time)",
+          "accepted_roles": [
+            "TIME"
+          ]
+        },
+        {
+          "role": "OBJECT",
+          "label": "목적어 (O)",
+          "accepted_roles": [
+            "OBJECT"
+          ]
+        },
+        {
+          "role": "VERB",
+          "label": "동사 (V)",
+          "accepted_roles": [
+            "VERB"
+          ]
+        }
+      ]
     }
   ]
 }

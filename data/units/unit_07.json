@@ -157,64 +157,238 @@
       "id": "ex_07_1",
       "type": "multiple_choice",
       "question": "Qual partícula indica o tempo em que uma ação ocorre?",
-      "options": ["은", "를", "에", "가"],
+      "options": [
+        "은",
+        "를",
+        "에",
+        "가"
+      ],
       "correct_index": 2
     },
     {
       "id": "ex_07_2",
       "type": "multiple_choice",
       "question": "Qual palavra de tempo NÃO pode ser seguida por '에'?",
-      "options": ["주말", "오늘", "아침", "월요일"],
+      "options": [
+        "주말",
+        "오늘",
+        "아침",
+        "월요일"
+      ],
       "correct_index": 1
     },
     {
       "id": "ex_07_3",
       "type": "multiple_choice",
       "question": "Qual sistema numérico usamos para expressar as HORAS (시)?",
-      "options": ["Sino-coreano", "Coreano Nativo", "Inglês", "Nenhum"],
+      "options": [
+        "Sino-coreano",
+        "Coreano Nativo",
+        "Inglês",
+        "Nenhum"
+      ],
       "correct_index": 1
     },
     {
       "id": "ex_07_4",
       "type": "multiple_choice",
       "question": "Qual sistema numérico usamos para expressar os MINUTOS (분)?",
-      "options": ["Coreano Nativo", "Sino-coreano", "Árabe", "Chinês puro"],
+      "options": [
+        "Coreano Nativo",
+        "Sino-coreano",
+        "Árabe",
+        "Chinês puro"
+      ],
       "correct_index": 1
     },
     {
       "id": "ex_07_5",
       "type": "multiple_choice",
       "question": "Como se diz 'segunda-feira' em coreano?",
-      "options": ["화요일", "주말", "월요일", "수요일"],
+      "options": [
+        "화요일",
+        "주말",
+        "월요일",
+        "수요일"
+      ],
       "correct_index": 2
     },
     {
       "id": "ex_07_6",
       "type": "multiple_choice",
       "question": "O que significa '운동하다'?",
-      "options": ["Trabalhar", "Encontrar", "Exercitar-se", "Estudar"],
+      "options": [
+        "Trabalhar",
+        "Encontrar",
+        "Exercitar-se",
+        "Estudar"
+      ],
       "correct_index": 2
     },
     {
       "id": "ex_07_7",
-      "type": "order_words",
+      "type": "drag_and_drop_sov",
       "question": "Organize as palavras para formar a frase: 'Exercito-me de manhã.'",
-      "words": ["운동해요.", "아침에", "저는"],
-      "correct_order": ["저는", "아침에", "운동해요."]
+      "words": [
+        "운동해요.",
+        "아침에",
+        "저는"
+      ],
+      "correct_order": [
+        "저는",
+        "아침에",
+        "운동해요."
+      ],
+      "sov_items": [
+        {
+          "word": "운동해요.",
+          "role": "VERB",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "아침에",
+          "role": "TIME",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "저는",
+          "role": "SUBJECT",
+          "snap_anchor": "square"
+        }
+      ],
+      "sov_slots": [
+        {
+          "role": "SUBJECT",
+          "label": "주어 (S)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "TIME",
+          "label": "시간 (Time)",
+          "accepted_roles": [
+            "TIME"
+          ]
+        },
+        {
+          "role": "VERB",
+          "label": "동사 (V)",
+          "accepted_roles": [
+            "VERB"
+          ]
+        }
+      ]
     },
     {
       "id": "ex_07_8",
-      "type": "order_words",
+      "type": "drag_and_drop_sov",
       "question": "Organize as palavras para formar a frase: 'Encontro um amigo no fim de semana.'",
-      "words": ["만나요.", "주말에", "친구를"],
-      "correct_order": ["주말에", "친구를", "만나요."]
+      "words": [
+        "만나요.",
+        "주말에",
+        "친구를"
+      ],
+      "correct_order": [
+        "주말에",
+        "친구를",
+        "만나요."
+      ],
+      "sov_items": [
+        {
+          "word": "만나요.",
+          "role": "VERB",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "주말에",
+          "role": "TIME",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "친구를",
+          "role": "OBJECT",
+          "snap_anchor": "square"
+        }
+      ],
+      "sov_slots": [
+        {
+          "role": "TIME",
+          "label": "시간 (Time)",
+          "accepted_roles": [
+            "TIME"
+          ]
+        },
+        {
+          "role": "OBJECT",
+          "label": "목적어 (O)",
+          "accepted_roles": [
+            "OBJECT"
+          ]
+        },
+        {
+          "role": "VERB",
+          "label": "동사 (V)",
+          "accepted_roles": [
+            "VERB"
+          ]
+        }
+      ]
     },
     {
       "id": "ex_07_9",
-      "type": "order_words",
+      "type": "drag_and_drop_sov",
       "question": "Organize as palavras para formar a frase: 'Hoje eu trabalho.'",
-      "words": ["일해요.", "오늘은", "제가"],
-      "correct_order": ["오늘은", "제가", "일해요."]
+      "words": [
+        "일해요.",
+        "오늘은",
+        "제가"
+      ],
+      "correct_order": [
+        "오늘은",
+        "제가",
+        "일해요."
+      ],
+      "sov_items": [
+        {
+          "word": "일해요.",
+          "role": "VERB",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "오늘은",
+          "role": "TIME",
+          "snap_anchor": "square"
+        },
+        {
+          "word": "제가",
+          "role": "SUBJECT",
+          "snap_anchor": "round"
+        }
+      ],
+      "sov_slots": [
+        {
+          "role": "TIME",
+          "label": "시간 (Time)",
+          "accepted_roles": [
+            "TIME"
+          ]
+        },
+        {
+          "role": "SUBJECT",
+          "label": "주어 (S)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "VERB",
+          "label": "동사 (V)",
+          "accepted_roles": [
+            "VERB"
+          ]
+        }
+      ]
     }
   ]
 }
