@@ -1,0 +1,217 @@
+{
+  "unit_id": "unit_03",
+  "title": "가방이 책상 위에 있어요",
+  "vocabulary": [
+    {
+      "word": "가방",
+      "meaning": "bolsa / mochila",
+      "example_kr": "가방이 있어요.",
+      "example_pt": "A bolsa está aqui.",
+      "category": "물건",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "책상",
+      "meaning": "escrivaninha / mesa",
+      "example_kr": "책상이 커요.",
+      "example_pt": "A escrivaninha é grande.",
+      "category": "물건",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "의자",
+      "meaning": "cadeira",
+      "example_kr": "의자가 없어요.",
+      "example_pt": "Não há cadeira.",
+      "category": "물건",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "펜",
+      "meaning": "caneta",
+      "example_kr": "펜이 있어요.",
+      "example_pt": "Tem caneta.",
+      "category": "물건",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "책",
+      "meaning": "livro",
+      "example_kr": "책이 많아요.",
+      "example_pt": "Há muitos livros.",
+      "category": "물건",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "컴퓨터",
+      "meaning": "computador",
+      "example_kr": "컴퓨터가 좋아요.",
+      "example_pt": "O computador é bom.",
+      "category": "물건",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "위",
+      "meaning": "em cima / sobre",
+      "example_kr": "책상 위",
+      "example_pt": "Em cima da mesa",
+      "category": "위치",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "PARTICLE"
+    },
+    {
+      "word": "아래",
+      "meaning": "embaixo",
+      "example_kr": "의자 아래",
+      "example_pt": "Embaixo da cadeira",
+      "category": "위치",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "PARTICLE"
+    },
+    {
+      "word": "앞",
+      "meaning": "na frente",
+      "example_kr": "컴퓨터 앞",
+      "example_pt": "Na frente do computador",
+      "category": "위치",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "PARTICLE"
+    },
+    {
+      "word": "뒤",
+      "meaning": "atrás",
+      "example_kr": "책상 뒤",
+      "example_pt": "Atrás da mesa",
+      "category": "위치",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "PARTICLE"
+    },
+    {
+      "word": "안",
+      "meaning": "dentro",
+      "example_kr": "가방 안",
+      "example_pt": "Dentro da bolsa",
+      "category": "위치",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "PARTICLE"
+    },
+    {
+      "word": "옆",
+      "meaning": "ao lado",
+      "example_kr": "의자 옆",
+      "example_pt": "Ao lado da cadeira",
+      "category": "위치",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "PARTICLE"
+    }
+  ],
+  "grammar": [
+    {
+      "id": "g3_1",
+      "title": "Pronomes Demonstrativos: 이 / 그 / 저",
+      "explanation": "Essas palavras são usadas para apontar algo.\n\n- **이**: perto de quem fala (este, esta).\n- **그**: perto de quem ouve (esse, essa).\n- **저**: longe de ambos (aquele, aquela).",
+      "examples": [
+        {"kr": "이 책", "pt": "Este livro (perto de mim)"},
+        {"kr": "저 가방", "pt": "Aquela bolsa (longe de nós)"}
+      ],
+      "lusophone_tip": "Assim como no português temos este/esse/aquele, o coreano tem 이/그/저. Eles sempre acompanham um substantivo."
+    },
+    {
+      "id": "g3_2",
+      "title": "Localização: 에 있다 / 없다",
+      "explanation": "A partícula **에** indica o local onde algo está existindo.\nOs verbos **있다** (ter/estar) e **없다** (não ter/não estar) indicam existência.\n\nEstrutura: [Local] + **에** + **있어요/없어요**.",
+      "examples": [
+        {"kr": "가방이 책상 위에 있어요.", "pt": "A bolsa está em cima da mesa."},
+        {"kr": "펜이 가방 안에 없어요.", "pt": "A caneta não está dentro da bolsa."}
+      ],
+      "lusophone_tip": "No coreano, você primeiro diz o local e a posição (ex: mesa cima) e depois adiciona '에 있어요'. A ordem é o inverso do português!"
+    }
+  ],
+  "cultural_notes": [
+    {
+      "title": "A importância da organização",
+      "content": "Na Coreia, espaços organizados são muito valorizados, por isso é comum aprender posições de objetos logo no início do aprendizado.",
+      "icon": "📚"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "u3_q1",
+      "type": "multiple_choice",
+      "question": "Como se diz 'bolsa' ou 'mochila'?",
+      "options": ["가방", "책상", "의자", "컴퓨터"],
+      "correct_index": 0,
+      "explanation": "'가방' significa bolsa ou mochila."
+    },
+    {
+      "id": "u3_q2",
+      "type": "multiple_choice",
+      "question": "Qual pronome usar para apontar algo perto de você (quem fala)?",
+      "options": ["그", "저", "이", "여"],
+      "correct_index": 2,
+      "explanation": "'이' é usado para algo perto de quem fala."
+    },
+    {
+      "id": "u3_q3",
+      "type": "multiple_choice",
+      "question": "O que significa '책상 위에'?",
+      "options": ["Embaixo da mesa", "Ao lado da mesa", "Em cima da mesa", "Dentro da mesa"],
+      "correct_index": 2,
+      "explanation": "'위' significa 'em cima'."
+    },
+    {
+      "id": "u3_q4",
+      "type": "multiple_choice",
+      "question": "Qual a tradução de '의자가 없어요'?",
+      "options": ["A cadeira está aqui.", "Não tem cadeira.", "A cadeira é boa.", "Tem mesa."],
+      "correct_index": 1,
+      "explanation": "'없어요' significa não existir, não ter."
+    },
+    {
+      "id": "u3_q5",
+      "type": "multiple_choice",
+      "question": "Se um objeto está longe tanto de quem fala quanto de quem escuta, usamos:",
+      "options": ["이", "그", "저", "내"],
+      "correct_index": 2,
+      "explanation": "'저' é para longe de ambos (aquele/aquela)."
+    },
+    {
+      "id": "u3_q6",
+      "type": "multiple_choice",
+      "question": "Onde está a caneta em '가방 안에 있어요'?",
+      "options": ["Dentro da bolsa", "Fora da bolsa", "Atrás da bolsa", "Na frente da bolsa"],
+      "correct_index": 0,
+      "explanation": "'안' significa 'dentro'."
+    },
+    {
+      "id": "u3_q7",
+      "type": "order_words",
+      "question": "Ordene: A bolsa está em cima da escrivaninha.",
+      "words": ["위에", "가방이", "책상", "있어요."],
+      "correct_order": ["가방이", "책상", "위에", "있어요."],
+      "explanation": "Sujeito (가방이) + Local (책상 위에) + Verbo (있어요)."
+    },
+    {
+      "id": "u3_q8",
+      "type": "order_words",
+      "question": "Ordene: Não há livro dentro da bolsa.",
+      "words": ["없어요.", "책이", "가방", "안에"],
+      "correct_order": ["책이", "가방", "안에", "없어요."],
+      "explanation": "Sujeito (책이) + Local (가방 안에) + Verbo (없어요)."
+    },
+    {
+      "id": "u3_q9",
+      "type": "order_words",
+      "question": "Ordene: Este computador está aqui.",
+      "words": ["있어요.", "컴퓨터가", "이"],
+      "correct_order": ["이", "컴퓨터가", "있어요."],
+      "explanation": "Demonstrativo (이) + Sujeito (컴퓨터가) + Verbo (있어요)."
+    }
+  ]
+}

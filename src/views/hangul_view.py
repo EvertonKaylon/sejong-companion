@@ -1,7 +1,7 @@
 import flet as ft
+from ..components import HangulCard, centered_content, build_oclusive_lab
 from ..theme import get_theme_colors, Styles, Responsive
 from ..services import DataService
-from ..components.hangul_card import HangulCard
 
 def hangul_view(page: ft.Page) -> ft.View:
     is_dark = page.theme_mode == ft.ThemeMode.DARK
@@ -116,8 +116,10 @@ def hangul_view(page: ft.Page) -> ft.View:
                 ft.Text("Consoantes Planas (기본)", size=15, weight=ft.FontWeight.BOLD, color=colors["text"]),
             ],
             spacing=8,
+            alignment=ft.MainAxisAlignment.CENTER,
         ),
         margin=ft.Margin.only(top=4, bottom=6),
+        alignment=ft.Alignment.CENTER,
     )
 
     consonants_wrap = ft.Row(
@@ -141,8 +143,10 @@ def hangul_view(page: ft.Page) -> ft.View:
                             ft.Text("Consoantes Aspiradas", size=15, weight=ft.FontWeight.BOLD, color=colors["text"]),
                         ],
                         spacing=8,
+                        alignment=ft.MainAxisAlignment.CENTER,
                     ),
                     margin=ft.Margin.only(bottom=4),
+                    alignment=ft.Alignment.CENTER,
                 ),
                 ft.Text("Produzidas com sopro forte de ar. Coloque a mão na frente da boca para sentir!", size=12, color=colors["text_sec"]),
                 ft.Container(height=8),
@@ -155,6 +159,7 @@ def hangul_view(page: ft.Page) -> ft.View:
                 ),
             ],
             spacing=2,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         )
 
     # ─── Grid de Consoantes Tensas ───
@@ -170,8 +175,10 @@ def hangul_view(page: ft.Page) -> ft.View:
                             ft.Text("Consoantes Tensas (쌍)", size=15, weight=ft.FontWeight.BOLD, color=colors["text"]),
                         ],
                         spacing=8,
+                        alignment=ft.MainAxisAlignment.CENTER,
                     ),
                     margin=ft.Margin.only(bottom=4),
+                    alignment=ft.Alignment.CENTER,
                 ),
                 ft.Text("Produzidas com tensão na garganta, SEM sopro de ar. Essa distinção não existe no português!", size=12, color=colors["text_sec"]),
                 ft.Container(height=8),
@@ -184,7 +191,11 @@ def hangul_view(page: ft.Page) -> ft.View:
                 ),
             ],
             spacing=2,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         )
+
+    # ─── Lab Oclusivo (integrado na aba Consoantes) ───
+    oclusive_lab_section = build_oclusive_lab(page, colors, w)
 
     consonants_col = ft.Container(
         content=ft.Column(
@@ -193,12 +204,16 @@ def hangul_view(page: ft.Page) -> ft.View:
                 consonants_wrap,
                 aspirated_section,
                 tense_section,
+                ft.Divider(height=1, color=colors["border"]),
+                oclusive_lab_section,
                 ft.Container(height=12),
             ],
             scroll=ft.ScrollMode.AUTO,
             expand=True,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         ),
         padding=ft.Padding.symmetric(horizontal=4, vertical=6),
+        alignment=ft.Alignment.TOP_CENTER,
     )
 
     # ─── 받침 Guide ───
@@ -207,9 +222,15 @@ def hangul_view(page: ft.Page) -> ft.View:
         bg = data.batchim_guide
         
         batchim_controls = [
-            ft.Text(bg.title, size=17, weight=ft.FontWeight.BOLD, color=colors["primary"]),
+            ft.Text(
+                bg.title,
+                size=17,
+                weight=ft.FontWeight.BOLD,
+                color=colors["primary"],
+                text_align=ft.TextAlign.CENTER,
+            ),
             ft.Container(height=2),
-            ft.Text(bg.explanation, size=12, color=colors["text_sec"]),
+            ft.Text(bg.explanation, size=12, color=colors["text_sec"], text_align=ft.TextAlign.CENTER),
             ft.Container(height=8),
         ]
 
@@ -226,11 +247,13 @@ def hangul_view(page: ft.Page) -> ft.View:
                                     ft.Text(lw.title, size=13, weight=ft.FontWeight.BOLD, color=colors["incorrect"]),
                                 ],
                                 spacing=8,
+                                alignment=ft.MainAxisAlignment.CENTER,
                             ),
                             ft.Container(height=2),
                             ft.Text(lw.content, size=12, color=colors["text"]),
                         ],
                         spacing=4,
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     ),
                     padding=12,
                     bgcolor="#0DC50337",
@@ -298,8 +321,10 @@ def hangul_view(page: ft.Page) -> ft.View:
                 controls=batchim_controls,
                 scroll=ft.ScrollMode.AUTO,
                 expand=True,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             ),
             padding=ft.Padding.symmetric(horizontal=4, vertical=6),
+            alignment=ft.Alignment.TOP_CENTER,
         )
 
     # ─── Ganada (가나다) — Sequência Alfabética Tradicional (ZERO Romanização) ───
@@ -335,8 +360,10 @@ def hangul_view(page: ft.Page) -> ft.View:
                         ft.Text("Sequência Ganada (가나다)", size=15, weight=ft.FontWeight.BOLD, color=colors["text"]),
                     ],
                     spacing=8,
+                    alignment=ft.MainAxisAlignment.CENTER,
                 ),
                 margin=ft.Margin.only(bottom=4),
+                alignment=ft.Alignment.CENTER,
             ),
             ft.Text(
                 "A ordem alfabética coreana combina as 14 consoantes básicas com a vogal ㅏ (a). Toque para ouvir!",
@@ -352,6 +379,7 @@ def hangul_view(page: ft.Page) -> ft.View:
                         ft.Text("• Consoante + Vogal + 받침 → 강 (ㄱ + ㅏ + ㅇ)", size=12, color=colors["text_sec"]),
                     ],
                     spacing=2,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 ),
                 padding=12,
                 bgcolor=colors["surface"],
@@ -368,6 +396,7 @@ def hangul_view(page: ft.Page) -> ft.View:
             ),
         ],
         spacing=4,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
 
     # ─── Números Coreanos (1–10) ───
@@ -451,8 +480,10 @@ def hangul_view(page: ft.Page) -> ft.View:
                         ft.Text("Números Coreanos (1–10)", size=15, weight=ft.FontWeight.BOLD, color=colors["text"]),
                     ],
                     spacing=8,
+                    alignment=ft.MainAxisAlignment.CENTER,
                 ),
                 margin=ft.Margin.only(bottom=4),
+                alignment=ft.Alignment.CENTER,
             ),
             ft.Container(
                 content=ft.Column(
@@ -462,6 +493,7 @@ def hangul_view(page: ft.Page) -> ft.View:
                         ft.Text("• 고유어 (Nativo): usado para horas, idade e contar objetos.", size=12, color=colors["text_sec"], no_wrap=False),
                     ],
                     spacing=2,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 ),
                 padding=12,
                 bgcolor=colors["surface"],
@@ -472,6 +504,7 @@ def hangul_view(page: ft.Page) -> ft.View:
             ft.Column(controls=number_rows, spacing=4),
         ],
         spacing=4,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
 
     # ─── Lista de Sílabas Originais ───
@@ -485,11 +518,14 @@ def hangul_view(page: ft.Page) -> ft.View:
                         ft.Text("Sílabas de Exemplo", size=15, weight=ft.FontWeight.BOLD, color=colors["text"]),
                     ],
                     spacing=8,
+                    alignment=ft.MainAxisAlignment.CENTER,
                 ),
                 margin=ft.Margin.only(bottom=6),
+                alignment=ft.Alignment.CENTER,
             ),
         ],
         spacing=0,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
 
     syllable_box_size = Responsive.value(w, compact=46, medium=60)
@@ -546,8 +582,10 @@ def hangul_view(page: ft.Page) -> ft.View:
             spacing=8,
             scroll=ft.ScrollMode.AUTO,
             expand=True,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         ),
         padding=ft.Padding.symmetric(horizontal=4, vertical=6),
+        alignment=ft.Alignment.TOP_CENTER,
     )
 
     # ─── Abas (Tabs) ───
@@ -608,10 +646,9 @@ def hangul_view(page: ft.Page) -> ft.View:
         appbar=app_bar,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         controls=[
-            ft.Row(
-                controls=[
-                    ft.Container(
-                        content=ft.Column(
+            centered_content(
+                page,
+                ft.Column(
                             controls=[
                                 anti_roman_banner,
                                 writing_banner,
@@ -626,24 +663,10 @@ def hangul_view(page: ft.Page) -> ft.View:
                             spacing=4,
                             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                         ),
-                        width=min(w, 600),
-                        padding=ft.Padding.symmetric(horizontal=12, vertical=4),
-                        expand=True,
-                    )
-                ],
-                alignment=ft.MainAxisAlignment.CENTER,
+                padding=ft.Padding.symmetric(horizontal=12, vertical=4),
                 expand=True,
             ),
-            ft.Row(
-                controls=[
-                    ft.Container(
-                        content=quiz_button,
-                        width=min(w, 600),
-                        alignment=ft.Alignment.CENTER,
-                    )
-                ],
-                alignment=ft.MainAxisAlignment.CENTER,
-            )
+            centered_content(page, quiz_button, alignment=ft.Alignment.CENTER)
         ],
         scroll=None,
         bgcolor=colors["bg"],

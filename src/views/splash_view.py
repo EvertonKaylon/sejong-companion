@@ -1,5 +1,6 @@
 import flet as ft
 import asyncio
+from ..components import centered_content
 from ..theme import get_theme_colors, Styles
 from ..theme import Responsive
 
@@ -84,17 +85,7 @@ def splash_view(page: ft.Page) -> ft.View:
     return ft.View(
         route="/splash",
         controls=[
-            ft.Row(
-                controls=[
-                    ft.Container(
-                        content=logo_layout,
-                        width=min(w, 600),
-                        alignment=ft.Alignment.CENTER,
-                    )
-                ],
-                alignment=ft.MainAxisAlignment.CENTER,
-                vertical_alignment=ft.CrossAxisAlignment.CENTER,
-            )
+            centered_content(page, logo_layout, alignment=ft.Alignment.CENTER)
         ],
         bgcolor=colors["bg"],
         vertical_alignment=ft.MainAxisAlignment.CENTER,

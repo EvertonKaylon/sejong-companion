@@ -1,0 +1,217 @@
+{
+  "unit_id": "unit_04",
+  "title": "민우가 밥을 먹어요",
+  "vocabulary": [
+    {
+      "word": "밥",
+      "meaning": "arroz (cozido) / refeição",
+      "example_kr": "밥을 먹어요.",
+      "example_pt": "Eu como arroz/comida.",
+      "category": "음식",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "빵",
+      "meaning": "pão",
+      "example_kr": "빵을 사요.",
+      "example_pt": "Eu compro pão.",
+      "category": "음식",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "우유",
+      "meaning": "leite",
+      "example_kr": "우유를 마셔요.",
+      "example_pt": "Eu bebo leite.",
+      "category": "음료",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "물",
+      "meaning": "água",
+      "example_kr": "물을 마셔요.",
+      "example_pt": "Eu bebo água.",
+      "category": "음료",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "사과",
+      "meaning": "maçã",
+      "example_kr": "사과를 먹어요.",
+      "example_pt": "Como uma maçã.",
+      "category": "음식",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "먹다",
+      "meaning": "comer",
+      "example_kr": "밥을 먹어요.",
+      "example_pt": "Como a refeição.",
+      "category": "동사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "마시다",
+      "meaning": "beber",
+      "example_kr": "물을 마셔요.",
+      "example_pt": "Bebo água.",
+      "category": "동사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "공부하다",
+      "meaning": "estudar",
+      "example_kr": "한국어를 공부해요.",
+      "example_pt": "Estudo coreano.",
+      "category": "동사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "자다",
+      "meaning": "dormir",
+      "example_kr": "집에서 자요.",
+      "example_pt": "Durmo em casa.",
+      "category": "동사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "만나다",
+      "meaning": "encontrar (alguém)",
+      "example_kr": "친구를 만나요.",
+      "example_pt": "Encontro um amigo.",
+      "category": "동사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "보다",
+      "meaning": "ver / assistir",
+      "example_kr": "영화를 봐요.",
+      "example_pt": "Assisto um filme.",
+      "category": "동사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "하다",
+      "meaning": "fazer",
+      "example_kr": "숙제를 해요.",
+      "example_pt": "Faço a tarefa de casa.",
+      "category": "동사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    }
+  ],
+  "grammar": [
+    {
+      "id": "g4_1",
+      "title": "Terminação Polida Presente: -아요/어요",
+      "explanation": "No coreano, os verbos mudam de acordo com o nível de formalidade e a vogal da raiz.\n\n- Usa-se **-아요** quando a raiz do verbo tem a vogal **ㅏ** ou **ㅗ** (ex: 가다 -> 가요, 보다 -> 봐요).\n- Usa-se **-어요** para outras vogais (ex: 먹다 -> 먹어요).\n- Verbos com **하다** tornam-se **해요**.",
+      "examples": [
+        {"kr": "먹다 -> 먹어요", "pt": "Como"},
+        {"kr": "공부하다 -> 공부해요", "pt": "Estudo"}
+      ],
+      "lusophone_tip": "A raiz do verbo é encontrada removendo o '다' do final no dicionário. Essa terminação serve tanto para afirmar quanto para perguntar (mudando a entonação)."
+    },
+    {
+      "id": "g4_2",
+      "title": "Partícula de Objeto: 을 / 를",
+      "explanation": "A partícula **을/를** é anexada ao substantivo para indicar que ele é o objeto direto da ação.\n\n- **을**: quando o substantivo termina em consoante (받침).\n- **를**: quando o substantivo termina em vogal.",
+      "examples": [
+        {"kr": "밥을 먹어요.", "pt": "Como a refeição. (밥 tem 받침)"},
+        {"kr": "우유를 마셔요.", "pt": "Bebo leite. (우유 não tem 받침)"}
+      ],
+      "lusophone_tip": "Lembre-se que em coreano o objeto vem antes do verbo! A estrutura clássica é: Sujeito + Objeto + Verbo (SOV)."
+    }
+  ],
+  "cultural_notes": [
+    {
+      "title": "A palavra 밥",
+      "content": "A palavra '밥' (arroz) é frequentemente usada como sinônimo para 'refeição'. Perguntar '밥 먹었어요?' (Comeu arroz?) é uma forma comum de dizer 'Como você está?' ou 'Já comeu?'.",
+      "icon": "🍚"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "u4_q1",
+      "type": "multiple_choice",
+      "question": "Qual partícula de objeto usar com '사과' (maçã)?",
+      "options": ["은", "는", "을", "를"],
+      "correct_index": 3,
+      "explanation": "'사과' termina em vogal, logo usamos '를'."
+    },
+    {
+      "id": "u4_q2",
+      "type": "multiple_choice",
+      "question": "Como se conjuga o verbo '먹다' no presente polido?",
+      "options": ["먹아요", "먹어요", "먹해요", "먹요"],
+      "correct_index": 1,
+      "explanation": "A raiz '먹' tem a vogal 'ㅓ', logo adicionamos '-어요'."
+    },
+    {
+      "id": "u4_q3",
+      "type": "multiple_choice",
+      "question": "Como se diz 'beber água'?",
+      "options": ["물을 마셔요.", "물이 마셔요.", "물을 먹어요.", "물 마시요."],
+      "correct_index": 0,
+      "explanation": "'물' + '을' (objeto) + '마셔요' (beber)."
+    },
+    {
+      "id": "u4_q4",
+      "type": "multiple_choice",
+      "question": "Qual partícula de objeto usar com '밥' (refeição)?",
+      "options": ["를", "을", "이", "가"],
+      "correct_index": 1,
+      "explanation": "'밥' termina em consoante (받침 'ㅂ'), então usamos '을'."
+    },
+    {
+      "id": "u4_q5",
+      "type": "multiple_choice",
+      "question": "Como se conjuga o verbo '공부하다' no presente polido?",
+      "options": ["공부하요", "공부해요", "공부하어요", "공부하아요"],
+      "correct_index": 1,
+      "explanation": "Verbos terminados em '하다' mudam para '해요'."
+    },
+    {
+      "id": "u4_q6",
+      "type": "multiple_choice",
+      "question": "O que significa '빵을 사요'?",
+      "options": ["Eu bebo leite.", "Eu compro pão.", "Eu como pão.", "Eu faço o pão."],
+      "correct_index": 1,
+      "explanation": "'빵' é pão, '사요' é do verbo 사다 (comprar)."
+    },
+    {
+      "id": "u4_q7",
+      "type": "order_words",
+      "question": "Ordene: Minwoo come a refeição.",
+      "words": ["먹어요.", "밥을", "민우가"],
+      "correct_order": ["민우가", "밥을", "먹어요."],
+      "explanation": "Sujeito (민우가) + Objeto (밥을) + Verbo (먹어요)."
+    },
+    {
+      "id": "u4_q8",
+      "type": "order_words",
+      "question": "Ordene: Eu bebo leite.",
+      "words": ["마셔요.", "우유를", "저는"],
+      "correct_order": ["저는", "우유를", "마셔요."],
+      "explanation": "Sujeito (저는) + Objeto (우유를) + Verbo (마셔요)."
+    },
+    {
+      "id": "u4_q9",
+      "type": "order_words",
+      "question": "Ordene: Minwoo estuda coreano.",
+      "words": ["공부해요.", "한국어를", "민우가"],
+      "correct_order": ["민우가", "한국어를", "공부해요."],
+      "explanation": "Sujeito (민우가) + Objeto (한국어를) + Verbo (공부해요)."
+    }
+  ]
+}

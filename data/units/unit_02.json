@@ -1,0 +1,217 @@
+{
+  "unit_id": "unit_02",
+  "title": "투안 씨는 베트남 사람이에요",
+  "vocabulary": [
+    {
+      "word": "한국",
+      "meaning": "Coreia do Sul",
+      "example_kr": "한국 사람이에요.",
+      "example_pt": "Sou coreano.",
+      "category": "나라",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "베트남",
+      "meaning": "Vietnã",
+      "example_kr": "베트남 사람이에요.",
+      "example_pt": "Sou vietnamita.",
+      "category": "나라",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "브라질",
+      "meaning": "Brasil",
+      "example_kr": "저는 브라질 사람이에요.",
+      "example_pt": "Eu sou brasileiro.",
+      "category": "나라",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "미국",
+      "meaning": "Estados Unidos",
+      "example_kr": "미국이 커요.",
+      "example_pt": "Os Estados Unidos são grandes.",
+      "category": "나라",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "일본",
+      "meaning": "Japão",
+      "example_kr": "일본 사람이에요.",
+      "example_pt": "Sou japonês.",
+      "category": "나라",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "중국",
+      "meaning": "China",
+      "example_kr": "중국 사람 아니에요.",
+      "example_pt": "Não sou chinês.",
+      "category": "나라",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "일",
+      "meaning": "um (1)",
+      "example_kr": "일, 이, 삼.",
+      "example_pt": "Um, dois, três.",
+      "category": "한자어 수",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "이",
+      "meaning": "dois (2)",
+      "example_kr": "이 번호",
+      "example_pt": "Número dois",
+      "category": "한자어 수",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "삼",
+      "meaning": "três (3)",
+      "example_kr": "삼층",
+      "example_pt": "Terceiro andar",
+      "category": "한자어 수",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "사",
+      "meaning": "quatro (4)",
+      "example_kr": "사월",
+      "example_pt": "Abril (quarto mês)",
+      "category": "한자어 수",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "오",
+      "meaning": "cinco (5)",
+      "example_kr": "오일",
+      "example_pt": "Cinco dias / dia 5",
+      "category": "한자어 수",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "의사",
+      "meaning": "médico",
+      "example_kr": "의사가 아니에요.",
+      "example_pt": "Não sou médico.",
+      "category": "직업",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "SUBJECT"
+    }
+  ],
+  "grammar": [
+    {
+      "id": "g2_1",
+      "title": "Partícula de Sujeito: 이 / 가",
+      "explanation": "A partícula **이/가** é adicionada ao substantivo para indicar que ele é o sujeito da frase.\n\n- Usa-se **이** quando o substantivo termina em consoante (받침).\n- Usa-se **가** quando o substantivo termina em vogal.",
+      "examples": [
+        {"kr": "선생님이", "pt": "O professor (sujeito)"},
+        {"kr": "의사가", "pt": "O médico (sujeito)"}
+      ],
+      "lusophone_tip": "No português, identificamos o sujeito pela ordem das palavras. No coreano, são as partículas que cumprem esse papel. Memorizar se a palavra termina com ou sem 받침 é essencial!"
+    },
+    {
+      "id": "g2_2",
+      "title": "Negação com o verbo ser: 이/가 아니에요",
+      "explanation": "A estrutura **이/가 아니에요** é usada para dizer 'não ser' algo.\n\nComo no caso da partícula de sujeito, escolhe-se **이** ou **가** com base na presença de 받침 no substantivo anterior, e depois adiciona-se **아니에요**.",
+      "examples": [
+        {"kr": "저는 학생이 아니에요.", "pt": "Eu não sou estudante."},
+        {"kr": "투안은 의사가 아니에요.", "pt": "Tuan não é médico."}
+      ],
+      "lusophone_tip": "Diferente do português, onde basta adicionar 'não' antes do verbo (ex: não sou), no coreano, o substantivo negado deve receber a partícula de sujeito (이/가) antes de '아니에요'."
+    }
+  ],
+  "cultural_notes": [
+    {
+      "title": "Nacionalidades em coreano",
+      "content": "Em coreano, para falar sua nacionalidade, basta adicionar a palavra '사람' (pessoa) ao nome do país. Ex: 브라질 (Brasil) + 사람 (pessoa) = 브라질 사람 (brasileiro).",
+      "icon": "🌎"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "u2_q1",
+      "type": "multiple_choice",
+      "question": "Qual é a partícula correta para '학생' (estudante)?",
+      "options": ["이", "가", "는", "은"],
+      "correct_index": 0,
+      "explanation": "'학생' termina em consoante (받침 'ㅇ'), logo, utiliza-se a partícula '이'."
+    },
+    {
+      "id": "u2_q2",
+      "type": "multiple_choice",
+      "question": "Qual é a partícula correta para '의사' (médico)?",
+      "options": ["이", "가", "을", "를"],
+      "correct_index": 1,
+      "explanation": "'의사' termina em vogal, logo, utiliza-se a partícula '가'."
+    },
+    {
+      "id": "u2_q3",
+      "type": "multiple_choice",
+      "question": "Como dizer 'Não sou médico'?",
+      "options": ["의사이 아니에요.", "의사가 아니에요.", "의사는 아니에요.", "의사 아니에요가."],
+      "correct_index": 1,
+      "explanation": "Como '의사' termina em vogal, usamos '가 아니에요'."
+    },
+    {
+      "id": "u2_q4",
+      "type": "multiple_choice",
+      "question": "Como se diz 'Coreia do Sul' em coreano?",
+      "options": ["미국", "한국", "중국", "일본"],
+      "correct_index": 1,
+      "explanation": "'한국' significa Coreia do Sul."
+    },
+    {
+      "id": "u2_q5",
+      "type": "multiple_choice",
+      "question": "O que significa '중국'?",
+      "options": ["Japão", "Vietnã", "China", "Brasil"],
+      "correct_index": 2,
+      "explanation": "'중국' significa China."
+    },
+    {
+      "id": "u2_q6",
+      "type": "multiple_choice",
+      "question": "Como se lê o número '3' em números sino-coreanos?",
+      "options": ["일", "이", "삼", "사"],
+      "correct_index": 2,
+      "explanation": "O número 3 é '삼'."
+    },
+    {
+      "id": "u2_q7",
+      "type": "order_words",
+      "question": "Ordene a frase: Tuan não é estudante.",
+      "words": ["학생이", "아니에요.", "투안은"],
+      "correct_order": ["투안은", "학생이", "아니에요."],
+      "explanation": "Sujeito (투안은) + Substantivo com partícula 이/가 (학생이) + Verbo de negação (아니에요)."
+    },
+    {
+      "id": "u2_q8",
+      "type": "order_words",
+      "question": "Ordene a frase: Eu não sou médico.",
+      "words": ["저는", "아니에요.", "의사가"],
+      "correct_order": ["저는", "의사가", "아니에요."],
+      "explanation": "Sujeito (저는) + Substantivo (의사가) + Verbo de negação (아니에요)."
+    },
+    {
+      "id": "u2_q9",
+      "type": "order_words",
+      "question": "Ordene a frase: Tuan é vietnamita.",
+      "words": ["사람이에요.", "투안 씨는", "베트남"],
+      "correct_order": ["투안 씨는", "베트남", "사람이에요."],
+      "explanation": "Sujeito (투안 씨는) + País (베트남) + 사람이에요."
+    }
+  ]
+}

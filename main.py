@@ -49,12 +49,7 @@ import flet as ft
 import flet_audio
 from src.theme import apply_app_theme
 from src.router import Router
-from src.views.splash_view import splash_view
-from src.views.home_view import home_view
-from src.views.hangul_view import hangul_view
-from src.views.lesson_view import lesson_view
-from src.views.quiz_view import quiz_view
-from src.views.ui_test_view import ui_test_view
+from src.views import APP_ROUTES
 
 from src.services import FullscreenService
 
@@ -80,12 +75,8 @@ def main(page: ft.Page):
     page.router = router
 
     # Registrar rotas do aplicativo
-    router.register_route("/splash", splash_view)
-    router.register_route("/home", home_view)
-    router.register_route("/hangul", hangul_view)
-    router.register_route("/lesson", lesson_view)
-    router.register_route("/quiz", quiz_view)
-    #router.register_route("/ui_test", ui_test_view)
+    for route_name, view_builder in APP_ROUTES.items():
+        router.register_route(route_name, view_builder)
 
     # Inicializar o servico de audio global
     from src.audio_service import AudioService

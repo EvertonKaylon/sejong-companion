@@ -1,7 +1,9 @@
 import os
 import tempfile
 import unittest
+from datetime import datetime, timedelta
 from src.services import ProgressService
+from src.models import MemoryNode
 
 class MockPage:
     pass
@@ -56,6 +58,17 @@ class TestProgressService(unittest.TestCase):
         self.assertFalse(self.service.is_unlocked("unit_03"))
         self.service.save_progress("unit_02", 1.0)
         self.assertTrue(self.service.is_unlocked("unit_03"))
+
+    def test_full_unlock_chain_10_units(self):
+        """Cadeia de desbloqueio completa: unit_intro → unit_01 → ... → unit_10."""
+        self.service.save_progress("unit_intro", 1.0)
+        for i in range(1, 10):
+            unit_id = f"unit_{i:02d}"
+            next_id = f"unit_{i+1:02d}"
+            self.assertTrue(self.service.is_unlocked(unit_id), f"{unit_id} deveria estar desbloqueada")
+            self.assertFalse(self.service.is_unlocked(next_id), f"{next_id} deveria estar bloqueada")
+            self.service.save_progress(unit_id, 1.0)
+            self.assertTrue(self.service.is_unlocked(next_id), f"{next_id} deveria desbloquear após completar {unit_id}")
 
     def test_disk_persistence_across_restarts(self):
         # 1. Salvar dados na instância atual
@@ -127,6 +140,80 @@ class TestProgressService(unittest.TestCase):
 
         service_1.save_progress("unit_intro", 0.5)
         self.assertEqual(service_2.get_progress("unit_intro"), 0.5)
+
+    # ─── HLR / SRS (Half-Life Regression de Ebbinghaus) ───
+
+    def test_memory_node_initial_stability(self):
+        """MemoryNode sem revisão retorna estabilidade 0.0."""
+        node = MemoryNode(unit_id="unit_01")
+        self.assertEqual(node.calculate_stability(), 0.0)
+
+    def test_memory_node_stability_after_review(self):
+        """Após revisão recente, estabilidade deve ser alta (próxima de 1.0)."""
+        node = MemoryNode(unit_id="unit_01", half_life=5.0,
+                          last_reviewed=datetime.now().isoformat())
+        stability = node.calculate_stability()
+        self.assertGreater(stability, 0.99)
+
+    def test_memory_node_stability_decay(self):
+        """Após tempo significativo, estabilidade deve decair."""
+        past = (datetime.now() - timedelta(days=10)).isoformat()
+        node = MemoryNode(unit_id="unit_01", half_life=5.0, last_reviewed=past)
+        stability = node.calculate_stability()
+        self.assertLess(stability, 0.3)  # 10 dias com meia-vida de 5 → R = 2^(-2) = 0.25
+
+    def test_memory_node_update_correct(self):
+        """Resposta correta deve aumentar a meia-vida."""
+        node = MemoryNode(unit_id="unit_01", half_life=5.0)
+        old_half_life = node.half_life
+        node.update_performance(is_correct=True, response_time_ms=1000)
+        self.assertGreater(node.half_life, old_half_life)
+
+    def test_memory_node_update_incorrect(self):
+        """Resposta incorreta deve diminuir a meia-vida."""
+        node = MemoryNode(unit_id="unit_01", half_life=5.0,
+                          last_reviewed=datetime.now().isoformat())
+        old_half_life = node.half_life
+        node.update_performance(is_correct=False)
+        self.assertLess(node.half_life, old_half_life)
+
+    def test_vitality_levels(self):
+        """Testa os 3 níveis de vitalidade do MemoryNode."""
+        # High: revisão muito recente
+        node_high = MemoryNode(unit_id="u1", half_life=5.0,
+                               last_reviewed=datetime.now().isoformat())
+        self.assertEqual(node_high.vitality_level(), "high")
+
+        # Low: revisão muito antiga
+        old = (datetime.now() - timedelta(days=30)).isoformat()
+        node_low = MemoryNode(unit_id="u2", half_life=5.0, last_reviewed=old)
+        self.assertEqual(node_low.vitality_level(), "low")
+
+    def test_service_get_vitality_none_by_default(self):
+        """Unidade nunca estudada retorna 'none'."""
+        vitality = self.service.get_vitality("unit_01")
+        self.assertEqual(vitality, "none")
+
+    def test_service_record_review_persists(self):
+        """record_review() deve persistir o MemoryNode no store."""
+        node = self.service.record_review("unit_01", is_correct=True, response_time_ms=1500)
+        self.assertGreater(node.half_life, 5.0)
+        self.assertNotEqual(node.last_reviewed, "")
+
+        # Verificar que vitality agora é 'high'
+        vitality = self.service.get_vitality("unit_01")
+        self.assertEqual(vitality, "high")
+
+    def test_memory_node_disk_persistence(self):
+        """MemoryNode deve sobreviver a reinicializações."""
+        self.service.record_review("unit_01", is_correct=True)
+        
+        # Simular reinicialização
+        ProgressService._sessions.clear()
+        new_service = ProgressService(self.mock_page)
+        
+        vitality = new_service.get_vitality("unit_01")
+        self.assertEqual(vitality, "high")  # Revisão recente → alta vitalidade
 
 if __name__ == "__main__":
     unittest.main()

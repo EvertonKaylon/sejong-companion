@@ -34,5 +34,68 @@
     "description": "Localização de objetos, posições e verbos de existência (있다/없다).",
     "is_unlocked": false,
     "progress": 0.0
+  },
+  {
+    "id": "unit_04",
+    "number": 4,
+    "title_kr": "민우가 밥을 먹어요",
+    "title_pt": "민우 come arroz",
+    "description": "Ações cotidianas, verbos básicos no presente polido e a partícula de objeto 을/를.",
+    "is_unlocked": false,
+    "progress": 0.0
+  },
+  {
+    "id": "unit_05",
+    "number": 5,
+    "title_kr": "시장에서 빵하고 우유를 사요",
+    "title_pt": "Compro pão e leite no mercado",
+    "description": "Compras, deslocamento, partícula direcional 에 가다/오다 e conectivo 하고.",
+    "is_unlocked": false,
+    "progress": 0.0
+  },
+  {
+    "id": "unit_06",
+    "number": 6,
+    "title_kr": "사과 다섯 개 주세요",
+    "title_pt": "Cinco maçãs, por favor",
+    "description": "Classificadores numéricos (개/명/병), números nativos coreanos e pedidos polidos.",
+    "is_unlocked": false,
+    "progress": 0.0
+  },
+  {
+    "id": "unit_07",
+    "number": 7,
+    "title_kr": "일곱 시에 운동해요",
+    "title_pt": "Faço exercício às 7 horas",
+    "description": "Horários, dias da semana, datas e a partícula temporal 에.",
+    "is_unlocked": false,
+    "progress": 0.0
+  },
+  {
+    "id": "unit_08",
+    "number": 8,
+    "title_kr": "오늘 날씨가 안 더워요",
+    "title_pt": "O clima de hoje não está quente",
+    "description": "Clima, estações, negação com 안 e verbos irregulares em ㅂ.",
+    "is_unlocked": false,
+    "progress": 0.0
+  },
+  {
+    "id": "unit_09",
+    "number": 9,
+    "title_kr": "공원에서 산책했어요",
+    "title_pt": "Passei no parque",
+    "description": "Atividades do fim de semana, tempo passado -았/었- e a partícula de local de ação 에서.",
+    "is_unlocked": false,
+    "progress": 0.0
+  },
+  {
+    "id": "unit_10",
+    "number": 10,
+    "title_kr": "우리 같이 영화를 볼까요?",
+    "title_pt": "Vamos assistir um filme juntos?",
+    "description": "Desejos (-고 싶다), sugestões (-(으)ㄹ까요?) e expressões de planos e convites.",
+    "is_unlocked": false,
+    "progress": 0.0
   }
 ]

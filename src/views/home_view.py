@@ -1,5 +1,6 @@
 import flet as ft
 from datetime import datetime
+from ..components import centered_content
 from ..theme import get_theme_colors, Styles, Responsive
 from ..services import DataService, ProgressService, FullscreenService
 
@@ -189,23 +190,60 @@ def home_view(page: ft.Page) -> ft.View:
 
         badge_text = str(unit.number) if unit.number > 0 else "H"
         badge_color = colors["primary"] if is_unlocked else colors["border"]
+
+        # Orbe de Vitalidade SRS (HLR Ebbinghaus)
+        vitality = progress_service.get_vitality(unit.id) if is_unlocked and unit_progress > 0 else "none"
+        vitality_color_map = {
+            "high": colors["vitality_high"],
+            "medium": colors["vitality_medium"],
+            "low": colors["vitality_low"],
+            "none": colors["vitality_none"],
+        }
+        vitality_color = vitality_color_map.get(vitality, colors["vitality_none"])
+        vitality_tooltip_map = {
+            "high": "Memória forte! ✅",
+            "medium": "Hora de revisar ⚠️",
+            "low": "Memória enfraquecendo! 🔴",
+            "none": "",
+        }
+        vitality_tooltip = vitality_tooltip_map.get(vitality, "")
+
+        # Badge com orbe de vitalidade
+        badge_stack = ft.Stack(
+            controls=[
+                ft.Container(
+                    content=ft.Text(
+                        badge_text,
+                        weight=ft.FontWeight.BOLD,
+                        color=ft.Colors.WHITE if is_unlocked else colors["text_sec"],
+                        size=15
+                    ),
+                    bgcolor=badge_color,
+                    shape=ft.BoxShape.CIRCLE,
+                    width=38,
+                    height=38,
+                    alignment=ft.Alignment.CENTER,
+                ),
+            ] + ([
+                ft.Container(
+                    width=12,
+                    height=12,
+                    bgcolor=vitality_color,
+                    shape=ft.BoxShape.CIRCLE,
+                    border=ft.Border.all(2, colors["card_bg"]),
+                    top=0,
+                    right=0,
+                    tooltip=vitality_tooltip,
+                ),
+            ] if vitality != "none" else []),
+            width=38,
+            height=38,
+        )
         
         card_content = ft.Container(
             content=ft.Row(
                 controls=[
-                    ft.Container(
-                        content=ft.Text(
-                            badge_text,
-                            weight=ft.FontWeight.BOLD,
-                            color=ft.Colors.WHITE if is_unlocked else colors["text_sec"],
-                            size=15
-                        ),
-                        bgcolor=badge_color,
-                        shape=ft.BoxShape.CIRCLE,
-                        width=38,
-                        height=38,
-                        alignment=ft.Alignment.CENTER,
-                    ),
+                    badge_stack,
                     ft.Column(
                         controls=[
                             ft.Row(
@@ -260,24 +298,19 @@ def home_view(page: ft.Page) -> ft.View:
         appbar=app_bar,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         controls=[
-            ft.Row(
-                controls=[
-                    ft.Container(
-                        content=ft.Column(
-                            controls=[
-                                welcome_text,
-                                neuro_tip_card,
-                                progress_summary,
-                                ft.Text("Grade Curricular", size=15, weight=ft.FontWeight.BOLD, color=colors["text"]),
-                                ft.Column(controls=unit_cards)
-                            ],
-                            spacing=0,
-                        ),
-                        width=min(w, 600),
-                        padding=ft.Padding.symmetric(horizontal=12, vertical=8),
-                    )
-                ],
-                alignment=ft.MainAxisAlignment.CENTER,
+            centered_content(
+                page,
+                ft.Column(
+                    controls=[
+                        welcome_text,
+                        neuro_tip_card,
+                        progress_summary,
+                        ft.Text("Grade Curricular", size=15, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                        ft.Column(controls=unit_cards),
+                    ],
+                    spacing=0,
+                ),
+                padding=ft.Padding.symmetric(horizontal=12, vertical=8),
             )
         ],
         scroll=ft.ScrollMode.AUTO,

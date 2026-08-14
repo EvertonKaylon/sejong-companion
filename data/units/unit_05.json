@@ -1,0 +1,220 @@
+{
+  "unit_id": "unit_05",
+  "title": "시장에서 빵하고 우유를 사요",
+  "vocabulary": [
+    {
+      "word": "시장",
+      "meaning": "mercado",
+      "example_kr": "시장에 가요.",
+      "example_pt": "Vou ao mercado.",
+      "category": "장소",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "식당",
+      "meaning": "restaurante",
+      "example_kr": "식당에서 밥을 먹어요.",
+      "example_pt": "Como arroz no restaurante.",
+      "category": "장소",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "학교",
+      "meaning": "escola",
+      "example_kr": "학교에 가요.",
+      "example_pt": "Vou à escola.",
+      "category": "장소",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "회사",
+      "meaning": "empresa",
+      "example_kr": "회사에서 일해요.",
+      "example_pt": "Trabalho na empresa.",
+      "category": "장소",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "빵",
+      "meaning": "pão",
+      "example_kr": "빵을 사요.",
+      "example_pt": "Compro pão.",
+      "category": "식품",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "우유",
+      "meaning": "leite",
+      "example_kr": "우유를 마셔요.",
+      "example_pt": "Bebo leite.",
+      "category": "식품",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "과일",
+      "meaning": "fruta",
+      "example_kr": "과일을 먹어요.",
+      "example_pt": "Como fruta.",
+      "category": "식품",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "물",
+      "meaning": "água",
+      "example_kr": "물을 마셔요.",
+      "example_pt": "Bebo água.",
+      "category": "식품",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "가다",
+      "meaning": "ir",
+      "example_kr": "학교에 가요.",
+      "example_pt": "Vou à escola.",
+      "category": "동사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "오다",
+      "meaning": "vir",
+      "example_kr": "친구가 와요.",
+      "example_pt": "O amigo vem.",
+      "category": "동사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "사다",
+      "meaning": "comprar",
+      "example_kr": "우유를 사요.",
+      "example_pt": "Compro leite.",
+      "category": "동사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "하고",
+      "meaning": "e",
+      "example_kr": "빵하고 우유를 사요.",
+      "example_pt": "Compro pão e leite.",
+      "category": "조사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "PARTICLE"
+    }
+  ],
+  "grammar": [
+    {
+      "id": "grammar_05_1",
+      "title": "장소에 가다/오다",
+      "explanation": "A partícula **에** é usada com verbos de movimento, como **가다** (ir) e **오다** (vir), para indicar o **destino** da ação. \n\n* 장소 + **에 가다**: Ir a [lugar].\n* 장소 + **에 오다**: Vir a [lugar].",
+      "examples": [
+        {
+          "kr": "시장에 가요.",
+          "pt": "Vou ao mercado."
+        },
+        {
+          "kr": "학교에 가요.",
+          "pt": "Vou à escola."
+        }
+      ],
+      "lusophone_tip": "Em português, usamos preposições como 'a' ou 'para' antes do lugar (ir ao mercado). Em coreano, a partícula **에** vem *logo após* a palavra que indica o lugar."
+    },
+    {
+      "id": "grammar_05_2",
+      "title": "명사하고 명사",
+      "explanation": "A partícula **하고** é anexada a substantivos para conectá-los, indicando **'e'** (adição) ou **'com'** (acompanhamento). Pode ser usada independentemente se a palavra termina em vogal ou consoante (받침).\n\n* 명사 + **하고** + 명사: Substantivo **e** Substantivo.",
+      "examples": [
+        {
+          "kr": "빵하고 우유를 먹어요.",
+          "pt": "Como pão e leite."
+        },
+        {
+          "kr": "친구하고 시장에 가요.",
+          "pt": "Vou ao mercado com um amigo."
+        }
+      ],
+      "lusophone_tip": "Ao contrário de '와/과', **하고** é usado mais frequentemente na linguagem falada. Além disso, a forma não muda se a palavra termina com consoante ou vogal!"
+    }
+  ],
+  "cultural_notes": [
+    {
+      "title": "Mercados Tradicionais (전통 시장)",
+      "content": "Apesar do crescimento de supermercados e lojas de conveniência, os mercados tradicionais ainda são muito populares na Coreia do Sul para comprar comida fresca, experimentar comida de rua, e vivenciar a cultura local. Pechinchar (깎아주세요) às vezes é possível neles!",
+      "icon": "🛍️"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "ex_05_1",
+      "type": "multiple_choice",
+      "question": "Selecione a palavra correta para 'mercado'.",
+      "options": ["식당", "회사", "시장", "학교"],
+      "correct_index": 2
+    },
+    {
+      "id": "ex_05_2",
+      "type": "multiple_choice",
+      "question": "Preencha a lacuna: 저는 학교__ 가요.",
+      "options": ["를", "에", "은", "가"],
+      "correct_index": 1
+    },
+    {
+      "id": "ex_05_3",
+      "type": "multiple_choice",
+      "question": "Qual é a tradução de '과일'?",
+      "options": ["Fruta", "Água", "Pão", "Leite"],
+      "correct_index": 0
+    },
+    {
+      "id": "ex_05_4",
+      "type": "multiple_choice",
+      "question": "Complete: 빵__ 우유를 먹어요.",
+      "options": ["가", "를", "하고", "에"],
+      "correct_index": 2
+    },
+    {
+      "id": "ex_05_5",
+      "type": "multiple_choice",
+      "question": "Como se diz 'ir' em coreano?",
+      "options": ["오다", "먹다", "사다", "가다"],
+      "correct_index": 3
+    },
+    {
+      "id": "ex_05_6",
+      "type": "multiple_choice",
+      "question": "Selecione a palavra que significa 'comprar'.",
+      "options": ["가다", "사다", "오다", "마시다"],
+      "correct_index": 1
+    },
+    {
+      "id": "ex_05_7",
+      "type": "order_words",
+      "question": "Organize as palavras para formar a frase: 'Eu vou à escola.'",
+      "words": ["학교에", "가요.", "저는"],
+      "correct_order": ["저는", "학교에", "가요."]
+    },
+    {
+      "id": "ex_05_8",
+      "type": "order_words",
+      "question": "Organize as palavras para formar a frase: 'Compro pão e leite.'",
+      "words": ["사요.", "빵하고", "우유를"],
+      "correct_order": ["빵하고", "우유를", "사요."]
+    },
+    {
+      "id": "ex_05_9",
+      "type": "order_words",
+      "question": "Organize as palavras para formar a frase: 'O amigo vai ao mercado.'",
+      "words": ["시장에", "친구가", "가요."],
+      "correct_order": ["친구가", "시장에", "가요."]
+    }
+  ]
+}

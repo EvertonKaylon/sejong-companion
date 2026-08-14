@@ -1,0 +1,112 @@
+{
+  "unit_id": "unit_08",
+  "title": "오늘 날씨가 안 더워요",
+  "vocabulary": [
+    {"word": "봄", "meaning": "primavera", "example_kr": "봄을 좋아해요.", "example_pt": "Gosto da primavera.", "category": "계절", "snap_anchor": "square", "magnetic_slot_role": "SUBJECT"},
+    {"word": "여름", "meaning": "verão", "example_kr": "여름은 날씨가 더워요.", "example_pt": "O tempo é quente no verão.", "category": "계절", "snap_anchor": "square", "magnetic_slot_role": "SUBJECT"},
+    {"word": "가을", "meaning": "outono", "example_kr": "가을은 시원해요.", "example_pt": "O outono é fresco.", "category": "계절", "snap_anchor": "square", "magnetic_slot_role": "SUBJECT"},
+    {"word": "겨울", "meaning": "inverno", "example_kr": "겨울에는 눈이 와요.", "example_pt": "Neva no inverno.", "category": "계절", "snap_anchor": "square", "magnetic_slot_role": "SUBJECT"},
+    {"word": "날씨", "meaning": "tempo, clima", "example_kr": "오늘 날씨가 어때요?", "example_pt": "Como está o tempo hoje?", "category": "날씨", "snap_anchor": "round", "magnetic_slot_role": "SUBJECT"},
+    {"word": "비", "meaning": "chuva", "example_kr": "비가 와요.", "example_pt": "Está chovendo.", "category": "날씨", "snap_anchor": "round", "magnetic_slot_role": "SUBJECT"},
+    {"word": "눈", "meaning": "neve", "example_kr": "눈이 안 와요.", "example_pt": "Não está nevando.", "category": "날씨", "snap_anchor": "square", "magnetic_slot_role": "SUBJECT"},
+    {"word": "따뜻하다", "meaning": "ser quente (agradável)", "example_kr": "날씨가 따뜻해요.", "example_pt": "O tempo está quente.", "category": "형용사", "snap_anchor": "round", "magnetic_slot_role": "PREDICATE"},
+    {"word": "시원하다", "meaning": "ser fresco", "example_kr": "바람이 시원해요.", "example_pt": "O vento é fresco.", "category": "형용사", "snap_anchor": "round", "magnetic_slot_role": "PREDICATE"},
+    {"word": "춥다", "meaning": "ser frio", "example_kr": "오늘 날씨가 추워요.", "example_pt": "O tempo está frio hoje.", "category": "형용사", "snap_anchor": "round", "magnetic_slot_role": "PREDICATE"},
+    {"word": "덥다", "meaning": "ser quente (desagradável)", "example_kr": "여름은 더워요.", "example_pt": "O verão é quente.", "category": "형용사", "snap_anchor": "round", "magnetic_slot_role": "PREDICATE"},
+    {"word": "맑다", "meaning": "ser limpo, claro (tempo)", "example_kr": "하늘이 맑아요.", "example_pt": "O céu está claro.", "category": "형용사", "snap_anchor": "round", "magnetic_slot_role": "PREDICATE"}
+  ],
+  "grammar": [
+    {
+      "id": "grammar_an",
+      "title": "안 (Negação)",
+      "explanation": "A palavra **안** é usada antes de um verbo ou adjetivo para indicar negação, com o sentido de 'não'.\n* Em verbos compostos com **하다** (como 공부하다), o **안** é colocado entre o substantivo e o **하다** (ex: 공부 안 해요).\n* Adjetivos com **하다** geralmente recebem **안** antes de toda a palavra (ex: 안 피곤해요).",
+      "examples": [
+        {"kr": "오늘 비가 안 와요.", "pt": "Não chove hoje."},
+        {"kr": "저는 사과를 안 먹어요.", "pt": "Eu não como maçã."}
+      ],
+      "lusophone_tip": "Diferente do português, onde o 'não' vem antes do verbo, no coreano o '안' também vem antes, mas em verbos de ação formados por NOME + 하다, ele se infiltra no meio (ex: 운동 안 해요 = não faço exercícios)."
+    },
+    {
+      "id": "grammar_b_irregular",
+      "title": "ㅂ 불규칙 (Irregular ㅂ)",
+      "explanation": "Alguns verbos e adjetivos que terminam com a consoante final **ㅂ** sofrem uma alteração ao serem conjugados com terminações que começam com vogal (como -아요/어요).\nO **ㅂ** é removido e adiciona-se **우** ou **오**.\n* A maioria das palavras recebe **우** (ex: 춥다 → 추우 + 어요 = **추워요**).\n* Apenas **돕다** e **곱다** recebem **오** (ex: 돕다 → 도오 + 아요 = **도와요**).",
+      "examples": [
+        {"kr": "날씨가 더워요.", "pt": "O tempo está quente."},
+        {"kr": "한국어는 안 어려워요.", "pt": "Coreano não é difícil."}
+      ],
+      "lusophone_tip": "Muitos adjetivos que descrevem o clima usam o 'ㅂ' irregular (덥다, 춥다). Tente memorizar a forma já conjugada (더워요, 추워요) para facilitar a conversação rápida."
+    }
+  ],
+  "cultural_notes": [
+    {
+      "title": "As quatro estações na Coreia",
+      "content": "A Coreia do Sul possui quatro estações do ano bem definidas (봄, 여름, 가을, 겨울). O verão é muito quente e úmido, muitas vezes com um período intenso de chuvas chamado 장마 (estação das monções). O inverno é frio e seco, sendo comum nevar em diversas partes do país.",
+      "icon": "🌸☀️🍂❄️"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "ex_08_01",
+      "type": "multiple_choice",
+      "question": "Como se diz 'primavera' em coreano?",
+      "options": ["가을", "여름", "봄", "겨울"],
+      "correct_index": 2
+    },
+    {
+      "id": "ex_08_02",
+      "type": "multiple_choice",
+      "question": "Qual é a forma correta e natural de dizer 'Hoje não está quente.'?",
+      "options": ["오늘 날씨가 안 더워요.", "오늘 안 날씨가 더워요.", "안 오늘 날씨가 더워요.", "오늘 날씨가 더워요 안."],
+      "correct_index": 0
+    },
+    {
+      "id": "ex_08_03",
+      "type": "multiple_choice",
+      "question": "Como se conjuga o adjetivo '춥다' (ser frio) no presente (-아요/어요)?",
+      "options": ["춥어요", "추바요", "추워요", "춥아요"],
+      "correct_index": 2
+    },
+    {
+      "id": "ex_08_04",
+      "type": "multiple_choice",
+      "question": "Selecione a tradução correta para: '비가 와요.'",
+      "options": ["Está nevando.", "Está chovendo.", "O tempo está fresco.", "Está ventando."],
+      "correct_index": 1
+    },
+    {
+      "id": "ex_08_05",
+      "type": "multiple_choice",
+      "question": "Complete a frase: '운동을 ___ 해요.' (Eu não me exercito.)",
+      "options": ["안", "가", "를", "은"],
+      "correct_index": 0
+    },
+    {
+      "id": "ex_08_06",
+      "type": "multiple_choice",
+      "question": "Qual palavra não pertence à mesma categoria?",
+      "options": ["봄", "눈", "여름", "가을"],
+      "correct_index": 1
+    },
+    {
+      "id": "ex_08_07",
+      "type": "order_words",
+      "question": "Coloque as palavras em ordem para formar: 'O tempo hoje não está quente.'",
+      "words": ["안", "더워요.", "오늘", "날씨가"],
+      "correct_order": ["오늘", "날씨가", "안", "더워요."]
+    },
+    {
+      "id": "ex_08_08",
+      "type": "order_words",
+      "question": "Coloque as palavras em ordem para formar: 'Não neva no inverno.'",
+      "words": ["겨울에", "와요.", "눈이", "안"],
+      "correct_order": ["겨울에", "눈이", "안", "와요."]
+    },
+    {
+      "id": "ex_08_09",
+      "type": "order_words",
+      "question": "Coloque as palavras em ordem para formar: 'O outono é fresco e bom.' (Assumindo duas frases ou uso das palavras a seguir)",
+      "words": ["시원해요.", "가을은", "아주"],
+      "correct_order": ["가을은", "아주", "시원해요."]
+    }
+  ]
+}

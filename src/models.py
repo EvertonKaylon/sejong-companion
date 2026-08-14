@@ -1,4 +1,6 @@
+import math
 from typing import List, Optional
+from datetime import datetime
 from pydantic import BaseModel
 
 # Curriculum Models
@@ -74,15 +76,16 @@ class QuizQuestion(BaseModel):
     """Modelo unificado de questão de quiz.
     - type='multiple_choice': usa options + correct_index
     - type='order_words': usa words + correct_order
+    - type='drag_and_drop_sov': usa words + correct_order
     """
     id: str
-    type: str  # 'multiple_choice' | 'order_words'
+    type: str  # 'multiple_choice' | 'order_words' | 'drag_and_drop_sov'
     question: str
-    explanation: str
+    explanation: Optional[str] = ""
     # Campos para multiple_choice
     options: Optional[List[str]] = None
     correct_index: Optional[int] = None
-    # Campos para order_words (unscrambling)
+    # Campos para order_words / drag_and_drop_sov (unscrambling)
     words: Optional[List[str]] = None
     correct_order: Optional[List[str]] = None
 
@@ -135,3 +138,60 @@ class UnitOneData(BaseModel):
     grammar: List[GrammarSection]
     cultural_notes: Optional[List[CulturalNote]] = []
     exercises: List[QuizQuestion]
+
+# Alias genérico: qualquer unidade 01–10 usa o mesmo schema
+UnitData = UnitOneData
+
+
+# ─── Memory / SRS (Half-Life Regression de Ebbinghaus) ───
+
+class MemoryNode(BaseModel):
+    """Entidade central do Algoritmo Half-Life Regression (HLR).
+    
+    Modela a curva de esquecimento de Ebbinghaus:
+      R = 2^(-t / h)
+    onde R é a retenção (0–1), t o tempo decorrido e h a meia-vida.
+    """
+    unit_id: str
+    half_life: float = 5.0          # Meia-vida em dias
+    last_reviewed: str = ""         # ISO timestamp
+    error_count: int = 0
+
+    def calculate_stability(self, now: Optional[datetime] = None) -> float:
+        """Retorna o nível de retenção atual (0.0 a 1.0)."""
+        if not self.last_reviewed:
+            return 0.0
+        now = now or datetime.now()
+        try:
+            last = datetime.fromisoformat(self.last_reviewed)
+        except (ValueError, TypeError):
+            return 0.0
+        elapsed_seconds = (now - last).total_seconds()
+        half_life_seconds = self.half_life * 24 * 60 * 60
+        if half_life_seconds <= 0:
+            return 0.0
+        stability = math.pow(2, -elapsed_seconds / half_life_seconds)
+        return max(0.0, min(1.0, stability))
+
+    def update_performance(self, is_correct: bool, response_time_ms: int = 2000) -> None:
+        """Atualiza o nó com base na performance do Active Recall."""
+        speed_factor = 1.0 / (1.0 + (response_time_ms / 2000.0))
+        if is_correct:
+            self.half_life = self.half_life * (1.5 + (1.2 * speed_factor))
+            if self.error_count > 0:
+                self.error_count -= 1
+        else:
+            self.error_count += 1
+            self.half_life = self.half_life * (0.3 / (self.error_count * 0.5))
+        self.half_life = max(0.01, self.half_life)
+        self.last_reviewed = datetime.now().isoformat()
+
+    def vitality_level(self, now: Optional[datetime] = None) -> str:
+        """Retorna 'high', 'medium' ou 'low' baseado na retenção."""
+        s = self.calculate_stability(now)
+        if s >= 0.75:
+            return "high"
+        elif s >= 0.35:
+            return "medium"
+        else:
+            return "low"

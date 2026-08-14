@@ -1,6 +1,6 @@
 import unittest
 from src.services import DataService
-from src.models import Unit, UnitIntroData, UnitOneData
+from src.models import Unit, UnitIntroData, UnitOneData, UnitData
 
 class TestDataService(unittest.TestCase):
     def test_get_curriculum(self):
@@ -12,6 +12,11 @@ class TestDataService(unittest.TestCase):
             self.assertIsNotNone(unit.id)
             self.assertIsNotNone(unit.title_kr)
             self.assertIsNotNone(unit.title_pt)
+
+    def test_curriculum_has_11_entries(self):
+        """O currículo completo tem 11 entradas: unit_intro + 10 unidades."""
+        curriculum = DataService.get_curriculum()
+        self.assertEqual(len(curriculum), 11)
 
     def test_get_unit_intro(self):
         intro_data = DataService.get_unit_intro()
@@ -28,6 +33,23 @@ class TestDataService(unittest.TestCase):
         self.assertEqual(unit_one_data.unit_id, "unit_01")
         self.assertGreater(len(unit_one_data.vocabulary), 0)
         self.assertGreater(len(unit_one_data.grammar), 0)
+
+    def test_get_unit_generic_all(self):
+        """DataService.get_unit() deve carregar todas as 10 unidades (01-10)."""
+        for i in range(1, 11):
+            unit_id = f"unit_{i:02d}"
+            data = DataService.get_unit(unit_id)
+            self.assertIsNotNone(data, f"{unit_id} retornou None")
+            self.assertIsInstance(data, UnitData)
+            self.assertEqual(data.unit_id, unit_id)
+            self.assertGreater(len(data.vocabulary), 0, f"{unit_id} sem vocabulário")
+            self.assertGreater(len(data.grammar), 0, f"{unit_id} sem gramática")
+            self.assertGreater(len(data.exercises), 0, f"{unit_id} sem exercícios")
+
+    def test_get_unit_nonexistent_returns_none(self):
+        """Unidade inexistente retorna None sem exceção."""
+        data = DataService.get_unit("unit_99")
+        self.assertIsNone(data)
 
     def test_implicit_sensory_attributes(self):
         intro_data = DataService.get_unit_intro()

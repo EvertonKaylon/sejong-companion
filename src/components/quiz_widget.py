@@ -40,7 +40,9 @@ class QuizWidget(ft.Container):
         )
 
         # Montar layout de acordo com o tipo de questão
-        if question_data.type == "order_words":
+        if question_data.type == "drag_and_drop_sov":
+            quiz_body = self._build_drag_drop_sov()
+        elif question_data.type == "order_words":
             quiz_body = self._build_order_words()
         else:
             quiz_body = self._build_multiple_choice()
@@ -463,3 +465,316 @@ class QuizWidget(ft.Container):
     def handle_next(self, e):
         if self.on_next:
             self.on_next()
+
+    # ─── DRAG & DROP SOV ───
+
+    def _build_drag_drop_sov(self):
+        """Constrói o widget de Drag & Drop SOV com slots magnéticos."""
+        import random
+
+        # Dados do exercício
+        self.sov_words = list(self.q_data.words)
+        self.sov_correct_order = self.q_data.correct_order
+        self.sov_slot_count = len(self.sov_correct_order)
+        self.sov_slots = [None] * self.sov_slot_count  # O que está em cada slot
+
+        # Cores por papel sintático
+        role_colors = {
+            "SUBJECT": self.colors.get("role_subject", "#3B82F6"),
+            "OBJECT": self.colors.get("role_object", "#10B981"),
+            "VERB": self.colors.get("role_verb", "#8B5CF6"),
+            "PREDICATE": self.colors.get("role_predicate", "#8B5CF6"),
+            "PARTICLE": self.colors.get("role_particle", "#F59E0B"),
+        }
+
+        # Rótulos dos slots SOV
+        slot_labels = []
+        for i in range(self.sov_slot_count):
+            if i == 0:
+                slot_labels.append("주어 (S)")
+            elif i == self.sov_slot_count - 1:
+                slot_labels.append("동사 (V)")
+            else:
+                slot_labels.append("목적어 (O)")
+
+        random.shuffle(self.sov_words)
+
+        # Área de drag sources (palavras embaralhadas)
+        self.sov_drag_row = ft.Row(
+            controls=[],
+            wrap=True,
+            spacing=8,
+            run_spacing=8,
+            alignment=ft.MainAxisAlignment.CENTER,
+        )
+        self._refresh_sov_drag_sources()
+
+        # Slots alvo (drop targets)
+        self.sov_slot_containers = []
+        self.sov_slot_texts = []
+        for i in range(self.sov_slot_count):
+            slot_text = ft.Text(
+                slot_labels[i],
+                size=12,
+                italic=True,
+                color=self.colors["text_sec"],
+                text_align=ft.TextAlign.CENTER,
+            )
+            self.sov_slot_texts.append(slot_text)
+
+            slot_container = ft.DragTarget(
+                group="sov",
+                content=ft.Container(
+                    content=ft.Column(
+                        controls=[
+                            slot_text,
+                        ],
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        spacing=2,
+                    ),
+                    width=100,
+                    height=56,
+                    border=ft.Border.all(2, self.colors["border"]),
+                    border_radius=Styles.BORDER_RADIUS_MD,
+                    bgcolor=self.colors["card_bg"],
+                    alignment=ft.Alignment.CENTER,
+                    animate=ft.Animation(200, ft.AnimationCurve.EASE_OUT),
+                    padding=6,
+                ),
+                on_accept=lambda e, idx=i: self._sov_on_accept(e, idx),
+                on_will_accept=lambda e, idx=i: self._sov_on_will_accept(e, idx),
+                on_leave=lambda e, idx=i: self._sov_on_leave(e, idx),
+            )
+            self.sov_slot_containers.append(slot_container)
+
+        slots_row = ft.Row(
+            controls=self.sov_slot_containers,
+            alignment=ft.MainAxisAlignment.CENTER,
+            spacing=8,
+            wrap=True,
+            run_spacing=8,
+        )
+
+        # Botão verificar
+        self.sov_check_btn = ft.ElevatedButton(
+            content="✅ Verificar Ordem SOV",
+            style=ft.ButtonStyle(
+                color=ft.Colors.WHITE,
+                bgcolor=self.colors["secondary"],
+                shape=ft.RoundedRectangleBorder(radius=Styles.BORDER_RADIUS_SM),
+            ),
+            on_click=self._sov_check_order,
+            disabled=True,
+        )
+
+        self.sov_clear_btn = ft.TextButton(
+            content="🔄 Limpar",
+            style=ft.ButtonStyle(color=self.colors["text_sec"]),
+            on_click=self._sov_clear,
+        )
+
+        return ft.Column(
+            controls=[
+                ft.Text("Arraste as palavras para os slots SOV corretos:",
+                         size=12, weight=ft.FontWeight.BOLD, color=self.colors["text_sec"]),
+                ft.Container(height=4),
+                ft.Text("Slots de Destino:", size=11, color=self.colors["text_sec"]),
+                slots_row,
+                ft.Container(height=8),
+                ft.Text("Palavras:", size=11, color=self.colors["text_sec"]),
+                self.sov_drag_row,
+                ft.Container(height=6),
+                ft.Row(
+                    controls=[self.sov_clear_btn, self.sov_check_btn],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                ),
+            ],
+            spacing=6,
+        )
+
+    def _refresh_sov_drag_sources(self):
+        """Reconstrói os Draggable chips para as palavras disponíveis."""
+        self.sov_drag_row.controls.clear()
+        for word in self.sov_words:
+            # Verifica se a palavra já está num slot
+            if word in self.sov_slots:
+                continue
+            draggable = ft.Draggable(
+                group="sov",
+                content=ft.Container(
+                    content=ft.Text(
+                        word,
+                        size=15,
+                        weight=ft.FontWeight.W_600,
+                        color=self.colors["primary"],
+                    ),
+                    padding=ft.Padding.symmetric(horizontal=14, vertical=8),
+                    bgcolor=self.colors["card_bg"],
+                    border=ft.Border.all(1.5, self.colors["primary_light"]),
+                    border_radius=Styles.BORDER_RADIUS_LG,
+                    shadow=Styles.CARD_SHADOW,
+                ),
+                content_feedback=ft.Container(
+                    content=ft.Text(
+                        word,
+                        size=17,
+                        weight=ft.FontWeight.BOLD,
+                        color=ft.Colors.WHITE,
+                    ),
+                    padding=ft.Padding.symmetric(horizontal=16, vertical=10),
+                    bgcolor=self.colors["primary"],
+                    border_radius=Styles.BORDER_RADIUS_LG,
+                    shadow=Styles.SHADOW_LG,
+                    opacity=0.9,
+                ),
+                data=word,
+            )
+            self.sov_drag_row.controls.append(draggable)
+
+    def _sov_on_will_accept(self, e, slot_idx: int):
+        """Animação de slot 'abrindo' quando Draggable paira sobre ele."""
+        if self.answered:
+            return
+        slot = self.sov_slot_containers[slot_idx]
+        inner = slot.content
+        inner.border = ft.Border.all(2.5, self.colors["secondary"])
+        inner.bgcolor = f"{self.colors['secondary']}14"
+        self.update()
+
+    def _sov_on_leave(self, e, slot_idx: int):
+        """Restaura visual do slot quando Draggable sai."""
+        if self.answered:
+            return
+        slot = self.sov_slot_containers[slot_idx]
+        inner = slot.content
+        if self.sov_slots[slot_idx] is None:
+            inner.border = ft.Border.all(2, self.colors["border"])
+            inner.bgcolor = self.colors["card_bg"]
+        self.update()
+
+    def _sov_on_accept(self, e, slot_idx: int):
+        """Aceita o drop e encaixa a palavra no slot magnético."""
+        if self.answered:
+            return
+
+        word = e.control.data
+        if not word:
+            # Extrair do src
+            src = self.page.get_control(e.src_id) if hasattr(self, 'page') else None
+            if src and hasattr(src, 'data'):
+                word = src.data
+            else:
+                return
+
+        # Se o slot já tem uma palavra, devolvê-la
+        if self.sov_slots[slot_idx] is not None:
+            old_word = self.sov_slots[slot_idx]
+            self.sov_slots[slot_idx] = None
+
+        # Encaixar a nova palavra
+        self.sov_slots[slot_idx] = word
+
+        # Atualizar visual do slot
+        inner = self.sov_slot_containers[slot_idx].content
+        inner.content = ft.Column(
+            controls=[
+                ft.Text(
+                    word,
+                    size=15,
+                    weight=ft.FontWeight.BOLD,
+                    color=self.colors["primary"],
+                    text_align=ft.TextAlign.CENTER,
+                ),
+            ],
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            alignment=ft.MainAxisAlignment.CENTER,
+        )
+        inner.border = ft.Border.all(2, self.colors["primary"])
+        inner.bgcolor = f"{self.colors['primary']}14"
+
+        # Atualizar fontes de drag
+        self._refresh_sov_drag_sources()
+
+        # Habilitar verificar quando todos slots estão preenchidos
+        self.sov_check_btn.disabled = None in self.sov_slots
+        self.update()
+
+    def _sov_clear(self, e):
+        """Limpa todos os slots SOV."""
+        if self.answered:
+            return
+        self.sov_slots = [None] * self.sov_slot_count
+        for i, slot in enumerate(self.sov_slot_containers):
+            inner = slot.content
+            inner.content = ft.Column(
+                controls=[self.sov_slot_texts[i]],
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                alignment=ft.MainAxisAlignment.CENTER,
+            )
+            inner.border = ft.Border.all(2, self.colors["border"])
+            inner.bgcolor = self.colors["card_bg"]
+        self._refresh_sov_drag_sources()
+        self.sov_check_btn.disabled = True
+        self.update()
+
+    def _sov_check_order(self, e):
+        """Verifica a ordem SOV e aplica animação elástica de rejeição se incorreto."""
+        if self.answered:
+            return
+        self.answered = True
+
+        is_correct = self.sov_slots == self.sov_correct_order
+
+        if is_correct:
+            # Todos os slots ficam verdes
+            for slot in self.sov_slot_containers:
+                inner = slot.content
+                inner.border = ft.Border.all(2.5, self.colors["correct"])
+                inner.bgcolor = "#14188150"
+        else:
+            # Slots incorretos: animação de rejeição elástica (shake + vermelho)
+            for i, slot in enumerate(self.sov_slot_containers):
+                inner = slot.content
+                if i < len(self.sov_correct_order) and self.sov_slots[i] == self.sov_correct_order[i]:
+                    inner.border = ft.Border.all(2, self.colors["correct"])
+                    inner.bgcolor = "#14188150"
+                else:
+                    inner.border = ft.Border.all(2.5, self.colors["incorrect"])
+                    inner.bgcolor = "#14C50337"
+                    # Elastic shake via offset animation
+                    inner.offset = ft.Offset(0.03, 0)
+                    inner.animate_offset = ft.Animation(150, ft.AnimationCurve.ELASTIC_OUT)
+
+            # Mostrar resposta correta
+            correct_display = ft.Row(
+                controls=[
+                    ft.Container(
+                        content=ft.Text(
+                            w, size=14, weight=ft.FontWeight.BOLD,
+                            color=self.colors["correct"],
+                        ),
+                        padding=ft.Padding.symmetric(horizontal=10, vertical=6),
+                        bgcolor="#14188150",
+                        border=ft.Border.all(1.5, self.colors["correct"]),
+                        border_radius=Styles.BORDER_RADIUS_LG,
+                    ) for w in self.sov_correct_order
+                ],
+                spacing=6,
+                alignment=ft.MainAxisAlignment.CENTER,
+            )
+            self.sov_drag_row.controls.clear()
+            self.sov_drag_row.controls.append(
+                ft.Column(
+                    controls=[
+                        ft.Text("Ordem correta SOV:", size=11, weight=ft.FontWeight.BOLD, color=self.colors["correct"]),
+                        correct_display,
+                    ],
+                    spacing=4,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                )
+            )
+
+        self.sov_check_btn.disabled = True
+        self.sov_clear_btn.disabled = True
+        self._show_feedback(is_correct)

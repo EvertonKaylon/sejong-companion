@@ -1,8 +1,9 @@
 import json
 import os
 from typing import List, Optional
+from datetime import datetime
 import flet as ft
-from .models import Unit, UnitIntroData, UnitOneData
+from .models import Unit, UnitIntroData, UnitOneData, UnitData, MemoryNode
 
 class DataService:
     @staticmethod
@@ -31,14 +32,19 @@ class DataService:
 
     @staticmethod
     def get_unit_one() -> Optional[UnitOneData]:
+        return DataService.get_unit("unit_01")
+
+    @staticmethod
+    def get_unit(unit_id: str) -> Optional[UnitData]:
+        """Carrega qualquer unidade (01–10) pelo ID genérico."""
         try:
             base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            file_path = os.path.join(base_dir, "data", "units", "unit_01.json")
+            file_path = os.path.join(base_dir, "data", "units", f"{unit_id}.json")
             with open(file_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                return UnitOneData(**data)
+                return UnitData(**data)
         except Exception as e:
-            print(f"Error loading unit_01: {e}")
+            print(f"Error loading {unit_id}: {type(e).__name__}")
             return None
 
 class ProgressService:
@@ -57,6 +63,13 @@ class ProgressService:
         "unit_intro": "unit_01",
         "unit_01": "unit_02",
         "unit_02": "unit_03",
+        "unit_03": "unit_04",
+        "unit_04": "unit_05",
+        "unit_05": "unit_06",
+        "unit_06": "unit_07",
+        "unit_07": "unit_08",
+        "unit_08": "unit_09",
+        "unit_09": "unit_10",
     }
 
     @staticmethod
@@ -150,6 +163,36 @@ class ProgressService:
     def get_all_progress(self) -> dict:
         """Retorna uma cópia dos dados de progresso desta sessão."""
         return dict(self._store)
+
+    # ─── HLR / SRS (Half-Life Regression de Ebbinghaus) ───
+
+    def get_memory_node(self, unit_id: str) -> MemoryNode:
+        """Obtém ou cria o MemoryNode de uma unidade."""
+        key = f"memory_{unit_id}"
+        raw = self._store.get(key)
+        if raw and isinstance(raw, dict):
+            return MemoryNode(**raw)
+        return MemoryNode(unit_id=unit_id)
+
+    def save_memory_node(self, node: MemoryNode) -> None:
+        """Salva o MemoryNode no store e persiste em disco."""
+        key = f"memory_{node.unit_id}"
+        self._store[key] = node.model_dump()
+        ProgressService._save_to_disk(self._session_id, self._store)
+
+    def record_review(self, unit_id: str, is_correct: bool, response_time_ms: int = 2000) -> MemoryNode:
+        """Registra uma revisão de uma unidade e atualiza a meia-vida."""
+        node = self.get_memory_node(unit_id)
+        node.update_performance(is_correct, response_time_ms)
+        self.save_memory_node(node)
+        return node
+
+    def get_vitality(self, unit_id: str) -> str:
+        """Retorna o nível de vitalidade ('high', 'medium', 'low') de uma unidade."""
+        node = self.get_memory_node(unit_id)
+        if not node.last_reviewed:
+            return "none"  # Nunca estudada
+        return node.vitality_level()
 
 
 class FullscreenService:

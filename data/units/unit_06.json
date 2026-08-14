@@ -1,0 +1,220 @@
+{
+  "unit_id": "unit_06",
+  "title": "사과 다섯 개 주세요",
+  "vocabulary": [
+    {
+      "word": "하나",
+      "meaning": "um (1)",
+      "example_kr": "사과 하나 주세요.",
+      "example_pt": "Por favor, me dê uma maçã.",
+      "category": "수사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "둘",
+      "meaning": "dois (2)",
+      "example_kr": "두 개 있어요.",
+      "example_pt": "Há dois (itens).",
+      "category": "수사",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "셋",
+      "meaning": "três (3)",
+      "example_kr": "세 명 와요.",
+      "example_pt": "Vêm três pessoas.",
+      "category": "수사",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "넷",
+      "meaning": "quatro (4)",
+      "example_kr": "네 개 사요.",
+      "example_pt": "Compro quatro (itens).",
+      "category": "수사",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "다섯",
+      "meaning": "cinco (5)",
+      "example_kr": "사과 다섯 개 주세요.",
+      "example_pt": "Por favor, me dê cinco maçãs.",
+      "category": "수사",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "개",
+      "meaning": "classificador para objetos em geral",
+      "example_kr": "우유 두 개 주세요.",
+      "example_pt": "Me dê duas (unidades de) leite, por favor.",
+      "category": "단위 명사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "명",
+      "meaning": "classificador para pessoas",
+      "example_kr": "학생이 세 명 있어요.",
+      "example_pt": "Há três estudantes.",
+      "category": "단위 명사",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "병",
+      "meaning": "classificador para garrafas",
+      "example_kr": "물 한 병 주세요.",
+      "example_pt": "Me dê uma garrafa de água, por favor.",
+      "category": "단위 명사",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "잔",
+      "meaning": "classificador para xícaras/copos",
+      "example_kr": "커피 두 잔 마셔요.",
+      "example_pt": "Bebo duas xícaras de café.",
+      "category": "단위 명사",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "사과",
+      "meaning": "maçã",
+      "example_kr": "사과가 맛있어요.",
+      "example_pt": "A maçã é gostosa.",
+      "category": "식품",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "커피",
+      "meaning": "café",
+      "example_kr": "커피를 마셔요.",
+      "example_pt": "Bebo café.",
+      "category": "식품",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "주다",
+      "meaning": "dar",
+      "example_kr": "물을 주세요.",
+      "example_pt": "Dê-me água, por favor.",
+      "category": "동사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    }
+  ],
+  "grammar": [
+    {
+      "id": "grammar_06_1",
+      "title": "단위 명사 (Classificadores)",
+      "explanation": "Na língua coreana, ao contar coisas, usa-se a estrutura: **Substantivo + Número Coreano Nativo + Classificador**.\n\n* **개**: objetos em geral (사과 한 개 = 1 maçã)\n* **명**: pessoas (학생 두 명 = 2 alunos)\n* **병**: garrafas (물 세 병 = 3 garrafas de água)\n* **잔**: copos/xícaras (커피 네 잔 = 4 xícaras de café)",
+      "examples": [
+        {
+          "kr": "사과 다섯 개 주세요.",
+          "pt": "Dê-me cinco maçãs, por favor."
+        },
+        {
+          "kr": "친구 두 명이 와요.",
+          "pt": "Dois amigos vêm."
+        }
+      ],
+      "lusophone_tip": "A ordem é diferente do português! Em vez de 'cinco maçãs', a estrutura em coreano é 'maçã cinco unidades' (사과 다섯 개). Lembre-se também que os números 1, 2, 3 e 4 perdem a última consoante antes dos classificadores (하나->한, 둘->두, 셋->세, 넷->네)."
+    },
+    {
+      "id": "grammar_06_2",
+      "title": "-(으)세요 (Por favor, faça...)",
+      "explanation": "A terminação **-(으)세요** é usada para fazer pedidos ou comandos educados a alguém.\n\n* Se a raiz do verbo termina em vogal -> **-세요** (주다 -> 주세요)\n* Se a raiz do verbo termina em consoante (받침) -> **-으세요** (읽다 -> 읽으세요)",
+      "examples": [
+        {
+          "kr": "물 한 병 주세요.",
+          "pt": "Dê-me uma garrafa de água, por favor."
+        },
+        {
+          "kr": "사과 두 개 주세요.",
+          "pt": "Dê-me duas maçãs, por favor."
+        }
+      ],
+      "lusophone_tip": "Essa forma transmite polidez. Ao fazer pedidos em restaurantes ou lojas, usa-se frequentemente '[Substantivo] 주세요' (Me dê [Substantivo], por favor)."
+    }
+  ],
+  "cultural_notes": [
+    {
+      "title": "Pedir em restaurantes e lojas",
+      "content": "Ao entrar em uma loja ou restaurante coreano, é muito comum ouvir '어서 오세요!' (Bem-vindo!). Para pedir os itens do cardápio educadamente, basta usar o nome da comida seguido pela quantidade (com o número nativo coreano e seu classificador) e terminar com '주세요'.",
+      "icon": "☕"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "ex_06_1",
+      "type": "multiple_choice",
+      "question": "Qual é a forma correta do número '1' quando usado com um classificador (como '개')?",
+      "options": ["하나", "한", "둘", "두"],
+      "correct_index": 1
+    },
+    {
+      "id": "ex_06_2",
+      "type": "multiple_choice",
+      "question": "Qual classificador é usado para contar PESSOAS?",
+      "options": ["개", "병", "잔", "명"],
+      "correct_index": 3
+    },
+    {
+      "id": "ex_06_3",
+      "type": "multiple_choice",
+      "question": "Qual é a tradução de '다섯'?",
+      "options": ["Dois (2)", "Três (3)", "Quatro (4)", "Cinco (5)"],
+      "correct_index": 3
+    },
+    {
+      "id": "ex_06_4",
+      "type": "multiple_choice",
+      "question": "Complete a frase: 사과 한 __ 주세요.",
+      "options": ["개", "명", "잔", "병"],
+      "correct_index": 0
+    },
+    {
+      "id": "ex_06_5",
+      "type": "multiple_choice",
+      "question": "Como se pede educadamente 'por favor, dê' em coreano?",
+      "options": ["가세요", "주세요", "오세요", "마셔요"],
+      "correct_index": 1
+    },
+    {
+      "id": "ex_06_6",
+      "type": "multiple_choice",
+      "question": "Como se diz '3 garrafas de água'?",
+      "options": ["물 셋 병", "물 세 병", "물 두 병", "물 한 병"],
+      "correct_index": 1
+    },
+    {
+      "id": "ex_06_7",
+      "type": "order_words",
+      "question": "Organize as palavras para formar: 'Dê-me cinco maçãs, por favor.'",
+      "words": ["다섯", "주세요.", "개", "사과"],
+      "correct_order": ["사과", "다섯", "개", "주세요."]
+    },
+    {
+      "id": "ex_06_8",
+      "type": "order_words",
+      "question": "Organize as palavras para formar: 'Há dois estudantes.'",
+      "words": ["있어요.", "학생이", "두", "명"],
+      "correct_order": ["학생이", "두", "명", "있어요."]
+    },
+    {
+      "id": "ex_06_9",
+      "type": "order_words",
+      "question": "Organize as palavras para formar: 'Dê-me duas xícaras de café, por favor.'",
+      "words": ["주세요.", "커피", "두", "잔"],
+      "correct_order": ["커피", "두", "잔", "주세요."]
+    }
+  ]
+}

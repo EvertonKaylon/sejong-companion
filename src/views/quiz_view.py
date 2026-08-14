@@ -1,7 +1,7 @@
 import flet as ft
+from ..components import QuizWidget, centered_content
 from ..theme import get_theme_colors, Styles, Responsive
 from ..services import DataService, ProgressService, FullscreenService
-from ..components.quiz_widget import QuizWidget
 
 def quiz_view(page: ft.Page) -> ft.View:
     is_dark = page.theme_mode == ft.ThemeMode.DARK
@@ -11,7 +11,7 @@ def quiz_view(page: ft.Page) -> ft.View:
 
     unit_id = page.router.current_unit_id
     
-    # Carregar questões da unidade correta
+    # Carregar questões da unidade correta (genérico para todas as unidades)
     exercises = []
     unit_title = ""
     if unit_id == "unit_intro":
@@ -19,8 +19,8 @@ def quiz_view(page: ft.Page) -> ft.View:
         if data:
             exercises = data.exercises
             unit_title = data.title
-    elif unit_id == "unit_01":
-        data = DataService.get_unit_one()
+    elif unit_id:
+        data = DataService.get_unit(unit_id)
         if data:
             exercises = data.exercises
             unit_title = data.title
@@ -40,10 +40,9 @@ def quiz_view(page: ft.Page) -> ft.View:
                 elevation=0,
             ),
             controls=[
-                ft.Row(
-                    controls=[
-                        ft.Container(
-                            content=ft.Column(
+                centered_content(
+                    page,
+                    ft.Column(
                                 controls=[
                                     ft.Container(height=40),
                                     ft.Icon(ft.Icons.CONSTRUCTION_ROUNDED, size=64, color=colors["accent"]),
@@ -79,12 +78,8 @@ def quiz_view(page: ft.Page) -> ft.View:
                                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                                 spacing=0,
                             ),
-                            padding=Responsive.value(w, compact=14, medium=24),
-                            alignment=ft.Alignment.CENTER,
-                            width=min(w, 600),
-                        )
-                    ],
-                    alignment=ft.MainAxisAlignment.CENTER,
+                    padding=Responsive.value(w, compact=14, medium=24),
+                    alignment=ft.Alignment.CENTER,
                     expand=True,
                 )
             ],
@@ -366,21 +361,13 @@ def quiz_view(page: ft.Page) -> ft.View:
         appbar=app_bar,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         controls=[
-            ft.Row(
-                controls=[
-                    ft.Container(
-                        content=ft.Column(
-                            controls=[
-                                progress_header,
-                                main_content
-                            ],
-                            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                        ),
-                        width=min(w, 600),
-                        padding=ft.Padding.symmetric(horizontal=12, vertical=8),
-                    )
-                ],
-                alignment=ft.MainAxisAlignment.CENTER,
+            centered_content(
+                page,
+                ft.Column(
+                    controls=[progress_header, main_content],
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                ),
+                padding=ft.Padding.symmetric(horizontal=12, vertical=8),
             )
         ],
         scroll=ft.ScrollMode.AUTO,

@@ -1,0 +1,220 @@
+{
+  "unit_id": "unit_07",
+  "title": "일곱 시에 운동해요",
+  "vocabulary": [
+    {
+      "word": "월요일",
+      "meaning": "segunda-feira",
+      "example_kr": "월요일에 일해요.",
+      "example_pt": "Trabalho na segunda-feira.",
+      "category": "요일",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "화요일",
+      "meaning": "terça-feira",
+      "example_kr": "화요일에 한국어를 공부해요.",
+      "example_pt": "Estudo coreano na terça-feira.",
+      "category": "요일",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "주말",
+      "meaning": "fim de semana",
+      "example_kr": "주말에 쉬어요.",
+      "example_pt": "Descanso no fim de semana.",
+      "category": "시간",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "오늘",
+      "meaning": "hoje",
+      "example_kr": "오늘은 친구를 만나요.",
+      "example_pt": "Hoje encontro um amigo.",
+      "category": "시간",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "내일",
+      "meaning": "amanhã",
+      "example_kr": "내일 학교에 가요.",
+      "example_pt": "Amanhã vou à escola.",
+      "category": "시간",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "아침",
+      "meaning": "manhã",
+      "example_kr": "아침에 운동해요.",
+      "example_pt": "Exercito-me de manhã.",
+      "category": "시간",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "저녁",
+      "meaning": "noite (cedo), jantar",
+      "example_kr": "저녁을 먹어요.",
+      "example_pt": "Como o jantar.",
+      "category": "시간",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "시",
+      "meaning": "horas",
+      "example_kr": "한 시에 점심을 먹어요.",
+      "example_pt": "Almoço à uma hora.",
+      "category": "시간 단위",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "PARTICLE"
+    },
+    {
+      "word": "분",
+      "meaning": "minutos",
+      "example_kr": "십 분을 기다려요.",
+      "example_pt": "Espero dez minutos.",
+      "category": "시간 단위",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "PARTICLE"
+    },
+    {
+      "word": "운동하다",
+      "meaning": "exercitar-se",
+      "example_kr": "아침에 운동해요.",
+      "example_pt": "Exercito-me de manhã.",
+      "category": "동사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "일하다",
+      "meaning": "trabalhar",
+      "example_kr": "회사에서 일해요.",
+      "example_pt": "Trabalho na empresa.",
+      "category": "동사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "만나다",
+      "meaning": "encontrar (alguém)",
+      "example_kr": "친구를 만나요.",
+      "example_pt": "Encontro um amigo.",
+      "category": "동사",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    }
+  ],
+  "grammar": [
+    {
+      "id": "grammar_07_1",
+      "title": "시간 명사 + 에",
+      "explanation": "A partícula **에** é usada após substantivos de tempo para indicar **quando** uma ação ocorre.\n\n* 시간 + **에**: Às / no(a) [tempo].",
+      "examples": [
+        {
+          "kr": "일곱 시에 운동해요.",
+          "pt": "Exercito-me às sete horas."
+        },
+        {
+          "kr": "주말에 만나요.",
+          "pt": "Nós nos encontramos no fim de semana."
+        }
+      ],
+      "lusophone_tip": "Atenção: A partícula **에** NÃO é usada com algumas palavras de tempo, como **오늘** (hoje), **내일** (amanhã) e **어제** (ontem). (Ex: 내일 만나요 em vez de 내일에 만나요)."
+    },
+    {
+      "id": "grammar_07_2",
+      "title": "시간 말하기: 시 / 분",
+      "explanation": "Para expressar as horas em coreano, utilizam-se dois sistemas numéricos diferentes:\n\n* As **horas** (시) usam números **Coreanos Nativos** (한 시, 두 시, 세 시...).\n* Os **minutos** (분) usam números **Sino-Coreanos** (일 분, 이 분, 오 분, 삼십 분...).",
+      "examples": [
+        {
+          "kr": "한 시 삼십 분",
+          "pt": "1 hora e 30 minutos (Uma e meia)"
+        },
+        {
+          "kr": "일곱 시",
+          "pt": "7 horas"
+        }
+      ],
+      "lusophone_tip": "Lembre-se da regra: 'Nativo para as horas, Sino para os minutos'. Pode ser um pouco confuso no início, mas com a prática se torna natural!"
+    }
+  ],
+  "cultural_notes": [
+    {
+      "title": "O final de semana na Coreia",
+      "content": "Na cultura corporativa e estudantil coreana contemporânea, o '주말' (fim de semana) é muito valorizado para descanso, saídas sociais com amigos e hobbies. Porém, muitos estudantes de ensino médio também frequentam academias preparatórias ('hagwon') mesmo durante o fim de semana.",
+      "icon": "📅"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "ex_07_1",
+      "type": "multiple_choice",
+      "question": "Qual partícula indica o tempo em que uma ação ocorre?",
+      "options": ["은", "를", "에", "가"],
+      "correct_index": 2
+    },
+    {
+      "id": "ex_07_2",
+      "type": "multiple_choice",
+      "question": "Qual palavra de tempo NÃO pode ser seguida por '에'?",
+      "options": ["주말", "오늘", "아침", "월요일"],
+      "correct_index": 1
+    },
+    {
+      "id": "ex_07_3",
+      "type": "multiple_choice",
+      "question": "Qual sistema numérico usamos para expressar as HORAS (시)?",
+      "options": ["Sino-coreano", "Coreano Nativo", "Inglês", "Nenhum"],
+      "correct_index": 1
+    },
+    {
+      "id": "ex_07_4",
+      "type": "multiple_choice",
+      "question": "Qual sistema numérico usamos para expressar os MINUTOS (분)?",
+      "options": ["Coreano Nativo", "Sino-coreano", "Árabe", "Chinês puro"],
+      "correct_index": 1
+    },
+    {
+      "id": "ex_07_5",
+      "type": "multiple_choice",
+      "question": "Como se diz 'segunda-feira' em coreano?",
+      "options": ["화요일", "주말", "월요일", "수요일"],
+      "correct_index": 2
+    },
+    {
+      "id": "ex_07_6",
+      "type": "multiple_choice",
+      "question": "O que significa '운동하다'?",
+      "options": ["Trabalhar", "Encontrar", "Exercitar-se", "Estudar"],
+      "correct_index": 2
+    },
+    {
+      "id": "ex_07_7",
+      "type": "order_words",
+      "question": "Organize as palavras para formar a frase: 'Exercito-me de manhã.'",
+      "words": ["운동해요.", "아침에", "저는"],
+      "correct_order": ["저는", "아침에", "운동해요."]
+    },
+    {
+      "id": "ex_07_8",
+      "type": "order_words",
+      "question": "Organize as palavras para formar a frase: 'Encontro um amigo no fim de semana.'",
+      "words": ["만나요.", "주말에", "친구를"],
+      "correct_order": ["주말에", "친구를", "만나요."]
+    },
+    {
+      "id": "ex_07_9",
+      "type": "order_words",
+      "question": "Organize as palavras para formar a frase: 'Hoje eu trabalho.'",
+      "words": ["일해요.", "오늘은", "제가"],
+      "correct_order": ["오늘은", "제가", "일해요."]
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 import flet as ft
+from ..components import VocabCard, centered_content
 from ..theme import get_theme_colors, Styles, Responsive
 from ..services import DataService, ProgressService, FullscreenService
-from ..components.vocab_card import VocabCard
 
 def lesson_view(page: ft.Page) -> ft.View:
     is_dark = page.theme_mode == ft.ThemeMode.DARK
@@ -11,10 +11,8 @@ def lesson_view(page: ft.Page) -> ft.View:
 
     unit_id = page.router.current_unit_id
     
-    # Carregar dados apropriados dependendo do ID
-    unit_data = None
-    if unit_id == "unit_01":
-        unit_data = DataService.get_unit_one()
+    # Carregar dados de qualquer unidade (01–10) pelo ID genérico
+    unit_data = DataService.get_unit(unit_id) if unit_id else None
 
     if not unit_data:
         return ft.View(
@@ -31,10 +29,9 @@ def lesson_view(page: ft.Page) -> ft.View:
                 elevation=0,
             ),
             controls=[
-                ft.Row(
-                    controls=[
-                        ft.Container(
-                            content=ft.Column(
+                centered_content(
+                    page,
+                    ft.Column(
                                 controls=[
                                     ft.Container(height=40),
                                     ft.Icon(ft.Icons.CONSTRUCTION_ROUNDED, size=64, color=colors["accent"]),
@@ -70,12 +67,8 @@ def lesson_view(page: ft.Page) -> ft.View:
                                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                                 spacing=0,
                             ),
-                            padding=Responsive.value(w, compact=14, medium=24),
-                            alignment=ft.Alignment.CENTER,
-                            width=min(w, 600),
-                        )
-                    ],
-                    alignment=ft.MainAxisAlignment.CENTER,
+                    padding=Responsive.value(w, compact=14, medium=24),
+                    alignment=ft.Alignment.CENTER,
                     expand=True,
                 )
             ],
@@ -348,28 +341,13 @@ def lesson_view(page: ft.Page) -> ft.View:
         appbar=app_bar,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         controls=[
-            ft.Row(
-                controls=[
-                    ft.Container(
-                        content=tabs,
-                        expand=True,
-                        width=min(w, 600),
-                        padding=ft.Padding.symmetric(horizontal=12, vertical=4),
-                    )
-                ],
-                alignment=ft.MainAxisAlignment.CENTER,
+            centered_content(
+                page,
+                tabs,
+                padding=ft.Padding.symmetric(horizontal=12, vertical=4),
                 expand=True,
             ),
-            ft.Row(
-                controls=[
-                    ft.Container(
-                        content=exercise_button,
-                        width=min(w, 600),
-                        alignment=ft.Alignment.CENTER,
-                    )
-                ],
-                alignment=ft.MainAxisAlignment.CENTER,
-            )
+            centered_content(page, exercise_button, alignment=ft.Alignment.CENTER)
         ],
         scroll=None,
         bgcolor=colors["bg"],

@@ -152,6 +152,17 @@ class Colors:
     ROLE_PREDICATE = "#8B5CF6"   # Predicado (Violeta)
     ROLE_PARTICLE = "#F59E0B"    # Partícula (Âmbar)
 
+    # Vitalidade SRS (Half-Life Regression de Ebbinghaus)
+    VITALITY_HIGH = "#10B981"    # Retenção >= 75% (Esmeralda)
+    VITALITY_MEDIUM = "#F59E0B"  # 35% <= Retenção < 75% (Âmbar)
+    VITALITY_LOW = "#EF4444"     # Retenção < 35% (Vermelho Urgência)
+    VITALITY_NONE = NEUTRAL_500  # Nunca estudada
+
+    # Tripartição Oclusiva (Laboratório Fonético)
+    OCLUSIVE_LAX = "#94A3B8"         # Simples (ㅂ, ㄷ, ㄱ): Neutro / Suave
+    OCLUSIVE_ASPIRATED = "#38BDF8"   # Aspirada (ㅅ, ㅊ, ㅋ): Expansão Azul Ar
+    OCLUSIVE_TENSE = "#EF4444"       # Tensa (ㅃ, ㄸ, ㄲ): Vermelho Tensão Glotal
+
 class Styles:
     # Bordas — escala do design system
     BORDER_RADIUS_SM = 9
@@ -226,6 +237,15 @@ def get_theme_colors(is_dark: bool):
         "role_verb": Colors.ROLE_VERB,
         "role_predicate": Colors.ROLE_PREDICATE,
         "role_particle": Colors.ROLE_PARTICLE,
+        # Vitalidade SRS
+        "vitality_high": Colors.VITALITY_HIGH,
+        "vitality_medium": Colors.VITALITY_MEDIUM,
+        "vitality_low": Colors.VITALITY_LOW,
+        "vitality_none": Colors.VITALITY_NONE,
+        # Oclusivas
+        "oclusive_lax": Colors.OCLUSIVE_LAX,
+        "oclusive_aspirated": Colors.OCLUSIVE_ASPIRATED,
+        "oclusive_tense": Colors.OCLUSIVE_TENSE,
     }
 
 def apply_app_theme(page: ft.Page):
