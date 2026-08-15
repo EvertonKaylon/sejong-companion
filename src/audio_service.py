@@ -98,6 +98,88 @@ class AudioService:
         else:
             await self._play_file(f"audio_cache/{filename}")
 
+    def is_cached(self, text: str) -> bool:
+        """Verifica se o áudio do texto já existe e não está vazio no cache local."""
+        if not text:
+            return False
+        clean_text = text.strip().replace(" / ", " ").replace("/", " ")
+        filename = self._cache_filename(clean_text)
+        local_path = os.path.join(self.cache_dir, filename)
+        return os.path.exists(local_path) and os.path.getsize(local_path) > 0
+
+    def get_cache_stats(self, texts: list[str]) -> dict:
+        """Retorna estatísticas de cache para uma lista de textos."""
+        total = len(texts)
+        cached = sum(1 for t in texts if self.is_cached(t))
+        return {
+            "total": total,
+            "cached": cached,
+            "missing": total - cached,
+            "percent": (cached / total * 100) if total > 0 else 100.0,
+        }
+
+    def prewarm_item(self, text: str) -> bool:
+        """Sintetiza e grava um item em cache caso ainda não exista. Retorna True se presente/sucesso."""
+        if not text:
+            return False
+        clean_text = text.strip().replace(" / ", " ").replace("/", " ")
+        if self.is_cached(clean_text):
+            return True
+        filename = self._cache_filename(clean_text)
+        local_file_path = os.path.join(self.cache_dir, filename)
+        return self._synthesize_to_cache(clean_text, local_file_path)
+
+    def prewarm_batch_sync(self, texts: list[str], on_progress=None) -> dict:
+        """Pré-carrega sincronicamente uma lista de textos (ideal para CLI e scripts)."""
+        total = len(texts)
+        success_count = 0
+        cached_count = 0
+        for i, text in enumerate(texts, start=1):
+            already = self.is_cached(text)
+            if already:
+                cached_count += 1
+                success_count += 1
+            else:
+                ok = self.prewarm_item(text)
+                if ok:
+                    success_count += 1
+            if on_progress:
+                try:
+                    on_progress(i, total, text, already)
+                except Exception:
+                    pass
+        return {"total": total, "cached_prior": cached_count, "successful": success_count}
+
+    async def prewarm_batch_async(self, texts: list[str], on_progress=None, max_concurrent: int = 3) -> dict:
+        """Pré-carrega assincronamente uma lista de textos com controle de concorrência."""
+        total = len(texts)
+        if total == 0:
+            return {"total": 0, "processed": 0}
+
+        semaphore = asyncio.Semaphore(max_concurrent)
+        completed = 0
+
+        async def _worker(t: str):
+            nonlocal completed
+            async with semaphore:
+                if not self.is_cached(t):
+                    clean_text = t.strip().replace(" / ", " ").replace("/", " ")
+                    filename = self._cache_filename(clean_text)
+                    local_file_path = os.path.join(self.cache_dir, filename)
+                    await asyncio.to_thread(self._synthesize_to_cache, clean_text, local_file_path)
+                completed += 1
+                if on_progress:
+                    try:
+                        res = on_progress(completed, total, t)
+                        if asyncio.iscoroutine(res):
+                            await res
+                    except Exception:
+                        pass
+
+        tasks = [asyncio.create_task(_worker(t)) for t in texts]
+        await asyncio.gather(*tasks, return_exceptions=True)
+        return {"total": total, "processed": completed}
+
     def _cache_filename(self, text: str) -> str:
         # Version the key to avoid reusing old .mp3 files that may actually
         # contain Typecast's former default WAV response.

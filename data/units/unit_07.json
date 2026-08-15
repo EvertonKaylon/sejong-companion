@@ -389,6 +389,38 @@
           ]
         }
       ]
+    },
+    {
+      "id": "wb_u7_q1",
+      "type": "multiple_choice",
+      "question": "Complete: 일곱 시__ 운동해요. (Faço exercício às sete.)",
+      "options": ["에", "에서", "을", "하고"],
+      "correct_index": 0,
+      "explanation": "에 é a partícula usada para indicar uma hora específica."
+    },
+    {
+      "id": "wb_u7_q2",
+      "type": "multiple_choice",
+      "question": "Qual frase corresponde à atividade 'Faço exercício às sete horas'?",
+      "options": ["일곱 시에 운동해요.", "일곱 시를 운동해요.", "일곱 시에 운동을 가요.", "일곱 시가 운동해요."],
+      "correct_index": 0,
+      "explanation": "시 é 'hora' e 에 conecta a hora à ação."
+    },
+    {
+      "id": "wb_u7_q3",
+      "type": "multiple_choice",
+      "question": "Como se diz 'segunda-feira' em coreano?",
+      "options": ["월요일", "화요일", "수요일", "금요일"],
+      "correct_index": 0,
+      "explanation": "월요일 é segunda-feira; 요일 significa dia da semana."
+    },
+    {
+      "id": "wb_u7_q4",
+      "type": "multiple_choice",
+      "question": "Qual forma indica exatamente 'três horas'?",
+      "options": ["세 시", "삼 시", "셋 시", "세 개"],
+      "correct_index": 0,
+      "explanation": "Antes de 시, 셋 muda para 세: 세 시."
     }
   ]
 }

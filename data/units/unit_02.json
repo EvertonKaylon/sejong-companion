@@ -1,6 +1,6 @@
 {
   "unit_id": "unit_02",
-  "title": "투안 씨는 베트남 사람이에요",
+  "title": "전화번호가 뭐예요?",
   "vocabulary": [
     {
       "word": "한국",
@@ -398,6 +398,38 @@
           ]
         }
       ]
+    },
+    {
+      "id": "wb_u2_q1",
+      "type": "multiple_choice",
+      "question": "Complete a tabela do workbook: 가방__.",
+      "options": ["이", "가", "은", "를"],
+      "correct_index": 0,
+      "explanation": "가방 termina em 받침, então recebe 이: 가방이." 
+    },
+    {
+      "id": "wb_u2_q2",
+      "type": "multiple_choice",
+      "question": "Complete a tabela do workbook: 카페__.",
+      "options": ["가", "이", "은", "을"],
+      "correct_index": 0,
+      "explanation": "카페 termina em vogal, então recebe 가: 카페가." 
+    },
+    {
+      "id": "wb_u2_q3",
+      "type": "multiple_choice",
+      "question": "Qual frase está correta para dizer 'Há um restaurante no terceiro andar'?",
+      "options": ["3층에 식당이 있어요.", "3층이 식당에 있어요.", "3층을 식당이 있어요.", "3층은 식당을 있어요."],
+      "correct_index": 0,
+      "explanation": "O workbook pratica local + 에 e sujeito com 이/가: 3층에 식당이 있어요." 
+    },
+    {
+      "id": "wb_u2_q4",
+      "type": "multiple_choice",
+      "question": "Complete: 이름__ 뭐예요?",
+      "options": ["이", "가", "은", "를"],
+      "correct_index": 0,
+      "explanation": "이름 termina em 받침, portanto a pergunta é 이름이 뭐예요?" 
     }
   ]
 }

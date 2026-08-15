@@ -431,6 +431,38 @@
           ]
         }
       ]
+    },
+    {
+      "id": "wb_u6_q1",
+      "type": "multiple_choice",
+      "question": "Como pedir 'cinco maçãs, por favor' na prática de compras?",
+      "options": ["사과 다섯 개 주세요.", "사과 다섯 명 주세요.", "사과 오 개 주세요.", "사과 다섯 시 주세요."],
+      "correct_index": 0,
+      "explanation": "다섯 é cinco (contador nativo) e 개 é o contador para itens como maçãs."
+    },
+    {
+      "id": "wb_u6_q2",
+      "type": "multiple_choice",
+      "question": "Qual número nativo coreano representa 5 ao contar objetos?",
+      "options": ["다섯", "오", "여섯", "넷"],
+      "correct_index": 0,
+      "explanation": "Para contadores de objetos, usa-se 다섯, não o sino-coreano 오."
+    },
+    {
+      "id": "wb_u6_q3",
+      "type": "multiple_choice",
+      "question": "Qual expressão conta duas pessoas?",
+      "options": ["두 명", "두 개", "두 병", "이 명"],
+      "correct_index": 0,
+      "explanation": "명 é o contador para pessoas; 둘 muda para 두 antes de contador."
+    },
+    {
+      "id": "wb_u6_q4",
+      "type": "multiple_choice",
+      "question": "Como dizer 'uma garrafa de água'?",
+      "options": ["물 한 병", "물 한 개", "물 한 명", "물 한 시"],
+      "correct_index": 0,
+      "explanation": "병 é o contador usado para garrafas."
     }
   ]
 }

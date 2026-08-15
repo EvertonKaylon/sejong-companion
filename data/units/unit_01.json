@@ -469,6 +469,38 @@
       ],
       "correct_index": 1,
       "explanation": "안녕하세요? é a forma polida e segura."
+    },
+    {
+      "id": "wb_u1_q1",
+      "type": "multiple_choice",
+      "question": "Complete a atividade de países e profissões: 프랑스 ___ (pessoa francesa).",
+      "options": ["사람", "학생", "이름", "친구"],
+      "correct_index": 0,
+      "explanation": "País + 사람 forma a nacionalidade: 프랑스 사람." 
+    },
+    {
+      "id": "wb_u1_q2",
+      "type": "multiple_choice",
+      "question": "Qual resposta completa '직업이 뭐예요?' para a pessoa de jaleco no workbook?",
+      "options": ["저는 의사예요.", "저는 학생이에요.", "저는 미국 사람이에요.", "저는 안나예요."],
+      "correct_index": 0,
+      "explanation": "A imagem representa uma médica; a resposta correta usa 의사예요." 
+    },
+    {
+      "id": "wb_u1_q3",
+      "type": "multiple_choice",
+      "question": "Complete: 저는 케냐 사람___ .",
+      "options": ["이에요", "예요", "이", "가"],
+      "correct_index": 0,
+      "explanation": "사람 termina em 받침, por isso usamos 이에요." 
+    },
+    {
+      "id": "wb_u1_q4",
+      "type": "multiple_choice",
+      "question": "Qual pergunta aparece nas práticas de apresentação do workbook?",
+      "options": ["어느 나라 사람이에요?", "몇 시에 운동해요?", "날씨가 어때요?", "영화를 볼까요?"],
+      "correct_index": 0,
+      "explanation": "A unidade pratica perguntar de que país a pessoa é." 
     }
   ]
 }

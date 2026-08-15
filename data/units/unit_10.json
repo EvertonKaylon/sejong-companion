@@ -403,6 +403,38 @@
           ]
         }
       ]
+    },
+    {
+      "id": "wb_u10_q1",
+      "type": "multiple_choice",
+      "question": "Qual frase expressa 'Quero assistir a um filme'?",
+      "options": ["영화를 보고 싶어요.", "영화를 봤어요.", "영화를 봐요?", "영화를 볼까요?"],
+      "correct_index": 0,
+      "explanation": "-고 싶어요 é a estrutura para dizer que se quer fazer algo."
+    },
+    {
+      "id": "wb_u10_q2",
+      "type": "multiple_choice",
+      "question": "Como convidar alguém: 'Vamos assistir a um filme juntos?'",
+      "options": ["우리 같이 영화를 볼까요?", "우리 같이 영화를 봤어요.", "영화를 보고 싶어요.", "영화가 같이 볼까요?"],
+      "correct_index": 0,
+      "explanation": "-(으)ㄹ까요? é usado para fazer uma sugestão ou convite."
+    },
+    {
+      "id": "wb_u10_q3",
+      "type": "multiple_choice",
+      "question": "Qual é uma resposta positiva natural a um convite com 볼까요?",
+      "options": ["네, 좋아요.", "아니요, 봤어요.", "네, 보고 싶어요?", "좋아요를."],
+      "correct_index": 0,
+      "explanation": "네, 좋아요 significa 'Sim, ótimo' e aceita o convite."
+    },
+    {
+      "id": "wb_u10_q4",
+      "type": "multiple_choice",
+      "question": "Como sugerir 'Vamos tomar café?'",
+      "options": ["커피를 마실까요?", "커피를 마시고 싶어요.", "커피를 마셨어요.", "커피가 마실까요?"],
+      "correct_index": 0,
+      "explanation": "마실까요? é a forma de convite derivada de 마시다 (beber)."
     }
   ]
 }

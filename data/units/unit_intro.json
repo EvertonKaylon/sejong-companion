@@ -324,6 +324,38 @@
       ],
       "correct_index": 1,
       "explanation": "O 받침 é implosivo — o som para nos lábios fechados."
+    },
+    {
+      "id": "wb_intro_q1",
+      "type": "multiple_choice",
+      "question": "No treino de escrita do workbook, qual consoante tem o traçado em forma de canto?",
+      "options": ["ㄱ", "ㅁ", "ㅇ", "ㅅ"],
+      "correct_index": 0,
+      "explanation": "A atividade de escrita começa com ㄱ, cuja forma é um canto." 
+    },
+    {
+      "id": "wb_intro_q2",
+      "type": "multiple_choice",
+      "question": "Qual palavra do exercício de leitura do workbook significa 'escola'?",
+      "options": ["교실", "등산", "파도", "의자"],
+      "correct_index": 0,
+      "explanation": "교실 significa sala de aula; aparece na prática de leitura do Hangul." 
+    },
+    {
+      "id": "wb_intro_q3",
+      "type": "multiple_choice",
+      "question": "Qual destas palavras tem 받침 (consoante final)?",
+      "options": ["바", "밥", "나", "가"],
+      "correct_index": 1,
+      "explanation": "밥 termina em ㅂ, um 받침." 
+    },
+    {
+      "id": "wb_intro_q4",
+      "type": "multiple_choice",
+      "question": "No exercício de fontes do workbook, qual palavra é um cumprimento?",
+      "options": ["안녕하세요", "대한민국", "희망", "어린이"],
+      "correct_index": 0,
+      "explanation": "안녕하세요 é o cumprimento polido praticado na leitura em fontes diferentes." 
     }
   ]
 }

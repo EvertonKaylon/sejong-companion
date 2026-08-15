@@ -398,6 +398,38 @@
           ]
         }
       ]
+    },
+    {
+      "id": "wb_u4_q1",
+      "type": "multiple_choice",
+      "question": "Qual é a forma educada presente de 먹다 (comer) usada no workbook?",
+      "options": ["먹어요", "먹었어요", "먹고", "먹을까요"],
+      "correct_index": 0,
+      "explanation": "먹다 termina em ㅓ, por isso a forma presente educada é 먹어요."
+    },
+    {
+      "id": "wb_u4_q2",
+      "type": "multiple_choice",
+      "question": "Complete: 밥__ 먹어요. (Eu como arroz.)",
+      "options": ["을", "를", "이", "에"],
+      "correct_index": 0,
+      "explanation": "밥 termina em consoante, então recebe a partícula de objeto 을."
+    },
+    {
+      "id": "wb_u4_q3",
+      "type": "multiple_choice",
+      "question": "Complete: 우유__ 마셔요. (Eu bebo leite.)",
+      "options": ["를", "을", "이", "에"],
+      "correct_index": 0,
+      "explanation": "우유 termina em vogal, então recebe 를."
+    },
+    {
+      "id": "wb_u4_q4",
+      "type": "multiple_choice",
+      "question": "Qual frase diz corretamente 'Minu come arroz'?",
+      "options": ["민우가 밥을 먹어요.", "민우를 밥이 먹어요.", "민우가 밥에 먹어요.", "민우는 밥을 가요."],
+      "correct_index": 0,
+      "explanation": "O sujeito usa 가 e o objeto 밥 usa 을."
     }
   ]
 }

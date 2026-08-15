@@ -417,6 +417,38 @@
           ]
         }
       ]
+    },
+    {
+      "id": "wb_u8_q1",
+      "type": "multiple_choice",
+      "question": "Qual frase do workbook diz 'Hoje não está quente'?",
+      "options": ["오늘 날씨가 안 더워요.", "오늘 날씨가 더워요.", "오늘 날씨를 안 더워요.", "오늘 날씨가 안 더웠어요."],
+      "correct_index": 0,
+      "explanation": "안 antes do verbo/adjetivo cria a negação no presente: 안 더워요."
+    },
+    {
+      "id": "wb_u8_q2",
+      "type": "multiple_choice",
+      "question": "Qual é a forma educada presente de 춥다 (estar frio)?",
+      "options": ["추워요", "춥어요", "추웠어요", "추워서"],
+      "correct_index": 0,
+      "explanation": "춥다 muda para 추워요 na conjugação educada presente."
+    },
+    {
+      "id": "wb_u8_q3",
+      "type": "multiple_choice",
+      "question": "Como dizer 'não está quente'?",
+      "options": ["안 더워요", "안 추워요", "더워요", "더웠어요"],
+      "correct_index": 0,
+      "explanation": "더워요 é 'está quente'; com 안, significa 'não está quente'."
+    },
+    {
+      "id": "wb_u8_q4",
+      "type": "multiple_choice",
+      "question": "Qual estação é normalmente associada ao frio nas práticas de clima?",
+      "options": ["겨울", "여름", "봄", "가을"],
+      "correct_index": 0,
+      "explanation": "겨울 significa inverno."
     }
   ]
 }

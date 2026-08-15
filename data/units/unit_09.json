@@ -403,6 +403,38 @@
           ]
         }
       ]
+    },
+    {
+      "id": "wb_u9_q1",
+      "type": "multiple_choice",
+      "question": "Qual frase corresponde ao título da unidade e à atividade do workbook?",
+      "options": ["공원에서 산책했어요.", "공원에 산책해요.", "공원을 산책할까요?", "공원이 산책했어요."],
+      "correct_index": 0,
+      "explanation": "에서 indica o local da ação; 산책했어요 é o passado de 'passear'."
+    },
+    {
+      "id": "wb_u9_q2",
+      "type": "multiple_choice",
+      "question": "Qual é a forma passada educada de 먹다 (comer)?",
+      "options": ["먹었어요", "먹어요", "먹을까요", "먹고"],
+      "correct_index": 0,
+      "explanation": "먹다 se torna 먹었어요 no passado educado."
+    },
+    {
+      "id": "wb_u9_q3",
+      "type": "multiple_choice",
+      "question": "Qual partícula indica o lugar onde uma atividade acontece?",
+      "options": ["에서", "에", "을", "와"],
+      "correct_index": 0,
+      "explanation": "에서 marca o local de uma ação, como caminhar no parque."
+    },
+    {
+      "id": "wb_u9_q4",
+      "type": "multiple_choice",
+      "question": "Como dizer 'Ontem assisti a um filme'?",
+      "options": ["어제 영화를 봤어요.", "어제 영화를 봐요.", "어제 영화에 갔어요.", "어제 영화가 봤어요."],
+      "correct_index": 0,
+      "explanation": "봤어요 é o passado de 보다 (ver/assistir) e 영화를 é o objeto."
     }
   ]
 }

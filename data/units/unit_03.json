@@ -1,6 +1,6 @@
 {
   "unit_id": "unit_03",
-  "title": "가방이 책상 위에 있어요",
+  "title": "제 가방은 책상 옆에 있어요",
   "vocabulary": [
     {
       "word": "가방",
@@ -426,6 +426,38 @@
           ]
         }
       ]
+    },
+    {
+      "id": "wb_u3_q1",
+      "type": "multiple_choice",
+      "question": "No exercício do workbook, onde está a mochila que fica sob a mesa?",
+      "options": ["가방은 책상 아래에 있어요.", "가방은 침대 위에 있어요.", "가방은 책상 안에 없어요.", "가방은 의자예요."],
+      "correct_index": 0,
+      "explanation": "아래에 significa 'embaixo de'. 가방은 책상 아래에 있어요 = A mochila está debaixo da mesa."
+    },
+    {
+      "id": "wb_u3_q2",
+      "type": "multiple_choice",
+      "question": "Qual pergunta do workbook significa 'De quem é este guarda-chuva?'",
+      "options": ["이거는 누구 우산이에요?", "이 우산은 어디에 있어요?", "누구는 우산이에요?", "우산이 책상 위에 있어요?"],
+      "correct_index": 0,
+      "explanation": "누구 é 'quem'; 누구 우산이에요? pergunta a quem pertence o guarda-chuva."
+    },
+    {
+      "id": "wb_u3_q3",
+      "type": "multiple_choice",
+      "question": "Qual expressão aponta para 'esta bolsa', perto de quem fala?",
+      "options": ["이 가방", "그 가방", "저 가방", "가방이"],
+      "correct_index": 0,
+      "explanation": "이 é usado para algo perto de quem fala."
+    },
+    {
+      "id": "wb_u3_q4",
+      "type": "multiple_choice",
+      "question": "Complete a frase do exercício de localização: 가방이 책상 위에 ___.",
+      "options": ["있어요", "먹어요", "가요", "이에요"],
+      "correct_index": 0,
+      "explanation": "있어요 expressa que algo existe ou está em determinado lugar."
     }
   ]
 }

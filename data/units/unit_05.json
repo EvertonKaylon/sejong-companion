@@ -389,6 +389,38 @@
           ]
         }
       ]
+    },
+    {
+      "id": "wb_u5_q1",
+      "type": "multiple_choice",
+      "question": "Complete a atividade de direção do workbook: 시장__ 가요. (Vou ao mercado.)",
+      "options": ["에", "에서", "을", "하고"],
+      "correct_index": 0,
+      "explanation": "에 marca o destino de um movimento, como ir ao mercado."
+    },
+    {
+      "id": "wb_u5_q2",
+      "type": "multiple_choice",
+      "question": "Como ligar 'pão' e 'leite' com 하고?",
+      "options": ["빵하고 우유", "빵에 우유", "빵을 우유", "빵이 우유"],
+      "correct_index": 0,
+      "explanation": "하고 significa 'e/com' e conecta os dois substantivos."
+    },
+    {
+      "id": "wb_u5_q3",
+      "type": "multiple_choice",
+      "question": "Complete: 빵하고 우유를 ___. (Compro pão e leite.)",
+      "options": ["사요", "가요", "먹어요", "있어요"],
+      "correct_index": 0,
+      "explanation": "사다 é 'comprar'; sua forma educada é 사요."
+    },
+    {
+      "id": "wb_u5_q4",
+      "type": "multiple_choice",
+      "question": "Qual frase significa 'Vou ao mercado com um amigo'?",
+      "options": ["친구하고 시장에 가요.", "친구를 시장에 가요.", "친구하고 시장을 먹어요.", "친구가 시장에 있어요."],
+      "correct_index": 0,
+      "explanation": "친구하고 é 'com um amigo' e 시장에 가요 é 'vou ao mercado'."
     }
   ]
 }

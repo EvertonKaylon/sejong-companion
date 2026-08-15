@@ -122,6 +122,76 @@ class DataService:
                 })
         return challenges
 
+    @staticmethod
+    def get_priority_audio_texts() -> List[str]:
+        """Retorna o lote prioritário para aquecimento rápido no Splash (Hangul + Lab Oclusivo + Unit 01)."""
+        texts: List[str] = []
+        # 1. Hangul Básico e Oclusivas
+        intro = DataService.get_unit_intro()
+        if intro:
+            texts.extend([v.char for v in intro.vowels if v.char])
+            texts.extend([c.char for c in intro.consonants if c.char])
+            if intro.aspirated_consonants:
+                texts.extend([c.char for c in intro.aspirated_consonants if c.char])
+            if intro.tense_consonants:
+                texts.extend([c.char for c in intro.tense_consonants if c.char])
+
+        # 2. Consoantes Oclusivas do Laboratório Fonético
+        texts.extend(["ㄱ", "ㅋ", "ㄲ", "ㄷ", "ㅌ", "ㄸ", "ㅂ", "ㅍ", "ㅃ", "ㅈ", "ㅊ", "ㅉ"])
+
+        # 3. Vocabulário da Unidade 01
+        u1 = DataService.get_unit("unit_01")
+        if u1:
+            for v in u1.vocabulary:
+                if v.word:
+                    texts.append(v.word)
+
+        # Deduplicação mantendo ordem
+        seen = set()
+        deduped = []
+        for t in texts:
+            clean = t.strip()
+            if clean and clean not in seen:
+                seen.add(clean)
+                deduped.append(clean)
+        return deduped
+
+    @staticmethod
+    def get_all_audio_texts() -> List[str]:
+        """Extrai e desduplica TODOS os textos com áudio do currículo completo (00 a 10)."""
+        texts = list(DataService.get_priority_audio_texts())
+
+        # 1. Sílabas do Hangul
+        intro = DataService.get_unit_intro()
+        if intro and intro.syllables:
+            texts.extend([s.block for s in intro.syllables if s.block])
+
+        # 2. Todas as Unidades 01 a 10 (Vocabulário e Frases de Exemplo)
+        for number in range(1, 11):
+            unit_id = f"unit_{number:02d}"
+            unit = DataService.get_unit(unit_id)
+            if not unit:
+                continue
+            for v in unit.vocabulary:
+                if v.word:
+                    texts.append(v.word)
+                if v.example_kr:
+                    texts.append(v.example_kr)
+            for g in unit.grammar:
+                for ex in g.examples:
+                    if ex.kr:
+                        texts.append(ex.kr)
+
+        # Deduplicação mantendo ordem
+        seen = set()
+        deduped = []
+        for t in texts:
+            clean = t.strip()
+            if clean and clean not in seen:
+                seen.add(clean)
+                deduped.append(clean)
+        return deduped
+
 class ProgressService:
     """Gerenciador de progresso com persistência em disco e isolamento por sessão.
     
