@@ -25,9 +25,12 @@ ENV/
 build/
 dist/
 
-# Cache de Áudio Gerado dinamicamente
-assets/audio_cache/*.mp3
-assets/audio_cache/*.wav
+# Áudios Pré-Instalados de Fábrica (Bundled HD Assets Typecast)
+# Arquivos .mp3 e .wav são versionados para funcionamento 100% offline de fábrica
+assets/audio_cache/*.part
+assets/audio_cache/*.tmp
+!assets/audio_cache/*.mp3
+!assets/audio_cache/*.wav
 !assets/audio_cache/.gitkeep
 
 # Estado do Obsidian (configurações locais da workspace, tabs abertas, plugins)
