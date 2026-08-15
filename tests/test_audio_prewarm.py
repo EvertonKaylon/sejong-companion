@@ -35,9 +35,11 @@ class TestAudioPrewarm(unittest.TestCase):
         self.assertIsInstance(priority, list)
         self.assertGreater(len(priority), 20)
 
-        # Deve conter consoantes oclusivas essenciais
+        # Deve conter consoantes oclusivas essenciais e seus sons vocalizados com [ㅏ]
         for char in ["ㄱ", "ㅋ", "ㄲ", "ㄷ", "ㅌ", "ㄸ", "ㅂ", "ㅍ", "ㅃ", "ㅈ", "ㅊ", "ㅉ"]:
             self.assertIn(char, priority)
+        for syllable in ["가", "카", "까", "다", "타", "따", "바", "파", "빠", "자", "차", "짜"]:
+            self.assertIn(syllable, priority)
 
         # Não deve ter duplicatas
         self.assertEqual(len(priority), len(set(priority)))

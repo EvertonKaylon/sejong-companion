@@ -11,38 +11,38 @@ import flet as ft
 from ..theme import get_theme_colors, Styles, Responsive
 
 
-# Dados das 4 tríades oclusivas
+# Dados das 4 tríades oclusivas com som vocalizado em [ㅏ] para percepção acústica exata
 _TRIADS = [
     {
-        "label": "Velares",
+        "label": "Velares (Garganta / Véu Palatino)",
         "chars": [
-            {"hangul": "ㄱ", "type": "lax"},
-            {"hangul": "ㅋ", "type": "aspirated"},
-            {"hangul": "ㄲ", "type": "tense"},
+            {"hangul": "ㄱ", "sound": "가", "type": "lax"},
+            {"hangul": "ㅋ", "sound": "카", "type": "aspirated"},
+            {"hangul": "ㄲ", "sound": "까", "type": "tense"},
         ],
     },
     {
-        "label": "Alveolares",
+        "label": "Alveolares (Língua nos Dentes)",
         "chars": [
-            {"hangul": "ㄷ", "type": "lax"},
-            {"hangul": "ㅌ", "type": "aspirated"},
-            {"hangul": "ㄸ", "type": "tense"},
+            {"hangul": "ㄷ", "sound": "다", "type": "lax"},
+            {"hangul": "ㅌ", "sound": "타", "type": "aspirated"},
+            {"hangul": "ㄸ", "sound": "따", "type": "tense"},
         ],
     },
     {
-        "label": "Bilabiais",
+        "label": "Bilabiais (Lábios)",
         "chars": [
-            {"hangul": "ㅂ", "type": "lax"},
-            {"hangul": "ㅍ", "type": "aspirated"},
-            {"hangul": "ㅃ", "type": "tense"},
+            {"hangul": "ㅂ", "sound": "바", "type": "lax"},
+            {"hangul": "ㅍ", "sound": "파", "type": "aspirated"},
+            {"hangul": "ㅃ", "sound": "빠", "type": "tense"},
         ],
     },
     {
-        "label": "Palatais",
+        "label": "Palatais / Afericadas (Céu da Boca)",
         "chars": [
-            {"hangul": "ㅈ", "type": "lax"},
-            {"hangul": "ㅊ", "type": "aspirated"},
-            {"hangul": "ㅉ", "type": "tense"},
+            {"hangul": "ㅈ", "sound": "자", "type": "lax"},
+            {"hangul": "ㅊ", "sound": "차", "type": "aspirated"},
+            {"hangul": "ㅉ", "sound": "짜", "type": "tense"},
         ],
     },
 ]
@@ -68,21 +68,37 @@ def _get_oclusive_label(oc_type: str) -> str:
 
 def _build_oclusive_button(
     hangul: str,
+    sound: str,
     oc_type: str,
     colors: dict,
     size: int,
     on_audio_click,
 ) -> ft.Container:
-    """Cria um botão circular tátil para uma consoante oclusiva."""
+    """Cria um botão circular tátil para uma consoante oclusiva tocando seu som fonético real."""
     border_color = _get_oclusive_color(oc_type, colors)
     border_width = 3.0 if oc_type == "tense" else 1.8
 
     return ft.Container(
-        content=ft.Text(
-            hangul,
-            size=size * 0.4,
-            weight=ft.FontWeight.BOLD,
-            color=border_color,
+        content=ft.Column(
+            controls=[
+                ft.Text(
+                    hangul,
+                    size=size * 0.38,
+                    weight=ft.FontWeight.BOLD,
+                    color=border_color,
+                    text_align=ft.TextAlign.CENTER,
+                ),
+                ft.Text(
+                    f"[{sound}]",
+                    size=max(9, int(size * 0.15)),
+                    weight=ft.FontWeight.W_600,
+                    color=colors["text_sec"],
+                    text_align=ft.TextAlign.CENTER,
+                ),
+            ],
+            spacing=0,
+            alignment=ft.MainAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         ),
         width=size,
         height=size,
@@ -97,9 +113,9 @@ def _build_oclusive_button(
                 spread_radius=1,
             )
         ],
-        on_click=lambda e, c=hangul: on_audio_click(c),
+        on_click=lambda e, s=sound: on_audio_click(s),
         animate=150,
-        tooltip=f"Ouvir {hangul} ({_get_oclusive_label(oc_type)})",
+        tooltip=f"Ouvir o som de {hangul} vocalizado como [{sound}] ({_get_oclusive_label(oc_type)})",
     )
 
 
@@ -127,16 +143,16 @@ def build_oclusive_lab(page: ft.Page, colors: dict, w: float) -> ft.Column:
         content=ft.Column(
             controls=[
                 ft.Text(
-                    "Compare os 3 tipos de consoantes oclusivas coreanas:",
+                    "Compare os 3 tipos de sons oclusivos coreanos (vocalizados com ㅏ):",
                     size=12,
                     weight=ft.FontWeight.BOLD,
                     color=colors["secondary"],
                     text_align=ft.TextAlign.CENTER,
                 ),
                 ft.Text(
-                    "• Simples: produzida sem esforço extra (som neutro)\n"
-                    "• Aspirada: produzida com sopro forte de ar (coloque a mão na boca)\n"
-                    "• Tensa: produzida com tensão na garganta, SEM sopro",
+                    "• Simples [가/다/바/자]: som suave e relaxado (sem ar extra)\n"
+                    "• Aspirada [카/타/파/차]: produzida com sopro forte de ar 💨\n"
+                    "• Tensa [까/따/빠/짜]: produzida com tensão na garganta, SEM sopro 💪",
                     size=11,
                     color=colors["text_sec"],
                     no_wrap=False,
@@ -163,10 +179,11 @@ def build_oclusive_lab(page: ft.Page, colors: dict, w: float) -> ft.Column:
                     controls=[
                         _build_oclusive_button(
                             char_info["hangul"],
+                            char_info["sound"],
                             char_info["type"],
                             colors,
                             btn_size,
-                            lambda c: page.audio_service.play_korean(c),
+                            lambda s: page.audio_service.play_korean(s),
                         ),
                         ft.Text(
                             _get_oclusive_label(char_info["type"]),

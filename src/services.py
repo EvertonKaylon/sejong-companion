@@ -136,8 +136,9 @@ class DataService:
             if intro.tense_consonants:
                 texts.extend([c.char for c in intro.tense_consonants if c.char])
 
-        # 2. Consoantes Oclusivas do Laboratório Fonético
+        # 2. Consoantes e Sons Vocalizados do Laboratório Fonético Oclusivo ([ㅏ])
         texts.extend(["ㄱ", "ㅋ", "ㄲ", "ㄷ", "ㅌ", "ㄸ", "ㅂ", "ㅍ", "ㅃ", "ㅈ", "ㅊ", "ㅉ"])
+        texts.extend(["가", "카", "까", "다", "타", "따", "바", "파", "빠", "자", "차", "짜"])
 
         # 3. Vocabulário da Unidade 01
         u1 = DataService.get_unit("unit_01")
