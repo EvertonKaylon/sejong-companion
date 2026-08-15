@@ -110,4 +110,6 @@ if __name__ == "__main__":
     else:
         view = ft.AppView.WEB_BROWSER if args.browser else ft.AppView.FLET_APP
 
-    ft.app(main, host=_HOST, port=port, assets_dir="assets", view=view)
+    # Usar ft.run (Flet >= 0.80) com fallback para ft.app
+    app_runner = getattr(ft, "run", ft.app)
+    app_runner(main, host=_HOST, port=port, assets_dir="assets", view=view)

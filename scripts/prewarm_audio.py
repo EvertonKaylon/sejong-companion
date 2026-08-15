@@ -50,7 +50,23 @@ def print_progress_bar(iteration, total, prefix='', suffix='', length=40, fill='
     if iteration == total:
         sys.stdout.write('\n')
 
+import argparse
+
 def main():
+    parser = argparse.ArgumentParser(description="Sejong Companion Audio Pre-Warming CLI")
+    parser.add_argument(
+        "--force-hd",
+        action="store_true",
+        help="Força a re-síntese de todos os áudios diretamente com Typecast HD (sobrescrevendo fallbacks)",
+    )
+    parser.add_argument(
+        "--delay",
+        type=float,
+        default=0.35,
+        help="Intervalo em segundos entre requisições para evitar rate limit 429 (padrão: 0.35s)",
+    )
+    args = parser.parse_args()
+
     print("=" * 65)
     print(" 🇰🇷  SEJONG COMPANION — OFFLINE AUDIO PRE-WARMING CLI")
     print("=" * 65)
@@ -63,21 +79,33 @@ def main():
     page = HeadlessPage()
     audio_service = AudioService(page)
 
+    if args.force_hd:
+        print("🔄 Modo --force-hd ativado: limpando cache para re-síntese completa em Typecast HD...")
+        for text in audio_texts:
+            clean_text = text.strip().replace(" / ", " ").replace("/", " ")
+            fn = audio_service._cache_filename(clean_text)
+            fp = os.path.join(audio_service.cache_dir, fn)
+            if os.path.exists(fp):
+                try:
+                    os.remove(fp)
+                except Exception:
+                    pass
+
     initial_stats = audio_service.get_cache_stats(audio_texts)
     print(f"📦 Estado inicial do cache local:")
     print(f"   • Já em cache: {initial_stats['cached']} ({initial_stats['percent']:.1f}%)")
     print(f"   • Pendentes:   {initial_stats['missing']}")
     print(f"   • Pasta:       {audio_service.cache_dir}\n")
 
-    if initial_stats['missing'] == 0:
+    if initial_stats['missing'] == 0 and not args.force_hd:
         print("✅ Todos os áudios já estão em cache! O app está 100% pronto para uso offline.")
         return
 
-    print("⚡ Iniciando download e síntese dos áudios pendentes...")
+    print(f"⚡ Iniciando download e síntese Typecast HD (delay: {args.delay}s)...")
     start_time = time.time()
 
     def on_progress(current, total, text, already_cached):
-        tag = "[CACHE]" if already_cached else "[BAIXADO]"
+        tag = "[CACHE]" if already_cached else "[HD BAIXADO]"
         short_text = (text[:20] + '..') if len(text) > 20 else text.ljust(22)
         print_progress_bar(
             current,
@@ -86,7 +114,7 @@ def main():
             suffix=f"({current}/{total}) {tag} {short_text}"
         )
 
-    results = audio_service.prewarm_batch_sync(audio_texts, on_progress=on_progress)
+    results = audio_service.prewarm_batch_sync(audio_texts, on_progress=on_progress, delay=args.delay)
     elapsed = time.time() - start_time
 
     final_stats = audio_service.get_cache_stats(audio_texts)

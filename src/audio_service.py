@@ -129,8 +129,8 @@ class AudioService:
         local_file_path = os.path.join(self.cache_dir, filename)
         return self._synthesize_to_cache(clean_text, local_file_path)
 
-    def prewarm_batch_sync(self, texts: list[str], on_progress=None) -> dict:
-        """Pré-carrega sincronicamente uma lista de textos (ideal para CLI e scripts)."""
+    def prewarm_batch_sync(self, texts: list[str], on_progress=None, delay: float = 0.3) -> dict:
+        """Pré-carrega sincronicamente uma lista de textos com espaçamento entre requisições."""
         total = len(texts)
         success_count = 0
         cached_count = 0
@@ -143,6 +143,9 @@ class AudioService:
                 ok = self.prewarm_item(text)
                 if ok:
                     success_count += 1
+                if delay > 0:
+                    import time
+                    time.sleep(delay)
             if on_progress:
                 try:
                     on_progress(i, total, text, already)
@@ -150,8 +153,8 @@ class AudioService:
                     pass
         return {"total": total, "cached_prior": cached_count, "successful": success_count}
 
-    async def prewarm_batch_async(self, texts: list[str], on_progress=None, max_concurrent: int = 3) -> dict:
-        """Pré-carrega assincronamente uma lista de textos com controle de concorrência."""
+    async def prewarm_batch_async(self, texts: list[str], on_progress=None, max_concurrent: int = 2) -> dict:
+        """Pré-carrega assincronamente uma lista de textos com controle de concorrência e espaçamento."""
         total = len(texts)
         if total == 0:
             return {"total": 0, "processed": 0}
@@ -167,6 +170,7 @@ class AudioService:
                     filename = self._cache_filename(clean_text)
                     local_file_path = os.path.join(self.cache_dir, filename)
                     await asyncio.to_thread(self._synthesize_to_cache, clean_text, local_file_path)
+                    await asyncio.sleep(0.25)  # Espaçamento suave para evitar 429
                 completed += 1
                 if on_progress:
                     try:
@@ -209,7 +213,7 @@ class AudioService:
                 pass
             return False
 
-    def _get_typecast_audio(self, text: str) -> bytes | None:
+    def _get_typecast_audio(self, text: str, max_retries: int = 3) -> bytes | None:
         api_key = os.environ.get("TYPECAST_API_KEY")
         if not api_key:
             return None
@@ -221,18 +225,32 @@ class AudioService:
             "language": "kor",
             "output": {"audio_format": self.audio_format},
         }
-        try:
-            response = requests.post(
-                self.TYPECAST_URL,
-                json=payload,
-                headers={"X-API-KEY": api_key, "Content-Type": "application/json"},
-                timeout=self.REQUEST_TIMEOUT,
-            )
-            response.raise_for_status()
-            return response.content or None
-        except requests.RequestException as error:
-            print(f"Typecast TTS error: {error}. Using Google TTS fallback.")
-            return None
+
+        import time
+
+        for attempt in range(max_retries):
+            try:
+                response = requests.post(
+                    self.TYPECAST_URL,
+                    json=payload,
+                    headers={"X-API-KEY": api_key, "Content-Type": "application/json"},
+                    timeout=self.REQUEST_TIMEOUT,
+                )
+                if response.status_code == 429:
+                    # Rate limit atingido: aguardar backoff exponencial antes de tentar novamente
+                    retry_after = float(response.headers.get("Retry-After", 1.8 * (attempt + 1)))
+                    time.sleep(retry_after)
+                    continue
+
+                response.raise_for_status()
+                return response.content or None
+            except requests.RequestException as error:
+                if attempt < max_retries - 1:
+                    time.sleep(1.2 * (attempt + 1))
+                    continue
+                print(f"Typecast TTS error: {error}. Using Google TTS fallback.")
+                return None
+        return None
 
     def _get_google_audio(self, text: str) -> bytes | None:
         try:
