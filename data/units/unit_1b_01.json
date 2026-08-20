@@ -1,0 +1,236 @@
+{
+  "unit_id": "unit_1b_01",
+  "title": "무슨 음식을 좋아해요?",
+  "vocabulary": [
+    {
+      "word": "불고기",
+      "meaning": "Bulgogi (carne bovina marinada grelhada)",
+      "example_kr": "저는 불고기를 좋아해요.",
+      "example_pt": "Eu gosto de bulgogi.",
+      "category": "comida",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "비빔밥",
+      "meaning": "Bibimbap (arroz misturado com vegetais, carne e ovo)",
+      "example_kr": "점심에 비빔밥을 먹었어요.",
+      "example_pt": "Comi bibimbap no almoço.",
+      "category": "comida",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "김치찌개",
+      "meaning": "Kimchi jjigae (ensopado picante de kimchi)",
+      "example_kr": "김치찌개가 조금 매워요.",
+      "example_pt": "O ensopado de kimchi é um pouco apimentado.",
+      "category": "comida",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "삼겹살",
+      "meaning": "Samgyeopsal (barriga de porco grelhada)",
+      "example_kr": "저녁에 삼겹살을 먹으러 가요.",
+      "example_pt": "Vamos comer samgyeopsal no jantar.",
+      "category": "comida",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "냉면",
+      "meaning": "Naengmyeon (macarrão frio em caldo gelado)",
+      "example_kr": "여름에는 시원한 냉면이 맛있어요.",
+      "example_pt": "No verão, o naengmyeon refrescante é delicioso.",
+      "category": "comida",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "갈비탕",
+      "meaning": "Galbitang (sopa de costela bovina)",
+      "example_kr": "따뜻한 갈비탕을 주문했어요.",
+      "example_pt": "Pedi uma sopa quente de costela.",
+      "category": "comida",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "달다",
+      "meaning": "Ser doce",
+      "example_kr": "이 케이크는 아주 달아요.",
+      "example_pt": "Este bolo é muito doce.",
+      "category": "sabores",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "PREDICATE"
+    },
+    {
+      "word": "짜다",
+      "meaning": "Ser salgado",
+      "example_kr": "국이 조금 짜요.",
+      "example_pt": "A sopa está um pouco salgada.",
+      "category": "sabores",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "PREDICATE"
+    },
+    {
+      "word": "맵다",
+      "meaning": "Ser apimentado / picante",
+      "example_kr": "한국 음식은 조금 매워요.",
+      "example_pt": "A comida coreana é um pouco picante.",
+      "category": "sabores",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "PREDICATE"
+    },
+    {
+      "word": "쓰다",
+      "meaning": "Ser amargo",
+      "example_kr": "약이 써서 못 먹겠어요.",
+      "example_pt": "O remédio é amargo, não consigo tomar.",
+      "category": "sabores",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "PREDICATE"
+    },
+    {
+      "word": "시다",
+      "meaning": "Ser azedo",
+      "example_kr": "레몬이 아주 셔요.",
+      "example_pt": "O limão é muito azedo.",
+      "category": "sabores",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "PREDICATE"
+    },
+    {
+      "word": "싱겁다",
+      "meaning": "Ser insosso / sem sal",
+      "example_kr": "음식이 싱거우면 소금을 넣으세요.",
+      "example_pt": "Se a comida estiver sem sal, coloque sal.",
+      "category": "sabores",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "PREDICATE"
+    },
+    {
+      "word": "음식",
+      "meaning": "Comida / Alimento",
+      "example_kr": "한국 음식을 자주 만들어요.",
+      "example_pt": "Faço comida coreana com frequência.",
+      "category": "geral",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "맛",
+      "meaning": "Sabor / Gosto",
+      "example_kr": "음식 맛이 정말 좋아요.",
+      "example_pt": "O sabor da comida está realmente bom.",
+      "category": "geral",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "식당",
+      "meaning": "Restaurante",
+      "example_kr": "학교 앞 식당에서 만나요.",
+      "example_pt": "Nos encontramos no restaurante em frente à escola.",
+      "category": "locais",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    }
+  ],
+  "grammar": [
+    {
+      "id": "g1b_01_museun",
+      "title": "Pronome Interrogativo: 무슨 (Qual / Que tipo de...)",
+      "explanation": "O pronome '무슨' é colocado imediatamente antes de um substantivo para perguntar sobre a espécie, gênero ou tipo de algo:\n\n**무슨 + Substantivo**\n\n* Exemplo: 무슨 음식 (Que tipo de comida?), 무슨 영화 (Qual filme?).\n* Diferença: '어느' escolhe entre opções limitadas conhecidas, enquanto '무슨' pergunta de forma aberta sobre a natureza do objeto.",
+      "examples": [
+        {
+          "kr": "무슨 음식을 좋아해요?",
+          "pt": "Qual tipo de comida você gosta?"
+        },
+        {
+          "kr": "무슨 운동을 해요?",
+          "pt": "Que esporte você pratica?"
+        }
+      ],
+      "lusophone_tip": "Em português usamos 'qual' ou 'que tipo de'. Em coreano, '무슨' antecede o substantivo diretamente sem preposição intermediária."
+    },
+    {
+      "id": "g1b_01_mot",
+      "title": "Negação de Impossibilidade: 못 + Verbo",
+      "explanation": "A partícula '못' é colocada antes do verbo para expressar incapacidade física, falta de habilidade ou impedimento circunstancial ('não conseguir fazer / não poder'):\n\n**못 + Verbo de Ação**\n\n* '안' expressa vontade própria ('não quero / não faço').\n* '못' expressa impossibilidade ('não consigo / não posso por forças externas').",
+      "examples": [
+        {
+          "kr": "매운 음식을 못 먹어요.",
+          "pt": "Não consigo comer comida apimentada."
+        },
+        {
+          "kr": "오늘 약속에 못 가요.",
+          "pt": "Não posso ir ao compromisso hoje."
+        }
+      ],
+      "lusophone_tip": "Cuidado com a pronúncia: antes de vogal ou consoante, 못 sofre neutralização para [몯] e quando seguido de '먹' sofre nasalização [몬먹어요]."
+    }
+  ],
+  "cultural_notes": [
+    {
+      "title": "A Cultura de Compartilhar Pratos (찌개 e 반찬)",
+      "content": "Na Coreia, pratos centrais como ensopados (찌개) e acompanhamentos (반찬) são colocados no centro da mesa para serem compartilhados por todos, refletindo o senso de comunidade (우리).",
+      "icon": "🍲"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "u1b_01_q01",
+      "type": "multiple_choice",
+      "question": "Como se pergunta 'Qual tipo de comida você gosta?' em coreano?",
+      "explanation": "Usa-se o pronome '무슨' antes do substantivo 음식: '무슨 음식을 좋아해요?'.",
+      "options": [
+        "무슨 음식을 좋아해요?",
+        "어디 음식을 가요?",
+        "누구 음식을 먹어요?",
+        "무엇이 음식을 있어요?"
+      ],
+      "correct_index": 0
+    },
+    {
+      "id": "u1b_01_q02",
+      "type": "multiple_choice",
+      "question": "Qual é a forma correta para 'Não consigo comer comida apimentada'?",
+      "explanation": "Para expressar incapacidade de tolerar pimenta, usa-se '못': '매운 음식을 못 먹어요'.",
+      "options": [
+        "매운 음식을 안 먹어요",
+        "매운 음식을 못 먹어요",
+        "매운 음식이 없어요",
+        "매운 음식을 먹고 싶어요"
+      ],
+      "correct_index": 1
+    },
+    {
+      "id": "u1b_01_q03",
+      "type": "order_words",
+      "question": "Ordene as palavras: 'Eu gosto de bulgogi'",
+      "explanation": "Estrutura SOV: Sujeito (저는) + Objeto (불고기를) + Verbo (좋아해요).",
+      "words": ["불고기를", "좋아해요", "저는"],
+      "correct_order": ["저는", "불고기를", "좋아해요"]
+    },
+    {
+      "id": "u1b_01_q04",
+      "type": "drag_and_drop_sov",
+      "question": "Monte a frase com os papéis sintáticos: 'A Anna não consegue comer kimchi'",
+      "explanation": "Sujeito (안나는) + Objeto (김치를) + Negação/Verbo (못 먹어요).",
+      "words": ["안나는", "김치를", "못 먹어요"],
+      "correct_order": ["안나는", "김치를", "못 먹어요"],
+      "sov_items": [
+        { "word": "안나는", "role": "SUBJECT", "snap_anchor": "round" },
+        { "word": "김치를", "role": "OBJECT", "snap_anchor": "round" },
+        { "word": "못 먹어요", "role": "PREDICATE", "snap_anchor": "square" }
+      ],
+      "sov_slots": [
+        { "role": "SUBJECT", "label": "주어 (Sujeito)", "accepted_roles": ["SUBJECT"] },
+        { "role": "OBJECT", "label": "목적어 (Objeto)", "accepted_roles": ["OBJECT"] },
+        { "role": "PREDICATE", "label": "서술어 (Predicado)", "accepted_roles": ["PREDICATE", "VERB"] }
+      ]
+    }
+  ]
+}

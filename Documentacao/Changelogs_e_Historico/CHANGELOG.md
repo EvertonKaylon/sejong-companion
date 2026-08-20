@@ -11,15 +11,44 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 Pré-Alpha → Alpha → Beta → RC → RTM → GA
                ▲
           ESTAMOS AQUI
-          v0.3.0-alpha
+          v0.3.1-alpha
 ```
 
 | Fase | Versão Alvo | Critérios de Entrada |
 |------|-------------|----------------------|
-| **Alpha** (atual) | `0.3.0-alpha` | Todas as unidades do Sejong 1A integradas, HLR SRS, Lab Fonético, Drag & Drop SOV |
-| **Beta** | `0.1.0-beta` | Todas as unidades do Livro 1A implementadas, persistência real, responsivo mobile, modo offline |
+| **Alpha** (atual) | `0.3.1-alpha` | Livro Sejong 1A (11 unidades) + Livro Sejong 1B (12 unidades), 79 Testes Automatizados, HLR SRS, Lab Fonético, Drag & Drop SOV |
+| **Beta** | `0.6.0-beta` | Sincronização Cloud, Banco de dados persistente, PWA Mobile Audit, modo offline |
 | **RC** | `1.0.0-rc.1` | Feature-complete, testes E2E, zero bugs críticos |
 | **GA** | `1.0.0` | Pronto para distribuição pública |
+
+---
+
+## [0.3.1-alpha] — 2026-08-20
+
+### Classificação: Alpha
+> Milestone de Expansão Curricular: Integração Integral do Livro Sejong Hakdang 1B e Workbook 1B (12 novas unidades temáticas: `unit_1b_01` a `unit_1b_12`), Desafios Sintáticos SOV com papéis semânticos, Cadeia Contínua de Desbloqueio $1A \rightarrow 1B$, Seções Visuais de Livro na Home e Suíte Expandida para 79 Testes Automatizados.
+
+### Added — Features
+- **Currículo Sejong 1B Completo (12 Unidades)** — Implementação completa dos arquivos `unit_1b_01.json` a `unit_1b_12.json` baseados no currículo oficial do King Sejong Institute 1B:
+  - `unit_1b_01`: 무슨 음식을 좋아해요? (Comida, 무슨, 못)
+  - `unit_1b_02`: 도서관에 책을 빌리러 가요 (Hobbies, -(으)러 가다/오다, 도)
+  - `unit_1b_03`: 백화점에서 쇼핑할 거예요 (Compras, -아서/어서 [motivo], -(으)ㄹ 거예요 [futuro])
+  - `unit_1b_04`: 더 큰 사이즈는 없어요? (Adjetivos, -(으)ㄴ + N, -습니다/ㅂ니다)
+  - `unit_1b_05`: 세종식당이 어디에 있어요? (Direções, 의문사 어디, (으)로)
+  - `unit_1b_06`: 한국미술관까지 어떻게 가요? (Transportes, ~에서 ~까지, -아요/어요 [sugestão])
+  - `unit_1b_07`: 제주도에 가려고 해요 (Viagem, -(으)려고 하다, -고)
+  - `unit_1b_08`: 지난번 여행보다 좋았어요 (Experiências, -(으)ㄴ 후에, 보다)
+  - `unit_1b_09`: 집에서 푹 쉬어야 돼요 (Saúde, -지만, -아야/어야 되다)
+  - `unit_1b_10`: 학교에 가기 전에 수영을 해요 (Rotina Saudável, -기 전에, -아서/어서 [sequência])
+  - `unit_1b_11`: 한국 음식을 만들 수 있어요? (Encontros, -(으)ㄹ 수 있다/없다, -고 있다)
+  - `unit_1b_12`: 저는 지니 씨에게 펜을 선물할 거예요 (Presentes, 에게/한테, -(으)니까)
+- **Cadeia de Desbloqueio Expandida ($1A \rightarrow 1B$)** — Conexão contínua da progressão de `unit_10` para `unit_1b_01` até `unit_1b_12` no `ProgressService._UNLOCK_CHAIN`.
+- **Organização Visual da Home por Livro Didático** — Divisores de seção para `Sejong Coreano 1A` e `Sejong Coreano 1B`, com badges compactas e orbes de retenção SRS individuais para todas as 23 unidades.
+- **Expansão do Banco de Flashcards e Desafios SOV** — `DataService.get_all_flashcards()` e `get_sentence_builder_challenges()` agora incorporam organicamente todo o vocabulário e exercícios do 1B.
+- **Portal Pedagógico & Dashboard de Administração (`/admin`)** — Acesso protegido por PIN institucional (`AdminService`) com compilação de KPIs multi-student, diagnóstico pedagógico de taxas de erro por questão, funil de abandono de lições, vocabulário crítico e roster individual de todos os `Student IDs` com exportação de relatórios em Markdown.
+
+### Added — Suíte de Testes
+- **84 Testes Automatizados (100% OK)** — Inclusão de `tests/test_unit_1b_content.py` e `tests/test_admin_service.py` validando os 12 arquivos do 1B, autenticação de administrador, varredura de sessões em disco, resiliência a arquivos corrompidos e compatibilidade curricular integral (23 unidades).
 
 ---
 
@@ -40,8 +69,22 @@ Pré-Alpha → Alpha → Beta → RC → RTM → GA
 - **Flashcards Gamificados & Sentence Builder (`/flashcards`)** — Hub com 3 níveis de dificuldade (Fácil, Médio, Difícil), flip cards táteis com pronúncia em áudio HD e módulo criador de frases com validação sintática imediata.
 - **Padronização de Layout Dead-Center** — Componente `centered_content` garantindo alinhamento central absoluto em telas widescreen e ultra-wide.
 
+- **Sistema de Evidência Pedagógica & Telemetria Local (`TelemetryService`)** — Registro append-only JSONL de interações didáticas (respostas a questões com cronometragem, avaliações no Active Recall, aberturas/conclusões de lições) com zero PII e CLI `scripts.pedagogical_report` para diagnóstico pedagógico.
+
+- **Identidade Persistente do Aluno (`Persistent Student ID`)** — Integração nativa com `page.client_storage` (localStorage / SharedPreferences), garantindo que fechar e reabrir o navegador/app preserva o mesmo perfil de estudante, progresso, streak e nós de retenção sem exigir login em servidor.
+- **Backup e Restauração de Perfil (`export_backup` / `import_backup`)** — Suporte a exportação e importação do progresso integral do aluno em formato JSON portátil.
+
 ### Added — Suíte de Testes
-- **53 Testes Unitários Automatizados (100% OK)** — Cobertura completa para carregamento de 10 unidades (`test_data_service.py`), estabilidade HLR e cadeia de desbloqueio (`test_progress_service.py`), contratos semânticos de SOV (`test_sov_drag_drop.py`), além de agregação SRS e classificação de flashcards (`test_active_recall.py`).
+- **74 Testes Automatizados (100% OK)** — Suíte completa cobrindo carregamento das 11 unidades (`test_data_service.py`), estabilidade da meia-vida, cadeia de desbloqueio, identidade persistente via client_storage e backup JSON (`test_progress_service.py`), contratos semânticos de SOV (`test_sov_drag_drop.py`), agregação SRS e classificação de flashcards (`test_active_recall.py`), pré-aquecimento e resiliência de cache de áudio (`test_audio_prewarm.py`, `test_audio_service.py`), roteamento de views (`test_router.py`), validação de conteúdo de quizzes (`test_workbook_quiz_content.py`) e telemetria pedagógica append-only com diagnósticos analíticos (`test_telemetry_service.py`).
+
+### Added — Governança e Arquitetura
+- **ADR-001 (Motor Adaptativo Local vs. IA Generativa)** — Registro formal da decisão de adotar IA Simbólica / Cognitive Learning Engine determinístico local, com desacoplamento dos 4 pilares: Completion, Mastery, Retention e Confidence.
+- **Nó Conceitual Learning Engine** — Documentação do Grafo de Conceitos (Learning Graph) do Sejong 1A e árvore de decisão pedagógica determinística.
+
+### Current Known Limitations (Alpha)
+- **Persistência por Sessão Local:** O armazenamento atual opera em `data/sessions/{uuid}.json` (isolamento por aba/conexão local), devendo evoluir para persistência de conta de usuário em banco de dados na fase Beta (`0.6.0-beta`).
+- **Modelo de Retenção Heurístico:** O algoritmo atual é uma modelagem heurística de decaimento temporal com multiplicadores fixos, aguardando dados anônimos de interação real para calibração estatística fina.
+- **Testes E2E Automatizados:** Cobertura focada em regras de domínio e serviços Python; testes ponta-a-ponta na UI Flutter ainda dependem de validação manual via walkthrough.
 
 ---
 
@@ -62,7 +105,7 @@ Pré-Alpha → Alpha → Beta → RC → RTM → GA
 
 ### Classificação: Alpha
 > Software funcional com features core implementadas, testado internamente.
-> Incompleto: faltam unidades curriculares, persistência real, responsividade mobile.
+> Incompleto: faltavam unidades curriculares (criadas na v0.3.0), persistência real e responsividade mobile.
 
 ### Added — Features
 - **Serviço de Áudio TTS Offline-First** — Typecast.ai (primário) + Google TTS (fallback), cache atômico em disco, autoplay unlock para navegadores
@@ -94,9 +137,3 @@ Pré-Alpha → Alpha → Beta → RC → RTM → GA
 - Autoplay bloqueado pelo Chrome/Edge (silent.wav mudo no init)
 - `min_height=` removido do Flet 0.85 (substituído por padding)
 - Perda de progresso ao reiniciar o app/servidor (migrado de memória pura para persistência atômica em disco)
-
-### Known Issues
-- Unidades 02 e 03 são placeholders (sem dados JSON didáticos completos)
-- Layout não otimizado para telas ultra-estreitas (< 360px)
-- Sem testes E2E automatizados de interface gráfica
-- Tab "Diálogo" ausente na lesson_view

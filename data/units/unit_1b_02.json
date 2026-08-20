@@ -1,0 +1,220 @@
+{
+  "unit_id": "unit_1b_02",
+  "title": "도서관에 책을 빌리러 가요",
+  "vocabulary": [
+    {
+      "word": "독서",
+      "meaning": "Leitura",
+      "example_kr": "제 취미는 독서예요.",
+      "example_pt": "Meu hobby é leitura.",
+      "category": "hobbies",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "영화 감상",
+      "meaning": "Apreciação de filmes / Assistir filmes",
+      "example_kr": "주말에 영화 감상을 해요.",
+      "example_pt": "Assisto filmes no fim de semana.",
+      "category": "hobbies",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "음악 감상",
+      "meaning": "Ouvir música",
+      "example_kr": "음악 감상을 좋아해요.",
+      "example_pt": "Gosto de ouvir música.",
+      "category": "hobbies",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "사진 촬영",
+      "meaning": "Fotografia / Tirar fotos",
+      "example_kr": "공원에서 사진 촬영을 했어요.",
+      "example_pt": "Tirei fotos no parque.",
+      "category": "hobbies",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "등산",
+      "meaning": "Trilha de montanha / Alpinismo",
+      "example_kr": "가을에 등산을 가요.",
+      "example_pt": "Faço trilha na montanha no outono.",
+      "category": "hobbies",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "수영",
+      "meaning": "Natação",
+      "example_kr": "아침마다 수영을 해요.",
+      "example_pt": "Nado todas as manhãs.",
+      "category": "hobbies",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "자전거",
+      "meaning": "Bicicleta",
+      "example_kr": "한강에서 자전거를 타요.",
+      "example_pt": "Ando de bicicleta no Rio Han.",
+      "category": "hobbies",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "도서관",
+      "meaning": "Biblioteca",
+      "example_kr": "도서관에서 공부해요.",
+      "example_pt": "Estudo na biblioteca.",
+      "category": "locais",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "책",
+      "meaning": "Livro",
+      "example_kr": "한국어 책을 읽어요.",
+      "example_pt": "Leio um livro de coreano.",
+      "category": "objetos",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "빌리다",
+      "meaning": "Pegar emprestado / Alugar",
+      "example_kr": "도서관에서 책을 빌려요.",
+      "example_pt": "Pego um livro emprestado na biblioteca.",
+      "category": "verbos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "노래",
+      "meaning": "Canção / Música cantada",
+      "example_kr": "한국 노래를 불러요.",
+      "example_pt": "Canto uma música coreana.",
+      "category": "hobbies",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "부르다",
+      "meaning": "Cantar / Chamar",
+      "example_kr": "노래방에서 노래를 불러요.",
+      "example_pt": "Canto músicas no karaokê.",
+      "category": "verbos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "취미",
+      "meaning": "Hobby / Passatempo",
+      "example_kr": "취미가 뭐예요?",
+      "example_pt": "Qual é o seu hobby?",
+      "category": "geral",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "SUBJECT"
+    }
+  ],
+  "grammar": [
+    {
+      "id": "g1b_02_reogada",
+      "title": "Partícula de Finalidade de Movimento: -(으)러 가다/오다",
+      "explanation": "Expressa o propósito ou objetivo de se deslocar até um lugar ('ir/vir a fim de fazer algo'):\n\n1. **-러 가다/오다** — Após raiz verbal terminada em **vogal** ou no batchim **ㄹ**.\n   * Ex: 만나다 → 만나**러 가요** (Vou para encontrar).\n   * Ex: 만들다 → 만들**러 가요** (Vou para fazer).\n\n2. **-으러 가다/오다** — Após raiz verbal terminada em **consoante** (exceto ㄹ).\n   * Ex: 읽다 → 읽**으러 가요** (Vou para ler).\n   * Ex: 찾다 → 찾**으러 와요** (Venho para buscar).",
+      "examples": [
+        {
+          "kr": "도서관에 책을 빌리러 가요.",
+          "pt": "Vou à biblioteca para pegar um livro emprestado."
+        },
+        {
+          "kr": "식당에 밥을 먹으러 가요.",
+          "pt": "Vou ao restaurante para comer."
+        }
+      ],
+      "lusophone_tip": "A estrutura em coreano inverte a ordem do português: [Lugar]에 [Ação]-(으)러 가요. O verbo de movimento final é sempre 가다 (ir) ou 오다 (vir)."
+    },
+    {
+      "id": "g1b_02_do",
+      "title": "Partícula de Inclusão: 도 (Também)",
+      "explanation": "A partícula '도' substitui partículas de sujeito (이/가) ou objeto (을/를) para indicar inclusão ('também / tampouco'):\n\n* 저는 사과를 좋아해요. 바나나**도** 좋아해요. (Gosto de maçã. Também gosto de banana.)\n* 민우 씨는 학생이에요. 저**도** 학생이에요. (Minwoo é estudante. Eu também sou estudante.)",
+      "examples": [
+        {
+          "kr": "저도 영화를 보고 싶어요.",
+          "pt": "Eu também quero assistir ao filme."
+        },
+        {
+          "kr": "책도 읽고 음악도 들어요.",
+          "pt": "Leio livros e também ouço música."
+        }
+      ],
+      "lusophone_tip": "Lembre-se de que '도' elimina e substitui as partículas 은/는, 이/가 e 을/를, anexando-se diretamente ao substantivo."
+    }
+  ],
+  "cultural_notes": [
+    {
+      "title": "A Paixão Coreana por 등산 (Trilhas de Montanha)",
+      "content": "Como cerca de 70% do relevo sul-coreano é montanhoso, o alpinismo recreativo (등산) é um dos hobbies mais populares de todas as gerações nos fins de semana, acompanhado de roupas técnicas coloridas.",
+      "icon": "⛰️"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "u1b_02_q01",
+      "type": "multiple_choice",
+      "question": "Complete a frase: '도서관에 책을 ______ 가요.' (Vou à biblioteca para ler um livro)",
+      "explanation": "Como a raiz do verbo 읽다 termina em consoante (ㄺ), usa-se '-으러': '읽으러'.",
+      "options": [
+        "읽으러",
+        "읽러",
+        "읽고",
+        "읽어서"
+      ],
+      "correct_index": 0
+    },
+    {
+      "id": "u1b_02_q02",
+      "type": "multiple_choice",
+      "question": "Qual frase expressa 'Eu também gosto de música'?",
+      "explanation": "A partícula '도' substitui a partícula de tópico/sujeito: '저도 음악을 좋아해요'.",
+      "options": [
+        "저도 음악을 좋아해요.",
+        "저는 음악만 좋아해요.",
+        "저를 음악이 좋아해요.",
+        "저에 음악을 좋아해요."
+      ],
+      "correct_index": 0
+    },
+    {
+      "id": "u1b_02_q03",
+      "type": "order_words",
+      "question": "Ordene: 'Vou ao cinema para assistir a um filme'",
+      "explanation": "Lugar (영화관에) + Objeto/Ação (영화를 보러) + Movimento (가요).",
+      "words": ["가요", "영화를 보러", "영화관에"],
+      "correct_order": ["영화관에", "영화를 보러", "가요"]
+    },
+    {
+      "id": "u1b_02_q04",
+      "type": "drag_and_drop_sov",
+      "question": "Monte a frase: 'Minwoo vai ao parque para andar de bicicleta'",
+      "explanation": "Sujeito (민우는) + Local/Propósito (공원에 자전거를 타러) + Verbo (가요).",
+      "words": ["민우는", "공원에", "자전거를 타러", "가요"],
+      "correct_order": ["민우는", "공원에", "자전거를 타러", "가요"],
+      "sov_items": [
+        { "word": "민우는", "role": "SUBJECT", "snap_anchor": "round" },
+        { "word": "공원에", "role": "LOCATION", "snap_anchor": "round" },
+        { "word": "자전거를 타러", "role": "OBJECT", "snap_anchor": "round" },
+        { "word": "가요", "role": "VERB", "snap_anchor": "round" }
+      ],
+      "sov_slots": [
+        { "role": "SUBJECT", "label": "주어 (Sujeito)", "accepted_roles": ["SUBJECT"] },
+        { "role": "LOCATION", "label": "장소 (Local)", "accepted_roles": ["LOCATION", "OBJECT"] },
+        { "role": "OBJECT", "label": "목적 (Propósito/Objeto)", "accepted_roles": ["OBJECT", "VERB"] },
+        { "role": "VERB", "label": "동사 (Verbo)", "accepted_roles": ["VERB", "PREDICATE"] }
+      ]
+    }
+  ]
+}

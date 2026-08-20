@@ -1,5 +1,6 @@
 import asyncio
 import random
+import time
 import flet as ft
 from typing import Callable, List, Optional
 from ..theme import get_theme_colors, Styles
@@ -16,6 +17,7 @@ class QuizWidget(ft.Container):
         self.on_next = on_next
         self.on_answer = on_answer
         self.answered = False
+        self.start_time = time.monotonic()
 
         # Pergunta (comum aos dois tipos) — com quebra de linha automática
         self.question_text = ft.Text(
@@ -463,7 +465,11 @@ class QuizWidget(ft.Container):
         self.update()
 
         if self.on_answer:
-            self.on_answer(is_correct)
+            elapsed_ms = int((time.monotonic() - getattr(self, "start_time", time.monotonic())) * 1000)
+            try:
+                self.on_answer(is_correct, elapsed_ms)
+            except TypeError:
+                self.on_answer(is_correct)
 
     def handle_next(self, e):
         if self.on_next:

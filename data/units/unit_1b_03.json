@@ -1,0 +1,211 @@
+{
+  "unit_id": "unit_1b_03",
+  "title": "백화점에서 쇼핑할 거예요",
+  "vocabulary": [
+    {
+      "word": "바지",
+      "meaning": "Calça",
+      "example_kr": "편한 바지를 샀어요.",
+      "example_pt": "Comprei uma calça confortável.",
+      "category": "roupas",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "치마",
+      "meaning": "Saia",
+      "example_kr": "예쁜 치마를 입었어요.",
+      "example_pt": "Vesti uma saia bonita.",
+      "category": "roupas",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "셔츠",
+      "meaning": "Camisa social",
+      "example_kr": "하얀 셔츠를 입어요.",
+      "example_pt": "Visto uma camisa branca.",
+      "category": "roupas",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "티셔츠",
+      "meaning": "Camiseta",
+      "example_kr": "검은색 티셔츠를 좋아해요.",
+      "example_pt": "Gosto de camiseta preta.",
+      "category": "roupas",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "코트",
+      "meaning": "Casaco / Sobretudo",
+      "example_kr": "겨울에는 따뜻한 코트를 입어요.",
+      "example_pt": "No inverno visto um casaco quente.",
+      "category": "roupas",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "모자",
+      "meaning": "Chapéu / Boné",
+      "example_kr": "모자를 써요.",
+      "example_pt": "Uso um boné.",
+      "category": "acessorios",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "구두",
+      "meaning": "Sapatos sociais",
+      "example_kr": "새 구두를 신었어요.",
+      "example_pt": "Calcei sapatos novos.",
+      "category": "calcados",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "운동화",
+      "meaning": "Tênis esportivo",
+      "example_kr": "운동화를 신고 달렸어요.",
+      "example_pt": "Calcei o tênis e corri.",
+      "category": "calcados",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "입다",
+      "meaning": "Vestir (roupas no corpo)",
+      "example_kr": "옷을 따뜻하게 입으세요.",
+      "example_pt": "Vista roupas quentinhas.",
+      "category": "verbos",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "신다",
+      "meaning": "Calçar (sapatos, meias)",
+      "example_kr": "양말과 운동화를 신어요.",
+      "example_pt": "Calço meias e tênis.",
+      "category": "verbos",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "쓰다",
+      "meaning": "Usar na cabeça (chapéu, óculos)",
+      "example_kr": "안경을 써요.",
+      "example_pt": "Uso óculos.",
+      "category": "verbos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "백화점",
+      "meaning": "Loja de departamentos / Shopping",
+      "example_kr": "주말에 백화점에서 쇼핑할 거예요.",
+      "example_pt": "Vou fazer compras no shopping no fim de semana.",
+      "category": "locais",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    }
+  ],
+  "grammar": [
+    {
+      "id": "g1b_03_aseo_eoseo",
+      "title": "Conectivo de Causa e Motivo: -아서/어서",
+      "explanation": "Conecta duas orações onde a primeira é o motivo ou causa da segunda ('porque / como...'):\n\n1. **-아서** — Após raiz com vogais claras (ㅏ, ㅗ).\n   * Ex: 싸다 → 싸**서** 많이 샀어요 (Comprei muito porque é barato).\n   * Ex: 좋다 → 좋**아서** 기뻐요 (Estou feliz porque é bom).\n\n2. **-어서** — Após raiz com outras vogais (ㅓ, ㅜ, ㅣ, etc.).\n   * Ex: 덥다 → 더**워서** 에어컨을 켰어요 (Liguei o ar condicionado porque está quente).\n   * Ex: 맛있다 → 맛있**어서** 다 먹었어요 (Comi tudo porque está gostoso).\n\n3. **-해서** — Para verbos terminados em 하다 (ex: 쇼핑하다 → 쇼핑**해서**).",
+      "examples": [
+        {
+          "kr": "옷이 예뻐서 샀어요.",
+          "pt": "Comprei a roupa porque ela é bonita."
+        },
+        {
+          "kr": "비가 와서 집에 있었어요.",
+          "pt": "Fiquei em casa porque choveu."
+        }
+      ],
+      "lusophone_tip": "Ao usar -아서/어서, o tempo verbal de passado (-았/었-) é colocado APENAS no verbo final da frase, nunca na primeira oração causal."
+    },
+    {
+      "id": "g1b_03_eul_geoyeyo",
+      "title": "Futuro e Intenção de Ação: -(으)ㄹ 거예요",
+      "explanation": "Expressa um plano futuro ou a intenção do falante ('vou fazer / farei'):\n\n1. **-ㄹ 거예요** — Após raiz terminada em **vogal** ou no batchim **ㄹ**.\n   * Ex: 가다 → 가**ㄹ 거예요** (Vou ir).\n   * Ex: 만들다 → 만들 **거예요** (Vou fazer).\n\n2. **-을 거예요** — Após raiz terminada em **consoante**.\n   * Ex: 먹다 → 먹**을 거예요** (Vou comer).\n   * Ex: 입다 → 입**을 거예요** (Vou vestir).",
+      "examples": [
+        {
+          "kr": "내일 친구를 만날 거예요.",
+          "pt": "Vou encontrar um amigo amanhã."
+        },
+        {
+          "kr": "백화점에서 바지를 살 거예요.",
+          "pt": "Vou comprar uma calça na loja de departamentos."
+        }
+      ],
+      "lusophone_tip": "Equivale ao nosso futuro perifrástico 'vou + verbo'. Na linguagem falada rápida, '것이에요' contrai-se sempre para '거예요'."
+    }
+  ],
+  "cultural_notes": [
+    {
+      "title": "Verbos Específicos para Vestuário em Coreano",
+      "content": "Diferente do português onde dizemos 'usar' para tudo, o coreano exige verbos específicos conforme a parte do corpo: roupas no tronco (입다), calçados nos pés (신다), e itens na cabeça/rosto (쓰다).",
+      "icon": "👗"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "u1b_03_q01",
+      "type": "multiple_choice",
+      "question": "Qual é a frase correta para 'Amanhã vou comprar sapatos'?",
+      "explanation": "O futuro de 사다 (vogal) é '살 거예요': '내일 구두를 살 거예요'.",
+      "options": [
+        "내일 구두를 살 거예요.",
+        "내일 구두를 사었어요.",
+        "내일 구두를 사러 없어요.",
+        "내일 구두를 샀을 거예요."
+      ],
+      "correct_index": 0
+    },
+    {
+      "id": "u1b_03_q02",
+      "type": "multiple_choice",
+      "question": "Complete com o verbo correto de calçados: '운동화를 ______.'",
+      "explanation": "Para tênis e calçados nos pés, usa-se o verbo '신다' (신어요).",
+      "options": [
+        "신어요",
+        "입어요",
+        "써요",
+        "끼워요"
+      ],
+      "correct_index": 0
+    },
+    {
+      "id": "u1b_03_q03",
+      "type": "order_words",
+      "question": "Ordene a oração causal: 'Comprei a saia porque ela é barata'",
+      "explanation": "Causa (치마가 싸서) + Ação (샀어요).",
+      "words": ["샀어요", "싸서", "치마가"],
+      "correct_order": ["치마가", "싸서", "샀어요"]
+    },
+    {
+      "id": "u1b_03_q04",
+      "type": "drag_and_drop_sov",
+      "question": "Monte a frase: 'Eu vou comprar uma camisa no shopping'",
+      "explanation": "Sujeito (저는) + Local (백화점에서) + Objeto (셔츠를) + Verbo no Futuro (살 거예요).",
+      "words": ["저는", "백화점에서", "셔츠를", "살 거예요"],
+      "correct_order": ["저는", "백화점에서", "셔츠를", "살 거예요"],
+      "sov_items": [
+        { "word": "저는", "role": "SUBJECT", "snap_anchor": "round" },
+        { "word": "백화점에서", "role": "LOCATION", "snap_anchor": "square" },
+        { "word": "셔츠를", "role": "OBJECT", "snap_anchor": "round" },
+        { "word": "살 거예요", "role": "PREDICATE", "snap_anchor": "round" }
+      ],
+      "sov_slots": [
+        { "role": "SUBJECT", "label": "주어 (Sujeito)", "accepted_roles": ["SUBJECT"] },
+        { "role": "LOCATION", "label": "장소 (Local)", "accepted_roles": ["LOCATION", "OBJECT"] },
+        { "role": "OBJECT", "label": "목적어 (Objeto)", "accepted_roles": ["OBJECT"] },
+        { "role": "PREDICATE", "label": "서술어 (Predicado Futuro)", "accepted_roles": ["PREDICATE", "VERB"] }
+      ]
+    }
+  ]
+}

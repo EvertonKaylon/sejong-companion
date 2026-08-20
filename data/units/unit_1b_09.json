@@ -1,0 +1,200 @@
+{
+  "unit_id": "unit_1b_09",
+  "title": "집에서 푹 쉬어야 돼요",
+  "vocabulary": [
+    {
+      "word": "머리",
+      "meaning": "Cabeça",
+      "example_kr": "머리가 너무 아파요.",
+      "example_pt": "Estou com muita dor de cabeça.",
+      "category": "corpo",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "배",
+      "meaning": "Barriga / Estômago",
+      "example_kr": "배가 아파서 병원에 갔어요.",
+      "example_pt": "Fui ao hospital porque estava com dor de barriga.",
+      "category": "corpo",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "목",
+      "meaning": "Garganta / Pescoço",
+      "example_kr": "감기에 걸려서 목이 아파요.",
+      "example_pt": "Estou com dor de garganta porque peguei um resfriado.",
+      "category": "corpo",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "눈",
+      "meaning": "Olhos",
+      "example_kr": "눈이 피곤해서 일찍 잤어요.",
+      "example_pt": "Dormi cedo porque meus olhos estavam cansados.",
+      "category": "corpo",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "감기",
+      "meaning": "Gripe / Resfriado",
+      "example_kr": "감기약을 먹고 푹 쉬세요.",
+      "example_pt": "Tome o remédio para gripe e descanse bem.",
+      "category": "saude",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "열이 나다",
+      "meaning": "Ter febre / Estar febril",
+      "example_kr": "어젯밤부터 열이 났어요.",
+      "example_pt": "Tive febre desde ontem à noite.",
+      "category": "sintomas",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "기침을 하다",
+      "meaning": "Tossir",
+      "example_kr": "기침을 많이 해서 따뜻한 물을 마셔요.",
+      "example_pt": "Tomo água morna porque estou tossindo muito.",
+      "category": "sintomas",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "푹 쉬다",
+      "meaning": "Descansar profundamente / Repousar bem",
+      "example_kr": "주말에는 집에서 푹 쉬어야 돼요.",
+      "example_pt": "No fim de semana você deve descansar bem em casa.",
+      "category": "expressoes",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "약을 먹다",
+      "meaning": "Tomar remédio",
+      "example_kr": "식후에 약을 꼭 드세요.",
+      "example_pt": "Tome o remédio sem falta após as refeições.",
+      "category": "expressoes",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "병원",
+      "meaning": "Hospital / Clínica médica",
+      "example_kr": "열이 심해서 병원에 가요.",
+      "example_pt": "Vou ao médico porque a febre está alta.",
+      "category": "locais",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "LOCATION"
+    },
+    {
+      "word": "아프다",
+      "meaning": "Estar doente / Doer",
+      "example_kr": "어디가 아프세요?",
+      "example_pt": "Onde está doendo? / O que você está sentindo?",
+      "category": "adjetivos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "PREDICATE"
+    }
+  ],
+  "grammar": [
+    {
+      "id": "g1b_09_jiman",
+      "title": "Conectivo de Oposição: -지만 (Mas / Porém)",
+      "explanation": "Conecta duas orações com ideias contrastantes ou opostas ('mas / embora'):\n\n* Anexa-se diretamente à raiz de verbos e adjetivos, sem modificação por batchim:\n  * Ex: 약이 쓰**지만** 효과가 좋아요 (O remédio é amargo, mas tem bom efeito).\n  * Ex: 바쁘**지만** 운동을 해요 (Estou ocupado, mas me exercito).",
+      "examples": [
+        {
+          "kr": "머리가 아프지만 학교에 갔어요.",
+          "pt": "Estava com dor de cabeça, mas fui para a escola."
+        },
+        {
+          "kr": "한국 음식은 맵지만 맛있어요.",
+          "pt": "A comida coreana é apimentada, porém é saborosa."
+        }
+      ],
+      "lusophone_tip": "Ao contrário de -아서/어서, o conectivo -지만 aceita conjugação de passado na primeira oração: '아팠지만 갔어요' (estava doendo, mas fui)."
+    },
+    {
+      "id": "g1b_09_ayadoeda",
+      "title": "Obrigação e Necessidade: -아야/어야 되다 (Ter que / Dever)",
+      "explanation": "Expressa dever moral, regra ou necessidade imperativa ('preciso / tenho que / devo fazer algo'):\n\n1. **-아야 되다** — Após raiz com vogais claras (ㅏ, ㅗ).\n   * Ex: 가다 → 가**아야 되다** → **가야 돼요** (Tenho que ir).\n   * Ex: 앉다 → **앉아야 돼요** (Tem que sentar).\n\n2. **-어야 되다** — Após raiz com outras vogais (ㅓ, ㅜ, ㅣ, etc.).\n   * Ex: 먹다 → **먹어야 돼요** (Tem que comer).\n   * Ex: 쉬다 → **쉬어야 돼요** (Tem que descansar).\n\n3. **-해야 되다** — Para verbos terminados em 하다 (ex: 공부하다 → **공부해야 돼요**).",
+      "examples": [
+        {
+          "kr": "감기에 걸려서 집에서 푹 쉬어야 돼요.",
+          "pt": "Peguei um resfriado, então preciso descansar bem em casa."
+        },
+        {
+          "kr": "내일 일찍 일어나야 돼요.",
+          "pt": "Tenho que acordar cedo amanhã."
+        }
+      ],
+      "lusophone_tip": "'되다' e '하다' são intercambiáveis aqui: -아야 돼요 e -아야 해요 possuem exatamente o mesmo significado no dia a dia."
+    }
+  ],
+  "cultural_notes": [
+    {
+      "title": "A Expressão de Empatia: 푹 쉬세요 (Descanse bem)",
+      "content": "Quando alguém está doente ou abatido na Coreia, a frase mais afetuosa e educada é sempre '푹 쉬세요' (descanse profundamente) e '빨리 나으세요' (melhore logo).",
+      "icon": "💊"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "u1b_09_q01",
+      "type": "multiple_choice",
+      "question": "Como se diz 'Preciso tomar remédio' usando -아야/어야 돼요?",
+      "explanation": "O verbo 먹다 (vogal ㅓ) recebe '-어야 돼요': '약들을 먹어야 돼요'.",
+      "options": [
+        "약들을 먹어야 돼요.",
+        "약들을 먹아야 돼요.",
+        "약들을 먹으러 돼요.",
+        "약들을 먹고 돼요."
+      ],
+      "correct_index": 0
+    },
+    {
+      "id": "u1b_09_q02",
+      "type": "multiple_choice",
+      "question": "Qual é a frase que conecta ideias opostas com '-지만'?",
+      "explanation": "A estrutura de oposição 'A지만 B' conecta: '한국 음식은 맵지만 맛있어요'.",
+      "options": [
+        "한국 음식은 맵지만 맛있어요.",
+        "한국 음식은 매워서 맛있어요.",
+        "한국 음식은 맵고 맛없어요.",
+        "한국 음식은 매우러 가요."
+      ],
+      "correct_index": 0
+    },
+    {
+      "id": "u1b_09_q03",
+      "type": "order_words",
+      "question": "Ordene: 'Tenho que ir ao hospital amanhã'",
+      "explanation": "Tempo (내일) + Destino (병원에) + Obrigação (가야 돼요).",
+      "words": ["가야 돼요", "내일", "병원에"],
+      "correct_order": ["내일", "병원에", "가야 돼요"]
+    },
+    {
+      "id": "u1b_09_q04",
+      "type": "drag_and_drop_sov",
+      "question": "Monte a frase: 'Eu tenho que descansar bem em casa'",
+      "explanation": "Sujeito (저는) + Local (집에서) + Modo/Verbo de Obrigação (푹 쉬어야 돼요).",
+      "words": ["저는", "집에서", "푹 쉬어야 돼요"],
+      "correct_order": ["저는", "집에서", "푹 쉬어야 돼요"],
+      "sov_items": [
+        { "word": "저는", "role": "SUBJECT", "snap_anchor": "round" },
+        { "word": "집에서", "role": "LOCATION", "snap_anchor": "square" },
+        { "word": "푹 쉬어야 돼요", "role": "PREDICATE", "snap_anchor": "round" }
+      ],
+      "sov_slots": [
+        { "role": "SUBJECT", "label": "주어 (Sujeito)", "accepted_roles": ["SUBJECT"] },
+        { "role": "LOCATION", "label": "장소 (Local)", "accepted_roles": ["LOCATION", "OBJECT"] },
+        { "role": "PREDICATE", "label": "서술어 (Obrigação)", "accepted_roles": ["PREDICATE", "VERB"] }
+      ]
+    }
+  ]
+}

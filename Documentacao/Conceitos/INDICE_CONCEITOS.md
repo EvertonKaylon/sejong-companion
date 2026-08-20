@@ -14,7 +14,7 @@ Diferente de uma documentação estática, cada conceito aqui catalogado é um *
 
 ```mermaid
 graph TD
-    %% Nós Príncipais de Conceitos
+    %% Nós Principais de Conceitos
     SDD["[[SDD_Spec_Driven_Development]]"] 
     DS["[[Design_System_e_Tokens_Semanticos]]"]
     ARCH["[[Arquitetura_Flet_e_Flutter_Engine]]"]
@@ -22,14 +22,18 @@ graph TD
     AUDIO["[[Integracao_TTS_Typecast_e_Audio]]"]
     TYPO["[[Tipografia_Bilingue_e_CJK]]"]
     NEURO["[[Neuropedagogia_e_Gamificacao]]"]
+    ENGINE["[[Motor_Adaptativo_e_Learning_Engine]]"]
     DIDACTIC["[[didactic_neuroscience_korean_ptbr]]"]
     PLAN_IMP["[[plano_ensino_implicito_neurociencia]]"]
+    ADR["[[decisao_arquitetural_motor_adaptativo_local_vs_llm]]"]
 
     %% Conexões Metodológicas e Arquiteturais
     SDD --> DS
     SDD --> ARCH
     ARCH --> MULTI
     ARCH --> AUDIO
+    ARCH --> ENGINE
+    ENGINE --> ADR
 
     %% Conexões de Design e UI/UX
     DS --> TYPO
@@ -40,12 +44,14 @@ graph TD
     NEURO --> PLAN_IMP
     DIDACTIC --> PLAN_IMP
     NEURO --> AUDIO
+    NEURO --> ENGINE
 
     %% Estilização do Grafo
     style SDD fill:#0356C5,stroke:#fff,stroke-width:2px,color:#fff
     style DS fill:#7C3AED,stroke:#fff,stroke-width:2px,color:#fff
     style ARCH fill:#02060E,stroke:#0356C5,stroke-width:2px,color:#fff
     style NEURO fill:#F5A623,stroke:#fff,stroke-width:2px,color:#000
+    style ENGINE fill:#19BD56,stroke:#fff,stroke-width:2px,color:#fff
     style DIDACTIC fill:#19BD56,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
@@ -80,7 +86,10 @@ graph TD
 
 ---
 
-### 4. 🧠 Neuropedagogia e Interface Implícita
+### 4. 🧠 Neuropedagogia e Inteligência Adaptativa
+- 🧠 **[[Motor_Adaptativo_e_Learning_Engine]]** — IA Simbólica local, Cognitive Knowledge Tracing, métricas desacopladas (Completion, Mastery, Retention, Confidence) e Learning Graph do Sejong 1A.
+  - *Documentos Relacionados:* [[decisao_arquitetural_motor_adaptativo_local_vs_llm]], [[ROADMAP_MESTRE_COMPANION]], [[manifesto_estrategico_develop_vs_main]], [[Neuropedagogia_e_Gamificacao]], [[didactic_neuroscience_korean_ptbr]]
+
 - 🎮 **[[Neuropedagogia_e_Gamificacao]]** — Aplicação da Teoria da Carga Cognitiva (Sweller), Teoria da Codificação Dupla (Paivio) e Memória Procedural vs. Declarativa (Ullman). Trata da máquina de estados do quiz, adaptação cronobiológica e eliminação total de avisos por escrito na UI.
   - *Documentos Relacionados:* [[viabilidade_app_coreano]], [[viabilidade_sejong_companion]], [[didactic_neuroscience_korean_ptbr]], [[plano_ensino_implicito_neurociencia]]
 

@@ -60,7 +60,7 @@ flowchart TD
 1. **Teoria da Codificação Dupla (Dual Coding Theory - Paivio, 1986)**: O processamento concomitante de estímulos visuais (grafia Hangul / formas geométricas) e auditivos (áudio nativo HD) cria traços de memória redundantes (verbais e não-verbais), acelerando a retenção em 200%.
 2. **Teoria da Carga Cognitiva (Sweller, 1988)**: A memória de trabalho humana comporta de 3 a 5 elementos (*chunks*). Banners de aviso, textos explicativos e disclaimers consomem recursos valiosos da memória de trabalho (*Extraneous Cognitive Load*), prejudicando a absorção do conteúdo real (*Germane Load*).
 3. **Efeito do Teste e Active Recall (Roediger & Karpicke, 2006)**: A recuperação ativa de informações (discriminação auditiva e construção visual) consolida sinapses no hipocampo de forma significativamente superior à leitura passiva de orientações.
-4. **Modelo de Memória Espaçada HLR (Settles & Meeder, arXiv:1606.01256)**: Algoritmo que modela a meia-vida da memória ($h$) baseando-se no histórico de erros e tempo de resposta de cada item, ajustando revisões de forma personalizada.
+4. **Modelo Heurístico de Retenção Baseado em Meia-Vida**: Modelagem matemática determinística que ajusta a meia-vida da memória ($h$) baseando-se no histórico de recuperação ativa e latência de resposta, agendando revisões antes do esquecimento crítico.
 5. **Memória Procedural vs. Declarativa na Linguagem (Ullman, 2004)**: A gramática e a pronúncia fluentes dependem do sistema procedural (automático, inconsciente). Avisos por escrito forçam o uso do sistema declarativo, criando a "muleta cognitiva" que paralisa a fala.
 
 ---

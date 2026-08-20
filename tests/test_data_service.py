@@ -13,10 +13,10 @@ class TestDataService(unittest.TestCase):
             self.assertIsNotNone(unit.title_kr)
             self.assertIsNotNone(unit.title_pt)
 
-    def test_curriculum_has_11_entries(self):
-        """O currículo completo tem 11 entradas: unit_intro + 10 unidades."""
+    def test_curriculum_has_23_entries(self):
+        """O currículo completo tem 23 entradas: unit_intro + 10 do 1A + 12 do 1B."""
         curriculum = DataService.get_curriculum()
-        self.assertEqual(len(curriculum), 11)
+        self.assertEqual(len(curriculum), 23)
 
     def test_get_unit_intro(self):
         intro_data = DataService.get_unit_intro()
@@ -35,9 +35,9 @@ class TestDataService(unittest.TestCase):
         self.assertGreater(len(unit_one_data.grammar), 0)
 
     def test_get_unit_generic_all(self):
-        """DataService.get_unit() deve carregar todas as 10 unidades (01-10)."""
-        for i in range(1, 11):
-            unit_id = f"unit_{i:02d}"
+        """DataService.get_unit() deve carregar todas as unidades do 1A (01-10) e 1B (1b_01-1b_12)."""
+        all_ids = [f"unit_{i:02d}" for i in range(1, 11)] + [f"unit_1b_{i:02d}" for i in range(1, 13)]
+        for unit_id in all_ids:
             data = DataService.get_unit(unit_id)
             self.assertIsNotNone(data, f"{unit_id} retornou None")
             self.assertIsInstance(data, UnitData)

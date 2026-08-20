@@ -97,5 +97,125 @@
     "description": "Desejos (-고 싶다), sugestões (-(으)ㄹ까요?) e expressões de planos e convites.",
     "is_unlocked": false,
     "progress": 0.0
+  },
+  {
+    "id": "unit_1b_01",
+    "number": 11,
+    "title_kr": "무슨 음식을 좋아해요?",
+    "title_pt": "Qual comida você gosta?",
+    "description": "Comidas e sabores coreanos, o pronome interrogativo 무슨 e a negação de impossibilidade 못.",
+    "is_unlocked": false,
+    "progress": 0.0,
+    "book": "1B"
+  },
+  {
+    "id": "unit_1b_02",
+    "number": 12,
+    "title_kr": "도서관에 책을 빌리러 가요",
+    "title_pt": "Vou à biblioteca para pegar um livro",
+    "description": "Hobbies e lazer, a partícula de finalidade -(으)러 가다/오다 e a partícula de inclusão 도.",
+    "is_unlocked": false,
+    "progress": 0.0,
+    "book": "1B"
+  },
+  {
+    "id": "unit_1b_03",
+    "number": 13,
+    "title_kr": "백화점에서 쇼핑할 거예요",
+    "title_pt": "Vou fazer compras no shopping",
+    "description": "Vestuário e compras, expressões de motivo (-아서/어서) e tempo futuro/planos (-(으)ㄹ 거예요).",
+    "is_unlocked": false,
+    "progress": 0.0,
+    "book": "1B"
+  },
+  {
+    "id": "unit_1b_04",
+    "number": 14,
+    "title_kr": "더 큰 사이즈는 없어요?",
+    "title_pt": "Não tem um tamanho maior?",
+    "description": "Adjetivos básicos, modificadores de substantivo (-(으)ㄴ) e o estilo formal deferente (-습니다/ㅂ니다).",
+    "is_unlocked": false,
+    "progress": 0.0,
+    "book": "1B"
+  },
+  {
+    "id": "unit_1b_05",
+    "number": 15,
+    "title_kr": "세종식당이 어디에 있어요?",
+    "title_pt": "Onde fica o Restaurante Sejong?",
+    "description": "Direções, localizações espaciais, pronomes interrogativos e a partícula direcional (으)로.",
+    "is_unlocked": false,
+    "progress": 0.0,
+    "book": "1B"
+  },
+  {
+    "id": "unit_1b_06",
+    "number": 16,
+    "title_kr": "한국미술관까지 어떻게 가요?",
+    "title_pt": "Como chego até o Museu de Arte?",
+    "description": "Meios de transporte, trajetos (~에서 ~까지) e sugestões amigáveis no estilo polido (-아요/어요).",
+    "is_unlocked": false,
+    "progress": 0.0,
+    "book": "1B"
+  },
+  {
+    "id": "unit_1b_07",
+    "number": 17,
+    "title_kr": "제주도에 가려고 해요",
+    "title_pt": "Pretendo ir à Ilha de Jeju",
+    "description": "Planos de viagem, a estrutura de intenção -(으)려고 하다 e o conectivo de adição -고.",
+    "is_unlocked": false,
+    "progress": 0.0,
+    "book": "1B"
+  },
+  {
+    "id": "unit_1b_08",
+    "number": 18,
+    "title_kr": "지난번 여행보다 좋았어요",
+    "title_pt": "Foi melhor que a viagem anterior",
+    "description": "Relato de experiências de viagem, sequência temporal (-(으)ㄴ 후에) e comparativo de superioridade (보다).",
+    "is_unlocked": false,
+    "progress": 0.0,
+    "book": "1B"
+  },
+  {
+    "id": "unit_1b_09",
+    "number": 19,
+    "title_kr": "집에서 푹 쉬어야 돼요",
+    "title_pt": "Preciso descansar bem em casa",
+    "description": "Partes do corpo e sintomas de saúde, contraste (-지만) e obrigação/necessidade (-아야/어야 되다).",
+    "is_unlocked": false,
+    "progress": 0.0,
+    "book": "1B"
+  },
+  {
+    "id": "unit_1b_10",
+    "number": 20,
+    "title_kr": "학교에 가기 전에 수영을 해요",
+    "title_pt": "Eu nado antes de ir para a escola",
+    "description": "Rotinas e hábitos saudáveis, anterioridade temporal (-기 전에) e sequência causal/temporal (-아서/어서).",
+    "is_unlocked": false,
+    "progress": 0.0,
+    "book": "1B"
+  },
+  {
+    "id": "unit_1b_11",
+    "number": 21,
+    "title_kr": "한국 음식을 만들 수 있어요?",
+    "title_pt": "Você consegue cozinhar comida coreana?",
+    "description": "Organização de encontros e festas, capacidade/habilidade (-(으)ㄹ 수 있다/없다) e presente contínuo (-고 있다).",
+    "is_unlocked": false,
+    "progress": 0.0,
+    "book": "1B"
+  },
+  {
+    "id": "unit_1b_12",
+    "number": 22,
+    "title_kr": "저는 지니 씨에게 펜을 선물할 거예요",
+    "title_pt": "Vou presentear a Jini com uma caneta",
+    "description": "Celebrações e presentes, partículas de destinatário (에게/한테) e justificativas evidentes (-(으)니까).",
+    "is_unlocked": false,
+    "progress": 0.0,
+    "book": "1B"
   }
 ]

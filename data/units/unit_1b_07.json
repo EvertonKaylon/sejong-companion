@@ -1,0 +1,191 @@
+{
+  "unit_id": "unit_1b_07",
+  "title": "제주도에 가려고 해요",
+  "vocabulary": [
+    {
+      "word": "여행",
+      "meaning": "Viagem",
+      "example_kr": "여름휴가 때 여행을 가요.",
+      "example_pt": "Vou viajar nas férias de verão.",
+      "category": "viagem",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "제주도",
+      "meaning": "Ilha de Jeju",
+      "example_kr": "제주도에 가려고 해요.",
+      "example_pt": "Pretendo ir à Ilha de Jeju.",
+      "category": "locais",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "LOCATION"
+    },
+    {
+      "word": "바다",
+      "meaning": "Mar / Praia",
+      "example_kr": "푸른 바다를 보고 싶어요.",
+      "example_pt": "Quero ver o mar azul.",
+      "category": "natureza",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "호텔",
+      "meaning": "Hotel",
+      "example_kr": "바다 근처 호텔을 예약했어요.",
+      "example_pt": "Reservei um hotel perto do mar.",
+      "category": "locais",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "예약하다",
+      "meaning": "Fazer reserva / Reservar",
+      "example_kr": "비행기 표를 미리 예약했어요.",
+      "example_pt": "Reservei a passagem aérea com antecedência.",
+      "category": "verbos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "짐을 싸다",
+      "meaning": "Fazer as malas / Arrumar bagagem",
+      "example_kr": "여행 가기 전에 짐을 쌌어요.",
+      "example_pt": "Arrumei as malas antes de viajar.",
+      "category": "expressoes",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "비행기 표",
+      "meaning": "Passagem de avião",
+      "example_kr": "비행기 표를 샀어요.",
+      "example_pt": "Comprei a passagem de avião.",
+      "category": "viagem",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "관광지",
+      "meaning": "Ponto turístico / Atração",
+      "example_kr": "유명한 관광지를 방문했어요.",
+      "example_pt": "Visitei pontos turísticos famosos.",
+      "category": "locais",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "계획",
+      "meaning": "Plano / Planejamento",
+      "example_kr": "주말 계획이 뭐예요?",
+      "example_pt": "Qual é o seu plano para o fim de semana?",
+      "category": "geral",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "휴가",
+      "meaning": "Férias / Folga do trabalho",
+      "example_kr": "다음 주에 휴가를 떠나요.",
+      "example_pt": "Saio de férias na próxima semana.",
+      "category": "viagem",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    }
+  ],
+  "grammar": [
+    {
+      "id": "g1b_07_ryeogohada",
+      "title": "Intenção e Plano Deliberado: -(으)려고 하다",
+      "explanation": "Expressa uma intenção resoluta, planejamento pessoal ou objetivo do falante ('pretendo / tenho a intenção de fazer algo'):\n\n1. **-려고 하다** — Após raiz terminada em **vogal** ou no batchim **ㄹ**.\n   * Ex: 가다 → 가**려고 해요** (Pretendo ir).\n   * Ex: 만들다 → 만들**려고 해요** (Pretendo fazer).\n\n2. **-으려고 하다** — Após raiz terminada em **consoante** (exceto ㄹ).\n   * Ex: 먹다 → 먹**으려고 해요** (Pretendo comer).\n   * Ex: 찾다 → 찾**으려고 해요** (Pretendo procurar).",
+      "examples": [
+        {
+          "kr": "이번 휴가 때 제주도에 가려고 해요.",
+          "pt": "Nestas férias pretendo ir à Ilha de Jeju."
+        },
+        {
+          "kr": "한국어를 열심히 공부하려고 해요.",
+          "pt": "Pretendo estudar coreano com dedicação."
+        }
+      ],
+      "lusophone_tip": "Diferença: -(으)ㄹ 거예요 expressa o futuro factual certo ('vou fazer'), enquanto -(으)려고 하다 foca na intenção interior e projeto da mente do falante ('pretendo fazer')."
+    },
+    {
+      "id": "g1b_07_go",
+      "title": "Conectivo Aditivo de Ações: -고",
+      "explanation": "Conecta dois verbos ou adjetivos com sentido aditivo simples ('e / e também'):\n\n* Ex: 밥을 먹**고** 커피를 마셨어요 (Comi arroz e tomei café).\n* Ex: 방이 넓**고** 깨끗해요 (O quarto é espaçoso e limpo).\n* Anexa-se diretamente à raiz do verbo sem alteração por batchim.",
+      "examples": [
+        {
+          "kr": "비행기 표를 사고 호텔을 예약했어요.",
+          "pt": "Comprei a passagem de avião e reservei o hotel."
+        },
+        {
+          "kr": "사진을 찍고 기념품을 샀어요.",
+          "pt": "Tirei fotos e comprei lembrancinhas."
+        }
+      ],
+      "lusophone_tip": "Ao conectar duas frases no passado com -고, o sufixo de passado (-았/었-) é colocado apenas no último verbo: '밥을 먹고 마셨어요' e não '먹었고 마셨어요'."
+    }
+  ],
+  "cultural_notes": [
+    {
+      "title": "Jeju-do: A Ilha das Três Abundâncias (삼다도)",
+      "content": "A Ilha de Jeju é o destino turístico mais famoso da Coreia, conhecida historicamente por sua riqueza em pedras vulcânicas (돌), vento forte (바람) e mulheres mergulhadoras tradicionais (해녀).",
+      "icon": "🌴"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "u1b_07_q01",
+      "type": "multiple_choice",
+      "question": "Como se expressa 'Pretendo viajar nas férias' usando -(으)려고 하다?",
+      "explanation": "O verbo 여행하다 termina em 하다 (vogal), logo recebe '-려고 해요': '여행하려고 해요'.",
+      "options": [
+        "휴가 때 여행하려고 해요.",
+        "휴가 때 여행하고 싶어요.",
+        "휴가 때 여행하러 없어요.",
+        "휴가 때 여행했으려고 해요."
+      ],
+      "correct_index": 0
+    },
+    {
+      "id": "u1b_07_q02",
+      "type": "multiple_choice",
+      "question": "Complete a frase conectiva: '호텔을 예약하____ 짐을 쌌어요.' (Reservei o hotel e arrumei as malas)",
+      "explanation": "O conectivo aditivo simples é '-고': '예약하고'.",
+      "options": [
+        "고",
+        "서",
+        "지만",
+        "는데"
+      ],
+      "correct_index": 0
+    },
+    {
+      "id": "u1b_07_q03",
+      "type": "order_words",
+      "question": "Ordene: 'Pretendo ir à Ilha de Jeju amanhã'",
+      "explanation": "Tempo (내일) + Destino (제주도에) + Intenção (가려고 해요).",
+      "words": ["가려고 해요", "제주도에", "내일"],
+      "correct_order": ["내일", "제주도에", "가려고 해요"]
+    },
+    {
+      "id": "u1b_07_q04",
+      "type": "drag_and_drop_sov",
+      "question": "Monte a frase: 'Eu pretendo reservar a passagem de avião'",
+      "explanation": "Sujeito (저는) + Objeto (비행기 표를) + Verbo de Intenção (예약하려고 해요).",
+      "words": ["저는", "비행기 표를", "예약하려고 해요"],
+      "correct_order": ["저는", "비행기 표를", "예약하려고 해요"],
+      "sov_items": [
+        { "word": "저는", "role": "SUBJECT", "snap_anchor": "round" },
+        { "word": "비행기 표를", "role": "OBJECT", "snap_anchor": "round" },
+        { "word": "예약하려고 해요", "role": "PREDICATE", "snap_anchor": "round" }
+      ],
+      "sov_slots": [
+        { "role": "SUBJECT", "label": "주어 (Sujeito)", "accepted_roles": ["SUBJECT"] },
+        { "role": "OBJECT", "label": "목적어 (Objeto)", "accepted_roles": ["OBJECT"] },
+        { "role": "PREDICATE", "label": "서술어 (Intenção)", "accepted_roles": ["PREDICATE", "VERB"] }
+      ]
+    }
+  ]
+}

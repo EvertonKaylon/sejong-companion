@@ -8,6 +8,7 @@ Bem-vindo ao repositório central de documentação e conhecimento do projeto **
 
 ### 🧠 1. Mapa de Conceitos do Projeto (`/Conceitos`)
 - 📌 **[[INDICE_CONCEITOS]]** — Mapa mestre de teoria, arquitetura e conceitos do projeto.
+- 🧠 **[[Motor_Adaptativo_e_Learning_Engine]]** — IA Simbólica, motor cognitivo determinístico, métricas desacopladas e Learning Graph.
 - 📐 **[[SDD_Spec_Driven_Development]]** — Metodologia Spec-Driven Development e Single Source of Truth.
 - ⚡ **[[Arquitetura_Flet_e_Flutter_Engine]]** — Bridge Python/Flutter, CanvasKit e gerenciamento de `page.overlay`.
 - 🎨 **[[Design_System_e_Tokens_Semanticos]]** — Papéis semânticos, modo escuro Midnight Blue e notação HEX `#AARRGGBB`.
@@ -19,10 +20,13 @@ Bem-vindo ao repositório central de documentação e conhecimento do projeto **
 ---
 
 ### 🎯 2. Planos e Arquitetura (`/Planos_e_Arquitetura`)
-- 🎨 **[Plano_UIUX_Flet_Sejong_Companion.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentação/Planos_e_Arquitetura/Plano_UIUX_Flet_Sejong_Companion.md)** — Guia mestre de UI/UX, Design Tokens, tipografia e boas práticas Flet.
-- 📋 **[plano_ensino_implicito_neurociencia.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentação/Planos_e_Arquitetura/plano_ensino_implicito_neurociencia.md)** — Plano de refatoração para ensino de coreano implícito sem avisos por escrito.
-- 📋 **[implementation_plan.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentação/Planos_e_Arquitetura/implementation_plan.md)** — Plano de implementação técnica do aplicativo, estrutura de lições e roteiro.
-- ⚙️ **[analise_stack_multiplataforma.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentação/Planos_e_Arquitetura/analise_stack_multiplataforma.md)** — Análise comparativa da stack Python/Flet vs Next.js/Tailwind e viabilidade cross-platform.
+- 🗺️ **[ROADMAP_MESTRE_COMPANION.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Planos_e_Arquitetura/ROADMAP_MESTRE_COMPANION.md)** — Roteiro oficial de releases (0.3.0 → 0.3.1 [Livro 1B] → 0.3.2 [Estabilização] → 0.4.0 → 0.5.0 → 0.6.0 → 0.8.0 → 1.0.0).
+- 📜 **[manifesto_estrategico_develop_vs_main.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Planos_e_Arquitetura/manifesto_estrategico_develop_vs_main.md)** — Análise comparativa aprofundada da `develop` vs `main` e os 28 pontos estratégicos.
+- 🏛️ **[decisao_arquitetural_motor_adaptativo_local_vs_llm.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Planos_e_Arquitetura/decisao_arquitetural_motor_adaptativo_local_vs_llm.md)** — ADR-001: Decisão formal pelo Motor Adaptativo Local vs. IA Generativa (LLM).
+- 🎨 **[Plano_UIUX_Flet_Sejong_Companion.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Planos_e_Arquitetura/Plano_UIUX_Flet_Sejong_Companion.md)** — Guia mestre de UI/UX, Design Tokens, tipografia e boas práticas Flet.
+- 📋 **[plano_ensino_implicito_neurociencia.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Planos_e_Arquitetura/plano_ensino_implicito_neurociencia.md)** — Plano de refatoração para ensino de coreano implícito sem avisos por escrito.
+- 📋 **[implementation_plan.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Planos_e_Arquitetura/implementation_plan.md)** — Plano de implementação técnica inicial do aplicativo.
+- ⚙️ **[analise_stack_multiplataforma.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Planos_e_Arquitetura/analise_stack_multiplataforma.md)** — Análise comparativa da stack Python/Flet vs Next.js/Tailwind e viabilidade cross-platform.
 
 ---
 

@@ -33,10 +33,16 @@ def home_view(page: ft.Page) -> ft.View:
         elevation=0,
         actions=[
             ft.IconButton(
+                icon=ft.Icons.ADMIN_PANEL_SETTINGS_ROUNDED,
+                icon_color=colors["secondary"],
+                on_click=lambda e: page.router.navigate_to("/admin"),
+                tooltip="Portal Pedagógico (Admin)",
+            ),
+            ft.IconButton(
                 icon=ft.Icons.DARK_MODE_ROUNDED if not is_dark else ft.Icons.LIGHT_MODE_ROUNDED,
                 icon_color=colors["primary"],
                 on_click=toggle_theme,
-                tooltip="Mudar Tema"
+                tooltip="Mudar Tema",
             ),
             ft.Container(width=8)
         ]
@@ -202,7 +208,41 @@ def home_view(page: ft.Page) -> ft.View:
     # ─── CARDS DAS UNIDADES ───
 
     unit_cards = []
+    has_shown_1a_header = False
+    has_shown_1b_header = False
+
     for unit in curriculum:
+        is_1b = getattr(unit, "book", "") == "1B" or unit.id.startswith("unit_1b_")
+
+        if not is_1b and not has_shown_1a_header:
+            unit_cards.append(
+                ft.Container(
+                    content=ft.Row(
+                        controls=[
+                            ft.Icon(ft.Icons.MENU_BOOK_ROUNDED, size=16, color=colors["primary"]),
+                            ft.Text("Sejong Coreano 1A · 세종한국어 1A", size=13, weight=ft.FontWeight.BOLD, color=colors["primary"]),
+                        ],
+                        spacing=6,
+                    ),
+                    margin=ft.Margin.only(top=10, bottom=8),
+                )
+            )
+            has_shown_1a_header = True
+        elif is_1b and not has_shown_1b_header:
+            unit_cards.append(
+                ft.Container(
+                    content=ft.Row(
+                        controls=[
+                            ft.Icon(ft.Icons.AUTO_STORIES_ROUNDED, size=16, color=colors["secondary"]),
+                            ft.Text("Sejong Coreano 1B · 세종한국어 1B", size=13, weight=ft.FontWeight.BOLD, color=colors["secondary"]),
+                        ],
+                        spacing=6,
+                    ),
+                    margin=ft.Margin.only(top=14, bottom=8),
+                )
+            )
+            has_shown_1b_header = True
+
         unit_progress = progress_service.get_progress(unit.id)
         is_unlocked = progress_service.is_unlocked(unit.id)
 
@@ -224,10 +264,16 @@ def home_view(page: ft.Page) -> ft.View:
                     page.router.navigate_to("/lesson", u_id)
             return handler
 
-        badge_text = str(unit.number) if unit.number > 0 else "H"
+        if unit.id == "unit_intro":
+            badge_text = "H"
+        elif is_1b:
+            badge_text = f"B{int(unit.id.split('_')[-1])}"
+        else:
+            badge_text = str(unit.number)
+
         badge_color = colors["primary"] if is_unlocked else colors["border"]
 
-        # Orbe de Vitalidade SRS (HLR Ebbinghaus)
+        # Orbe de Vitalidade SRS (Retenção por Meia-Vida)
         vitality = progress_service.get_vitality(unit.id) if is_unlocked and unit_progress > 0 else "none"
         vitality_color_map = {
             "high": colors["vitality_high"],

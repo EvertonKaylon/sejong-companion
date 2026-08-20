@@ -1,0 +1,193 @@
+{
+  "unit_id": "unit_1b_12",
+  "title": "저는 지니 씨에게 펜을 선물할 거예요",
+  "vocabulary": [
+    {
+      "word": "선물",
+      "meaning": "Presente",
+      "example_kr": "생일 선물을 준비했어요.",
+      "example_pt": "Preparei um presente de aniversário.",
+      "category": "presentes",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "꽃",
+      "meaning": "Flor / Flores",
+      "example_kr": "예쁜 꽃을 샀어요.",
+      "example_pt": "Comprei flores bonitas.",
+      "category": "presentes",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "케이크",
+      "meaning": "Bolo",
+      "example_kr": "초콜릿 케이크를 선물했어요.",
+      "example_pt": "Presenteei com um bolo de chocolate.",
+      "category": "presentes",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "카드",
+      "meaning": "Cartão comemorativo / Cartão postal",
+      "example_kr": "축하 카드를 썼어요.",
+      "example_pt": "Escrevi um cartão de felicitações.",
+      "category": "presentes",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "지갑",
+      "meaning": "Carteira",
+      "example_kr": "가죽 지갑을 받았어요.",
+      "example_pt": "Ganhei uma carteira de couro.",
+      "category": "presentes",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "시계",
+      "meaning": "Relógio",
+      "example_kr": "멋진 손목시계를 샀어요.",
+      "example_pt": "Comprei um relógio de pulso elegante.",
+      "category": "presentes",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "주다",
+      "meaning": "Dar / Entregar",
+      "example_kr": "친구에게 선물을 줘요.",
+      "example_pt": "Dou um presente ao meu amigo.",
+      "category": "verbos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "드리다",
+      "meaning": "Dar / Oferecer (honorífico para superiores)",
+      "example_kr": "선생님께 카네이션을 드렸어요.",
+      "example_pt": "Entreguei cravos para o professor (honorífico).",
+      "category": "verbos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "받다",
+      "meaning": "Receber / Ganhar",
+      "example_kr": "많은 축하를 받았어요.",
+      "example_pt": "Recebi muitas felicitações.",
+      "category": "verbos",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "축하하다",
+      "meaning": "Parabenizar / Felicitar",
+      "example_kr": "생일을 진심으로 축하해요.",
+      "example_pt": "Parabéns de coração pelo seu aniversário.",
+      "category": "verbos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    }
+  ],
+  "grammar": [
+    {
+      "id": "g1b_12_ege_hante",
+      "title": "Partícula de Destinatário: 에게 / 한테 (A / Para alguém)",
+      "explanation": "Marca a pessoa ou ser vivo que recebe o benefício da ação ('para / a alguém'):\n\n1. **에게** — Utilizado tanto na linguagem escrita quanto falada formal/padrão.\n   * Ex: 친구**에게** 편지를 써요 (Escrevo uma carta para meu amigo).\n\n2. **한테** — Utilizado frequentemente na conversação coloquial oral.\n   * Ex: 지니**한테** 전화했어요 (Liguei para a Jini).\n\n3. **께** — Forma honorífica para pais, professores e idosos.\n   * Ex: 부모님**께** 선물을 드려요 (Entrego o presente aos meus pais).",
+      "examples": [
+        {
+          "kr": "저는 지니 씨에게 펜을 선물할 거예요.",
+          "pt": "Vou presentear a Jini com uma caneta."
+        },
+        {
+          "kr": "친구한테 생일 축하 카드를 줬어요.",
+          "pt": "Dei um cartão de feliz aniversário para meu amigo."
+        }
+      ],
+      "lusophone_tip": "Equivale ao nosso objeto indireto ('dar algo A alguém' / 'enviar algo PARA alguém')."
+    },
+    {
+      "id": "g1b_12_eunikka",
+      "title": "Causa Evidente e Justificativa: -(으)니까",
+      "explanation": "Indica uma razão que fundamenta uma proposta, sugestão ou imperativo ('já que / visto que / porque...'):\n\n1. **-니까** — Após raiz terminada em **vogal** ou no batchim **ㄹ**.\n   * Ex: 날씨가 좋**으니까** 산책해요 (Já que o tempo está bom, vamos caminhar!).\n   * Ex: 머리가 아프**니까** 쉬세요 (Já que está com dor de cabeça, descanse).\n\n2. **-으니까** — Após raiz terminada em **consoante** (exceto ㄹ).\n   * Ex: 시간이 없**으니까** 택시를 타요 (Já que não temos tempo, vamos de táxi).",
+      "examples": [
+        {
+          "kr": "비가 오니까 우산을 쓰세요.",
+          "pt": "Já que está chovendo, use o guarda-chuva."
+        },
+        {
+          "kr": "내일 시험이 있으니까 오늘 열심히 공부해요.",
+          "pt": "Visto que amanhã tem prova, vamos estudar bastante hoje."
+        }
+      ],
+      "lusophone_tip": "Regra essencial: ao fazer comandos (-(으)세요) ou convites (-(으)ㅂ시다 / -아요), NUNCA use -아서/어서; use SEMPRE -(으)니까 para dar o motivo!"
+    }
+  ],
+  "cultural_notes": [
+    {
+      "title": "A Etiqueta de Entregar Presentes com as Duas Mãos (두 손)",
+      "content": "Na Coreia, ao presentear ou receber qualquer item (cartões, presentes, copos ou troco), é sinal fundamental de respeito utilizar as duas mãos ou apoiar o antebraço direito com a mão esquerda.",
+      "icon": "🎁"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "u1b_12_q01",
+      "type": "multiple_choice",
+      "question": "Qual partícula completa a frase: '선생님___ 선물을 드렸어요' respeitando a deferência honorífica?",
+      "explanation": "Para figuras de respeito como professores, a partícula de destinatário honorífica é '께': '선생님께'.",
+      "options": [
+        "께",
+        "에게",
+        "한테",
+        "에서"
+      ],
+      "correct_index": 0
+    },
+    {
+      "id": "u1b_12_q02",
+      "type": "multiple_choice",
+      "question": "Complete com o conectivo de motivo adequado para imperativos: '날씨가 추우____ 옷을 따뜻하게 입으세요.'",
+      "explanation": "Com imperativos (-(으)세요), usa-se a forma -(으)니까: '춥다' vira '추우니까'.",
+      "options": [
+        "추우니까",
+        "추워서",
+        "춥지만",
+        "춥고"
+      ],
+      "correct_index": 0
+    },
+    {
+      "id": "u1b_12_q03",
+      "type": "order_words",
+      "question": "Ordene: 'Vou dar flores de presente para a Jini'",
+      "explanation": "Destinatário (지니 씨에게) + Objeto (꽃을) + Verbo no Futuro (선물할 거예요).",
+      "words": ["선물할 거예요", "꽃을", "지니 씨에게"],
+      "correct_order": ["지니 씨에게", "꽃을", "선물할 거예요"]
+    },
+    {
+      "id": "u1b_12_q04",
+      "type": "drag_and_drop_sov",
+      "question": "Monte a frase: 'Eu dei um cartão para o meu amigo'",
+      "explanation": "Sujeito (저는) + Destinatário (친구에게) + Objeto (카드를) + Verbo (줬어요).",
+      "words": ["저는", "친구에게", "카드를", "줬어요"],
+      "correct_order": ["저는", "친구에게", "카드를", "줬어요"],
+      "sov_items": [
+        { "word": "저는", "role": "SUBJECT", "snap_anchor": "round" },
+        { "word": "친구에게", "role": "OBJECT", "snap_anchor": "round" },
+        { "word": "카드를", "role": "OBJECT", "snap_anchor": "round" },
+        { "word": "줬어요", "role": "VERB", "snap_anchor": "round" }
+      ],
+      "sov_slots": [
+        { "role": "SUBJECT", "label": "주어 (Sujeito)", "accepted_roles": ["SUBJECT"] },
+        { "role": "OBJECT", "label": "받는 사람 (Destinatário)", "accepted_roles": ["OBJECT", "LOCATION"] },
+        { "role": "OBJECT", "label": "목적어 (Objeto)", "accepted_roles": ["OBJECT"] },
+        { "role": "VERB", "label": "동사 (Verbo)", "accepted_roles": ["VERB", "PREDICATE"] }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,209 @@
+{
+  "unit_id": "unit_1b_04",
+  "title": "더 큰 사이즈는 없어요?",
+  "vocabulary": [
+    {
+      "word": "크다",
+      "meaning": "Ser grande",
+      "example_kr": "옷이 너무 커요.",
+      "example_pt": "A roupa é muito grande.",
+      "category": "adjetivos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "PREDICATE"
+    },
+    {
+      "word": "작다",
+      "meaning": "Ser pequeno",
+      "example_kr": "신발이 조금 작아요.",
+      "example_pt": "O calçado está um pouco pequeno.",
+      "category": "adjetivos",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "PREDICATE"
+    },
+    {
+      "word": "길다",
+      "meaning": "Ser comprido / longo",
+      "example_kr": "바지가 너무 길어요.",
+      "example_pt": "A calça é muito comprida.",
+      "category": "adjetivos",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "PREDICATE"
+    },
+    {
+      "word": "짧다",
+      "meaning": "Ser curto",
+      "example_kr": "치마가 조금 짧아요.",
+      "example_pt": "A saia está um pouco curta.",
+      "category": "adjetivos",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "PREDICATE"
+    },
+    {
+      "word": "비싸다",
+      "meaning": "Ser caro",
+      "example_kr": "이 가방은 너무 비싸요.",
+      "example_pt": "Esta bolsa é muito cara.",
+      "category": "adjetivos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "PREDICATE"
+    },
+    {
+      "word": "싸다",
+      "meaning": "Ser barato",
+      "example_kr": "시장은 물건이 싸요.",
+      "example_pt": "No mercado as coisas são baratas.",
+      "category": "adjetivos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "PREDICATE"
+    },
+    {
+      "word": "두껍다",
+      "meaning": "Ser grosso / espesso",
+      "example_kr": "두꺼운 코트를 입으세요.",
+      "example_pt": "Vista um casaco grosso.",
+      "category": "adjetivos",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "PREDICATE"
+    },
+    {
+      "word": "얇다",
+      "meaning": "Ser fino (roupas, tecidos)",
+      "example_kr": "얇은 옷을 샀어요.",
+      "example_pt": "Comprei roupas finas.",
+      "category": "adjetivos",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "PREDICATE"
+    },
+    {
+      "word": "맞다",
+      "meaning": "Servir / Cair bem / Estar certo",
+      "example_kr": "사이즈가 딱 맞아요.",
+      "example_pt": "O tamanho serviu perfeitamente.",
+      "category": "verbos",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "편하다",
+      "meaning": "Ser confortável",
+      "example_kr": "이 운동화는 아주 편해요.",
+      "example_pt": "Este tênis é muito confortável.",
+      "category": "adjetivos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "PREDICATE"
+    },
+    {
+      "word": "색깔",
+      "meaning": "Cor",
+      "example_kr": "무슨 색깔을 좋아해요?",
+      "example_pt": "Qual cor você gosta?",
+      "category": "compras",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "사이즈",
+      "meaning": "Tamanho (de roupa/calçado)",
+      "example_kr": "더 큰 사이즈는 없어요?",
+      "example_pt": "Não tem um tamanho maior?",
+      "category": "compras",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "SUBJECT"
+    }
+  ],
+  "grammar": [
+    {
+      "id": "g1b_04_adjective_noun",
+      "title": "Adjetivo Modificador de Substantivo: -(으)ㄴ + Substantivo",
+      "explanation": "Transforma um adjetivo descritivo em um modificador que antecede diretamente o substantivo ('um casaco quente / um tamanho grande'):\n\n1. **-ㄴ** — Após raiz adjetival terminada em **vogal** ou no irregular **ㅂ** (que vira 우).\n   * Ex: 크다 → **큰** 가방 (bolsa grande).\n   * Ex: 싸다 → **싼** 옷 (roupa barata).\n   * Ex: 맵다 → 매우 + ㄴ → **매운** 음식 (comida apimentada).\n\n2. **-은** — Após raiz adjetival terminada em **consoante**.\n   * Ex: 작다 → **작은** 신발 (calçado pequeno).\n   * Ex: 좋다 → **좋은** 친구 (bom amigo).\n\n3. **있다/없다** — Usam **-는** (ex: 맛있다 → **맛있는** 음식).",
+      "examples": [
+        {
+          "kr": "더 큰 사이즈를 보여 주세요.",
+          "pt": "Por favor, me mostre um tamanho maior."
+        },
+        {
+          "kr": "예쁜 모자를 샀어요.",
+          "pt": "Comprei um chapéu bonito."
+        }
+      ],
+      "lusophone_tip": "Em coreano, os adjetivos SEMPRE vêm antes do substantivo quando funcionam como modificadores, diferentemente do português onde normalmente dizemos 'roupa bonita' e não 'bonita roupa'."
+    },
+    {
+      "id": "g1b_04_seumnida",
+      "title": "Estilo Formal Deferente: -습니다 / -ㅂ니다",
+      "explanation": "Utilizado em contextos formais, apresentações em público, notícias e respeito profissional solene:\n\n1. **-ㅂ니다 / -ㅂ니까?** — Após raiz terminada em **vogal** ou **ㄹ**.\n   * Ex: 가다 → 갑니다 / 갑니까?\n   * Ex: 크다 → 큽니다 / 큽니까?\n\n2. **-습니다 / -습니까?** — Após raiz terminada em **consoante**.\n   * Ex: 먹다 → 먹습니다 / 먹습니까?\n   * Ex: 작다 → 작습니다 / 작습니까?",
+      "examples": [
+        {
+          "kr": "처음 뵙겠습니다. 반갑습니다.",
+          "pt": "Prazer em conhecê-lo. É uma honra."
+        },
+        {
+          "kr": "이 옷이 아주 마음에 듭니다.",
+          "pt": "Gosto muito desta roupa (formal)."
+        }
+      ],
+      "lusophone_tip": "O estilo formal deferente (-습니다) é o mais respeitoso do idioma, transmitindo grande polidez e distanciamento cerimonial elegante."
+    }
+  ],
+  "cultural_notes": [
+    {
+      "title": "A Expressão '더' (Mais) no Comércio",
+      "content": "Ao fazer compras na Coreia, usar '더' antes de adjetivos modificados ('더 큰 사이즈', '더 밝은 색') é a forma mais natural e educada de solicitar opções alternativas ao vendedor.",
+      "icon": "🛍️"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "u1b_04_q01",
+      "type": "multiple_choice",
+      "question": "Como se diz 'comida apimentada' usando o modificador de adjetivo de 맵다?",
+      "explanation": "O adjetivo 맵다 é irregular em ㅂ (맵 + 은 -> 매우 + ㄴ = 매운): '매운 음식'.",
+      "options": [
+        "매운 음식",
+        "맵은 음식",
+        "맵는 음식",
+        "매운는 음식"
+      ],
+      "correct_index": 0
+    },
+    {
+      "id": "u1b_04_q02",
+      "type": "multiple_choice",
+      "question": "Qual é a terminação formal deferente afirmativa para o verbo '크다'?",
+      "explanation": "Terminando em vogal (크), adiciona-se '-ㅂ니다' formando '큽니다'.",
+      "options": [
+        "큽니다",
+        "크습니다",
+        "크요",
+        "크입니다"
+      ],
+      "correct_index": 0
+    },
+    {
+      "id": "u1b_04_q03",
+      "type": "order_words",
+      "question": "Ordene: 'Por favor, me mostre um tamanho maior'",
+      "explanation": "Adjetivo modificador (더 큰) + Objeto (사이즈를) + Pedido (보여 주세요).",
+      "words": ["보여 주세요", "사이즈를", "더 큰"],
+      "correct_order": ["더 큰", "사이즈를", "보여 주세요"]
+    },
+    {
+      "id": "u1b_04_q04",
+      "type": "drag_and_drop_sov",
+      "question": "Monte a frase: 'Eu comprei sapatos confortáveis'",
+      "explanation": "Sujeito (저는) + Objeto Modificado (편한 구두를) + Verbo (샀습니다).",
+      "words": ["저는", "편한 구두를", "샀습니다"],
+      "correct_order": ["저는", "편한 구두를", "샀습니다"],
+      "sov_items": [
+        { "word": "저는", "role": "SUBJECT", "snap_anchor": "round" },
+        { "word": "편한 구두를", "role": "OBJECT", "snap_anchor": "round" },
+        { "word": "샀습니다", "role": "PREDICATE", "snap_anchor": "square" }
+      ],
+      "sov_slots": [
+        { "role": "SUBJECT", "label": "주어 (Sujeito)", "accepted_roles": ["SUBJECT"] },
+        { "role": "OBJECT", "label": "목적어 (Objeto Modificado)", "accepted_roles": ["OBJECT"] },
+        { "role": "PREDICATE", "label": "서술어 (Predicado Formal)", "accepted_roles": ["PREDICATE", "VERB"] }
+      ]
+    }
+  ]
+}

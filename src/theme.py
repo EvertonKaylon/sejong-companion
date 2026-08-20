@@ -152,7 +152,7 @@ class Colors:
     ROLE_PREDICATE = "#8B5CF6"   # Predicado (Violeta)
     ROLE_PARTICLE = "#F59E0B"    # Partícula (Âmbar)
 
-    # Vitalidade SRS (Half-Life Regression de Ebbinghaus)
+    # Vitalidade SRS (Retenção Baseada em Meia-Vida)
     VITALITY_HIGH = "#10B981"    # Retenção >= 75% (Esmeralda)
     VITALITY_MEDIUM = "#F59E0B"  # 35% <= Retenção < 75% (Âmbar)
     VITALITY_LOW = "#EF4444"     # Retenção < 35% (Vermelho Urgência)

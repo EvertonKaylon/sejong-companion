@@ -1,0 +1,182 @@
+{
+  "unit_id": "unit_1b_08",
+  "title": "지난번 여행보다 좋았어요",
+  "vocabulary": [
+    {
+      "word": "구경하다",
+      "meaning": "Passear / Apreciar atrações / Olhar",
+      "example_kr": "시장을 구경했어요.",
+      "example_pt": "Passeei pelo mercado tradicional.",
+      "category": "verbos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "사진을 찍다",
+      "meaning": "Tirar fotos",
+      "example_kr": "경치가 좋아서 사진을 찍었어요.",
+      "example_pt": "Tirei fotos porque a paisagem era linda.",
+      "category": "expressoes",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "기념품",
+      "meaning": "Lembrancinha / Souvenir",
+      "example_kr": "친구들에게 줄 기념품을 샀어요.",
+      "example_pt": "Comprei lembrancinhas para dar aos amigos.",
+      "category": "objetos",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "경치",
+      "meaning": "Paisagem / Vista cênica",
+      "example_kr": "산에서 보는 경치가 아름다워요.",
+      "example_pt": "A paisagem vista da montanha é linda.",
+      "category": "natureza",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "특별하다",
+      "meaning": "Ser especial",
+      "example_kr": "아주 특별한 경험이었어요.",
+      "example_pt": "Foi uma experiência muito especial.",
+      "category": "adjetivos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "PREDICATE"
+    },
+    {
+      "word": "즐겁다",
+      "meaning": "Ser divertido / Agradável",
+      "example_kr": "친구들과 즐거운 시간을 보냈어요.",
+      "example_pt": "Passei momentos agradáveis com amigos.",
+      "category": "adjetivos",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "PREDICATE"
+    },
+    {
+      "word": "지난번",
+      "meaning": "Da última vez / Passado recente",
+      "example_kr": "지난번 여행보다 좋았어요.",
+      "example_pt": "Foi melhor que a viagem da última vez.",
+      "category": "tempo",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "이번",
+      "meaning": "Desta vez / Este",
+      "example_kr": "이번 휴가는 정말 최고예요.",
+      "example_pt": "Estas férias estão realmente sendo o máximo.",
+      "category": "tempo",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    },
+    {
+      "word": "훨씬",
+      "meaning": "Muito mais / Consideravelmente mais",
+      "example_kr": "한국어가 처음보다 훨씬 쉬워졌어요.",
+      "example_pt": "O coreano ficou muito mais fácil do que no início.",
+      "category": "adverbios",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "PREDICATE"
+    }
+  ],
+  "grammar": [
+    {
+      "id": "g1b_08_n_hue",
+      "title": "Sequência Temporal: -(으)ㄴ 후에 (Depois de...)",
+      "explanation": "Indica que a segunda ação ocorre estritamente após a conclusão da primeira ação ('depois de fazer algo'):\n\n1. **-ㄴ 후에** — Após raiz terminada em **vogal** ou batchim **ㄹ**.\n   * Ex: 보다 → **본 후에** (Depois de assistir).\n   * Ex: 만들다 → **만든 후에** (Depois de fazer).\n\n2. **-은 후에** — Após raiz terminada em **consoante**.\n   * Ex: 먹다 → **먹은 후에** (Depois de comer).\n   * Ex: 닫다 → **닫은 후에** (Depois de fechar).",
+      "examples": [
+        {
+          "kr": "식사를 한 후에 커피를 마셔요.",
+          "pt": "Tomo café depois de fazer a refeição."
+        },
+        {
+          "kr": "수업이 끝난 후에 만나요.",
+          "pt": "Nos encontramos depois que a aula terminar."
+        }
+      ],
+      "lusophone_tip": "Equivale à nossa construção 'depois de + infinitivo' (ex: depois de comer). Também pode ser usado '-(으)ㄴ 다음에' com o mesmo sentido."
+    },
+    {
+      "id": "g1b_08_boda",
+      "title": "Partícula Comparativa: 보다 (Mais ... do que)",
+      "explanation": "Anexa-se ao substantivo que serve de ponto de comparação ou padrão ('do que X'):\n\n* **[Substantivo A]이/가 [Substantivo B]보다 (더) [Adjetivo]**\n* Ex: 비행기가 기차**보다** 빨라요 (O avião é mais rápido do que o trem).\n* Ex: 한국어가 영어**보다** 재미있어요 (O coreano é mais interessante do que o inglês).",
+      "examples": [
+        {
+          "kr": "이번 여행이 지난번보다 좋았어요.",
+          "pt": "Esta viagem foi melhor do que a da última vez."
+        },
+        {
+          "kr": "수박이 사과보다 커요.",
+          "pt": "A melancia é maior do que a maçã."
+        }
+      ],
+      "lusophone_tip": "Em coreano, a palavra anexada a '보다' é SEMPRE o termo comparado ('do que X'), vindo antes do adjetivo de comparação."
+    }
+  ],
+  "cultural_notes": [
+    {
+      "title": "Os 특산물 (Produtos Típicos Locais)",
+      "content": "Ao viajar para qualquer província da Coreia, os viajantes sempre compram os 'produtos típicos regionais' (como tangerinas de Jeju ou biscoitos de Gyeongju) para presentear colegas de trabalho e familiares ao retornar.",
+      "icon": "🍊"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "u1b_08_q01",
+      "type": "multiple_choice",
+      "question": "Como se diz 'Depois de comer, tomo remédio'?",
+      "explanation": "O verbo 먹다 (consoante) recebe '-은 후에': '밥을 먹은 후에 약을 먹어요'.",
+      "options": [
+        "밥을 먹은 후에 약을 먹어요.",
+        "밥을 먹는 후에 약을 먹어요.",
+        "밥을 먹기 전에 약을 먹어요.",
+        "밥을 먹으러 약을 먹어요."
+      ],
+      "correct_index": 0
+    },
+    {
+      "id": "u1b_08_q02",
+      "type": "multiple_choice",
+      "question": "Na frase '비행기가 기차보다 빨라요', qual meio de transporte é mais rápido?",
+      "explanation": "Como 기차 está com a partícula '보다' (do que o trem), o avião (비행기) é o mais rápido.",
+      "options": [
+        "O avião (비행기)",
+        "O trem (기차)",
+        "Ambos têm a mesma velocidade",
+        "Nenhum dos dois"
+      ],
+      "correct_index": 0
+    },
+    {
+      "id": "u1b_08_q03",
+      "type": "order_words",
+      "question": "Ordene: 'Esta viagem foi melhor do que a da última vez'",
+      "explanation": "Sujeito (이번 여행이) + Comparado (지난번보다) + Adjetivo no passado (좋았어요).",
+      "words": ["좋았어요", "지난번보다", "이번 여행이"],
+      "correct_order": ["이번 여행이", "지난번보다", "좋았어요"]
+    },
+    {
+      "id": "u1b_08_q04",
+      "type": "drag_and_drop_sov",
+      "question": "Monte a frase comparativa: 'A melancia é maior do que a maçã'",
+      "explanation": "Sujeito (수박이) + Comparação (사과보다) + Adjetivo (커요).",
+      "words": ["수박이", "사과보다", "커요"],
+      "correct_order": ["수박이", "사과보다", "커요"],
+      "sov_items": [
+        { "word": "수박이", "role": "SUBJECT", "snap_anchor": "square" },
+        { "word": "사과보다", "role": "OBJECT", "snap_anchor": "round" },
+        { "word": "커요", "role": "PREDICATE", "snap_anchor": "round" }
+      ],
+      "sov_slots": [
+        { "role": "SUBJECT", "label": "주어 (Sujeito)", "accepted_roles": ["SUBJECT"] },
+        { "role": "OBJECT", "label": "비교 (Padrão de Comparação)", "accepted_roles": ["OBJECT", "LOCATION"] },
+        { "role": "PREDICATE", "label": "서술어 (Qualidade)", "accepted_roles": ["PREDICATE", "VERB"] }
+      ]
+    }
+  ]
+}

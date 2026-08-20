@@ -1,7 +1,8 @@
 import flet as ft
 from ..components import QuizWidget, centered_content
 from ..theme import get_theme_colors, Styles, Responsive
-from ..services import DataService, ProgressService, FullscreenService
+from ..models import PedagogicalEvent
+from ..services import DataService, ProgressService, FullscreenService, TelemetryService
 
 def quiz_view(page: ft.Page) -> ft.View:
     is_dark = page.theme_mode == ft.ThemeMode.DARK
@@ -139,6 +140,18 @@ def quiz_view(page: ft.Page) -> ft.View:
         else:
             page.router.navigate_to("/lesson", unit_id)
 
+    session_id = ProgressService._get_session_id(page)
+
+    # Registrar início do quiz
+    TelemetryService.record(
+        session_id,
+        PedagogicalEvent(
+            event_type="quiz_started",
+            unit_id=unit_id or "unknown",
+            payload={"total_questions": len(exercises), "unit_title": unit_title},
+        ),
+    )
+
     def update_progress_header():
         total = len(exercises)
         curr = state["current_index"]
@@ -146,10 +159,28 @@ def quiz_view(page: ft.Page) -> ft.View:
         progress_bar.value = curr / total if total > 0 else 0.0
         page.update()
 
-    def handle_answer(is_correct: bool):
+    def handle_answer(is_correct: bool, response_time_ms: int = 0):
         if is_correct:
             state["score"] += 1
         state["answers"].append(is_correct)
+        
+        # Telemetria anônima da resposta da questão
+        curr_idx = state["current_index"]
+        if 0 <= curr_idx < len(exercises):
+            q_current = exercises[curr_idx]
+            TelemetryService.record(
+                session_id,
+                PedagogicalEvent(
+                    event_type="question_answered",
+                    unit_id=unit_id or "unknown",
+                    item_id=q_current.id,
+                    payload={
+                        "correct": is_correct,
+                        "response_time_ms": response_time_ms,
+                        "question_type": q_current.type,
+                    },
+                ),
+            )
 
     def handle_next():
         state["current_index"] += 1
@@ -189,6 +220,20 @@ def quiz_view(page: ft.Page) -> ft.View:
         total = len(exercises)
         score = state["score"]
         pct = (score / total) if total > 0 else 0.0
+
+        # Telemetria de conclusão do quiz
+        TelemetryService.record(
+            session_id,
+            PedagogicalEvent(
+                event_type="quiz_completed",
+                unit_id=unit_id or "unknown",
+                payload={
+                    "score": score,
+                    "total": total,
+                    "pct": round(pct, 4),
+                },
+            ),
+        )
         
         # Mensagens motivacionais personalizadas
         if pct == 1.0:

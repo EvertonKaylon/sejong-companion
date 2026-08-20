@@ -1,0 +1,209 @@
+{
+  "unit_id": "unit_1b_05",
+  "title": "세종식당이 어디에 있어요?",
+  "vocabulary": [
+    {
+      "word": "앞",
+      "meaning": "Frente",
+      "example_kr": "학교 앞에 식당이 있어요.",
+      "example_pt": "Tem um restaurante em frente à escola.",
+      "category": "posicoes",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "LOCATION"
+    },
+    {
+      "word": "뒤",
+      "meaning": "Atrás",
+      "example_kr": "건물 뒤에 주차장이 있어요.",
+      "example_pt": "Tem um estacionamento atrás do prédio.",
+      "category": "posicoes",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "LOCATION"
+    },
+    {
+      "word": "옆",
+      "meaning": "Ao lado",
+      "example_kr": "은행 옆에 약국이 있어요.",
+      "example_pt": "Tem uma farmácia ao lado do banco.",
+      "category": "posicoes",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "LOCATION"
+    },
+    {
+      "word": "사이",
+      "meaning": "Entre (no meio de dois pontos)",
+      "example_kr": "우체국과 은행 사이에 있어요.",
+      "example_pt": "Fica entre os correios e o banco.",
+      "category": "posicoes",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "LOCATION"
+    },
+    {
+      "word": "위",
+      "meaning": "Em cima / Acima",
+      "example_kr": "책상 위에 가방이 있어요.",
+      "example_pt": "A bolsa está em cima da mesa.",
+      "category": "posicoes",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "LOCATION"
+    },
+    {
+      "word": "아래",
+      "meaning": "Embaixo / Abaixo",
+      "example_kr": "나무 아래에서 쉬어요.",
+      "example_pt": "Descanso embaixo da árvore.",
+      "category": "posicoes",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "LOCATION"
+    },
+    {
+      "word": "오른쪽",
+      "meaning": "Lado direito / Direita",
+      "example_kr": "오른쪽으로 가세요.",
+      "example_pt": "Vá para a direita.",
+      "category": "direcoes",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "LOCATION"
+    },
+    {
+      "word": "왼쪽",
+      "meaning": "Lado esquerdo / Esquerda",
+      "example_kr": "왼쪽으로 돌아가세요.",
+      "example_pt": "Vire para a esquerda.",
+      "category": "direcoes",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "LOCATION"
+    },
+    {
+      "word": "똑바로",
+      "meaning": "Em linha reta / Direto",
+      "example_kr": "똑바로 100미터 가세요.",
+      "example_pt": "Vá em linha reta por 100 metros.",
+      "category": "direcoes",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "LOCATION"
+    },
+    {
+      "word": "건너편",
+      "meaning": "Do outro lado da rua",
+      "example_kr": "길 건너편에 있어요.",
+      "example_pt": "Fica do outro lado da rua.",
+      "category": "direcoes",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "LOCATION"
+    },
+    {
+      "word": "사거리",
+      "meaning": "Cruzamento de quatro vias",
+      "example_kr": "사거리에서 오른쪽으로 가세요.",
+      "example_pt": "No cruzamento, vá para a direita.",
+      "category": "locais",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "LOCATION"
+    },
+    {
+      "word": "약국",
+      "meaning": "Farmácia",
+      "example_kr": "약국에서 감기약을 샀어요.",
+      "example_pt": "Comprei remédio para gripe na farmácia.",
+      "category": "locais",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    }
+  ],
+  "grammar": [
+    {
+      "id": "g1b_05_euro",
+      "title": "Partícula de Direção e Sentido: (으)로",
+      "explanation": "Indica a direção para onde o movimento ou deslocamento se dirige ('em direção a / para'):\n\n1. **-로** — Após substantivo terminado em **vogal** ou no batchim **ㄹ**.\n   * Ex: 오른쪽 → 오른쪽**으로** (Para a direita).\n   * Ex: 서울 → 서울**로** (Para Seul).\n\n2. **-으로** — Após substantivo terminado em **consoante** (exceto ㄹ).\n   * Ex: 앞 → 앞**으로** (Para a frente).\n   * Ex: 안 → 안**으로** (Para dentro).",
+      "examples": [
+        {
+          "kr": "이쪽으로 오세요.",
+          "pt": "Venha por aqui / nesta direção."
+        },
+        {
+          "kr": "사거리에서 왼쪽으로 가세요.",
+          "pt": "No cruzamento, vá para a esquerda."
+        }
+      ],
+      "lusophone_tip": "Diferença entre '에' e '(으)로': '에' foca no destino final pontual (학교에 가요 = Vou à escola), enquanto '(으)로' foca na direção ou trajetória (학교 쪽으로 가요 = Vou na direção da escola)."
+    },
+    {
+      "id": "g1b_05_eodi",
+      "title": "Pronome Interrogativo de Lugar: 어디 (Onde)",
+      "explanation": "Utilizado para perguntar a localização de pessoas, edifícios ou objetos:\n\n* **[Substantivo]이/가 어디에 있어요?**\n* Ex: 화장실이 어디에 있어요? (Onde fica o banheiro?)\n* Resposta: 2층에 있어요 (Fica no 2º andar).",
+      "examples": [
+        {
+          "kr": "세종식당이 어디에 있어요?",
+          "pt": "Onde fica o Restaurante Sejong?"
+        },
+        {
+          "kr": "지하철역이 어디에 있어요?",
+          "pt": "Onde fica a estação de metrô?"
+        }
+      ],
+      "lusophone_tip": "Nunca esqueça de marcar o substantivo perguntado com a partícula de sujeito 이/가 antes de 어디에 있어요."
+    }
+  ],
+  "cultural_notes": [
+    {
+      "title": "Navegação Espacial na Coreia: Cruzamentos e Pontos de Referência",
+      "content": "Ao pedir direções nas cidades coreanas, as pessoas costumam orientar usando grandes marcos visuais (como 사거리 = cruzamentos de 4 vias, saídas numeradas de metrô ou lojas de conveniência).",
+      "icon": "🗺️"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "u1b_05_q01",
+      "type": "multiple_choice",
+      "question": "Como se diz 'Vá para a direita' em coreano?",
+      "explanation": "Usa-se a partícula de direção (으)로 após 오른쪽: '오른쪽으로 가세요'.",
+      "options": [
+        "오른쪽으로 가세요.",
+        "오른쪽에 가세요.",
+        "오른쪽을 가세요.",
+        "오른쪽에서 가세요."
+      ],
+      "correct_index": 0
+    },
+    {
+      "id": "u1b_05_q02",
+      "type": "multiple_choice",
+      "question": "Onde fica o item na frase: '은행 옆에 약국이 있어요'?",
+      "explanation": "A frase significa: 'Tem uma farmácia ao lado (옆) do banco'.",
+      "options": [
+        "Ao lado do banco",
+        "Atrás do banco",
+        "Em frente ao banco",
+        "Em cima do banco"
+      ],
+      "correct_index": 0
+    },
+    {
+      "id": "u1b_05_q03",
+      "type": "order_words",
+      "question": "Ordene: 'Onde fica a farmácia?'",
+      "explanation": "Sujeito (약국이) + Pergunta de Localização (어디에 있어요?).",
+      "words": ["있어요?", "어디에", "약국이"],
+      "correct_order": ["약국이", "어디에", "있어요?"]
+    },
+    {
+      "id": "u1b_05_q04",
+      "type": "drag_and_drop_sov",
+      "question": "Monte a frase: 'Vá em linha reta para a frente'",
+      "explanation": "Modificador (똑바로) + Direção (앞으로) + Verbo (가세요).",
+      "words": ["똑바로", "앞으로", "가세요"],
+      "correct_order": ["똑바로", "앞으로", "가세요"],
+      "sov_items": [
+        { "word": "똑바로", "role": "LOCATION", "snap_anchor": "round" },
+        { "word": "앞으로", "role": "LOCATION", "snap_anchor": "square" },
+        { "word": "가세요", "role": "PREDICATE", "snap_anchor": "round" }
+      ],
+      "sov_slots": [
+        { "role": "LOCATION", "label": "방향 1 (Modo)", "accepted_roles": ["LOCATION", "OBJECT"] },
+        { "role": "LOCATION", "label": "방향 2 (Sentido)", "accepted_roles": ["LOCATION", "OBJECT"] },
+        { "role": "PREDICATE", "label": "서술어 (Comando)", "accepted_roles": ["PREDICATE", "VERB"] }
+      ]
+    }
+  ]
+}

@@ -1,10 +1,11 @@
-"""Tela de revisão diária baseada na fila HLR de cartões vencidos."""
+"""Tela de revisão diária baseada na fila de retenção por meia-vida (SRS)."""
 
 import time
 import flet as ft
 
 from ..components import FlashcardWidget, centered_content
-from ..services import ProgressService
+from ..models import PedagogicalEvent
+from ..services import ProgressService, TelemetryService
 from ..theme import Styles, get_theme_colors
 
 
@@ -12,6 +13,7 @@ def review_view(page: ft.Page) -> ft.View:
     is_dark = page.theme_mode == ft.ThemeMode.DARK
     colors = get_theme_colors(is_dark)
     progress_service = ProgressService(page)
+    session_id = ProgressService._get_session_id(page)
     due_entries = progress_service.get_due_reviews()
     state = {
         "cards": [entry["item"] for entry in due_entries],
@@ -27,6 +29,20 @@ def review_view(page: ft.Page) -> ft.View:
 
     def render_complete():
         reviewed = len(state["history"])
+        
+        # Telemetria de conclusão da sessão de revisão
+        TelemetryService.record(
+            session_id,
+            PedagogicalEvent(
+                event_type="review_completed",
+                unit_id="all",
+                payload={
+                    "cards_reviewed": reviewed,
+                    "xp_earned": progress_service.get_total_xp() - state['starting_xp'],
+                },
+            ),
+        )
+
         content.content = ft.Column(
             controls=[
                 ft.Icon(ft.Icons.CELEBRATION_ROUNDED, color=colors["accent"], size=58),
@@ -45,6 +61,21 @@ def review_view(page: ft.Page) -> ft.View:
         elapsed_ms = int((time.monotonic() - state["started_at"]) * 1000)
         progress_service.record_item_recall(card.id, rating, elapsed_ms)
         state["history"].append({"item_id": card.id, "rating": rating})
+
+        # Telemetria da avaliação do flashcard
+        TelemetryService.record(
+            session_id,
+            PedagogicalEvent(
+                event_type="flashcard_rated",
+                unit_id=card.unit_id,
+                item_id=card.id,
+                payload={
+                    "rating": rating,
+                    "response_time_ms": elapsed_ms,
+                },
+            ),
+        )
+
         if rating == "again":
             # Active recall: um erro reaparece no fim da mesma sessão.
             state["cards"].append(card)
@@ -88,15 +119,115 @@ def review_view(page: ft.Page) -> ft.View:
             FlashcardWidget(card, is_dark, on_rate=rate_card, on_audio_click=lambda text: page.audio_service.play_korean(text)),
         ], spacing=12)
     else:
-        content.content = ft.Column(controls=[
-            ft.Icon(ft.Icons.AUTO_AWESOME_ROUNDED, size=56, color=colors["correct"]),
-            ft.Text("Tudo em dia! ✨", size=23, weight=ft.FontWeight.BOLD, color=colors["text"]),
-            ft.Text("Nenhum cartão estudado está abaixo de 75% de retenção. Explore a trilha para uma revisão preventiva.",
-                    size=13, color=colors["text_sec"], text_align=ft.TextAlign.CENTER),
-            ft.ElevatedButton(content=ft.Text("Abrir Flashcards"), icon=ft.Icons.STYLE_ROUNDED,
-                on_click=lambda e: page.router.navigate_to("/flashcards"),
-                style=ft.ButtonStyle(color=ft.Colors.WHITE, bgcolor=colors["primary"])),
-        ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=14)
+        content.content = ft.Column(
+            controls=[
+                ft.Container(
+                    content=ft.Column(
+                        controls=[
+                            ft.Icon(ft.Icons.AUTO_AWESOME_ROUNDED, size=52, color=colors["accent"]),
+                            ft.Text(
+                                "✨ Sua revisão adaptativa está em dia!",
+                                size=20,
+                                weight=ft.FontWeight.BOLD,
+                                color=colors["text"],
+                                text_align=ft.TextAlign.CENTER,
+                            ),
+                            ft.Text(
+                                "Nenhum item estudado está abaixo do limiar crítico de retenção (75%).",
+                                size=13,
+                                color=colors["text_sec"],
+                                text_align=ft.TextAlign.CENTER,
+                            ),
+                        ],
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                        spacing=8,
+                    ),
+                    padding=ft.Padding.symmetric(vertical=6),
+                ),
+                ft.Container(
+                    content=ft.Column(
+                        controls=[
+                            ft.Text(
+                                "Você ainda pode:",
+                                size=14,
+                                weight=ft.FontWeight.BOLD,
+                                color=colors["text"],
+                            ),
+                            ft.Row(
+                                controls=[
+                                    ft.Icon(ft.Icons.AUTO_STORIES_ROUNDED, size=18, color=colors["primary"]),
+                                    ft.Text(
+                                        "• Aprender conteúdo novo na trilha",
+                                        size=13,
+                                        color=colors["text"],
+                                    ),
+                                ],
+                                spacing=8,
+                            ),
+                            ft.Row(
+                                controls=[
+                                    ft.Icon(ft.Icons.FITNESS_CENTER_ROUNDED, size=18, color=colors["secondary"]),
+                                    ft.Text(
+                                        "• Fazer prática preventiva nos flashcards",
+                                        size=13,
+                                        color=colors["text"],
+                                    ),
+                                ],
+                                spacing=8,
+                            ),
+                            ft.Row(
+                                controls=[
+                                    ft.Icon(ft.Icons.MENU_BOOK_ROUNDED, size=18, color=colors["accent"]),
+                                    ft.Text(
+                                        "• Revisar unidades específicas no menu",
+                                        size=13,
+                                        color=colors["text"],
+                                    ),
+                                ],
+                                spacing=8,
+                            ),
+                        ],
+                        spacing=10,
+                    ),
+                    bgcolor=colors["card_bg"],
+                    padding=16,
+                    border_radius=Styles.BORDER_RADIUS_MD,
+                    border=ft.Border.all(1, colors["border"]),
+                ),
+                ft.Container(height=4),
+                ft.Row(
+                    controls=[
+                        ft.ElevatedButton(
+                            content=ft.Text("Continuar Trilha"),
+                            icon=ft.Icons.EXPLORE_ROUNDED,
+                            on_click=lambda e: page.router.navigate_to("/home"),
+                            style=ft.ButtonStyle(
+                                color=ft.Colors.WHITE,
+                                bgcolor=colors["primary"],
+                                shape=ft.RoundedRectangleBorder(radius=Styles.BORDER_RADIUS_SM),
+                                padding=ft.Padding.symmetric(horizontal=14, vertical=12),
+                            ),
+                            expand=True,
+                        ),
+                        ft.OutlinedButton(
+                            content=ft.Text("Prática Preventiva"),
+                            icon=ft.Icons.STYLE_ROUNDED,
+                            on_click=lambda e: page.router.navigate_to("/flashcards"),
+                            style=ft.ButtonStyle(
+                                color=colors["text"],
+                                side=ft.BorderSide(1, colors["border"]),
+                                shape=ft.RoundedRectangleBorder(radius=Styles.BORDER_RADIUS_SM),
+                                padding=ft.Padding.symmetric(horizontal=14, vertical=12),
+                            ),
+                            expand=True,
+                        ),
+                    ],
+                    spacing=10,
+                ),
+            ],
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=14,
+        )
 
     return ft.View(
         route="/review",

@@ -1,0 +1,191 @@
+{
+  "unit_id": "unit_1b_10",
+  "title": "학교에 가기 전에 수영을 해요",
+  "vocabulary": [
+    {
+      "word": "운동하다",
+      "meaning": "Fazer exercícios / Praticar esportes",
+      "example_kr": "아침마다 공원에서 운동해요.",
+      "example_pt": "Faço exercícios no parque todas as manhãs.",
+      "category": "habitos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "산책하다",
+      "meaning": "Fazer caminhada / Passear a pé",
+      "example_kr": "저녁에 강아지와 산책해요.",
+      "example_pt": "Passeio com o cachorro à noite.",
+      "category": "habitos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "일찍 일어나다",
+      "meaning": "Acordar cedo",
+      "example_kr": "내일 일찍 일어나야 돼요.",
+      "example_pt": "Preciso acordar cedo amanhã.",
+      "category": "rotina",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "물을 마시다",
+      "meaning": "Beber água",
+      "example_kr": "일어나서 물을 한 잔 마셔요.",
+      "example_pt": "Acordo e tomo um copo de água.",
+      "category": "habitos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "체조하다",
+      "meaning": "Fazer alongamento / Ginástica matinal",
+      "example_kr": "가벼운 체조로 아침을 시작해요.",
+      "example_pt": "Começo a manhã com um alongamento leve.",
+      "category": "habitos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "손을 씻다",
+      "meaning": "Lavar as mãos",
+      "example_kr": "식사 전에 손을 깨끗이 씻어요.",
+      "example_pt": "Lavo bem as mãos antes das refeições.",
+      "category": "higiene",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "이를 닦다",
+      "meaning": "Escovar os dentes",
+      "example_kr": "밥을 먹고 이를 닦아요.",
+      "example_pt": "Como e escovo os dentes.",
+      "category": "higiene",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "샤워하다",
+      "meaning": "Tomar banho / Chuveiro",
+      "example_kr": "운동한 후에 샤워해요.",
+      "example_pt": "Tomo banho depois de me exercitar.",
+      "category": "higiene",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "건강",
+      "meaning": "Saúde",
+      "example_kr": "건강을 위해 매일 걸어요.",
+      "example_pt": "Caminho todos os dias pela minha saúde.",
+      "category": "geral",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "습관",
+      "meaning": "Hábito / Costumes",
+      "example_kr": "좋은 생활 습관을 만들어요.",
+      "example_pt": "Crio bons hábitos de vida.",
+      "category": "geral",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    }
+  ],
+  "grammar": [
+    {
+      "id": "g1b_10_gi_jeone",
+      "title": "Anterioridade Temporal: -기 전에 (Antes de...)",
+      "explanation": "Indica que uma ação ocorre antes de outra ('antes de fazer algo'):\n\n* **[Verbo de Ação] + 기 전에**\n* Anexa-se diretamente à raiz do verbo sem modificação por batchim:\n  * Ex: 자다 → **자기 전에** (Antes de dormir).\n  * Ex: 먹다 → **먹기 전에** (Antes de comer).\n  * Ex: 수업을 시작하다 → **시작하기 전에** (Antes de começar a aula).",
+      "examples": [
+        {
+          "kr": "학교에 가기 전에 아침을 먹어요.",
+          "pt": "Tomo café da manhã antes de ir para a escola."
+        },
+        {
+          "kr": "밥을 먹기 전에 손을 씻으세요.",
+          "pt": "Lave as mãos antes de comer."
+        }
+      ],
+      "lusophone_tip": "Ao contrário do português onde usamos o substantivo ('antes do almoço') ou infinitivo ('antes de comer'), em coreano usa-se a nominalização verbal com '-기 전에'."
+    },
+    {
+      "id": "g1b_10_aseo_sequence",
+      "title": "Sequência Consecutiva de Ações: -아서/어서",
+      "explanation": "Utilizado para encadear duas ações intimamente relacionadas cronológica e logicamente, onde a primeira é pré-requisito da segunda ('faço X e [com isso] faço Y'):\n\n* Ex: 일어나**서** 물을 마셔요 (Acordo e tomo água).\n* Ex: 친구를 만나**서** 같이 영화를 봤어요 (Encontrei um amigo e [junto com ele] assisti a um filme).\n* Diferença de -고: -고 conecta ações soltas e independentes, enquanto -아서/어서 conecta ações interdependentes no mesmo fluxo de contexto.",
+      "examples": [
+        {
+          "kr": "도서관에 가서 책을 빌렸어요.",
+          "pt": "Fui à biblioteca e peguei um livro emprestado."
+        },
+        {
+          "kr": "아침에 일찍 일어나서 운동을 해요.",
+          "pt": "Acordo cedo de manhã e me exercito."
+        }
+      ],
+      "lusophone_tip": "Para verbos de deslocamento (가다, 오다), a sequência natural é SEMPRE com -아서/어서: '가서 만나요' (vou lá e nos encontramos)."
+    }
+  ],
+  "cultural_notes": [
+    {
+      "title": "Aparelhos de Ginástica nos Parques Coreanos (동네 체육시설)",
+      "content": "Praças, parques ribeirinhos (como o Rio Han) e trilhas nas montanhas de toda a Coreia contam com aparelhos públicos de musculação e alongamento gratuitos, amplamente utilizados logo ao amanhecer.",
+      "icon": "🏃"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "u1b_10_q01",
+      "type": "multiple_choice",
+      "question": "Como se diz 'Antes de dormir, leio um livro' em coreano?",
+      "explanation": "A estrutura de anterioridade é raiz + '-기 전에': '자기 전에 책을 읽어요'.",
+      "options": [
+        "자기 전에 책을 읽어요.",
+        "잔 후에 책을 읽어요.",
+        "자러 가면서 책을 읽어요.",
+        "자고 싶어서 책을 읽어요."
+      ],
+      "correct_index": 0
+    },
+    {
+      "id": "u1b_10_q02",
+      "type": "multiple_choice",
+      "question": "Qual frase expressa ações sequenciais interdependentes com '-아서/어서'?",
+      "explanation": "Ir a um lugar para executar a ação subsequente usa -아서/어서: '도서관에 가서 공부해요'.",
+      "options": [
+        "도서관에 가서 공부해요.",
+        "도서관에 가고 공부해요.",
+        "도서관에 가지만 공부해요.",
+        "도서관에 가기 전에 공부해요."
+      ],
+      "correct_index": 0
+    },
+    {
+      "id": "u1b_10_q03",
+      "type": "order_words",
+      "question": "Ordene: 'Lave as mãos antes de comer'",
+      "explanation": "Ação prévia (밥을 먹기 전에) + Ação consequente (손을 씻으세요).",
+      "words": ["손을 씻으세요", "밥을 먹기 전에"],
+      "correct_order": ["밥을 먹기 전에", "손을 씻으세요"]
+    },
+    {
+      "id": "u1b_10_q04",
+      "type": "drag_and_drop_sov",
+      "question": "Monte a frase: 'Eu nado antes de ir para a escola'",
+      "explanation": "Ação temporal (학교에 가기 전에) + Objeto (수영을) + Verbo (해요).",
+      "words": ["학교에 가기 전에", "수영을", "해요"],
+      "correct_order": ["학교에 가기 전에", "수영을", "해요"],
+      "sov_items": [
+        { "word": "학교에 가기 전에", "role": "LOCATION", "snap_anchor": "round" },
+        { "word": "수영을", "role": "OBJECT", "snap_anchor": "square" },
+        { "word": "해요", "role": "PREDICATE", "snap_anchor": "round" }
+      ],
+      "sov_slots": [
+        { "role": "LOCATION", "label": "시간/조건 (Antes de)", "accepted_roles": ["LOCATION", "SUBJECT", "OBJECT"] },
+        { "role": "OBJECT", "label": "목적어 (Atividade)", "accepted_roles": ["OBJECT"] },
+        { "role": "PREDICATE", "label": "서술어 (Verbo)", "accepted_roles": ["PREDICATE", "VERB"] }
+      ]
+    }
+  ]
+}

@@ -7,6 +7,7 @@ from .quiz_view import quiz_view
 from .splash_view import splash_view
 from .review_view import review_view
 from .flashcards_view import flashcards_view
+from .admin_view import admin_view
 
 APP_ROUTES = {
     "/splash": splash_view,
@@ -16,6 +17,7 @@ APP_ROUTES = {
     "/quiz": quiz_view,
     "/review": review_view,
     "/flashcards": flashcards_view,
+    "/admin": admin_view,
 }
 
-__all__ = ["APP_ROUTES", "hangul_view", "home_view", "lesson_view", "quiz_view", "splash_view", "review_view", "flashcards_view"]
+__all__ = ["APP_ROUTES", "hangul_view", "home_view", "lesson_view", "quiz_view", "splash_view", "review_view", "flashcards_view", "admin_view"]

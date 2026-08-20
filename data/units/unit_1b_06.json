@@ -1,0 +1,211 @@
+{
+  "unit_id": "unit_1b_06",
+  "title": "한국미술관까지 어떻게 가요?",
+  "vocabulary": [
+    {
+      "word": "지하철",
+      "meaning": "Metrô",
+      "example_kr": "지하철 3호선을 타세요.",
+      "example_pt": "Pegue a linha 3 do metrô.",
+      "category": "transporte",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "버스",
+      "meaning": "Ônibus",
+      "example_kr": "시내버스를 타고 가요.",
+      "example_pt": "Vou de ônibus municipal.",
+      "category": "transporte",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "택시",
+      "meaning": "Táxi",
+      "example_kr": "늦어서 택시를 탔어요.",
+      "example_pt": "Peguei um táxi porque estava atrasado.",
+      "category": "transporte",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "기차",
+      "meaning": "Trem (ferrovia)",
+      "example_kr": "부산까지 기차로 가요.",
+      "example_pt": "Vou de trem até Busan.",
+      "category": "transporte",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "비행기",
+      "meaning": "Avião",
+      "example_kr": "제주도에 비행기로 가요.",
+      "example_pt": "Vou de avião para a Ilha de Jeju.",
+      "category": "transporte",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "걸어서",
+      "meaning": "A pé / Caminhando",
+      "example_kr": "학교까지 걸어서 10분 걸려요.",
+      "example_pt": "Leva 10 minutos a pé até a escola.",
+      "category": "transporte",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "LOCATION"
+    },
+    {
+      "word": "타다",
+      "meaning": "Pegar (transporte) / Embarcar / Montar",
+      "example_kr": "지하철을 타요.",
+      "example_pt": "Pego o metrô.",
+      "category": "verbos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "내리다",
+      "meaning": "Desembarcar / Descer (do transporte)",
+      "example_kr": "다음 역에서 내리세요.",
+      "example_pt": "Desça na próxima estação.",
+      "category": "verbos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "갈아타다",
+      "meaning": "Fazer baldeação / Trocar de linha",
+      "example_kr": "시청역에서 2호선으로 갈아타요.",
+      "example_pt": "Faço baldeação para a linha 2 na estação Prefeitura.",
+      "category": "verbos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "정류장",
+      "meaning": "Ponto de ônibus",
+      "example_kr": "버스 정류장에서 기다려요.",
+      "example_pt": "Espero no ponto de ônibus.",
+      "category": "locais",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "LOCATION"
+    },
+    {
+      "word": "역",
+      "meaning": "Estação (de metrô ou trem)",
+      "example_kr": "강남역 2번 출구에서 만나요.",
+      "example_pt": "Nos encontramos na saída 2 da estação Gangnam.",
+      "category": "locais",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "LOCATION"
+    },
+    {
+      "word": "걸리다",
+      "meaning": "Levar / Demorar (tempo)",
+      "example_kr": "집까지 30분 걸려요.",
+      "example_pt": "Demora 30 minutos até em casa.",
+      "category": "verbos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    }
+  ],
+  "grammar": [
+    {
+      "id": "g1b_06_eseo_kkaji",
+      "title": "Origem e Destino Espacial: ~에서 ~까지 (De ... até ...)",
+      "explanation": "Marca o ponto de partida (에서) e o ponto final (까지) de um deslocamento ou trajeto:\n\n* **[Ponto de Partida]에서 [Destino]까지**\n* Ex: 집**에서** 학교**까지** 15분 걸려요 (Demora 15 minutos de casa até a escola).\n* Ex: 서울**에서** 부산**까지** KTX를 타요 (Pego o KTX de Seul até Busan).",
+      "examples": [
+        {
+          "kr": "여기에서 한국미술관까지 어떻게 가요?",
+          "pt": "Como chego daqui até o Museu de Arte da Coreia?"
+        },
+        {
+          "kr": "공항에서 호텔까지 버스로 가요.",
+          "pt": "Vou de ônibus do aeroporto até o hotel."
+        }
+      ],
+      "lusophone_tip": "Note que '에서' aqui significa 'a partir de / de' (origem física) e '까지' significa 'até' (limite espacial). Para tempo usa-se 부터...까지."
+    },
+    {
+      "id": "g1b_06_proposal_ayo",
+      "title": "Sugestão e Convite Polido: -아요/어요? (Vamos...?)",
+      "explanation": "No estilo informal polido com entonação ascendente e o pronome 우리 (nós), o presente funciona como convite amigável:\n\n* 우리 같이 지하철을 **타요**! (Vamos pegar o metrô juntos!)\n* 오늘 같이 점심 **먹어요**. (Vamos almoçar juntos hoje.)",
+      "examples": [
+        {
+          "kr": "우리 같이 걸어가요.",
+          "pt": "Vamos caminhando juntos."
+        },
+        {
+          "kr": "택시를 타요.",
+          "pt": "Vamos pegar um táxi."
+        }
+      ],
+      "lusophone_tip": "É a forma mais comum e simpática de propor uma atividade conjunta sem a formalidade do -(으)ㅂ시다."
+    }
+  ],
+  "cultural_notes": [
+    {
+      "title": "A Eficiência e Integração do Cartão T-Money",
+      "content": "Com o cartão de transporte recarregável (T-Money ou cartão de crédito contactless), o passageiro ganha desconto automático ao fazer baldeação gratuita entre ônibus e metrô dentro de 30 minutos.",
+      "icon": "💳"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "u1b_06_q01",
+      "type": "multiple_choice",
+      "question": "Qual partícula completa a frase: '집____ 학교까지 걸어가요' (Vou a pé de casa até a escola)?",
+      "explanation": "O ponto de origem espacial é marcado por '에서': '집에서'.",
+      "options": [
+        "에서",
+        "부터",
+        "으로",
+        "에게"
+      ],
+      "correct_index": 0
+    },
+    {
+      "id": "u1b_06_q02",
+      "type": "multiple_choice",
+      "question": "Como se diz 'Quanto tempo demora até a estação?'",
+      "explanation": "Usa-se o verbo 걸리다 (demorar tempo): '역까지 얼마나 걸려요?'.",
+      "options": [
+        "역까지 얼마나 걸려요?",
+        "역에서 무엇을 타요?",
+        "역까지 어디에 있어요?",
+        "역으로 왜 가요?"
+      ],
+      "correct_index": 0
+    },
+    {
+      "id": "u1b_06_q03",
+      "type": "order_words",
+      "question": "Ordene: 'Leva 20 minutos de metrô daqui até a escola'",
+      "explanation": "Trajeto (여기에서 학교까지) + Meio (지하철로) + Duração (20분 걸려요).",
+      "words": ["20분 걸려요", "여기에서 학교까지", "지하철로"],
+      "correct_order": ["여기에서 학교까지", "지하철로", "20분 걸려요"]
+    },
+    {
+      "id": "u1b_06_q04",
+      "type": "drag_and_drop_sov",
+      "question": "Monte a frase: 'Eu pego o ônibus no ponto'",
+      "explanation": "Sujeito (저는) + Local (정류장에서) + Objeto (버스를) + Verbo (타요).",
+      "words": ["저는", "정류장에서", "버스를", "타요"],
+      "correct_order": ["저는", "정류장에서", "버스를", "타요"],
+      "sov_items": [
+        { "word": "저는", "role": "SUBJECT", "snap_anchor": "round" },
+        { "word": "정류장에서", "role": "LOCATION", "snap_anchor": "square" },
+        { "word": "버스를", "role": "OBJECT", "snap_anchor": "round" },
+        { "word": "타요", "role": "VERB", "snap_anchor": "round" }
+      ],
+      "sov_slots": [
+        { "role": "SUBJECT", "label": "주어 (Sujeito)", "accepted_roles": ["SUBJECT"] },
+        { "role": "LOCATION", "label": "장소 (Local)", "accepted_roles": ["LOCATION", "OBJECT"] },
+        { "role": "OBJECT", "label": "목적어 (Objeto)", "accepted_roles": ["OBJECT"] },
+        { "role": "VERB", "label": "동사 (Verbo)", "accepted_roles": ["VERB", "PREDICATE"] }
+      ]
+    }
+  ]
+}

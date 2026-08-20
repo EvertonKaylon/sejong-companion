@@ -1,0 +1,191 @@
+{
+  "unit_id": "unit_1b_11",
+  "title": "한국 음식을 만들 수 있어요?",
+  "vocabulary": [
+    {
+      "word": "초대하다",
+      "meaning": "Convidar",
+      "example_kr": "생일 파티에 친구들을 초대했어요.",
+      "example_pt": "Convidei amigos para a festa de aniversário.",
+      "category": "encontros",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "모이다",
+      "meaning": "Reunir-se / Juntar-se",
+      "example_kr": "주말에 카페에서 다 같이 모여요.",
+      "example_pt": "Nos reunimos todos juntos no café no fim de semana.",
+      "category": "encontros",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "파티",
+      "meaning": "Festa",
+      "example_kr": "금요일 저녁에 홈파티를 해요.",
+      "example_pt": "Fazemos uma festa em casa na sexta-feira à noite.",
+      "category": "encontros",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "준비하다",
+      "meaning": "Preparar / Organizar",
+      "example_kr": "파티 음식을 준비하고 있어요.",
+      "example_pt": "Estou preparando as comidas da festa.",
+      "category": "verbos",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "돕다",
+      "meaning": "Ajudar",
+      "example_kr": "제가 청소를 도와줄게요.",
+      "example_pt": "Eu vou te ajudar na limpeza.",
+      "category": "verbos",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "요리하다",
+      "meaning": "Cozinhar",
+      "example_kr": "한국 요리를 배우고 있어요.",
+      "example_pt": "Estou aprendendo a cozinhar comida coreana.",
+      "category": "habilidades",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "만들다",
+      "meaning": "Fazer / Criar / Confeccionar",
+      "example_kr": "직접 케이크를 만들 수 있어요.",
+      "example_pt": "Consigo fazer um bolo com minhas próprias mãos.",
+      "category": "habilidades",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "기타를 치다",
+      "meaning": "Tocar violão / guitarra",
+      "example_kr": "기타를 칠 수 있어요?",
+      "example_pt": "Você sabe tocar violão?",
+      "category": "habilidades",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "VERB"
+    },
+    {
+      "word": "음료수",
+      "meaning": "Bebida / Refrigerante",
+      "example_kr": "시원한 음료수를 준비했어요.",
+      "example_pt": "Preparei bebidas geladas.",
+      "category": "comida",
+      "snap_anchor": "round",
+      "magnetic_slot_role": "OBJECT"
+    },
+    {
+      "word": "모임",
+      "meaning": "Encontro / Confraternização de grupo",
+      "example_kr": "오늘 저녁에 동아리 모임이 있어요.",
+      "example_pt": "Hoje à noite tem encontro do clube.",
+      "category": "encontros",
+      "snap_anchor": "square",
+      "magnetic_slot_role": "SUBJECT"
+    }
+  ],
+  "grammar": [
+    {
+      "id": "g1b_11_eul_su_itda",
+      "title": "Capacidade e Possibilidade: -(으)ㄹ 수 있다 / 없다",
+      "explanation": "Expressa habilidade ('saber / conseguir fazer') ou possibilidade circunstancial ('poder / ser possível fazer'):\n\n1. **-ㄹ 수 있다/없다** — Após raiz terminada em **vogal** ou no batchim **ㄹ**.\n   * Ex: 만들다 → 만들 **수 있어요** (Consigo fazer).\n   * Ex: 가다 → 가**ㄹ 수 있어요** (Posso ir) / 가**ㄹ 수 없어요** (Não posso ir).\n\n2. **-을 수 있다/없다** — Após raiz terminada em **consoante** (exceto ㄹ).\n   * Ex: 먹다 → 먹**을 수 있어요** (Consigo comer).\n   * Ex: 읽다 → 읽**을 수 있어요** (Consigo ler).",
+      "examples": [
+        {
+          "kr": "한국 음식을 만들 수 있어요?",
+          "pt": "Você consegue / sabe fazer comida coreana?"
+        },
+        {
+          "kr": "오늘 바빠서 모임에 갈 수 없어요.",
+          "pt": "Estou ocupado hoje, então não posso ir ao encontro."
+        }
+      ],
+      "lusophone_tip": "Equivale a 'conseguir / poder / saber fazer'. Para indicar incapacidade, usa-se -(으)ㄹ 수 없다 ou o advérbio curto 못."
+    },
+    {
+      "id": "g1b_11_go_itda",
+      "title": "Presente Contínuo e Ação em Andamento: -고 있다",
+      "explanation": "Expressa uma ação que está ocorrendo no exato momento da fala ('estar fazendo algo'):\n\n* **[Raiz do Verbo] + 고 있다**\n* Anexa-se diretamente à raiz verbal sem alteração:\n  * Ex: 먹다 → 먹**고 있어요** (Estou comendo).\n  * Ex: 준비하다 → 준비하**고 있어요** (Estou preparando).\n  * Ex: 기다리다 → 기다리**고 있어요** (Estou esperando).",
+      "examples": [
+        {
+          "kr": "지금 파티를 준비하고 있어요.",
+          "pt": "Agora estou preparando a festa."
+        },
+        {
+          "kr": "친구를 기다리고 있어요.",
+          "pt": "Estou esperando meu amigo."
+        }
+      ],
+      "lusophone_tip": "Equivale ao nosso gerúndio 'estar + -ndo' (estou comendo, estou estudando)."
+    }
+  ],
+  "cultural_notes": [
+    {
+      "title": "A Cultura de '모임' e Encontros Comunitários",
+      "content": "Na Coreia, quase todas as pessoas participam de 모임 regulares (동창회 = reunião de ex-alunos, 동호회 = grupos com o mesmo hobby), reforçando laços de amizade com comida e conversas.",
+      "icon": "🎉"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "u1b_11_q01",
+      "type": "multiple_choice",
+      "question": "Como se pergunta 'Você sabe tocar violão?' em coreano?",
+      "explanation": "O verbo 치다 (terminado em vogal) recebe '-ㄹ 수 있어요': '기타를 칠 수 있어요?'.",
+      "options": [
+        "기타를 칠 수 있어요?",
+        "기타를 치을 수 있어요?",
+        "기타를 치고 있어요?",
+        "기타를 치러 가요?"
+      ],
+      "correct_index": 0
+    },
+    {
+      "id": "u1b_11_q02",
+      "type": "multiple_choice",
+      "question": "Qual frase indica que a pessoa está cozinhando neste momento?",
+      "explanation": "Usa-se o presente contínuo '-고 있어요': '지금 음식을 만들고 있어요'.",
+      "options": [
+        "지금 음식을 만들고 있어요.",
+        "지금 음식을 만들었어요.",
+        "지금 음식을 만들 거예요.",
+        "지금 음식을 만들 수 없어요."
+      ],
+      "correct_index": 0
+    },
+    {
+      "id": "u1b_11_q03",
+      "type": "order_words",
+      "question": "Ordene: 'Eu sei fazer comida coreana'",
+      "explanation": "Sujeito (저는) + Objeto (한국 음식을) + Capacidade (만들 수 있어요).",
+      "words": ["만들 수 있어요", "한국 음식을", "저는"],
+      "correct_order": ["저는", "한국 음식을", "만들 수 있어요"]
+    },
+    {
+      "id": "u1b_11_q04",
+      "type": "drag_and_drop_sov",
+      "question": "Monte a frase: 'Eu estou preparando a festa'",
+      "explanation": "Sujeito (저는) + Objeto (파티를) + Verbo no Presente Contínuo (준비하고 있어요).",
+      "words": ["저는", "파티를", "준비하고 있어요"],
+      "correct_order": ["저는", "파티를", "준비하고 있어요"],
+      "sov_items": [
+        { "word": "저는", "role": "SUBJECT", "snap_anchor": "round" },
+        { "word": "파티를", "role": "OBJECT", "snap_anchor": "round" },
+        { "word": "준비하고 있어요", "role": "PREDICATE", "snap_anchor": "round" }
+      ],
+      "sov_slots": [
+        { "role": "SUBJECT", "label": "주어 (Sujeito)", "accepted_roles": ["SUBJECT"] },
+        { "role": "OBJECT", "label": "목적어 (Objeto)", "accepted_roles": ["OBJECT"] },
+        { "role": "PREDICATE", "label": "서술어 (Ação em Andamento)", "accepted_roles": ["PREDICATE", "VERB"] }
+      ]
+    }
+  ]
+}

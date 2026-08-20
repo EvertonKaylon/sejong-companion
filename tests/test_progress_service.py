@@ -141,7 +141,7 @@ class TestProgressService(unittest.TestCase):
         service_1.save_progress("unit_intro", 0.5)
         self.assertEqual(service_2.get_progress("unit_intro"), 0.5)
 
-    # ─── HLR / SRS (Half-Life Regression de Ebbinghaus) ───
+    # ─── SRS (Modelo Heurístico de Retenção Baseado em Meia-Vida) ───
 
     def test_memory_node_initial_stability(self):
         """MemoryNode sem revisão retorna estabilidade 0.0."""
@@ -214,6 +214,68 @@ class TestProgressService(unittest.TestCase):
         
         vitality = new_service.get_vitality("unit_01")
         self.assertEqual(vitality, "high")  # Revisão recente → alta vitalidade
+
+    # ─── Identidade Persistente do Aluno (Client Storage & Perfil) ───
+
+    def test_persistent_student_id_via_client_storage(self):
+        """ClientStorage preserva o student_id mesmo após recriar o objeto page."""
+        class MockClientStorage:
+            def __init__(self):
+                self.store = {}
+            def get(self, key):
+                return self.store.get(key)
+            def set(self, key, value):
+                self.store[key] = value
+
+        mock_storage = MockClientStorage()
+
+        # 1. Primeira aba/sessão
+        page_1 = MockPage()
+        page_1.client_storage = mock_storage
+        service_1 = ProgressService(page_1)
+        student_id_1 = service_1.get_student_id()
+        self.assertTrue(student_id_1.startswith("student_"))
+        self.assertEqual(mock_storage.get("sejong_student_id"), student_id_1)
+
+        # Salva progresso no perfil
+        service_1.save_progress("unit_intro", 1.0)
+        service_1.set_student_name("Kayzer")
+
+        # 2. Usuário fecha o navegador e abre novamente (novo objeto page, mesmo client_storage)
+        ProgressService._sessions.clear()
+        page_2 = MockPage()
+        page_2.client_storage = mock_storage
+        service_2 = ProgressService(page_2)
+
+        self.assertEqual(service_2.get_student_id(), student_id_1)
+        self.assertEqual(service_2.get_student_name(), "Kayzer")
+        self.assertEqual(service_2.get_progress("unit_intro"), 1.0)
+
+    def test_export_and_import_backup(self):
+        """Garante que o progresso pode ser exportado e restaurado via JSON."""
+        self.service.save_progress("unit_01", 0.75)
+        self.service.set_student_name("Kayzer Dev")
+
+        backup_json = self.service.export_backup()
+        self.assertIn("Kayzer Dev", backup_json)
+        self.assertIn("progress_unit_01", backup_json)
+
+        # Resetar e restaurar
+        self.service.reset_progress()
+        self.assertEqual(self.service.get_progress("unit_01"), 0.0)
+
+        ok = self.service.import_backup(backup_json)
+        self.assertTrue(ok)
+        self.assertEqual(self.service.get_progress("unit_01"), 0.75)
+        self.assertEqual(self.service.get_student_name(), "Kayzer Dev")
+
+    def test_import_invalid_backup(self):
+        """Importação de JSON inválido retorna False sem corromper o store."""
+        self.service.save_progress("unit_01", 1.0)
+        ok = self.service.import_backup("NOT_JSON")
+        self.assertFalse(ok)
+        self.assertEqual(self.service.get_progress("unit_01"), 1.0)
+
 
 if __name__ == "__main__":
     unittest.main()

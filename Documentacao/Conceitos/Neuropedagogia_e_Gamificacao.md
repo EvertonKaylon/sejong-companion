@@ -29,8 +29,8 @@ O processamento concomitante de estímulos visuais (grafia Hangul / formas geom�
 ### C. Memória Procedural vs. Declarativa na Linguagem (Ullman, 2004)
 A gramática e a pronúncia fluentes dependem do **sistema procedural** (automático, inconsciente, localizado nos gânglios da base). Avisos por escrito forçam o aluno a recorrer ao **sistema declarativo** (temporal/hipocampal), criando a "muleta cognitiva" da tradução interna que paralisa a fala.
 
-### D. Modelo de Memória Espaçada HLR (Settles & Meeder, arXiv:1606.01256)
-Algoritmo de meia-vida da memória ($h$) baseado no histórico de recuperação ativa e latência de resposta para calcular o intervalo ideal de revisão de cada card sem estresse.
+### D. Modelo Heurístico de Retenção Baseado em Meia-Vida
+Modelo de decaimento temporal inspirado na curva exponencial de Ebbinghaus e conceitos de meia-vida ($h$), utilizando multiplicadores de recuperação ativa (Active Recall) e tempo de resposta para calcular o momento ideal de revisão de cada item sem sobrecarga cognitiva.
 
 ---
 

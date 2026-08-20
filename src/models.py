@@ -1,8 +1,8 @@
 import math
 from collections import Counter
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 from datetime import datetime
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, Field, model_validator
 
 # Curriculum Models
 class Unit(BaseModel):
@@ -13,6 +13,7 @@ class Unit(BaseModel):
     description: str
     is_unlocked: bool
     progress: float
+    book: Optional[str] = "1A"
 
 # ─── Hangul Models (Unit Intro) ───
 
@@ -190,14 +191,14 @@ class UnitOneData(BaseModel):
 UnitData = UnitOneData
 
 
-# ─── Memory / SRS (Half-Life Regression de Ebbinghaus) ───
+# ─── Memory / SRS (Modelo Heurístico de Retenção Baseado em Meia-Vida) ───
 
 class MemoryNode(BaseModel):
-    """Entidade central do Algoritmo Half-Life Regression (HLR).
+    """Entidade central do Modelo Heurístico de Retenção Baseado em Meia-Vida.
     
-    Modela a curva de esquecimento de Ebbinghaus:
+    Modela o decaimento temporal inspirado na curva de esquecimento exponencial:
       R = 2^(-t / h)
-    onde R é a retenção (0–1), t o tempo decorrido e h a meia-vida.
+    onde R é a retenção estimada (0.0–1.0), t o tempo decorrido e h a meia-vida (em dias).
     """
     unit_id: str
     half_life: float = 5.0          # Meia-vida em dias
@@ -271,3 +272,19 @@ class ReviewSessionState(BaseModel):
     streak: int = 0
     xp_earned: int = 0
     history: List[dict] = []
+
+
+# ─── Telemetria Pedagógica Local (Zero PII) ───
+
+class PedagogicalEvent(BaseModel):
+    """Evento atômico de interação pedagógica para calibração do algoritmo adaptativo.
+    
+    Zero PII (dados pessoais): armazena exclusivamente identificadores didáticos,
+    métricas de desempenho (tempo de resposta, acertos, autoavaliações) e timestamps.
+    """
+    event_type: str  # ex: 'question_answered', 'flashcard_rated', 'lesson_opened', 'quiz_completed'
+    unit_id: str  # ex: 'unit_01'
+    item_id: Optional[str] = None  # ex: 'unit_01:vocab:03', 'u01_q01'
+    timestamp: str = Field(default_factory=lambda: datetime.now().isoformat())
+    payload: Dict[str, Any] = Field(default_factory=dict)
+

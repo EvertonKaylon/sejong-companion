@@ -1,9 +1,10 @@
 import json
 import os
-from typing import List, Optional
+from collections import defaultdict
+from typing import Any, Dict, List, Optional
 from datetime import datetime, date
 import flet as ft
-from .models import FlashcardItem, Unit, UnitIntroData, UnitOneData, UnitData, MemoryNode
+from .models import FlashcardItem, Unit, UnitIntroData, UnitOneData, UnitData, MemoryNode, PedagogicalEvent
 
 class DataService:
     @staticmethod
@@ -48,6 +49,13 @@ class DataService:
             return None
 
     @staticmethod
+    def _get_all_unit_ids() -> List[str]:
+        """Retorna os IDs de todas as unidades dos livros 1A e 1B em ordem sequencial."""
+        unit_ids = [f"unit_{n:02d}" for n in range(1, 11)]
+        unit_ids += [f"unit_1b_{n:02d}" for n in range(1, 13)]
+        return unit_ids
+
+    @staticmethod
     def _flashcard_difficulty(unit_number: int, word: str, category: str) -> str:
         """Classifica o material sem exigir uma segunda cópia dos JSONs.
 
@@ -57,7 +65,7 @@ class DataService:
         """
         normalized = f"{word} {category}".lower()
         easy_terms = ("cumpr", "pronom", "numero", "수", "인사", "나라")
-        hard_markers = ("았", "었", "겠", "싶", "까요", "불규칙", "ㅂ", "classificador", "단위")
+        hard_markers = ("았", "었", "겠", "싶", "까요", "불규칙", "ㅂ", "classificador", "단위", "보다", "에게", "니까", "어야", "려고", "수 있")
         if any(term in normalized for term in easy_terms) or unit_number <= 2:
             return "easy"
         if any(marker in normalized for marker in hard_markers) or unit_number >= 6:
@@ -66,15 +74,14 @@ class DataService:
 
     @staticmethod
     def get_all_flashcards(difficulty: Optional[str] = None) -> List[FlashcardItem]:
-        """Compila o vocabulário das unidades 01–10 em cartões consistentes."""
+        """Compila o vocabulário de todas as unidades dos livros 1A e 1B em cartões consistentes."""
         cards: List[FlashcardItem] = []
-        for number in range(1, 11):
-            unit_id = f"unit_{number:02d}"
+        for idx, unit_id in enumerate(DataService._get_all_unit_ids(), start=1):
             unit = DataService.get_unit(unit_id)
             if not unit:
                 continue
             for index, vocab in enumerate(unit.vocabulary):
-                level = DataService._flashcard_difficulty(number, vocab.word, vocab.category or "")
+                level = DataService._flashcard_difficulty(idx, vocab.word, vocab.category or "")
                 if difficulty and difficulty != level:
                     continue
                 cards.append(FlashcardItem(
@@ -96,8 +103,7 @@ class DataService:
         if difficulty not in {"easy", "medium", "hard"}:
             return []
         challenges: List[dict] = []
-        for number in range(1, 11):
-            unit_id = f"unit_{number:02d}"
+        for idx, unit_id in enumerate(DataService._get_all_unit_ids(), start=1):
             unit = DataService.get_unit(unit_id)
             if not unit:
                 continue
@@ -105,7 +111,7 @@ class DataService:
                 if exercise.type != "drag_and_drop_sov" or not exercise.correct_order:
                     continue
                 category = "sintaxe"
-                level = DataService._flashcard_difficulty(number, " ".join(exercise.correct_order), category)
+                level = DataService._flashcard_difficulty(idx, " ".join(exercise.correct_order), category)
                 if level != difficulty:
                     continue
                 prompt = exercise.question.split(":", 1)[-1].strip()
@@ -159,7 +165,7 @@ class DataService:
 
     @staticmethod
     def get_all_audio_texts() -> List[str]:
-        """Extrai e desduplica TODOS os textos com áudio do currículo completo (00 a 10)."""
+        """Extrai e desduplica TODOS os textos com áudio do currículo completo (1A e 1B)."""
         texts = list(DataService.get_priority_audio_texts())
 
         # 1. Sílabas do Hangul
@@ -167,9 +173,8 @@ class DataService:
         if intro and intro.syllables:
             texts.extend([s.block for s in intro.syllables if s.block])
 
-        # 2. Todas as Unidades 01 a 10 (Vocabulário e Frases de Exemplo)
-        for number in range(1, 11):
-            unit_id = f"unit_{number:02d}"
+        # 2. Todas as Unidades 1A e 1B (Vocabulário e Frases de Exemplo)
+        for unit_id in DataService._get_all_unit_ids():
             unit = DataService.get_unit(unit_id)
             if not unit:
                 continue
@@ -194,11 +199,16 @@ class DataService:
         return deduped
 
 class ProgressService:
-    """Gerenciador de progresso com persistência em disco e isolamento por sessão.
+    """Motor de Gestão do Aluno, Progresso e Retenção Adaptativa por Meia-Vida.
     
-    Cada sessão Flet (aba do navegador / conexão) recebe um UUID único, garantindo
-    que múltiplos usuários simultâneos em modo web não compartilhem progresso.
-    Os dados são persistidos em data/sessions/{session_id}.json de forma atômica.
+    Arquitetura de 4 Pilares Ortogonais:
+      1. XP (Motivação): Cosmético e atrativo; recompensa disciplina e presença sem afetar a pedagogia.
+      2. Mastery (Aprendizagem): Domínio morfossintático medido por acertos consistentes.
+      3. Retention (Memória): Estabilidade temporal de evocação modelada por meia-vida (SRS).
+      4. Completion (Progresso Curricular): Cobertura formal das lições e desbloqueio de unidades.
+    
+    A persistência opera via Persistent Student ID (page.client_storage no cliente) e
+    gravação atômica em data/sessions/student_{id}.json.
     """
     
     _file_path_override: Optional[str] = None  # Override para testes
@@ -218,24 +228,70 @@ class ProgressService:
         "unit_07": "unit_08",
         "unit_08": "unit_09",
         "unit_09": "unit_10",
+        "unit_10": "unit_1b_01",
+        "unit_1b_01": "unit_1b_02",
+        "unit_1b_02": "unit_1b_03",
+        "unit_1b_03": "unit_1b_04",
+        "unit_1b_04": "unit_1b_05",
+        "unit_1b_05": "unit_1b_06",
+        "unit_1b_06": "unit_1b_07",
+        "unit_1b_07": "unit_1b_08",
+        "unit_1b_08": "unit_1b_09",
+        "unit_1b_09": "unit_1b_10",
+        "unit_1b_10": "unit_1b_11",
+        "unit_1b_11": "unit_1b_12",
     }
 
     @staticmethod
     def _get_session_id(page) -> str:
-        """Obtém ou gera um UUID único para a sessão desta page."""
+        """Obtém ou recupera a identidade persistente do aluno (Persistent Student ID).
+        
+        Prioriza o client_storage (localStorage do navegador / SharedPreferences nativo)
+        para que fechar/reabrir o navegador preserve o mesmo ID e arquivo de progresso.
+        """
         if page is None:
             return "__default__"
-        if not hasattr(page, '_sejong_session_id'):
-            import uuid
-            page._sejong_session_id = uuid.uuid4().hex[:12]
-        return page._sejong_session_id
+
+        # 1. Se já cacheado em memória no objeto page da sessão ativa
+        if hasattr(page, "_sejong_student_id") and page._sejong_student_id:
+            return str(page._sejong_student_id)
+        if hasattr(page, "_sejong_session_id") and page._sejong_session_id:
+            return str(page._sejong_session_id)
+
+        # 2. Tenta recuperar do client_storage do dispositivo
+        student_id = None
+        try:
+            if hasattr(page, "client_storage") and page.client_storage:
+                student_id = page.client_storage.get("sejong_student_id")
+        except Exception:
+            student_id = None
+
+        if student_id and isinstance(student_id, str) and student_id.strip():
+            safe_id = student_id.strip()
+            page._sejong_student_id = safe_id
+            page._sejong_session_id = safe_id
+            return safe_id
+
+        # 3. Se é o primeiro acesso deste cliente, gera e persiste
+        import uuid
+        new_id = f"student_{uuid.uuid4().hex[:12]}"
+        try:
+            if hasattr(page, "client_storage") and page.client_storage:
+                page.client_storage.set("sejong_student_id", new_id)
+        except Exception:
+            pass
+
+        page._sejong_student_id = new_id
+        page._sejong_session_id = new_id
+        return new_id
 
     @classmethod
     def _get_storage_path(cls, session_id: str) -> str:
         if cls._file_path_override:
             return cls._file_path_override
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        return os.path.join(base_dir, "data", "sessions", f"{session_id}.json")
+        safe_id = "".join(c for c in session_id if c.isalnum() or c in ("-", "_")) or "default"
+        return os.path.join(base_dir, "data", "sessions", f"{safe_id}.json")
 
     @classmethod
     def _load_from_disk(cls, session_id: str) -> dict:
@@ -279,6 +335,53 @@ class ProgressService:
         """Retorna o store isolado desta sessão."""
         return ProgressService._sessions.setdefault(self._session_id, {})
 
+    def get_student_id(self) -> str:
+        """Retorna a identidade persistente do aluno."""
+        return self._session_id
+
+    def get_student_name(self) -> str:
+        """Retorna o nome personalizado do aluno ou o padrão."""
+        return str(self._store.get("student_name", "Estudante Sejong"))
+
+    def set_student_name(self, name: str) -> str:
+        """Atualiza o nome do aluno no perfil e sincroniza."""
+        clean_name = name.strip() or "Estudante Sejong"
+        self._store["student_name"] = clean_name
+        ProgressService._save_to_disk(self._session_id, self._store)
+        try:
+            if hasattr(self.page, "client_storage") and self.page.client_storage:
+                self.page.client_storage.set("sejong_student_name", clean_name)
+        except Exception:
+            pass
+        return clean_name
+
+    def export_backup(self) -> str:
+        """Exporta o progresso completo e nós de memória em formato JSON string."""
+        payload = {
+            "version": "1.0",
+            "exported_at": datetime.now().isoformat(),
+            "student_id": self._session_id,
+            "data": self._store,
+        }
+        return json.dumps(payload, indent=2, ensure_ascii=False)
+
+    def import_backup(self, backup_json: str) -> bool:
+        """Restaura o progresso a partir de uma string JSON de backup válida."""
+        try:
+            raw = json.loads(backup_json)
+            if not isinstance(raw, dict):
+                return False
+            data_to_restore = raw.get("data") if "data" in raw and isinstance(raw["data"], dict) else raw
+            if not isinstance(data_to_restore, dict):
+                return False
+            self._store.clear()
+            self._store.update(data_to_restore)
+            ProgressService._save_to_disk(self._session_id, self._store)
+            return True
+        except Exception as e:
+            print(f"[ProgressService] Erro ao importar backup: {e}")
+            return False
+
     def get_progress(self, unit_id: str) -> float:
         val = self._store.get(f"progress_{unit_id}", 0.0)
         try:
@@ -312,7 +415,7 @@ class ProgressService:
         """Retorna uma cópia dos dados de progresso desta sessão."""
         return dict(self._store)
 
-    # ─── HLR / SRS (Half-Life Regression de Ebbinghaus) ───
+    # ─── SRS (Modelo Heurístico de Retenção Baseado em Meia-Vida) ───
 
     def get_memory_node(self, unit_id: str) -> MemoryNode:
         """Obtém ou cria o MemoryNode de uma unidade."""
@@ -382,7 +485,7 @@ class ProgressService:
         return sorted(due_reviews, key=lambda review: review["retention"])
 
     def record_item_recall(self, item_id: str, rating: str, response_time_ms: int = 2000) -> MemoryNode:
-        """Atualiza HLR com os multiplicadores explícitos da autoavaliação."""
+        """Atualiza a meia-vida com os multiplicadores heurísticos da autoavaliação."""
         rating = rating.lower().strip()
         multipliers = {"again": 0.3, "hard": 0.3, "good": 1.5, "easy": 2.2}
         if rating not in multipliers:
@@ -574,3 +677,536 @@ class FullscreenService:
             on_click=lambda e: FullscreenService.toggle_fullscreen(page),
             tooltip="Alternar Modo Tela Cheia (Fullscreen)",
         )
+
+
+# ─── Telemetria e Evidência Pedagógica Local (Zero PII) ───
+
+class TelemetryService:
+    """Serviço de registro de eventos pedagógicos em disco local (append-only JSONL).
+    
+    Garante persistência de interação atômica e leve O(1) sem carregar logs na RAM.
+    Zero dados pessoais (PII) — coleta estritamente métricas didáticas e temporais.
+    """
+    _telemetry_dir_override: Optional[str] = None
+
+    @classmethod
+    def _get_telemetry_dir(cls) -> str:
+        if cls._telemetry_dir_override:
+            os.makedirs(cls._telemetry_dir_override, exist_ok=True)
+            return cls._telemetry_dir_override
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        telemetry_dir = os.path.join(base_dir, "data", "telemetry")
+        os.makedirs(telemetry_dir, exist_ok=True)
+        return telemetry_dir
+
+    @classmethod
+    def _get_log_path(cls, session_id: str) -> str:
+        safe_id = "".join(c for c in session_id if c.isalnum() or c in ("-", "_")) or "default"
+        return os.path.join(cls._get_telemetry_dir(), f"events_{safe_id}.jsonl")
+
+    @classmethod
+    def record(cls, session_id: str, event: PedagogicalEvent) -> bool:
+        """Grava um evento pedagógico no arquivo JSONL da sessão em modo append."""
+        try:
+            path = cls._get_log_path(session_id)
+            with open(path, "a", encoding="utf-8") as f:
+                f.write(event.model_dump_json() + "\n")
+            return True
+        except Exception as e:
+            print(f"[TelemetryService] Erro ao gravar evento: {e}")
+            return False
+
+    @classmethod
+    def get_events(cls, session_id: Optional[str] = None) -> List[PedagogicalEvent]:
+        """Carrega eventos registrados de uma sessão específica ou de todas as sessões."""
+        events: List[PedagogicalEvent] = []
+        target_dir = cls._get_telemetry_dir()
+        if not os.path.exists(target_dir):
+            return events
+
+        if session_id:
+            files = [cls._get_log_path(session_id)]
+        else:
+            files = [
+                os.path.join(target_dir, f)
+                for f in os.listdir(target_dir)
+                if f.startswith("events_") and f.endswith(".jsonl")
+            ]
+
+        for file_path in files:
+            if not os.path.exists(file_path):
+                continue
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    for line in f:
+                        line_str = line.strip()
+                        if not line_str:
+                            continue
+                        try:
+                            raw = json.loads(line_str)
+                            events.append(PedagogicalEvent(**raw))
+                        except Exception:
+                            # Ignora linhas corrompidas sem quebrar a leitura
+                            continue
+            except Exception as e:
+                print(f"[TelemetryService] Erro ao ler {file_path}: {e}")
+
+        # Ordenar cronologicamente
+        events.sort(key=lambda ev: ev.timestamp)
+        return events
+
+    @classmethod
+    def clear_events(cls, session_id: Optional[str] = None) -> int:
+        """Remove arquivos de log de eventos (útil para testes ou reset de dados)."""
+        target_dir = cls._get_telemetry_dir()
+        if not os.path.exists(target_dir):
+            return 0
+        removed = 0
+        if session_id:
+            path = cls._get_log_path(session_id)
+            if os.path.exists(path):
+                os.remove(path)
+                removed += 1
+        else:
+            for f in os.listdir(target_dir):
+                if f.startswith("events_") and f.endswith(".jsonl"):
+                    os.remove(os.path.join(target_dir, f))
+                    removed += 1
+        return removed
+
+
+class PedagogicalAnalyzer:
+    """Motor analítico determinístico local para extrair evidência pedagógica dos logs."""
+
+    @staticmethod
+    def analyze(events: List[PedagogicalEvent]) -> Dict[str, Any]:
+        """Processa a lista de eventos e retorna diagnósticos pedagógicos estruturados."""
+        total_events = len(events)
+        if total_events == 0:
+            return {
+                "total_events": 0,
+                "hardest_questions": [],
+                "drop_off_units": [],
+                "critical_vocab": [],
+                "avg_response_times": {},
+                "session_summary": {"total_quizzes_completed": 0, "total_reviews_completed": 0},
+            }
+
+        # 1. Estatísticas de Questões
+        question_stats = defaultdict(lambda: {
+            "unit_id": "",
+            "total": 0,
+            "errors": 0,
+            "times": [],
+            "types": set(),
+        })
+
+        # 2. Estatísticas de Unidades (Abertura vs Conclusão)
+        units_opened = defaultdict(int)
+        units_completed = defaultdict(int)
+
+        # 3. Estatísticas de Flashcards (Avaliações no Active Recall)
+        cards_ratings = defaultdict(lambda: {
+            "unit_id": "",
+            "again": 0,
+            "hard": 0,
+            "good": 0,
+            "easy": 0,
+            "times": [],
+        })
+
+        # 4. Tempos de resposta agregados
+        times_by_type = defaultdict(list)
+        total_quizzes_completed = 0
+        total_reviews_completed = 0
+
+        for ev in events:
+            # Questões respondidas
+            if ev.event_type == "question_answered":
+                qid = ev.item_id or "unknown"
+                q = question_stats[qid]
+                q["unit_id"] = ev.unit_id
+                q["total"] += 1
+                is_correct = bool(ev.payload.get("correct", False))
+                if not is_correct:
+                    q["errors"] += 1
+                resp_time = ev.payload.get("response_time_ms")
+                if isinstance(resp_time, (int, float)) and resp_time > 0:
+                    q["times"].append(resp_time)
+                    q_type = ev.payload.get("question_type", "multiple_choice")
+                    times_by_type[f"quiz_{q_type}"].append(resp_time)
+
+            # Abertura e conclusão de lição
+            elif ev.event_type == "lesson_opened":
+                units_opened[ev.unit_id] += 1
+            elif ev.event_type == "lesson_completed":
+                units_completed[ev.unit_id] += 1
+
+            # Quiz concluído
+            elif ev.event_type == "quiz_completed":
+                total_quizzes_completed += 1
+
+            # Revisão de Flashcard
+            elif ev.event_type == "flashcard_rated":
+                cid = ev.item_id or "unknown"
+                c = cards_ratings[cid]
+                c["unit_id"] = ev.unit_id
+                rating = str(ev.payload.get("rating", "good")).lower().strip()
+                if rating in ("again", "hard", "good", "easy"):
+                    c[rating] += 1
+                resp_time = ev.payload.get("response_time_ms")
+                if isinstance(resp_time, (int, float)) and resp_time > 0:
+                    c["times"].append(resp_time)
+                    times_by_type["flashcard_recall"].append(resp_time)
+
+            # Revisão diária concluída
+            elif ev.event_type == "review_completed":
+                total_reviews_completed += 1
+
+        # Compilar Questões mais difíceis (ordenadas por taxa de erro desc)
+        hardest_questions: List[dict] = []
+        for qid, data in question_stats.items():
+            total = data["total"]
+            errors = data["errors"]
+            error_rate = (errors / total) if total > 0 else 0.0
+            avg_time = (sum(data["times"]) / len(data["times"])) if data["times"] else 0.0
+            hardest_questions.append({
+                "question_id": qid,
+                "unit_id": data["unit_id"],
+                "total_attempts": total,
+                "errors": errors,
+                "error_rate": round(error_rate, 4),
+                "avg_response_time_ms": round(avg_time, 1),
+            })
+        hardest_questions.sort(key=lambda x: (x["error_rate"], x["total_attempts"]), reverse=True)
+
+        # Compilar Abandono de Unidades
+        drop_off_units: List[dict] = []
+        all_units = set(units_opened.keys()).union(set(units_completed.keys()))
+        for uid in sorted(all_units):
+            opened = units_opened.get(uid, 0)
+            completed = units_completed.get(uid, 0)
+            drop_rate = 1.0 - (completed / opened) if opened > 0 else 0.0
+            drop_off_units.append({
+                "unit_id": uid,
+                "opened_count": opened,
+                "completed_count": completed,
+                "drop_off_rate": round(max(0.0, drop_rate), 4),
+            })
+        drop_off_units.sort(key=lambda x: x["drop_off_rate"], reverse=True)
+
+        # Compilar Vocabulário Crítico (ordenado por contagem e taxa de 'again')
+        critical_vocab: List[dict] = []
+        for cid, data in cards_ratings.items():
+            total_reviews = data["again"] + data["hard"] + data["good"] + data["easy"]
+            again_rate = (data["again"] / total_reviews) if total_reviews > 0 else 0.0
+            avg_time = (sum(data["times"]) / len(data["times"])) if data["times"] else 0.0
+            critical_vocab.append({
+                "item_id": cid,
+                "unit_id": data["unit_id"],
+                "again_count": data["again"],
+                "hard_count": data["hard"],
+                "good_count": data["good"],
+                "easy_count": data["easy"],
+                "total_reviews": total_reviews,
+                "again_rate": round(again_rate, 4),
+                "avg_response_time_ms": round(avg_time, 1),
+            })
+        critical_vocab.sort(key=lambda x: (x["again_count"], x["again_rate"]), reverse=True)
+
+        # Tempos médios de resposta por tipo de atividade
+        avg_response_times = {}
+        for act_type, t_list in times_by_type.items():
+            if t_list:
+                avg_response_times[act_type] = round(sum(t_list) / len(t_list), 1)
+
+        return {
+            "total_events": total_events,
+            "hardest_questions": hardest_questions,
+            "drop_off_units": drop_off_units,
+            "critical_vocab": critical_vocab,
+            "avg_response_times": avg_response_times,
+            "session_summary": {
+                "total_quizzes_completed": total_quizzes_completed,
+                "total_reviews_completed": total_reviews_completed,
+            },
+        }
+
+
+class AdminService:
+    """Serviço de Gestão Administrativa e Consolidação Pedagógica Multi-Student.
+    
+    Responsável por autenticação de professores/administradores, varredura de
+    todas as sessões de alunos em disco (data/sessions/), compilação de KPIs globais
+    e geração de relatórios pedagógicos executivos.
+    """
+
+    DEFAULT_PIN: str = "sejong2026"
+
+    @classmethod
+    def authenticate(cls, pin: str) -> bool:
+        """Verifica se o PIN fornecido corresponde ao PIN configurado ou ao padrão."""
+        if not pin:
+            return False
+        expected = os.environ.get("SEJONG_ADMIN_PIN", cls.DEFAULT_PIN).strip()
+        return pin.strip() == expected
+
+    @classmethod
+    def _get_sessions_dir(cls, custom_dir: Optional[str] = None) -> str:
+        """Retorna o diretório de sessões dos alunos."""
+        if custom_dir:
+            return custom_dir
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        return os.path.join(base_dir, "data", "sessions")
+
+    @classmethod
+    def get_all_students_summary(cls, sessions_dir: Optional[str] = None) -> List[Dict[str, Any]]:
+        """Lê e resume todas as sessões de estudantes cadastradas no disco."""
+        directory = cls._get_sessions_dir(sessions_dir)
+        if not os.path.exists(directory):
+            return []
+
+        students: List[Dict[str, Any]] = []
+        curriculum = DataService.get_curriculum()
+        total_units_count = len(curriculum) if curriculum else 23
+
+        # Listar todos os arquivos .json na pasta de sessões
+        for filename in os.listdir(directory):
+            if not filename.endswith(".json"):
+                continue
+
+            file_path = os.path.join(directory, filename)
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+            except Exception as e:
+                print(f"Erro ao ler sessão {filename}: {e}")
+                continue
+
+            if not isinstance(data, dict):
+                continue
+
+            # Extrair student_id
+            s_id = data.get("student_id")
+            if not s_id:
+                # Extrair do nome do arquivo: student_{id}.json ou {uuid}.json
+                if filename.startswith("student_") and filename.endswith(".json"):
+                    s_id = filename[8:-5]
+                else:
+                    s_id = filename[:-5]
+
+            s_name = data.get("student_name") or "Aluno Anônimo"
+            streak = data.get("streak", 0)
+            total_xp = data.get("total_xp", 0)
+            last_date = data.get("last_study_date") or data.get("updated_at") or "—"
+            created_at = data.get("created_at") or "—"
+
+            # Calcular progresso e conclusões
+            completed_1a = 0
+            completed_1b = 0
+            total_completed = 0
+            progress_sum = 0.0
+
+            for unit in curriculum:
+                u_prog = data.get(f"progress_{unit.id}", 0.0)
+                progress_sum += u_prog
+                if u_prog >= 1.0:
+                    total_completed += 1
+                    if unit.id.startswith("unit_1b_"):
+                        completed_1b += 1
+                    else:
+                        completed_1a += 1
+
+            avg_progress_pct = (progress_sum / total_units_count) if total_units_count > 0 else 0.0
+
+            # Calcular saúde de memória (SRS)
+            nodes_to_eval = []
+            if isinstance(data.get("memory_nodes"), dict):
+                for k, v in data["memory_nodes"].items():
+                    if isinstance(v, dict):
+                        nodes_to_eval.append((k, v))
+
+            for k, v in data.items():
+                if (k.startswith("memory_") or k.startswith("memory_item_")) and isinstance(v, dict) and k != "memory_nodes":
+                    nodes_to_eval.append((k, v))
+
+            nodes_count = len(nodes_to_eval)
+            retention_sum = 0.0
+
+            now = datetime.now()
+            for key, node_raw in nodes_to_eval:
+                try:
+                    h_life = float(node_raw.get("half_life", node_raw.get("half_life_days", 5.0)))
+                    l_rev = str(node_raw.get("last_reviewed", node_raw.get("last_reviewed_at", "")))
+                    node = MemoryNode(unit_id=key, half_life=h_life, last_reviewed=l_rev)
+                    retention = node.calculate_stability(now)
+                    retention_sum += retention
+                except Exception:
+                    retention_sum += 0.5
+
+            avg_retention_pct = (retention_sum / nodes_count) if nodes_count > 0 else 0.0
+
+            students.append({
+                "student_id": s_id,
+                "student_name": s_name,
+                "streak": streak,
+                "total_xp": total_xp,
+                "last_study_date": last_date,
+                "created_at": created_at,
+                "completed_1a_count": completed_1a,
+                "completed_1b_count": completed_1b,
+                "completed_total_count": total_completed,
+                "total_units_count": total_units_count,
+                "overall_progress_pct": round(avg_progress_pct, 4),
+                "memory_nodes_count": nodes_count,
+                "avg_retention_pct": round(avg_retention_pct, 4),
+            })
+
+        # Ordenar: alunos com atividade mais recente primeiro
+        students.sort(key=lambda s: (s["last_study_date"], s["overall_progress_pct"]), reverse=True)
+        return students
+
+    @classmethod
+    def get_global_kpis(cls, sessions_dir: Optional[str] = None) -> Dict[str, Any]:
+        """Calcula os indicadores-chave de desempenho (KPIs) de toda a base de alunos."""
+        students = cls.get_all_students_summary(sessions_dir)
+        total_students = len(students)
+
+        total_progress = sum(s["overall_progress_pct"] for s in students) if total_students > 0 else 0.0
+        avg_progress = (total_progress / total_students) if total_students > 0 else 0.0
+
+        students_with_memory = [s for s in students if s["memory_nodes_count"] > 0]
+        total_retention = sum(s["avg_retention_pct"] for s in students_with_memory)
+        avg_retention = (total_retention / len(students_with_memory)) if students_with_memory else 0.0
+        total_nodes = sum(s["memory_nodes_count"] for s in students)
+
+        telemetry_events = TelemetryService.get_events()
+        telemetry_analysis = PedagogicalAnalyzer.analyze(telemetry_events)
+
+        return {
+            "total_students": total_students,
+            "avg_progress_pct": round(avg_progress, 4),
+            "avg_retention_pct": round(avg_retention, 4),
+            "total_memory_nodes": total_nodes,
+            "total_telemetry_events": len(telemetry_events),
+            "total_quizzes_completed": telemetry_analysis["session_summary"]["total_quizzes_completed"],
+            "total_reviews_completed": telemetry_analysis["session_summary"]["total_reviews_completed"],
+        }
+
+    @classmethod
+    def get_pedagogical_diagnostics(cls) -> Dict[str, Any]:
+        """Retorna a análise diagnóstica consolidada de telemetria pedagógica."""
+        events = TelemetryService.get_events()
+        return PedagogicalAnalyzer.analyze(events)
+
+    @classmethod
+    def export_report_markdown(cls, sessions_dir: Optional[str] = None) -> str:
+        """Gera um relatório executivo pedagógico completo formatado em Markdown."""
+        kpis = cls.get_global_kpis(sessions_dir)
+        diagnostics = cls.get_pedagogical_diagnostics()
+        students = cls.get_all_students_summary(sessions_dir)
+
+        now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        lines = [
+            "# 🏛️ Relatório Executivo & Diagnóstico Pedagógico — Sejong Companion",
+            f"*Gerado em: {now_str} | Corpo Docente CCCB / Sejong Hakdang*",
+            "",
+            "---",
+            "",
+            "## 📈 1. Indicadores Globais de Aprendizagem (KPIs)",
+            "",
+            f"- **👥 Total de Alunos Cadastrados:** {kpis['total_students']}",
+            f"- **📊 Progresso Médio Curricular:** {kpis['avg_progress_pct']:.1%}",
+            f"- **🧠 Retenção Média de Vocabulário (SRS):** {kpis['avg_retention_pct']:.1%}",
+            f"- **🃏 Nós de Memória Ativos na Turma:** {kpis['total_memory_nodes']}",
+            f"- **📝 Quizzes Avaliativos Concluídos:** {kpis['total_quizzes_completed']}",
+            f"- **🔄 Sessões de Revisão Diária:** {kpis['total_reviews_completed']}",
+            "",
+            "---",
+            "",
+            "## ⚠️ 2. Questões Críticas com Maior Taxa de Erro (Top 5)",
+            "",
+        ]
+
+        hardest = diagnostics.get("hardest_questions", [])[:5]
+        if hardest:
+            lines.extend([
+                "| ID da Questão | Unidade | Tentativas | Erros | Taxa de Erro | Tempo Médio |",
+                "| :--- | :--- | :---: | :---: | :---: | :---: |",
+            ])
+            for q in hardest:
+                lines.append(
+                    f"| `{q['question_id']}` | `{q['unit_id']}` | {q['total_attempts']} | "
+                    f"{q['errors']} | **{q['error_rate']:.1%}** | {q['avg_response_time_ms']}ms |"
+                )
+        else:
+            lines.append("*Nenhum dado de questão avaliativa registrado ainda.*")
+
+        lines.extend([
+            "",
+            "---",
+            "",
+            "## 📉 3. Funil de Abandono por Unidade (Opened vs Completed)",
+            "",
+        ])
+
+        drop_offs = diagnostics.get("drop_off_units", [])
+        if drop_offs:
+            lines.extend([
+                "| Unidade | Aberturas | Conclusões | Taxa de Abandono |",
+                "| :--- | :---: | :---: | :---: |",
+            ])
+            for u in drop_offs:
+                lines.append(
+                    f"| `{u['unit_id']}` | {u['opened_count']} | {u['completed_count']} | **{u['drop_off_rate']:.1%}** |"
+                )
+        else:
+            lines.append("*Nenhum dado de abandono registrado ainda.*")
+
+        lines.extend([
+            "",
+            "---",
+            "",
+            "## 🔄 4. Vocabulário Crítico com Reincidência de 'Again' (Top 5)",
+            "",
+        ])
+
+        critical = diagnostics.get("critical_vocab", [])[:5]
+        if critical:
+            lines.extend([
+                "| Item | Unidade | Again (Errei) | Hard | Good | Easy | Taxa de Again |",
+                "| :--- | :--- | :---: | :---: | :---: | :---: | :---: |",
+            ])
+            for c in critical:
+                lines.append(
+                    f"| `{c['item_id']}` | `{c['unit_id']}` | **{c['again_count']}** | "
+                    f"{c['hard_count']} | {c['good_count']} | {c['easy_count']} | {c['again_rate']:.1%} |"
+                )
+        else:
+            lines.append("*Nenhum dado de avaliação de flashcard registrado ainda.*")
+
+        lines.extend([
+            "",
+            "---",
+            "",
+            "## 🎓 5. Roster de Alunos Cadastrados",
+            "",
+        ])
+
+        if students:
+            lines.extend([
+                "| Student ID | Nome / Aluno | 1A Concluídas | 1B Concluídas | Progresso Geral | Retenção SRS | Streak | XP | Último Acesso |",
+                "| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :--- |",
+            ])
+            for s in students:
+                lines.append(
+                    f"| `{s['student_id']}` | **{s['student_name']}** | {s['completed_1a_count']}/11 | "
+                    f"{s['completed_1b_count']}/12 | {s['overall_progress_pct']:.1%} | {s['avg_retention_pct']:.1%} | "
+                    f"{s['streak']}🔥 | {s['total_xp']} | {s['last_study_date']} |"
+                )
+        else:
+            lines.append("*Nenhum perfil de aluno localizado em data/sessions/.*")
+
+        return "\n".join(lines)
+

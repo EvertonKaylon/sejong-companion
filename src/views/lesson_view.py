@@ -1,7 +1,8 @@
 import flet as ft
 from ..components import VocabCard, centered_content
 from ..theme import get_theme_colors, Styles, Responsive
-from ..services import DataService, ProgressService, FullscreenService
+from ..models import PedagogicalEvent
+from ..services import DataService, ProgressService, FullscreenService, TelemetryService
 
 def lesson_view(page: ft.Page) -> ft.View:
     is_dark = page.theme_mode == ft.ThemeMode.DARK
@@ -10,9 +11,20 @@ def lesson_view(page: ft.Page) -> ft.View:
     progress_service = ProgressService(page)
 
     unit_id = page.router.current_unit_id
+    session_id = ProgressService._get_session_id(page)
     
     # Carregar dados de qualquer unidade (01–10) pelo ID genérico
     unit_data = DataService.get_unit(unit_id) if unit_id else None
+
+    if unit_data and unit_id:
+        TelemetryService.record(
+            session_id,
+            PedagogicalEvent(
+                event_type="lesson_opened",
+                unit_id=unit_id,
+                payload={"title": unit_data.title},
+            ),
+        )
 
     if not unit_data:
         return ft.View(
@@ -318,6 +330,18 @@ def lesson_view(page: ft.Page) -> ft.View:
         )
     )
 
+    def go_to_quiz(e):
+        if unit_id:
+            TelemetryService.record(
+                session_id,
+                PedagogicalEvent(
+                    event_type="lesson_completed",
+                    unit_id=unit_id,
+                    payload={"action": "proceed_to_quiz"},
+                ),
+            )
+        page.router.navigate_to("/quiz", unit_id)
+
     # Botão de Exercícios
     exercise_button = ft.Container(
         content=ft.ElevatedButton(
@@ -329,7 +353,7 @@ def lesson_view(page: ft.Page) -> ft.View:
                 shape=ft.RoundedRectangleBorder(radius=Styles.BORDER_RADIUS_SM),
                 padding=14
             ),
-            on_click=lambda e: page.router.navigate_to("/quiz", unit_id),
+            on_click=go_to_quiz,
         ),
         padding=ft.Padding.symmetric(horizontal=12, vertical=10),
         bgcolor=colors["surface"],
