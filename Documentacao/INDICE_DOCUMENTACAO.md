@@ -27,6 +27,7 @@ Bem-vindo ao repositório central de documentação e conhecimento do projeto **
 - 📋 **[plano_ensino_implicito_neurociencia.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Planos_e_Arquitetura/plano_ensino_implicito_neurociencia.md)** — Plano de refatoração para ensino de coreano implícito sem avisos por escrito.
 - 📋 **[implementation_plan.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Planos_e_Arquitetura/implementation_plan.md)** — Plano de implementação técnica inicial do aplicativo.
 - ⚙️ **[analise_stack_multiplataforma.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Planos_e_Arquitetura/analise_stack_multiplataforma.md)** — Análise comparativa da stack Python/Flet vs Next.js/Tailwind e viabilidade cross-platform.
+- ☁️ **[estrategia_hospedagem_oci_always_free_vs_render.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Planos_e_Arquitetura/estrategia_hospedagem_oci_always_free_vs_render.md)** — Comparativo estratégico de infraestrutura: Oracle Cloud Always Free (ARM Ampere 24GB/200GB) vs. Render.
 
 ---
 
