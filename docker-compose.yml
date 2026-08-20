@@ -1,0 +1,39 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sejong-companion-app
+    restart: always
+    environment:
+      - PORT=8554
+      - SEJONG_ADMIN_PIN=sejong2026
+      # Opcional: Descomente e insira sua chave Typecast para síntese ao vivo na nuvem
+      # - TYPECAST_API_KEY=sua_chave_aqui
+    ports:
+      - "8554:8554"
+    volumes:
+      # Volumes persistentes para que os dados dos alunos e áudios NUNCA sejam apagados
+      - ./assets/audio_cache:/app/assets/audio_cache
+      - ./data/sessions:/app/data/sessions
+      - ./data/telemetry:/app/data/telemetry
+      - ./data/reports:/app/data/reports
+
+  # Reverse Proxy Caddy para HTTPS automático com Let's Encrypt e compressão
+  caddy:
+    image: caddy:2-alpine
+    container_name: sejong-companion-caddy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+
+volumes:
+  caddy_data:
+  caddy_config:
