@@ -526,20 +526,35 @@ def admin_view(page: ft.Page) -> ft.View:
         spacing=4,
     )
 
+    tab_headers = [
+        ft.Tab(label="Diagnóstico da Turma", icon=ft.Icons.INSIGHTS_ROUNDED),
+        ft.Tab(label=f"Roster de Alunos ({len(all_students)})", icon=ft.Icons.PEOPLE_ROUNDED),
+    ]
+    tab_contents = [
+        tab_diagnostics_content,
+        tab_students_content,
+    ]
+
     tabs = ft.Tabs(
         selected_index=0,
         animation_duration=200,
-        tabs=[
-            ft.Tab(
-                text="📊 Diagnóstico da Turma",
-                content=tab_diagnostics_content,
-            ),
-            ft.Tab(
-                text=f"🎓 Roster de Alunos ({len(all_students)})",
-                content=tab_students_content,
-            ),
-        ],
         expand=True,
+        length=len(tab_headers),
+        content=ft.Column(
+            expand=True,
+            controls=[
+                ft.TabBar(
+                    tabs=tab_headers,
+                    label_color=colors["primary"],
+                    unselected_label_color=colors["text_sec"],
+                    indicator_color=colors["primary"],
+                ),
+                ft.TabBarView(
+                    expand=True,
+                    controls=tab_contents,
+                ),
+            ],
+        ),
     )
 
     return ft.View(

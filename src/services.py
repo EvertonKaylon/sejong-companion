@@ -73,10 +73,15 @@ class DataService:
         return "medium"
 
     @staticmethod
-    def get_all_flashcards(difficulty: Optional[str] = None) -> List[FlashcardItem]:
+    def get_all_flashcards(difficulty: Optional[str] = None, book: Optional[str] = None) -> List[FlashcardItem]:
         """Compila o vocabulário de todas as unidades dos livros 1A e 1B em cartões consistentes."""
         cards: List[FlashcardItem] = []
         for idx, unit_id in enumerate(DataService._get_all_unit_ids(), start=1):
+            is_1b = unit_id.startswith("unit_1b_")
+            unit_book = "1B" if is_1b else "1A"
+            if book and book.upper() != unit_book:
+                continue
+
             unit = DataService.get_unit(unit_id)
             if not unit:
                 continue
@@ -98,12 +103,15 @@ class DataService:
         return cards
 
     @staticmethod
-    def get_sentence_builder_challenges(difficulty: str) -> List[dict]:
+    def get_sentence_builder_challenges(difficulty: Optional[str] = None, book: Optional[str] = None) -> List[dict]:
         """Extrai desafios SOV existentes para não duplicar o currículo."""
-        if difficulty not in {"easy", "medium", "hard"}:
-            return []
         challenges: List[dict] = []
         for idx, unit_id in enumerate(DataService._get_all_unit_ids(), start=1):
+            is_1b = unit_id.startswith("unit_1b_")
+            unit_book = "1B" if is_1b else "1A"
+            if book and book.upper() != unit_book:
+                continue
+
             unit = DataService.get_unit(unit_id)
             if not unit:
                 continue
@@ -112,7 +120,7 @@ class DataService:
                     continue
                 category = "sintaxe"
                 level = DataService._flashcard_difficulty(idx, " ".join(exercise.correct_order), category)
-                if level != difficulty:
+                if difficulty and level != difficulty:
                     continue
                 prompt = exercise.question.split(":", 1)[-1].strip()
                 challenges.append({
@@ -304,6 +312,13 @@ class ProgressService:
                         return data
             except Exception as e:
                 print(f"[ProgressService] Warning: Error reading session {session_id}: {e}")
+                try:
+                    corrupt_backup = f"{path}.corrupt.bak"
+                    if os.path.exists(path):
+                        os.replace(path, corrupt_backup)
+                        print(f"[ProgressService] Corrupted session backed up to: {corrupt_backup}")
+                except Exception:
+                    pass
         return {}
 
     @classmethod
@@ -385,12 +400,12 @@ class ProgressService:
     def get_progress(self, unit_id: str) -> float:
         val = self._store.get(f"progress_{unit_id}", 0.0)
         try:
-            return float(val)
+            return max(0.0, min(1.0, float(val)))
         except (ValueError, TypeError):
             return 0.0
 
     def save_progress(self, unit_id: str, progress: float) -> None:
-        val = float(progress)
+        val = max(0.0, min(1.0, float(progress)))
         self._store[f"progress_{unit_id}"] = val
 
         # Desbloqueio progressivo via cadeia data-driven

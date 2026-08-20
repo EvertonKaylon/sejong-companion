@@ -11,15 +11,33 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 Pré-Alpha → Alpha → Beta → RC → RTM → GA
                ▲
           ESTAMOS AQUI
-          v0.3.1-alpha
+          v0.3.2-alpha
 ```
 
 | Fase | Versão Alvo | Critérios de Entrada |
 |------|-------------|----------------------|
-| **Alpha** (atual) | `0.3.1-alpha` | Livro Sejong 1A (11 unidades) + Livro Sejong 1B (12 unidades), 79 Testes Automatizados, HLR SRS, Lab Fonético, Drag & Drop SOV |
+| **Alpha** (atual) | `0.3.2-alpha` | Auditoria Global de Conteúdo (23 Unidades), 91 Testes Automatizados (100% OK), Hardening de Sessão, Filtros por Livro 1A/1B, Dashboard Admin Flet 0.28+ |
 | **Beta** | `0.6.0-beta` | Sincronização Cloud, Banco de dados persistente, PWA Mobile Audit, modo offline |
 | **RC** | `1.0.0-rc.1` | Feature-complete, testes E2E, zero bugs críticos |
 | **GA** | `1.0.0` | Pronto para distribuição pública |
+
+---
+
+## [0.3.2-alpha] — 2026-08-20
+
+### Classificação: Alpha
+> Milestone de Estabilização & Hardening: Auditoria profunda de 100% do currículo (23 unidades do Sejong 1A e 1B), isolamento e auto-recuperação de arquivos corrompidos em disco (`.corrupt.bak`), correção de compatibilidade `ft.Tabs` com Flet 0.28+ no Portal Admin, refinamento de UX com filtros por livro (1A / 1B) na Home e nos Flashcards, e expansão da suíte para 91 testes automatizados (100% OK).
+
+### Added — Features & UX
+- **Auditoria de Integridade Curricular (`scripts/audit_curriculum.py`)** — CLI de validação profunda que audita todas as 23 unidades, garantindo conformidade Pydantic, política estrita Zero Romanização, integridade de papéis sintáticos SOV e ausência de colisões de IDs.
+- **Filtros por Livro na Home (`home_view.py`)** — Adicionado seletor com pílulas interativas (`Todas`, `📘 Livro 1A`, `📗 Livro 1B`) e card de progresso resumido de cada livro no topo da grade.
+- **Filtros por Livro nos Flashcards (`flashcards_view.py`)** — Suporte a filtragem de vocabulário e criação de frases por Livro Didático (1A vs 1B) combinado com os níveis de dificuldade.
+- **Badges de Origem no Active Recall (`review_view.py`)** — Indicador visual de qual livro e unidade cada cartão pertence durante a revisão adaptativa.
+- **Hardening e Resiliência de Armazenamento (`ProgressService`)** — Auto-recuperação de sessões corrompidas com backup automático `.corrupt.bak` e clamping de progresso estrito entre $0.0$ e $1.0$.
+- **Correção de Compatibilidade Flet 0.28+ (`admin_view.py`)** — Migração de `ft.Tabs` para a sintaxe moderna `TabBar` + `TabBarView` com `label` e `icon`.
+
+### Added — Suíte de Testes
+- **91 Testes Automatizados (100% OK)** — Inclusão de `tests/test_curriculum_integrity.py` e novos testes de resiliência a corrupção de disco e clamping em `tests/test_progress_service.py`.
 
 ---
 

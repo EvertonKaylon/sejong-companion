@@ -12,12 +12,16 @@ def flashcards_view(page: ft.Page) -> ft.View:
     is_dark = page.theme_mode == ft.ThemeMode.DARK
     colors = get_theme_colors(is_dark)
     progress_service = ProgressService(page)
-    state = {"difficulty": None, "category": None, "mode": "cards", "index": 0, "started_at": time.monotonic()}
+    state = {"book": None, "difficulty": None, "category": None, "mode": "cards", "index": 0, "started_at": time.monotonic()}
     stage = ft.Container()
 
     def filtered_cards():
-        cards = DataService.get_all_flashcards(state["difficulty"])
+        cards = DataService.get_all_flashcards(difficulty=state["difficulty"], book=state["book"])
         return [card for card in cards if not state["category"] or card.category == state["category"]]
+
+    def set_book(book):
+        state.update({"book": book, "category": None, "index": 0})
+        render()
 
     def set_difficulty(difficulty):
         state.update({"difficulty": difficulty, "category": None, "index": 0})
@@ -43,16 +47,39 @@ def flashcards_view(page: ft.Page) -> ft.View:
         render()
 
     def render():
-        all_cards = DataService.get_all_flashcards(state["difficulty"])
+        all_cards = DataService.get_all_flashcards(difficulty=state["difficulty"], book=state["book"])
         categories = sorted({card.category for card in all_cards})
+        
+        # Filtro de Livro (Todos / 1A / 1B)
+        book_controls = []
+        for label, b_val in [("Todos os Livros", None), ("📘 Livro 1A", "1A"), ("📗 Livro 1B", "1B")]:
+            b_active = state["book"] == b_val
+            book_controls.append(ft.OutlinedButton(
+                content=ft.Text(label, size=12),
+                on_click=lambda e, bv=b_val: set_book(bv),
+                style=ft.ButtonStyle(
+                    color=ft.Colors.WHITE if b_active else colors["secondary"],
+                    bgcolor=colors["secondary"] if b_active else colors["surface"],
+                    padding=ft.Padding.symmetric(horizontal=10, vertical=4),
+                ),
+            ))
+
+        # Filtro de Dificuldade
         difficulty_controls = []
-        for label, value in [("Todos", None), ("Fácil · 초급", "easy"), ("Médio · 중급", "medium"), ("Difícil · 고급", "hard")]:
+        for label, value in [("Todos os Níveis", None), ("Fácil · 초급", "easy"), ("Médio · 중급", "medium"), ("Difícil · 고급", "hard")]:
             active = state["difficulty"] == value
             difficulty_controls.append(ft.OutlinedButton(
-                content=ft.Text(label), on_click=lambda e, v=value: set_difficulty(v),
-                style=ft.ButtonStyle(color=ft.Colors.WHITE if active else colors["primary"], bgcolor=colors["primary"] if active else colors["surface"]),
+                content=ft.Text(label, size=12),
+                on_click=lambda e, v=value: set_difficulty(v),
+                style=ft.ButtonStyle(
+                    color=ft.Colors.WHITE if active else colors["primary"],
+                    bgcolor=colors["primary"] if active else colors["surface"],
+                    padding=ft.Padding.symmetric(horizontal=10, vertical=4),
+                ),
             ))
+
         toolbar = ft.Column(controls=[
+            ft.Row(controls=book_controls, wrap=True, spacing=5, alignment=ft.MainAxisAlignment.CENTER),
             ft.Row(controls=difficulty_controls, wrap=True, spacing=5, alignment=ft.MainAxisAlignment.CENTER),
             ft.Row(controls=[
                 ft.OutlinedButton(content=ft.Text("🃏 Flashcards"), on_click=lambda e: set_mode("cards"),
@@ -63,7 +90,8 @@ def flashcards_view(page: ft.Page) -> ft.View:
             ft.Dropdown(label="Categoria", value=state["category"], options=[ft.DropdownOption(key=category, text=category.title()) for category in categories],
                         on_select=change_category, width=260, visible=state["mode"] == "cards"),
             ft.Text(f"✨ {progress_service.get_total_xp()} XP · 📅 {progress_service.get_daily_streak()} dias estudados", size=12, color=colors["accent"], text_align=ft.TextAlign.CENTER),
-        ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=8)
+        ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=6)
+
         if state["mode"] == "cards":
             cards = filtered_cards()
             if cards:
@@ -75,8 +103,7 @@ def flashcards_view(page: ft.Page) -> ft.View:
             else:
                 body = ft.Text("Nenhum cartão neste filtro.", color=colors["text_sec"], text_align=ft.TextAlign.CENTER)
         else:
-            levels = [state["difficulty"]] if state["difficulty"] else ["easy", "medium", "hard"]
-            challenges = [challenge for level in levels for challenge in DataService.get_sentence_builder_challenges(level)]
+            challenges = DataService.get_sentence_builder_challenges(difficulty=state["difficulty"], book=state["book"])
             if challenges:
                 state["index"] %= len(challenges)
                 body = ft.Column(controls=[
@@ -87,7 +114,7 @@ def flashcards_view(page: ft.Page) -> ft.View:
                     ft.TextButton(content=ft.Text("Próximo desafio →"), on_click=lambda e: next_challenge(len(challenges))),
                 ], horizontal_alignment=ft.CrossAxisAlignment.CENTER)
             else:
-                body = ft.Text("Ainda não há desafios nesta dificuldade.", color=colors["text_sec"])
+                body = ft.Text("Ainda não há desafios neste filtro.", color=colors["text_sec"])
         stage.content = ft.Column(controls=[toolbar, ft.Divider(color=colors["border"]), body], spacing=12)
         try:
             stage.update()

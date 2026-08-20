@@ -276,6 +276,24 @@ class TestProgressService(unittest.TestCase):
         self.assertFalse(ok)
         self.assertEqual(self.service.get_progress("unit_01"), 1.0)
 
+    def test_corrupted_disk_file_handling(self):
+        """Arquivo de sessão corrompido em disco gera backup .corrupt.bak e reinicia seguro."""
+        with open(self.test_storage_file, "w", encoding="utf-8") as f:
+            f.write("{invalid_json: 123 broken")
+
+        ProgressService._sessions.clear()
+        service = ProgressService(MockPage())
+        self.assertEqual(service.get_progress("unit_01"), 0.0)
+        self.assertTrue(os.path.exists(f"{self.test_storage_file}.corrupt.bak"))
+
+    def test_progress_clamping(self):
+        """Valores de progresso são sempre limitados estritamente entre 0.0 e 1.0."""
+        self.service.save_progress("unit_01", -0.5)
+        self.assertEqual(self.service.get_progress("unit_01"), 0.0)
+
+        self.service.save_progress("unit_01", 1.8)
+        self.assertEqual(self.service.get_progress("unit_01"), 1.0)
+
 
 if __name__ == "__main__":
     unittest.main()

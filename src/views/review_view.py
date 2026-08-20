@@ -86,6 +86,39 @@ def review_view(page: ft.Page) -> ft.View:
         else:
             render_current()
 
+    def get_card_source_badge(unit_id: str):
+        if unit_id.startswith("unit_1b_"):
+            u_num = int(unit_id.split("_")[-1])
+            return ft.Container(
+                content=ft.Row(
+                    controls=[
+                        ft.Icon(ft.Icons.AUTO_STORIES_ROUNDED, size=12, color=colors["secondary"]),
+                        ft.Text(f"Sejong 1B · Unidade {u_num:02d}", size=11, weight=ft.FontWeight.BOLD, color=colors["secondary"]),
+                    ],
+                    spacing=4,
+                ),
+                bgcolor=f"{colors['secondary']}18",
+                border=ft.Border.all(1, f"{colors['secondary']}44"),
+                border_radius=Styles.BORDER_RADIUS_SM,
+                padding=ft.Padding.symmetric(horizontal=8, vertical=3),
+            )
+        elif unit_id.startswith("unit_"):
+            u_num = int(unit_id.split("_")[-1])
+            return ft.Container(
+                content=ft.Row(
+                    controls=[
+                        ft.Icon(ft.Icons.MENU_BOOK_ROUNDED, size=12, color=colors["primary"]),
+                        ft.Text(f"Sejong 1A · Unidade {u_num:02d}", size=11, weight=ft.FontWeight.BOLD, color=colors["primary"]),
+                    ],
+                    spacing=4,
+                ),
+                bgcolor=f"{colors['primary']}18",
+                border=ft.Border.all(1, f"{colors['primary']}44"),
+                border_radius=Styles.BORDER_RADIUS_SM,
+                padding=ft.Padding.symmetric(horizontal=8, vertical=3),
+            )
+        return ft.Container()
+
     def render_current():
         index = state["index"]
         total = len(state["cards"])
@@ -94,7 +127,10 @@ def review_view(page: ft.Page) -> ft.View:
         content.content = ft.Column(
             controls=[
                 ft.Row(controls=[
-                    ft.Text(f"Cartão {index + 1} de {total}", size=12, color=colors["text_sec"]),
+                    ft.Row(controls=[
+                        ft.Text(f"Cartão {index + 1} de {total}", size=12, color=colors["text_sec"]),
+                        get_card_source_badge(card.unit_id),
+                    ], spacing=8, vertical_alignment=ft.CrossAxisAlignment.CENTER),
                     ft.Text(f"📅 {progress_service.get_daily_streak()} dias  ·  ✨ {progress_service.get_total_xp()} XP", size=12, color=colors["accent"]),
                 ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
                 ft.ProgressBar(value=index / total if total else 0, color=colors["secondary"], bgcolor=colors["border"], height=6),
@@ -111,7 +147,10 @@ def review_view(page: ft.Page) -> ft.View:
         retention = due_entries[0]["retention"]
         content.content = ft.Column(controls=[
             ft.Row(controls=[
-                ft.Text(f"Cartão {index + 1} de {total}", size=12, color=colors["text_sec"]),
+                ft.Row(controls=[
+                    ft.Text(f"Cartão {index + 1} de {total}", size=12, color=colors["text_sec"]),
+                    get_card_source_badge(card.unit_id),
+                ], spacing=8, vertical_alignment=ft.CrossAxisAlignment.CENTER),
                 ft.Text(f"📅 {progress_service.get_daily_streak()} dias  ·  ✨ {progress_service.get_total_xp()} XP", size=12, color=colors["accent"]),
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
             ft.ProgressBar(value=0, color=colors["secondary"], bgcolor=colors["border"], height=6),

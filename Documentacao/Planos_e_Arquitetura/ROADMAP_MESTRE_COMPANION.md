@@ -62,30 +62,20 @@ flowchart TD
 ---
 
 ## 🟡 Fase 3: `v0.3.2-alpha` — Stabilization & Hardening
-> **Status:** PLANEJADO (Meta Imediata)  
+> **Status:** CONCLUÍDO (Branch `develop`)  
 > **Foco:** Eliminação de pontas soltas, validação de integridade e refinamento de UX para toda a base 1A + 1B.
 
-### Objetivos & Entregáveis Detalhados:
-1. **Validação Estrita de Conteúdo (JSON Audit Global):**
-   - Script automatizado de validação sintática para todos os arquivos de unidades 1A e 1B.
-   - Garantir que todo item de vocabulário e questão SOV possua áudios pré-aquecidos e contratos semânticos válidos.
-2. **Refinamento de UX nas Filas de Revisão e Trilha:**
-   - Polimento das transições de visualização entre livros 1A e 1B no menu e na Home.
-   - Ajustar textos e dicas visuais em telas com menos de 360px de largura.
-3. **Auditoria de Responsividade Mobile / PWA:**
-   - Validar viewport e gestos de toque no Chrome Mobile e Safari iOS.
-   - Testar o comportamento do player de áudio sob bloqueio de autoplay no primeiro toque.
-4. **Isolamento de Erros e Logs:**
-   - Hardening no `ProgressService` contra arquivos de sessão corrompidos em disco.
-
-### Critério de Aceite:
-- 100% dos JSONs validados por schema Pydantic em teste automatizado contínuo.
-- 0 regressões na suíte de testes.
+### Entregáveis Concluídos:
+- [x] **Auditoria Global de Conteúdo (23 Unidades):** Script CLI `scripts/audit_curriculum.py` e suíte `tests/test_curriculum_integrity.py` validando schemas Pydantic, Zero Romanização, unicidade de IDs e consistência semântica SOV.
+- [x] **Hardening de Armazenamento e Auto-Recuperação:** Proteção contra sessões corrompidas com backup automático `.corrupt.bak` e clamping de limites em `ProgressService`.
+- [x] **Refinamento de UX de Trilha e Fila:** Filtros rápidos por Livro (`Todas`, `📘 1A`, `📗 1B`) na Home e nos Flashcards, cards de progresso resumido 1A/1B e badges de origem no Active Recall.
+- [x] **Compatibilidade Flet 0.28+:** Adequação de `ft.Tabs` com `TabBar` e `TabBarView` no Portal Admin (`/admin`).
+- [x] **Suíte de Testes Expandida:** Total de **91 testes automatizados (100% OK)**.
 
 ---
 
-## 🟠 Fase 3: `v0.4.0-alpha` — The Learning Engine
-> **Status:** PLANEJADO  
+## 🟠 Fase 4: `v0.4.0-alpha` — The Learning Engine
+> **Status:** PLANEJADO (Meta Imediata)  
 > **Foco:** Implementação da IA Simbólica / Cognitiva Local conforme [[decisao_arquitetural_motor_adaptativo_local_vs_llm]].
 
 ### Objetivos & Entregáveis Detalhados:

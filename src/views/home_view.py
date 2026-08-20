@@ -201,68 +201,105 @@ def home_view(page: ft.Page) -> ft.View:
                 ft.Icon(ft.Icons.ARROW_FORWARD_IOS_ROUNDED, size=16, color=colors["primary"]),
             ], vertical_alignment=ft.CrossAxisAlignment.CENTER, spacing=10,
         ),
-        bgcolor=colors["card_bg"], border=ft.Border.all(1, colors["secondary"]), border_radius=Styles.BORDER_RADIUS_MD,
-        padding=12, margin=ft.Margin.only(bottom=16), on_click=lambda e: page.router.navigate_to("/flashcards"),
+        bgcolor=colors["card_bg"], border=ft.Border.all(1, colors["secondary"]), border_radius=Styles.BORDER_R    # ─── SUMÁRIO DE PROGRESSO DOS LIVROS (1A & 1B) ───
+    completed_1a = sum(1 for u in curriculum if (getattr(u, "book", "1A") == "1A" and u.id != "unit_intro" or u.id == "unit_intro") and progress_service.get_progress(u.id) >= 1.0)
+    total_1a = sum(1 for u in curriculum if getattr(u, "book", "1A") == "1A" or u.id == "unit_intro")
+    completed_1b = sum(1 for u in curriculum if getattr(u, "book", "") == "1B" or u.id.startswith("unit_1b_") and progress_service.get_progress(u.id) >= 1.0)
+    total_1b = sum(1 for u in curriculum if getattr(u, "book", "") == "1B" or u.id.startswith("unit_1b_"))
+
+    progress_summary_card = ft.Container(
+        content=ft.Row(
+            controls=[
+                ft.Container(
+                    content=ft.Column(
+                        controls=[
+                            ft.Row(
+                                controls=[
+                                    ft.Row(
+                                        controls=[
+                                            ft.Icon(ft.Icons.MENU_BOOK_ROUNDED, size=14, color=colors["primary"]),
+                                            ft.Text("Livro 1A", size=12, weight=ft.FontWeight.BOLD, color=colors["primary"]),
+                                        ],
+                                        spacing=4,
+                                    ),
+                                    ft.Text(f"{completed_1a}/{total_1a}", size=11, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                                ],
+                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                            ),
+                            ft.ProgressBar(
+                                value=completed_1a / max(1, total_1a),
+                                color=colors["primary"],
+                                bgcolor=colors["border"],
+                                height=4,
+                                border_radius=2,
+                            ),
+                        ],
+                        spacing=3,
+                    ),
+                    expand=True,
+                ),
+                ft.Container(width=10),
+                ft.Container(
+                    content=ft.Column(
+                        controls=[
+                            ft.Row(
+                                controls=[
+                                    ft.Row(
+                                        controls=[
+                                            ft.Icon(ft.Icons.AUTO_STORIES_ROUNDED, size=14, color=colors["secondary"]),
+                                            ft.Text("Livro 1B", size=12, weight=ft.FontWeight.BOLD, color=colors["secondary"]),
+                                        ],
+                                        spacing=4,
+                                    ),
+                                    ft.Text(f"{completed_1b}/{total_1b}", size=11, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                                ],
+                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                            ),
+                            ft.ProgressBar(
+                                value=completed_1b / max(1, total_1b),
+                                color=colors["secondary"],
+                                bgcolor=colors["border"],
+                                height=4,
+                                border_radius=2,
+                            ),
+                        ],
+                        spacing=3,
+                    ),
+                    expand=True,
+                ),
+            ],
+        ),
+        bgcolor=colors["surface"],
+        border=ft.Border.all(1, colors["border"]),
+        border_radius=Styles.BORDER_RADIUS_MD,
+        padding=10,
+        margin=ft.Margin.only(bottom=14),
     )
 
-    # ─── CARDS DAS UNIDADES ───
+    # ─── CARDS DAS UNIDADES COM FILTRAGEM REATIVA ───
+    selected_filter = ["ALL"]  # "ALL" | "1A" | "1B"
+    units_column = ft.Column(spacing=0)
+    filter_pills_row = ft.Row(spacing=6)
 
-    unit_cards = []
-    has_shown_1a_header = False
-    has_shown_1b_header = False
-
-    for unit in curriculum:
-        is_1b = getattr(unit, "book", "") == "1B" or unit.id.startswith("unit_1b_")
-
-        if not is_1b and not has_shown_1a_header:
-            unit_cards.append(
-                ft.Container(
-                    content=ft.Row(
-                        controls=[
-                            ft.Icon(ft.Icons.MENU_BOOK_ROUNDED, size=16, color=colors["primary"]),
-                            ft.Text("Sejong Coreano 1A · 세종한국어 1A", size=13, weight=ft.FontWeight.BOLD, color=colors["primary"]),
-                        ],
-                        spacing=6,
-                    ),
-                    margin=ft.Margin.only(top=10, bottom=8),
-                )
-            )
-            has_shown_1a_header = True
-        elif is_1b and not has_shown_1b_header:
-            unit_cards.append(
-                ft.Container(
-                    content=ft.Row(
-                        controls=[
-                            ft.Icon(ft.Icons.AUTO_STORIES_ROUNDED, size=16, color=colors["secondary"]),
-                            ft.Text("Sejong Coreano 1B · 세종한국어 1B", size=13, weight=ft.FontWeight.BOLD, color=colors["secondary"]),
-                        ],
-                        spacing=6,
-                    ),
-                    margin=ft.Margin.only(top=14, bottom=8),
-                )
-            )
-            has_shown_1b_header = True
-
+    def render_single_unit_card(unit, is_1b: bool):
         unit_progress = progress_service.get_progress(unit.id)
         is_unlocked = progress_service.is_unlocked(unit.id)
 
-        def create_click_handler(u_id=unit.id, unlocked=is_unlocked):
-            def handler(e):
-                if not unlocked:
-                    snack = ft.SnackBar(
-                        content=ft.Text("🔒 Complete as unidades anteriores para desbloquear esta!"),
-                        bgcolor=colors["secondary"],
-                        open=True,
-                    )
-                    page.overlay.append(snack)
-                    page.update()
-                    return
+        def click_handler(e):
+            if not is_unlocked:
+                snack = ft.SnackBar(
+                    content=ft.Text("🔒 Complete as unidades anteriores para desbloquear esta!"),
+                    bgcolor=colors["secondary"],
+                    open=True,
+                )
+                page.overlay.append(snack)
+                page.update()
+                return
 
-                if u_id == "unit_intro":
-                    page.router.navigate_to("/hangul", u_id)
-                else:
-                    page.router.navigate_to("/lesson", u_id)
-            return handler
+            if unit.id == "unit_intro":
+                page.router.navigate_to("/hangul", unit.id)
+            else:
+                page.router.navigate_to("/lesson", unit.id)
 
         if unit.id == "unit_intro":
             badge_text = "H"
@@ -290,7 +327,6 @@ def home_view(page: ft.Page) -> ft.View:
         }
         vitality_tooltip = vitality_tooltip_map.get(vitality, "")
 
-        # Badge com orbe de vitalidade
         badge_stack = ft.Stack(
             controls=[
                 ft.Container(
@@ -298,7 +334,7 @@ def home_view(page: ft.Page) -> ft.View:
                         badge_text,
                         weight=ft.FontWeight.BOLD,
                         color=ft.Colors.WHITE if is_unlocked else colors["text_sec"],
-                        size=15
+                        size=15,
                     ),
                     bgcolor=badge_color,
                     shape=ft.BoxShape.CIRCLE,
@@ -321,8 +357,8 @@ def home_view(page: ft.Page) -> ft.View:
             width=38,
             height=38,
         )
-        
-        card_content = ft.Container(
+
+        return ft.Container(
             content=ft.Row(
                 controls=[
                     badge_stack,
@@ -335,10 +371,10 @@ def home_view(page: ft.Page) -> ft.View:
                                         ft.Icons.LOCK_ROUNDED,
                                         size=14,
                                         color=colors["text_sec"],
-                                        visible=not is_unlocked
-                                    )
+                                        visible=not is_unlocked,
+                                    ),
                                 ],
-                                spacing=6
+                                spacing=6,
                             ),
                             ft.Text(unit.title_pt, size=12, weight=ft.FontWeight.W_500, color=colors["text_sec"]),
                             ft.Text(
@@ -346,7 +382,7 @@ def home_view(page: ft.Page) -> ft.View:
                                 size=11,
                                 color=colors["text_sec"],
                                 max_lines=2,
-                                overflow=ft.TextOverflow.ELLIPSIS
+                                overflow=ft.TextOverflow.ELLIPSIS,
                             ),
                             ft.Container(height=4),
                             ft.ProgressBar(
@@ -355,25 +391,104 @@ def home_view(page: ft.Page) -> ft.View:
                                 bgcolor=colors["border"],
                                 height=4,
                                 border_radius=2,
-                                visible=is_unlocked
-                            ) if is_unlocked else ft.Container()
+                                visible=is_unlocked,
+                            ) if is_unlocked else ft.Container(),
                         ],
                         spacing=1,
                         expand=True,
-                    )
+                    ),
                 ],
                 alignment=ft.MainAxisAlignment.START,
-                vertical_alignment=ft.CrossAxisAlignment.CENTER
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
             ),
             bgcolor=colors["card_bg"] if is_unlocked else "#0874717F",
             border=ft.Border.all(1, colors["primary_light"] if is_unlocked and unit_progress > 0 else colors["border"]),
             border_radius=Styles.BORDER_RADIUS_MD,
             padding=14,
             shadow=Styles.CARD_SHADOW if is_unlocked else None,
-            on_click=create_click_handler(unit.id, is_unlocked),
-            margin=ft.Margin.only(bottom=10)
+            on_click=click_handler,
+            margin=ft.Margin.only(bottom=10),
         )
-        unit_cards.append(card_content)
+
+    def refresh_units_display():
+        units_column.controls.clear()
+        filter_mode = selected_filter[0]
+
+        has_shown_1a = False
+        has_shown_1b = False
+
+        for unit in curriculum:
+            is_1b = getattr(unit, "book", "") == "1B" or unit.id.startswith("unit_1b_")
+
+            if filter_mode == "1A" and is_1b:
+                continue
+            if filter_mode == "1B" and not is_1b:
+                continue
+
+            if filter_mode == "ALL":
+                if not is_1b and not has_shown_1a:
+                    units_column.controls.append(
+                        ft.Container(
+                            content=ft.Row(
+                                controls=[
+                                    ft.Icon(ft.Icons.MENU_BOOK_ROUNDED, size=16, color=colors["primary"]),
+                                    ft.Text("Sejong Coreano 1A · 세종한국어 1A", size=13, weight=ft.FontWeight.BOLD, color=colors["primary"]),
+                                ],
+                                spacing=6,
+                            ),
+                            margin=ft.Margin.only(top=10, bottom=8),
+                        )
+                    )
+                    has_shown_1a = True
+                elif is_1b and not has_shown_1b:
+                    units_column.controls.append(
+                        ft.Container(
+                            content=ft.Row(
+                                controls=[
+                                    ft.Icon(ft.Icons.AUTO_STORIES_ROUNDED, size=16, color=colors["secondary"]),
+                                    ft.Text("Sejong Coreano 1B · 세종한국어 1B", size=13, weight=ft.FontWeight.BOLD, color=colors["secondary"]),
+                                ],
+                                spacing=6,
+                            ),
+                            margin=ft.Margin.only(top=14, bottom=8),
+                        )
+                    )
+                    has_shown_1b = True
+
+            units_column.controls.append(render_single_unit_card(unit, is_1b))
+
+    def set_filter(mode: str):
+        selected_filter[0] = mode
+        refresh_filter_pills()
+        refresh_units_display()
+        page.update()
+
+    def refresh_filter_pills():
+        filter_pills_row.controls.clear()
+        filters_data = [
+            ("Todas", "ALL", len(curriculum)),
+            ("Livro 1A", "1A", total_1a),
+            ("Livro 1B", "1B", total_1b),
+        ]
+        for label, mode, count in filters_data:
+            is_active = selected_filter[0] == mode
+            pill = ft.Container(
+                content=ft.Text(
+                    f"{label} ({count})",
+                    size=12,
+                    weight=ft.FontWeight.BOLD if is_active else ft.FontWeight.W_500,
+                    color=ft.Colors.WHITE if is_active else colors["text_sec"],
+                ),
+                bgcolor=colors["primary"] if is_active else colors["surface"],
+                border=ft.Border.all(1, colors["primary"] if is_active else colors["border"]),
+                border_radius=Styles.BORDER_RADIUS_SM,
+                padding=ft.Padding.symmetric(horizontal=10, vertical=5),
+                on_click=lambda e, m=mode: set_filter(m),
+            )
+            filter_pills_row.controls.append(pill)
+
+    refresh_filter_pills()
+    refresh_units_display()
 
     return ft.View(
         route="/home",
@@ -389,8 +504,17 @@ def home_view(page: ft.Page) -> ft.View:
                         progress_summary,
                         review_card,
                         flashcards_card,
-                        ft.Text("Grade Curricular", size=15, weight=ft.FontWeight.BOLD, color=colors["text"]),
-                        ft.Column(controls=unit_cards),
+                        progress_summary_card,
+                        ft.Row(
+                            controls=[
+                                ft.Text("Grade Curricular", size=15, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                                filter_pills_row,
+                            ],
+                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                        ),
+                        ft.Container(height=8),
+                        units_column,
                     ],
                     spacing=0,
                 ),
@@ -399,5 +523,5 @@ def home_view(page: ft.Page) -> ft.View:
         ],
         scroll=ft.ScrollMode.AUTO,
         bgcolor=colors["bg"],
-        padding=0
+        padding=0,
     )
