@@ -216,10 +216,17 @@ def home_view(page: ft.Page) -> ft.View:
     )
 
     # ─── SUMÁRIO DE PROGRESSO DOS LIVROS (1A & 1B) ───
-    completed_1a = sum(1 for u in curriculum if (getattr(u, "book", "1A") == "1A" and u.id != "unit_intro" or u.id == "unit_intro") and progress_service.get_progress(u.id) >= 1.0)
-    total_1a = sum(1 for u in curriculum if getattr(u, "book", "1A") == "1A" or u.id == "unit_intro")
-    completed_1b = sum(1 for u in curriculum if getattr(u, "book", "") == "1B" or u.id.startswith("unit_1b_") and progress_service.get_progress(u.id) >= 1.0)
-    total_1b = sum(1 for u in curriculum if getattr(u, "book", "") == "1B" or u.id.startswith("unit_1b_"))
+    completed_1a = sum(
+        1 for u in curriculum
+        if (not u.id.startswith("unit_1b_")) and progress_service.get_progress(u.id) >= 1.0
+    )
+    total_1a = sum(1 for u in curriculum if not u.id.startswith("unit_1b_"))
+
+    completed_1b = sum(
+        1 for u in curriculum
+        if u.id.startswith("unit_1b_") and progress_service.get_progress(u.id) >= 1.0
+    )
+    total_1b = sum(1 for u in curriculum if u.id.startswith("unit_1b_"))
 
     progress_summary_card = ft.Container(
         content=ft.Row(
