@@ -194,14 +194,28 @@ def home_view(page: ft.Page) -> ft.View:
             controls=[
                 ft.Container(content=ft.Text("🃏", size=24), width=44, height=44, alignment=ft.Alignment.CENTER,
                              bgcolor="#147C4DFF", border_radius=Styles.BORDER_RADIUS_SM),
-                ft.Column(controls=[
-                    ft.Text("Flashcards & Criação de Texto · 문장", size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),
-                    ft.Text("Treine por nível e monte frases em coreano.", size=11, color=colors["text_sec"]),
-                ], spacing=2, expand=True),
+                ft.Column(
+                    controls=[
+                        ft.Text("Flashcards & Criação de Texto · 문장", size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                        ft.Text("Treine por nível e monte frases em coreano.", size=11, color=colors["text_sec"]),
+                    ],
+                    spacing=2,
+                    expand=True,
+                ),
                 ft.Icon(ft.Icons.ARROW_FORWARD_IOS_ROUNDED, size=16, color=colors["primary"]),
-            ], vertical_alignment=ft.CrossAxisAlignment.CENTER, spacing=10,
+            ],
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=10,
         ),
-        bgcolor=colors["card_bg"], border=ft.Border.all(1, colors["secondary"]), border_radius=Styles.BORDER_R    # ─── SUMÁRIO DE PROGRESSO DOS LIVROS (1A & 1B) ───
+        bgcolor=colors["card_bg"],
+        border=ft.Border.all(1, colors["secondary"]),
+        border_radius=Styles.BORDER_RADIUS_MD,
+        padding=12,
+        margin=ft.Margin.only(bottom=16),
+        on_click=lambda e: page.router.navigate_to("/flashcards"),
+    )
+
+    # ─── SUMÁRIO DE PROGRESSO DOS LIVROS (1A & 1B) ───
     completed_1a = sum(1 for u in curriculum if (getattr(u, "book", "1A") == "1A" and u.id != "unit_intro" or u.id == "unit_intro") and progress_service.get_progress(u.id) >= 1.0)
     total_1a = sum(1 for u in curriculum if getattr(u, "book", "1A") == "1A" or u.id == "unit_intro")
     completed_1b = sum(1 for u in curriculum if getattr(u, "book", "") == "1B" or u.id.startswith("unit_1b_") and progress_service.get_progress(u.id) >= 1.0)
