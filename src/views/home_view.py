@@ -492,12 +492,15 @@ def home_view(page: ft.Page) -> ft.View:
                     size=12,
                     weight=ft.FontWeight.BOLD if is_active else ft.FontWeight.W_500,
                     color=ft.Colors.WHITE if is_active else colors["text_sec"],
+                    text_align=ft.TextAlign.CENTER,
                 ),
                 bgcolor=colors["primary"] if is_active else colors["surface"],
                 border=ft.Border.all(1, colors["primary"] if is_active else colors["border"]),
                 border_radius=Styles.BORDER_RADIUS_SM,
-                padding=ft.Padding.symmetric(horizontal=10, vertical=5),
+                padding=ft.Padding.symmetric(horizontal=4, vertical=6),
+                alignment=ft.Alignment.CENTER,
                 on_click=lambda e, m=mode: set_filter(m),
+                expand=True,
             )
             filter_pills_row.controls.append(pill)
 
@@ -519,15 +522,10 @@ def home_view(page: ft.Page) -> ft.View:
                         review_card,
                         flashcards_card,
                         progress_summary_card,
-                        ft.Row(
-                            controls=[
-                                ft.Text("Grade Curricular", size=15, weight=ft.FontWeight.BOLD, color=colors["text"]),
-                                filter_pills_row,
-                            ],
-                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                        ),
+                        ft.Text("Grade Curricular", size=15, weight=ft.FontWeight.BOLD, color=colors["text"]),
                         ft.Container(height=8),
+                        filter_pills_row,
+                        ft.Container(height=10),
                         units_column,
                     ],
                     spacing=0,
