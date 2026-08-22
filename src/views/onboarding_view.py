@@ -108,7 +108,7 @@ def onboarding_view(page: ft.Page) -> ft.View:
         restore_btn.visible = show_restore[0]
         name_input.visible = not show_restore[0]
         start_btn.visible = not show_restore[0]
-        toggle_link.text = "← Voltar para criar novo perfil" if show_restore[0] else "Já tem um código de aluno? Restaurar progresso"
+        toggle_link.content.value = "← Voltar para criar novo perfil" if show_restore[0] else "Já tem um código de aluno? Restaurar progresso"
         error_text.visible = False
         page.update()
 
@@ -147,7 +147,7 @@ def onboarding_view(page: ft.Page) -> ft.View:
     )
 
     toggle_link = ft.TextButton(
-        text="Já tem um código de aluno? Restaurar progresso",
+        content=ft.Text("Já tem um código de aluno? Restaurar progresso", size=12),
         on_click=toggle_restore_mode,
         style=ft.ButtonStyle(color=colors["secondary"]),
     )
