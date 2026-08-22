@@ -1,6 +1,6 @@
 # Configuração do Caddy para o Sejong Companion
-# Se você tiver um domínio próprio (ex: sejong.seusite.com), substitua ":80" pelo domínio para ter SSL automático (HTTPS).
-:80 {
+# Suporta tanto o domínio DuckDNS oficial quanto acesso direto por IP na porta 80
+sejongcompanion.duckdns.org, :80 {
     # Proxy reverso para o container do Sejong Companion com suporte total a WebSockets Flet
     reverse_proxy app:8554 {
         header_up Host {host}
