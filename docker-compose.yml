@@ -7,9 +7,8 @@ services:
     restart: always
     environment:
       - PORT=8554
-      - SEJONG_ADMIN_PIN=sejong2026
-      # Opcional: Descomente e insira sua chave Typecast para síntese ao vivo na nuvem
-      # - TYPECAST_API_KEY=sua_chave_aqui
+      - SEJONG_ADMIN_PIN=${SEJONG_ADMIN_PIN:-sejong2026}
+      - TYPECAST_API_KEY=${TYPECAST_API_KEY:-}
     ports:
       - "8554:8554"
     volumes:
