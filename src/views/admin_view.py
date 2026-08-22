@@ -180,7 +180,7 @@ def admin_view(page: ft.Page) -> ft.View:
             on_click=lambda e: page.router.navigate_to("/home"),
             tooltip="Voltar para a Home",
         ),
-        title=ft.Text("Portal do Professor · 교사용", weight=ft.FontWeight.BOLD, size=18, color=colors["text"]),
+        title=ft.Text("Portal do Professor", weight=ft.FontWeight.BOLD, size=16, color=colors["text"]),
         bgcolor=colors["surface"],
         elevation=0,
         actions=[
@@ -202,7 +202,7 @@ def admin_view(page: ft.Page) -> ft.View:
                 on_click=handle_logout,
                 tooltip="Sair do Modo Admin",
             ),
-            ft.Container(width=6),
+            ft.Container(width=4),
         ],
     )
 
@@ -215,35 +215,45 @@ def admin_view(page: ft.Page) -> ft.View:
                         controls=[
                             ft.Container(
                                 content=ft.Text(icon, size=18),
-                                width=34,
-                                height=34,
+                                width=32,
+                                height=32,
                                 alignment=ft.Alignment.CENTER,
                                 bgcolor=f"{color_hex}15",
                                 border_radius=Styles.BORDER_RADIUS_SM,
                             ),
                             ft.Text(title, size=12, weight=ft.FontWeight.W_600, color=colors["text_sec"]),
                         ],
-                        spacing=8,
+                        spacing=6,
                         vertical_alignment=ft.CrossAxisAlignment.CENTER,
                     ),
-                    ft.Text(value, size=22, weight=ft.FontWeight.BOLD, color=colors["text"]),
-                    ft.Text(subtitle, size=11, color=colors["text_sec"]),
+                    ft.Text(value, size=20, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                    ft.Text(subtitle, size=10, color=colors["text_sec"]),
                 ],
-                spacing=3,
+                spacing=2,
             ),
             bgcolor=colors["surface"],
             border=ft.Border.all(1, colors["border"]),
             border_radius=Styles.BORDER_RADIUS_MD,
-            padding=12,
+            padding=10,
             expand=True,
         )
 
-    kpi_row = ft.Row(
+    kpi_grid = ft.Column(
         controls=[
-            make_kpi_card("Alunos", str(kpis["total_students"]), "Perfis em disco", "👥", colors["primary"]),
-            make_kpi_card("Progresso Médio", f"{kpis['avg_progress_pct']:.1%}", "Currículo 1A + 1B", "📊", colors["secondary"]),
-            make_kpi_card("Retenção SRS", f"{kpis['avg_retention_pct']:.1%}", f"{kpis['total_memory_nodes']} cartões", "🧠", colors["vitality_high"]),
-            make_kpi_card("Quizzes", str(kpis["total_quizzes_completed"]), f"{kpis['total_telemetry_events']} eventos", "📝", "#F88807"),
+            ft.Row(
+                controls=[
+                    make_kpi_card("Alunos", str(kpis["total_students"]), "Perfis registrados", "👥", colors["primary"]),
+                    make_kpi_card("Progresso Médio", f"{kpis['avg_progress_pct']:.1%}", "Currículo 1A + 1B", "📊", colors["secondary"]),
+                ],
+                spacing=8,
+            ),
+            ft.Row(
+                controls=[
+                    make_kpi_card("Retenção SRS", f"{kpis['avg_retention_pct']:.1%}", f"{kpis['total_memory_nodes']} cartões", "🧠", colors["vitality_high"]),
+                    make_kpi_card("Quizzes", str(kpis["total_quizzes_completed"]), f"{kpis['total_telemetry_events']} eventos", "📝", "#F88807"),
+                ],
+                spacing=8,
+            ),
         ],
         spacing=8,
     )
@@ -378,14 +388,14 @@ def admin_view(page: ft.Page) -> ft.View:
 
     tab_diagnostics_content = ft.Column(
         controls=[
-            ft.Container(height=10),
-            ft.Text("⚠️ Questões com Maior Taxa de Erro (Top Foco de Reforço)", size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),
+            ft.Container(height=6),
+            ft.Text("⚠️ Questões com Maior Taxa de Erro", size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),
             ft.Column(controls=hardest_controls, spacing=0),
-            ft.Container(height=14),
+            ft.Container(height=12),
             ft.Text("📉 Funil de Conclusão e Abandono por Unidade", size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),
             ft.Column(controls=drop_off_controls, spacing=0),
-            ft.Container(height=14),
-            ft.Text("🔄 Vocabulário com Maior Taxa de 'Again' (Memória Frágil)", size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),
+            ft.Container(height=12),
+            ft.Text("🔄 Vocabulário Crítico no Active Recall (Again)", size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),
             ft.Column(controls=vocab_controls, spacing=0),
         ],
         spacing=2,
@@ -516,7 +526,7 @@ def admin_view(page: ft.Page) -> ft.View:
 
     tab_students_content = ft.Column(
         controls=[
-            ft.Container(height=10),
+            ft.Container(height=6),
             search_field,
             ft.Container(height=6),
             students_list_column,
@@ -524,36 +534,54 @@ def admin_view(page: ft.Page) -> ft.View:
         spacing=4,
     )
 
-    tab_headers = [
-        ft.Tab(label="Diagnóstico da Turma", icon=ft.Icons.INSIGHTS_ROUNDED),
-        ft.Tab(label=f"Roster de Alunos ({len(all_students)})", icon=ft.Icons.PEOPLE_ROUNDED),
-    ]
-    tab_contents = [
-        tab_diagnostics_content,
-        tab_students_content,
-    ]
+    # ─── SEGMENTED TAB SWITCHER (100% RESPONSIVO / SEM COLLAPSE) ───
+    active_tab = [0]
+    tab_container = ft.Container(content=tab_diagnostics_content)
 
-    tabs = ft.Tabs(
-        selected_index=0,
-        animation_duration=200,
-        expand=True,
-        length=len(tab_headers),
-        content=ft.Column(
-            expand=True,
+    tab_btn_diag = ft.Container(expand=True)
+    tab_btn_roster = ft.Container(expand=True)
+    tabs_switcher_row = ft.Row(controls=[tab_btn_diag, tab_btn_roster], spacing=8)
+
+    def set_tab(index: int):
+        active_tab[0] = index
+        tab_container.content = tab_diagnostics_content if index == 0 else tab_students_content
+        refresh_tab_buttons()
+        page.update()
+
+    def refresh_tab_buttons():
+        is_diag = active_tab[0] == 0
+        tab_btn_diag.content = ft.Row(
             controls=[
-                ft.TabBar(
-                    tabs=tab_headers,
-                    label_color=colors["primary"],
-                    unselected_label_color=colors["text_sec"],
-                    indicator_color=colors["primary"],
-                ),
-                ft.TabBarView(
-                    expand=True,
-                    controls=tab_contents,
-                ),
+                ft.Icon(ft.Icons.INSIGHTS_ROUNDED, size=15, color=ft.Colors.WHITE if is_diag else colors["text_sec"]),
+                ft.Text("Diagnóstico da Turma", size=12, weight=ft.FontWeight.BOLD if is_diag else ft.FontWeight.W_500, color=ft.Colors.WHITE if is_diag else colors["text_sec"]),
             ],
-        ),
-    )
+            alignment=ft.MainAxisAlignment.CENTER,
+            spacing=6,
+        )
+        tab_btn_diag.bgcolor = colors["primary"] if is_diag else colors["surface"]
+        tab_btn_diag.border = ft.Border.all(1, colors["primary"] if is_diag else colors["border"])
+        tab_btn_diag.border_radius = Styles.BORDER_RADIUS_SM
+        tab_btn_diag.padding = ft.Padding.symmetric(vertical=10, horizontal=6)
+        tab_btn_diag.alignment = ft.Alignment.CENTER
+        tab_btn_diag.on_click = lambda e: set_tab(0)
+
+        is_roster = active_tab[0] == 1
+        tab_btn_roster.content = ft.Row(
+            controls=[
+                ft.Icon(ft.Icons.PEOPLE_ROUNDED, size=15, color=ft.Colors.WHITE if is_roster else colors["text_sec"]),
+                ft.Text(f"Roster de Alunos ({len(all_students)})", size=12, weight=ft.FontWeight.BOLD if is_roster else ft.FontWeight.W_500, color=ft.Colors.WHITE if is_roster else colors["text_sec"]),
+            ],
+            alignment=ft.MainAxisAlignment.CENTER,
+            spacing=6,
+        )
+        tab_btn_roster.bgcolor = colors["primary"] if is_roster else colors["surface"]
+        tab_btn_roster.border = ft.Border.all(1, colors["primary"] if is_roster else colors["border"])
+        tab_btn_roster.border_radius = Styles.BORDER_RADIUS_SM
+        tab_btn_roster.padding = ft.Padding.symmetric(vertical=10, horizontal=6)
+        tab_btn_roster.alignment = ft.Alignment.CENTER
+        tab_btn_roster.on_click = lambda e: set_tab(1)
+
+    refresh_tab_buttons()
 
     return ft.View(
         route="/admin",
@@ -567,16 +595,18 @@ def admin_view(page: ft.Page) -> ft.View:
                         ft.Container(
                             content=ft.Row(
                                 controls=[
-                                    ft.Icon(ft.Icons.AUTO_AWESOME_ROUNDED, color=colors["secondary"], size=18),
-                                    ft.Text("Central de Análise e Evidência Pedagógica", size=13, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                                    ft.Icon(ft.Icons.AUTO_AWESOME_ROUNDED, color=colors["secondary"], size=16),
+                                    ft.Text("Central de Análise e Evidência Pedagógica", size=12, weight=ft.FontWeight.BOLD, color=colors["text"]),
                                 ],
                                 spacing=6,
                             ),
                             margin=ft.Margin.only(top=4, bottom=8),
                         ),
-                        kpi_row,
+                        kpi_grid,
                         ft.Container(height=12),
-                        tabs,
+                        tabs_switcher_row,
+                        ft.Container(height=8),
+                        tab_container,
                     ],
                     spacing=0,
                 ),
