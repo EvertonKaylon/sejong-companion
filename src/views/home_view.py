@@ -48,17 +48,77 @@ def home_view(page: ft.Page) -> ft.View:
         ]
     )
 
-    welcome_text = ft.Container(
-        content=ft.Column(
-            controls=[
-                ft.Text("Olá, Estudante! 👋", size=22, weight=ft.FontWeight.BOLD, color=colors["text"]),
-                ft.Text(
-                    "Acompanhe o currículo do Sejong Hakdang de forma complementar e interativa.",
-                    size=13,
-                    color=colors["text_sec"]
-                )
+    student_name = progress_service.get_student_name()
+    student_id = progress_service.get_student_id()
+
+    def show_profile_dialog(e):
+        name_edit_input = ft.TextField(
+            label="Seu Nome e Sobrenome",
+            value=student_name,
+            border_radius=Styles.BORDER_RADIUS_SM,
+            autofocus=True,
+        )
+        def save_name(ev):
+            val = (name_edit_input.value or "").strip()
+            if val:
+                progress_service.set_student_name(val)
+                page._sejong_student_name = val
+                async def _save_sp():
+                    try:
+                        sp = ft.SharedPreferences()
+                        await sp.set("sejong_student_name", val)
+                    except Exception:
+                        pass
+                page.run_task(_save_sp)
+                try:
+                    page.pop_dialog()
+                except Exception:
+                    pass
+                page.router.navigate_to("/home")
+
+        dialog = ft.AlertDialog(
+            title=ft.Text("Perfil do Estudante · 프로필", size=16, weight=ft.FontWeight.BOLD),
+            content=ft.Column(
+                controls=[
+                    ft.Text(f"Seu Código Institucional:\n{student_id}", size=11, color=colors["text_sec"], selectable=True),
+                    ft.Container(height=8),
+                    name_edit_input,
+                ],
+                tight=True,
+                spacing=6,
+            ),
+            actions=[
+                ft.TextButton("Fechar", on_click=lambda ev: page.pop_dialog()),
+                ft.FilledButton("Salvar Alterações", on_click=save_name),
             ],
-            spacing=2
+        )
+        page.show_dialog(dialog)
+
+    welcome_text = ft.Container(
+        content=ft.Row(
+            controls=[
+                ft.Column(
+                    controls=[
+                        ft.Text(f"Olá, {student_name}! 👋", size=22, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                        ft.Text(
+                            "Acompanhe o currículo do Sejong Hakdang de forma complementar e interativa.",
+                            size=13,
+                            color=colors["text_sec"]
+                        )
+                    ],
+                    spacing=2,
+                    expand=True,
+                ),
+                ft.IconButton(
+                    icon=ft.Icons.ACCOUNT_CIRCLE_ROUNDED,
+                    icon_color=colors["primary"],
+                    icon_size=28,
+                    tooltip="Meu Perfil / Código de Aluno",
+                    on_click=show_profile_dialog,
+                ),
+            ],
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            vertical_alignment=ft.CrossAxisAlignment.START,
         ),
         margin=ft.Margin.only(bottom=12)
     )

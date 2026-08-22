@@ -8,9 +8,11 @@ from .splash_view import splash_view
 from .review_view import review_view
 from .flashcards_view import flashcards_view
 from .admin_view import admin_view
+from .onboarding_view import onboarding_view
 
 APP_ROUTES = {
     "/splash": splash_view,
+    "/onboarding": onboarding_view,
     "/home": home_view,
     "/hangul": hangul_view,
     "/lesson": lesson_view,
@@ -20,4 +22,15 @@ APP_ROUTES = {
     "/admin": admin_view,
 }
 
-__all__ = ["APP_ROUTES", "hangul_view", "home_view", "lesson_view", "quiz_view", "splash_view", "review_view", "flashcards_view", "admin_view"]
+__all__ = [
+    "APP_ROUTES",
+    "hangul_view",
+    "home_view",
+    "lesson_view",
+    "quiz_view",
+    "splash_view",
+    "review_view",
+    "flashcards_view",
+    "admin_view",
+    "onboarding_view",
+]

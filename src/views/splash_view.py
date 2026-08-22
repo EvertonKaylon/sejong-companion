@@ -127,11 +127,31 @@ def splash_view(page: ft.Page) -> ft.View:
                     except asyncio.TimeoutError:
                         pass
 
+            # ─── VERIFICAÇÃO DE IDENTIDADE PERSISTENTE ───
+            next_route = "/onboarding"
+            try:
+                sp = ft.SharedPreferences()
+                if hasattr(page, "services") and sp not in page.services:
+                    page.services.append(sp)
+                saved_id = await sp.get("sejong_student_id")
+                saved_name = await sp.get("sejong_student_name")
+                if saved_id and str(saved_id).strip():
+                    clean_id = str(saved_id).strip()
+                    page._sejong_student_id = clean_id
+                    if saved_name and str(saved_name).strip() and str(saved_name).strip() != "Aluno Anônimo":
+                        page._sejong_student_name = str(saved_name).strip()
+                        from ..services import ProgressService
+                        ps = ProgressService(page)
+                        ps.set_student_name(page._sejong_student_name)
+                        next_route = "/home"
+            except Exception as e:
+                print(f"[Splash] Erro ao consultar SharedPreferences: {e}")
+
             # Tempo mínimo para visualização suave da marca (~1.2s)
             await asyncio.sleep(1.2)
 
-            # Navegar para a Home
-            page.router.navigate_to("/home")
+            # Navegar para a rota correta (Home ou Onboarding)
+            page.router.navigate_to(next_route)
 
             # Em segundo plano: continuar baixando silenciosamente o restante do currículo
             if audio_service:

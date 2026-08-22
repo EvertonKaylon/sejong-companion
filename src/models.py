@@ -231,7 +231,7 @@ class MemoryNode(BaseModel):
         else:
             self.error_count += 1
             self.half_life = self.half_life * (0.3 / (self.error_count * 0.5))
-        self.half_life = max(0.01, self.half_life)
+        self.half_life = max(0.2, self.half_life)
         self.last_reviewed = datetime.now().isoformat()
 
     def vitality_level(self, now: Optional[datetime] = None) -> str:

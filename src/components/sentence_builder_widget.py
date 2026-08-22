@@ -98,7 +98,8 @@ class SentenceBuilderWidget(ft.Container):
         self._set_feedback(attempt == self.challenge["correct_order"])
 
     def _check_typing(self, _event):
-        normalize = lambda value: " ".join((value or "").strip().replace(".", "").split())
+        import re
+        normalize = lambda value: " ".join(re.sub(r"[.?!,~;:]", "", value or "").strip().split())
         self._set_feedback(normalize(self.answer_input.value) == normalize(self.challenge["answer"]))
 
     def _set_feedback(self, correct: bool):
@@ -116,4 +117,7 @@ class SentenceBuilderWidget(ft.Container):
 
     def _refresh(self):
         self.content = self._build_content()
-        self.update()
+        try:
+            self.update()
+        except Exception:
+            pass

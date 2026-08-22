@@ -252,21 +252,17 @@ class ProgressService:
 
     @staticmethod
     def _get_session_id(page) -> str:
-        """Obtém ou recupera a identidade persistente do aluno (Persistent Student ID).
-        
-        Prioriza o client_storage (localStorage do navegador / SharedPreferences nativo)
-        para que fechar/reabrir o navegador preserve o mesmo ID e arquivo de progresso.
-        """
+        """Obtém ou recupera a identidade persistente do aluno (Persistent Student ID)."""
         if page is None:
             return "__default__"
 
-        # 1. Se já cacheado em memória no objeto page da sessão ativa
+        # 1. Se já cacheado no objeto page da sessão ativa
         if hasattr(page, "_sejong_student_id") and page._sejong_student_id:
-            return str(page._sejong_student_id)
+            return str(page._sejong_student_id).strip()
         if hasattr(page, "_sejong_session_id") and page._sejong_session_id:
-            return str(page._sejong_session_id)
+            return str(page._sejong_session_id).strip()
 
-        # 2. Tenta recuperar do client_storage do dispositivo
+        # 2. Se salvo no client_storage do dispositivo
         student_id = None
         try:
             if hasattr(page, "client_storage") and page.client_storage:
@@ -280,7 +276,17 @@ class ProgressService:
             page._sejong_session_id = safe_id
             return safe_id
 
-        # 3. Se é o primeiro acesso deste cliente, gera e persiste
+        # 3. Se salvo na sessão do Flet (page.session)
+        try:
+            if hasattr(page, "session") and page.session:
+                sess_id = page.session.get("sejong_student_id")
+                if sess_id and str(sess_id).strip():
+                    page._sejong_student_id = str(sess_id).strip()
+                    return page._sejong_student_id
+        except Exception:
+            pass
+
+        # 4. Fallback: gerar identificador estável para a sessão atual
         import uuid
         new_id = f"student_{uuid.uuid4().hex[:12]}"
         try:
@@ -291,6 +297,11 @@ class ProgressService:
 
         page._sejong_student_id = new_id
         page._sejong_session_id = new_id
+        try:
+            if hasattr(page, "session") and page.session:
+                page.session.set("sejong_student_id", new_id)
+        except Exception:
+            pass
         return new_id
 
     @classmethod
@@ -325,7 +336,8 @@ class ProgressService:
     def _save_to_disk(cls, session_id: str, data: dict) -> None:
         path = cls._get_storage_path(session_id)
         os.makedirs(os.path.dirname(path), exist_ok=True)
-        tmp_path = f"{path}.tmp"
+        import uuid
+        tmp_path = f"{path}.tmp.{uuid.uuid4().hex[:8]}"
         try:
             with open(tmp_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
@@ -502,11 +514,11 @@ class ProgressService:
     def record_item_recall(self, item_id: str, rating: str, response_time_ms: int = 2000) -> MemoryNode:
         """Atualiza a meia-vida com os multiplicadores heurísticos da autoavaliação."""
         rating = rating.lower().strip()
-        multipliers = {"again": 0.3, "hard": 0.3, "good": 1.5, "easy": 2.2}
+        multipliers = {"again": 0.3, "hard": 0.6, "good": 1.5, "easy": 2.2}
         if rating not in multipliers:
             raise ValueError("rating deve ser again, hard, good ou easy")
         node = self.get_item_memory_node(item_id)
-        node.half_life = max(0.01, node.half_life * multipliers[rating])
+        node.half_life = max(0.2, node.half_life * multipliers[rating])
         if rating in {"again", "hard"}:
             node.error_count += 1
         elif node.error_count:
@@ -1005,12 +1017,9 @@ class AdminService:
             s_id = data.get("student_id")
             if not s_id:
                 # Extrair do nome do arquivo: student_{id}.json ou {uuid}.json
-                if filename.startswith("student_") and filename.endswith(".json"):
-                    s_id = filename[8:-5]
-                else:
-                    s_id = filename[:-5]
+                s_id = filename[:-5]
 
-            s_name = data.get("student_name") or "Aluno Anônimo"
+            s_name = data.get("student_name") or "Estudante Sejong"
             streak = data.get("streak", 0)
             total_xp = data.get("total_xp", 0)
             last_date = data.get("last_study_date") or data.get("updated_at") or "—"

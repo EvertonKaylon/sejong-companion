@@ -78,6 +78,14 @@ def main(page: ft.Page):
     for route_name, view_builder in APP_ROUTES.items():
         router.register_route(route_name, view_builder)
 
+    # Inicializar servico de persistencia local (SharedPreferences)
+    try:
+        sp = ft.SharedPreferences()
+        if hasattr(page, "services") and sp not in page.services:
+            page.services.append(sp)
+    except Exception:
+        pass
+
     # Inicializar o servico de audio global
     from src.audio_service import AudioService
     page.audio_service = AudioService(page)
