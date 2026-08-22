@@ -101,8 +101,6 @@ def admin_view(page: ft.Page) -> ft.View:
                         content=ft.Text("Voltar para o Início", color=colors["text_sec"], size=12),
                         on_click=lambda e: page.router.navigate_to("/home"),
                     ),
-                    ft.Container(height=10),
-                    ft.Text("PIN padrão de homologação: sejong2026", size=10, color=colors["text_sec"]),
                 ],
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 alignment=ft.MainAxisAlignment.CENTER,
