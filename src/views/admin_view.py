@@ -1,17 +1,132 @@
-import flet as ft
+import os
 from datetime import datetime
+import flet as ft
 from ..components import centered_content
 from ..theme import get_theme_colors, Styles, Responsive
 from ..services import AdminService, DataService
+
+# Dicionário de Internacionalização para o Portal do Professor (Português / 한국어)
+ADMIN_I18N = {
+    "pt": {
+        "title": "Portal do Professor",
+        "subtitle": "Central de Análise e Evidência Pedagógica",
+        "students_kpi": "Alunos",
+        "students_sub": "Perfis registrados",
+        "progress_kpi": "Progresso Médio",
+        "progress_sub": "Currículo 1A + 1B",
+        "retention_kpi": "Retenção SRS",
+        "cards_suffix": "cartões",
+        "quizzes_kpi": "Quizzes",
+        "events_suffix": "eventos",
+        "tab_diag": "Diagnóstico da Turma",
+        "tab_roster": "Roster de Alunos",
+        "hardest_title": "⚠️ Questões com Maior Taxa de Erro",
+        "hardest_empty": "Nenhum dado de erro em exercícios registrado ainda.",
+        "question_prefix": "Questão",
+        "attempts": "Tentativas",
+        "errors": "Erros",
+        "avg_time": "Tempo médio",
+        "dropoff_title": "📉 Funil de Conclusão e Abandono por Unidade",
+        "dropoff_empty": "Nenhum evento de abertura/abandono registrado ainda.",
+        "unit": "Unidade",
+        "dropoff": "Abandono",
+        "completed": "concluídos",
+        "vocab_title": "🔄 Vocabulário Crítico no Active Recall (Again)",
+        "vocab_empty": "Nenhuma reincidência crítica de vocabulário registrada.",
+        "reviews": "revisões",
+        "search_hint": "Buscar aluno por nome ou Student ID...",
+        "no_students": "Nenhum aluno encontrado.",
+        "book_1a": "Livro 1A",
+        "book_1b": "Livro 1B",
+        "general_progress": "Progresso Geral",
+        "srs_retention": "Retenção SRS",
+        "items": "itens",
+        "last_study": "Último",
+        "refresh_snack": "🔄 Dados recarregados em tempo real!",
+        "export_snack": "📄 Relatório exportado com sucesso",
+        "logout_tooltip": "Sair do Modo Admin",
+        "refresh_tooltip": "Atualizar Dados",
+        "export_tooltip": "Exportar Relatório Markdown",
+        "lang_toggle_btn": "🇰🇷 한국어로 보기",
+        "lang_toggle_tooltip": "Alternar para Coreano / 한국어로 전환",
+        # Login
+        "login_title": "Portal Pedagógico",
+        "login_sub": "Área Administrativa · 관리자",
+        "login_desc": "Acesso restrito ao corpo docente do Sejong Hakdang e administradores para análise de evidência pedagógica.",
+        "pin_label": "PIN de Acesso",
+        "login_btn": "Entrar no Painel",
+        "back_home": "Voltar para o Início",
+        "pin_error": "PIN incorreto. Tente novamente.",
+    },
+    "ko": {
+        "title": "교사용 포털",
+        "subtitle": "학습 데이터 및 교육 성과 분석 센터",
+        "students_kpi": "학습자 수",
+        "students_sub": "등록된 학생 프로필",
+        "progress_kpi": "평균 진도율",
+        "progress_sub": "세종한국어 1A + 1B",
+        "retention_kpi": "SRS 기억 유지율",
+        "cards_suffix": "개 카드",
+        "quizzes_kpi": "완료된 퀴즈",
+        "events_suffix": "개 학습 이벤트",
+        "tab_diag": "학급 진단 분석",
+        "tab_roster": "학생 명단",
+        "hardest_title": "⚠️ 오답률 상위 문항 (보강 지도 권장)",
+        "hardest_empty": "아직 기록된 연습문제 오류 데이터가 없습니다.",
+        "question_prefix": "문항",
+        "attempts": "시도",
+        "errors": "오답",
+        "avg_time": "평균 응답시간",
+        "dropoff_title": "📉 단원별 이탈률 및 완강 현황",
+        "dropoff_empty": "아직 기록된 단원 학습 데이터가 없습니다.",
+        "unit": "단원",
+        "dropoff": "이탈률",
+        "completed": "완료",
+        "vocab_title": "🔄 어휘 취약도 분석 (Again 재학습 빈도)",
+        "vocab_empty": "심각한 어휘 재학습 오류가 기록되지 않았습니다.",
+        "reviews": "회 복습",
+        "search_hint": "학생 이름 또는 Student ID 검색...",
+        "no_students": "해당하는 학생을 찾을 수 없습니다.",
+        "book_1a": "1A 교재",
+        "book_1b": "1B 교재",
+        "general_progress": "전체 진도율",
+        "srs_retention": "SRS 기억력",
+        "items": "개 어휘",
+        "last_study": "최근 학습",
+        "refresh_snack": "🔄 실시간 데이터를 새로고침했습니다!",
+        "export_snack": "📄 교육 분석 보고서가 내보내졌습니다",
+        "logout_tooltip": "관리자 로그아웃",
+        "refresh_tooltip": "데이터 새로고침",
+        "export_tooltip": "마크다운 보고서 내보내기",
+        "lang_toggle_btn": "🇧🇷 Ver em Português",
+        "lang_toggle_tooltip": "Alternar para Português / 포르투갈어로 전환",
+        # Login
+        "login_title": "세종학당 교수 포털",
+        "login_sub": "관리자 및 교수진 전용 · 관리자",
+        "login_desc": "세종학당 교수진 및 관리자 전용 교육 성과 분석 포털입니다.",
+        "pin_label": "접속 PIN 번호",
+        "login_btn": "대시보드 로그인",
+        "back_home": "홈 화면으로 돌아가기",
+        "pin_error": "PIN 번호가 일치하지 않습니다. 다시 입력해주세요.",
+    }
+}
 
 def admin_view(page: ft.Page) -> ft.View:
     is_dark = page.theme_mode == ft.ThemeMode.DARK
     colors = get_theme_colors(is_dark)
     w = page.width or 400
 
-    # Estado de autenticação administrativa na sessão ativa
+    # Estado de autenticação e idioma da sessão
     if not hasattr(page, "_admin_authenticated"):
         page._admin_authenticated = False
+    if not hasattr(page, "_admin_lang"):
+        page._admin_lang = "pt"
+
+    t = ADMIN_I18N[page._admin_lang]
+
+    def toggle_lang(e=None):
+        page._admin_lang = "ko" if page._admin_lang == "pt" else "pt"
+        rebuild_view()
 
     def rebuild_view():
         page.views.clear()
@@ -21,7 +136,7 @@ def admin_view(page: ft.Page) -> ft.View:
     # ─── 1. TELA DE LOGIN / AUTENTICAÇÃO POR PIN ───
     if not page._admin_authenticated:
         pin_input = ft.TextField(
-            label="PIN de Acesso",
+            label=t["pin_label"],
             password=True,
             can_reveal_password=True,
             prefix_icon=ft.Icons.KEY_ROUNDED,
@@ -35,7 +150,7 @@ def admin_view(page: ft.Page) -> ft.View:
             content=ft.Row(
                 controls=[
                     ft.Icon(ft.Icons.ERROR_OUTLINE_ROUNDED, color=colors["incorrect"], size=16),
-                    ft.Text("PIN incorreto. Tente novamente.", size=12, color=colors["incorrect"], weight=ft.FontWeight.W_500),
+                    ft.Text(t["pin_error"], size=12, color=colors["incorrect"], weight=ft.FontWeight.W_500),
                 ],
                 spacing=6,
             ),
@@ -58,6 +173,17 @@ def admin_view(page: ft.Page) -> ft.View:
         login_card = ft.Container(
             content=ft.Column(
                 controls=[
+                    # Seletor de Idioma no topo do card
+                    ft.Row(
+                        controls=[
+                            ft.TextButton(
+                                content=ft.Text(t["lang_toggle_btn"], size=11, weight=ft.FontWeight.BOLD, color=colors["primary"]),
+                                on_click=toggle_lang,
+                                tooltip=t["lang_toggle_tooltip"],
+                            )
+                        ],
+                        alignment=ft.MainAxisAlignment.END,
+                    ),
                     ft.Container(
                         content=ft.Icon(ft.Icons.ADMIN_PANEL_SETTINGS_ROUNDED, color=colors["primary"], size=44),
                         width=72,
@@ -67,10 +193,10 @@ def admin_view(page: ft.Page) -> ft.View:
                         shape=ft.BoxShape.CIRCLE,
                     ),
                     ft.Container(height=8),
-                    ft.Text("Portal Pedagógico", size=20, weight=ft.FontWeight.BOLD, color=colors["text"]),
-                    ft.Text("Área Administrativa · 관리자", size=13, weight=ft.FontWeight.W_600, color=colors["primary"]),
+                    ft.Text(t["login_title"], size=20, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                    ft.Text(t["login_sub"], size=13, weight=ft.FontWeight.W_600, color=colors["primary"]),
                     ft.Text(
-                        "Acesso restrito ao corpo docente do Sejong Hakdang e administradores para análise de evidência pedagógica.",
+                        t["login_desc"],
                         size=12,
                         color=colors["text_sec"],
                         text_align=ft.TextAlign.CENTER,
@@ -83,7 +209,7 @@ def admin_view(page: ft.Page) -> ft.View:
                         content=ft.Row(
                             controls=[
                                 ft.Icon(ft.Icons.LOGIN_ROUNDED, size=18),
-                                ft.Text("Entrar no Painel", weight=ft.FontWeight.BOLD, size=14),
+                                ft.Text(t["login_btn"], weight=ft.FontWeight.BOLD, size=14),
                             ],
                             alignment=ft.MainAxisAlignment.CENTER,
                         ),
@@ -98,7 +224,7 @@ def admin_view(page: ft.Page) -> ft.View:
                     ),
                     ft.Container(height=6),
                     ft.TextButton(
-                        content=ft.Text("Voltar para o Início", color=colors["text_sec"], size=12),
+                        content=ft.Text(t["back_home"], color=colors["text_sec"], size=12),
                         on_click=lambda e: page.router.navigate_to("/home"),
                     ),
                 ],
@@ -145,7 +271,7 @@ def admin_view(page: ft.Page) -> ft.View:
     def handle_refresh(e):
         rebuild_view()
         snack = ft.SnackBar(
-            content=ft.Text("🔄 Dados recarregados em tempo real!"),
+            content=ft.Text(t["refresh_snack"]),
             bgcolor=colors["secondary"],
             open=True,
         )
@@ -154,7 +280,6 @@ def admin_view(page: ft.Page) -> ft.View:
 
     def handle_export(e):
         report_md = AdminService.export_report_markdown()
-        # Salvar arquivo de relatório em scratch ou data/reports
         base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         reports_dir = os.path.join(base_dir, "data", "reports")
         os.makedirs(reports_dir, exist_ok=True)
@@ -164,43 +289,56 @@ def admin_view(page: ft.Page) -> ft.View:
             f.write(report_md)
 
         snack = ft.SnackBar(
-            content=ft.Text(f"📄 Relatório exportado com sucesso: data/reports/{filename}"),
+            content=ft.Text(f"{t['export_snack']}: data/reports/{filename}"),
             bgcolor=colors["correct"],
             open=True,
         )
         page.overlay.append(snack)
         page.update()
 
-    import os  # Local import just in case
-
     app_bar = ft.AppBar(
         leading=ft.IconButton(
             icon=ft.Icons.ARROW_BACK_ROUNDED,
             icon_color=colors["primary"],
             on_click=lambda e: page.router.navigate_to("/home"),
-            tooltip="Voltar para a Home",
+            tooltip=t["back_home"],
         ),
-        title=ft.Text("Portal do Professor", weight=ft.FontWeight.BOLD, size=16, color=colors["text"]),
+        title=ft.Text(t["title"], weight=ft.FontWeight.BOLD, size=16, color=colors["text"]),
         bgcolor=colors["surface"],
         elevation=0,
         actions=[
+            # Botão de Tradução Instantânea (PT / KO)
+            ft.Container(
+                content=ft.TextButton(
+                    content=ft.Row(
+                        controls=[
+                            ft.Icon(ft.Icons.TRANSLATE_ROUNDED, size=14, color=colors["primary"]),
+                            ft.Text(t["lang_toggle_btn"], size=11, weight=ft.FontWeight.BOLD, color=colors["primary"]),
+                        ],
+                        spacing=4,
+                    ),
+                    on_click=toggle_lang,
+                    tooltip=t["lang_toggle_tooltip"],
+                ),
+                padding=ft.Padding.only(right=4),
+            ),
             ft.IconButton(
                 icon=ft.Icons.REFRESH_ROUNDED,
                 icon_color=colors["primary"],
                 on_click=handle_refresh,
-                tooltip="Atualizar Dados",
+                tooltip=t["refresh_tooltip"],
             ),
             ft.IconButton(
                 icon=ft.Icons.DOWNLOAD_ROUNDED,
                 icon_color=colors["secondary"],
                 on_click=handle_export,
-                tooltip="Exportar Relatório Markdown",
+                tooltip=t["export_tooltip"],
             ),
             ft.IconButton(
                 icon=ft.Icons.LOGOUT_ROUNDED,
                 icon_color=colors["incorrect"],
                 on_click=handle_logout,
-                tooltip="Sair do Modo Admin",
+                tooltip=t["logout_tooltip"],
             ),
             ft.Container(width=4),
         ],
@@ -242,15 +380,15 @@ def admin_view(page: ft.Page) -> ft.View:
         controls=[
             ft.Row(
                 controls=[
-                    make_kpi_card("Alunos", str(kpis["total_students"]), "Perfis registrados", "👥", colors["primary"]),
-                    make_kpi_card("Progresso Médio", f"{kpis['avg_progress_pct']:.1%}", "Currículo 1A + 1B", "📊", colors["secondary"]),
+                    make_kpi_card(t["students_kpi"], str(kpis["total_students"]), t["students_sub"], "👥", colors["primary"]),
+                    make_kpi_card(t["progress_kpi"], f"{kpis['avg_progress_pct']:.1%}", t["progress_sub"], "📊", colors["secondary"]),
                 ],
                 spacing=8,
             ),
             ft.Row(
                 controls=[
-                    make_kpi_card("Retenção SRS", f"{kpis['avg_retention_pct']:.1%}", f"{kpis['total_memory_nodes']} cartões", "🧠", colors["vitality_high"]),
-                    make_kpi_card("Quizzes", str(kpis["total_quizzes_completed"]), f"{kpis['total_telemetry_events']} eventos", "📝", "#F88807"),
+                    make_kpi_card(t["retention_kpi"], f"{kpis['avg_retention_pct']:.1%}", f"{kpis['total_memory_nodes']} {t['cards_suffix']}", "🧠", colors["vitality_high"]),
+                    make_kpi_card(t["quizzes_kpi"], str(kpis["total_quizzes_completed"]), f"{kpis['total_telemetry_events']} {t['events_suffix']}", "📝", "#F88807"),
                 ],
                 spacing=8,
             ),
@@ -277,8 +415,8 @@ def admin_view(page: ft.Page) -> ft.View:
                             ),
                             ft.Column(
                                 controls=[
-                                    ft.Text(f"Questão: {q['question_id']} ({q['unit_id']})", size=13, weight=ft.FontWeight.BOLD, color=colors["text"]),
-                                    ft.Text(f"Tentativas: {q['total_attempts']} | Erros: {q['errors']} | Tempo médio: {q['avg_response_time_ms']}ms", size=11, color=colors["text_sec"]),
+                                    ft.Text(f"{t['question_prefix']}: {q['question_id']} ({q['unit_id']})", size=13, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                                    ft.Text(f"{t['attempts']}: {q['total_attempts']} | {t['errors']}: {q['errors']} | {t['avg_time']}: {q['avg_response_time_ms']}ms", size=11, color=colors["text_sec"]),
                                 ],
                                 spacing=1,
                                 expand=True,
@@ -297,7 +435,7 @@ def admin_view(page: ft.Page) -> ft.View:
     else:
         hardest_controls.append(
             ft.Container(
-                content=ft.Text("Nenhum dado de erro em exercícios registrado ainda.", size=12, color=colors["text_sec"]),
+                content=ft.Text(t["hardest_empty"], size=12, color=colors["text_sec"]),
                 padding=10,
             )
         )
@@ -314,8 +452,8 @@ def admin_view(page: ft.Page) -> ft.View:
                         controls=[
                             ft.Row(
                                 controls=[
-                                    ft.Text(f"Unidade: {u['unit_id']}", size=12, weight=ft.FontWeight.BOLD, color=colors["text"]),
-                                    ft.Text(f"Abandono: {rate:.1%} ({u['completed_count']}/{u['opened_count']} concluídos)", size=11, color=colors["text_sec"]),
+                                    ft.Text(f"{t['unit']}: {u['unit_id']}", size=12, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                                    ft.Text(f"{t['dropoff']}: {rate:.1%} ({u['completed_count']}/{u['opened_count']} {t['completed']})", size=11, color=colors["text_sec"]),
                                 ],
                                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                             ),
@@ -339,7 +477,7 @@ def admin_view(page: ft.Page) -> ft.View:
     else:
         drop_off_controls.append(
             ft.Container(
-                content=ft.Text("Nenhum evento de abertura/abandono registrado ainda.", size=12, color=colors["text_sec"]),
+                content=ft.Text(t["dropoff_empty"], size=12, color=colors["text_sec"]),
                 padding=10,
             )
         )
@@ -361,8 +499,8 @@ def admin_view(page: ft.Page) -> ft.View:
                             ),
                             ft.Column(
                                 controls=[
-                                    ft.Text(f"Item: {c['item_id']} ({c['unit_id']})", size=13, weight=ft.FontWeight.BOLD, color=colors["text"]),
-                                    ft.Text(f"Erros (Again): {c['again_count']}x de {c['total_reviews']} revisões ({c['again_rate']:.1%})", size=11, color=colors["text_sec"]),
+                                    ft.Text(f"{c['item_id']} ({c['unit_id']})", size=13, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                                    ft.Text(f"{t['errors']} (Again): {c['again_count']}x / {c['total_reviews']} {t['reviews']} ({c['again_rate']:.1%})", size=11, color=colors["text_sec"]),
                                 ],
                                 spacing=1,
                                 expand=True,
@@ -381,7 +519,7 @@ def admin_view(page: ft.Page) -> ft.View:
     else:
         vocab_controls.append(
             ft.Container(
-                content=ft.Text("Nenhuma reincidência crítica de vocabulário registrada.", size=12, color=colors["text_sec"]),
+                content=ft.Text(t["vocab_empty"], size=12, color=colors["text_sec"]),
                 padding=10,
             )
         )
@@ -389,13 +527,13 @@ def admin_view(page: ft.Page) -> ft.View:
     tab_diagnostics_content = ft.Column(
         controls=[
             ft.Container(height=6),
-            ft.Text("⚠️ Questões com Maior Taxa de Erro", size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),
+            ft.Text(t["hardest_title"], size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),
             ft.Column(controls=hardest_controls, spacing=0),
             ft.Container(height=12),
-            ft.Text("📉 Funil de Conclusão e Abandono por Unidade", size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),
+            ft.Text(t["dropoff_title"], size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),
             ft.Column(controls=drop_off_controls, spacing=0),
             ft.Container(height=12),
-            ft.Text("🔄 Vocabulário Crítico no Active Recall (Again)", size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),
+            ft.Text(t["vocab_title"], size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),
             ft.Column(controls=vocab_controls, spacing=0),
         ],
         spacing=2,
@@ -416,7 +554,7 @@ def admin_view(page: ft.Page) -> ft.View:
         if not filtered:
             students_list_column.controls.append(
                 ft.Container(
-                    content=ft.Text("Nenhum aluno encontrado.", size=13, color=colors["text_sec"]),
+                    content=ft.Text(t["no_students"], size=13, color=colors["text_sec"]),
                     padding=20,
                     alignment=ft.Alignment.CENTER,
                 )
@@ -476,7 +614,7 @@ def admin_view(page: ft.Page) -> ft.View:
                             controls=[
                                 ft.Column(
                                     controls=[
-                                        ft.Text(f"Livro 1A: {c_1a}/11", size=11, color=colors["text_sec"]),
+                                        ft.Text(f"{t['book_1a']}: {c_1a}/11", size=11, color=colors["text_sec"]),
                                         ft.ProgressBar(value=min(1.0, c_1a / 11.0), color=colors["primary"], bgcolor=colors["border"], height=4, border_radius=2),
                                     ],
                                     spacing=2,
@@ -484,7 +622,7 @@ def admin_view(page: ft.Page) -> ft.View:
                                 ),
                                 ft.Column(
                                     controls=[
-                                        ft.Text(f"Livro 1B: {c_1b}/12", size=11, color=colors["text_sec"]),
+                                        ft.Text(f"{t['book_1b']}: {c_1b}/12", size=11, color=colors["text_sec"]),
                                         ft.ProgressBar(value=min(1.0, c_1b / 12.0), color=colors["secondary"], bgcolor=colors["border"], height=4, border_radius=2),
                                     ],
                                     spacing=2,
@@ -496,9 +634,9 @@ def admin_view(page: ft.Page) -> ft.View:
                         ft.Container(height=2),
                         ft.Row(
                             controls=[
-                                ft.Text(f"Progresso Geral: {prog_pct:.1%}", size=11, weight=ft.FontWeight.W_600, color=colors["text"]),
-                                ft.Text(f"Retenção SRS: {ret_pct:.1%} ({s['memory_nodes_count']} itens)", size=11, weight=ft.FontWeight.W_600, color=colors["vitality_high"] if ret_pct >= 0.75 else colors["warning"]),
-                                ft.Text(f"Último: {last_date}", size=11, color=colors["text_sec"]),
+                                ft.Text(f"{t['general_progress']}: {prog_pct:.1%}", size=11, weight=ft.FontWeight.W_600, color=colors["text"]),
+                                ft.Text(f"{t['srs_retention']}: {ret_pct:.1%} ({s['memory_nodes_count']} {t['items']})", size=11, weight=ft.FontWeight.W_600, color=colors["vitality_high"] if ret_pct >= 0.75 else colors["warning"]),
+                                ft.Text(f"{t['last_study']}: {last_date}", size=11, color=colors["text_sec"]),
                             ],
                             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                         ),
@@ -513,7 +651,7 @@ def admin_view(page: ft.Page) -> ft.View:
             students_list_column.controls.append(card)
 
     search_field = ft.TextField(
-        hint_text="Buscar aluno por nome ou Student ID...",
+        hint_text=t["search_hint"],
         prefix_icon=ft.Icons.SEARCH_ROUNDED,
         border_color=colors["border"],
         focused_border_color=colors["primary"],
@@ -553,7 +691,7 @@ def admin_view(page: ft.Page) -> ft.View:
         tab_btn_diag.content = ft.Row(
             controls=[
                 ft.Icon(ft.Icons.INSIGHTS_ROUNDED, size=15, color=ft.Colors.WHITE if is_diag else colors["text_sec"]),
-                ft.Text("Diagnóstico da Turma", size=12, weight=ft.FontWeight.BOLD if is_diag else ft.FontWeight.W_500, color=ft.Colors.WHITE if is_diag else colors["text_sec"]),
+                ft.Text(t["tab_diag"], size=12, weight=ft.FontWeight.BOLD if is_diag else ft.FontWeight.W_500, color=ft.Colors.WHITE if is_diag else colors["text_sec"]),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             spacing=6,
@@ -569,7 +707,7 @@ def admin_view(page: ft.Page) -> ft.View:
         tab_btn_roster.content = ft.Row(
             controls=[
                 ft.Icon(ft.Icons.PEOPLE_ROUNDED, size=15, color=ft.Colors.WHITE if is_roster else colors["text_sec"]),
-                ft.Text(f"Roster de Alunos ({len(all_students)})", size=12, weight=ft.FontWeight.BOLD if is_roster else ft.FontWeight.W_500, color=ft.Colors.WHITE if is_roster else colors["text_sec"]),
+                ft.Text(f"{t['tab_roster']} ({len(all_students)})", size=12, weight=ft.FontWeight.BOLD if is_roster else ft.FontWeight.W_500, color=ft.Colors.WHITE if is_roster else colors["text_sec"]),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             spacing=6,
@@ -596,7 +734,7 @@ def admin_view(page: ft.Page) -> ft.View:
                             content=ft.Row(
                                 controls=[
                                     ft.Icon(ft.Icons.AUTO_AWESOME_ROUNDED, color=colors["secondary"], size=16),
-                                    ft.Text("Central de Análise e Evidência Pedagógica", size=12, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                                    ft.Text(t["subtitle"], size=12, weight=ft.FontWeight.BOLD, color=colors["text"]),
                                 ],
                                 spacing=6,
                             ),
