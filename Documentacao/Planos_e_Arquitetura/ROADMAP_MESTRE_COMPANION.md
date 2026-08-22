@@ -61,16 +61,19 @@ flowchart TD
 
 ---
 
-## 🟡 Fase 3: `v0.3.2-alpha` — Stabilization & Hardening
-> **Status:** CONCLUÍDO (Branch `develop`)  
-> **Foco:** Eliminação de pontas soltas, validação de integridade e refinamento de UX para toda a base 1A + 1B.
+## 🟡 Fase 3: `v0.3.2-alpha` — Stabilization, Hardening & Piloto Público
+> **Status:** PILOTO PÚBLICO ATIVO COM PROFESSORA E TURMAS 1A (Oracle Cloud Always Free)  
+> **Foco:** Validação em ambiente de produção com dados e estudantes reais, onboarding nominal, estabilidade de persistência e telemetria pedagógica para toda a base 1A + 1B.
 
 ### Entregáveis Concluídos:
 - [x] **Auditoria Global de Conteúdo (23 Unidades):** Script CLI `scripts/audit_curriculum.py` e suíte `tests/test_curriculum_integrity.py` validando schemas Pydantic, Zero Romanização, unicidade de IDs e consistência semântica SOV.
+- [x] **Onboarding e Identificação Nominal do Aluno:** Tela institucional acolhedora de identificação vinculando Nome/Sobrenome a um Student ID exclusivo com suporte a restauração de progresso.
+- [x] **Persistência Real Multiplataforma (`ft.SharedPreferences`):** Fim da perda de sessão no mobile; sincronização assíncrona com `localStorage` e arquivos JSON persistentes no servidor.
+- [x] **Deploy 24/7 de Alta Performance (Oracle Cloud Infrastructure):** Container Docker multi-arch com Caddy reverse proxy e HTTPS automático no domínio `sejongcompanion.duckdns.org`.
 - [x] **Hardening de Armazenamento e Auto-Recuperação:** Proteção contra sessões corrompidas com backup automático `.corrupt.bak` e clamping de limites em `ProgressService`.
 - [x] **Refinamento de UX de Trilha e Fila:** Filtros rápidos por Livro (`Todas`, `📘 1A`, `📗 1B`) na Home e nos Flashcards, cards de progresso resumido 1A/1B e badges de origem no Active Recall.
-- [x] **Compatibilidade Flet 0.28+:** Adequação de `ft.Tabs` com `TabBar` e `TabBarView` no Portal Admin (`/admin`).
-- [x] **Suíte de Testes Expandida:** Total de **91 testes automatizados (100% OK)**.
+- [x] **Áudio Web & Catalogação BUG-08:** Inclusão do `assets/silent.wav` para destravar autoplay web e catalogação técnica oficial.
+- [x] **Suíte de Testes Expandida:** Total de **93 testes automatizados (100% OK)**.
 
 ---
 

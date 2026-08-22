@@ -23,21 +23,23 @@ Pré-Alpha → Alpha → Beta → RC → RTM → GA
 
 ---
 
-## [0.3.2-alpha] — 2026-08-20
+## [0.3.2-alpha] — 2026-08-22
 
-### Classificação: Alpha
-> Milestone de Estabilização & Hardening: Auditoria profunda de 100% do currículo (23 unidades do Sejong 1A e 1B), isolamento e auto-recuperação de arquivos corrompidos em disco (`.corrupt.bak`), correção de compatibilidade `ft.Tabs` com Flet 0.28+ no Portal Admin, refinamento de UX com filtros por livro (1A / 1B) na Home e nos Flashcards, e expansão da suíte para 91 testes automatizados (100% OK).
+### Classificação: Alpha (Piloto Público Ativo — Turmas 1A CCCB)
+> Milestone de Estabilização, Hardening & Piloto Pedagógico Real: Lançamento do piloto público oficial com a professora e turmas do Sejong Coreano 1A para coleta e validação de métricas pedagógicas autênticas em produção. Introdução da tela institucional de Onboarding com identificação nominal do estudante (Nome + Sobrenome vinculados ao Student ID), persistência real multiplataforma via `ft.SharedPreferences` (fim da perda de sessão mobile ao desligar/bloquear a tela), deploy de alta performance 24/7 na Oracle Cloud Infrastructure com domínio e HTTPS automático (`sejongcompanion.duckdns.org`), inclusão do binário canônico `assets/silent.wav` (destravamento de autoplay web / BUG-08 catalogado), hardening do algoritmo de repetição espaçada SRS com piso de meia-vida $\ge 0.2$ dias e expansão da suíte para **93 testes automatizados (100% OK)**.
 
-### Added — Features & UX
-- **Auditoria de Integridade Curricular (`scripts/audit_curriculum.py`)** — CLI de validação profunda que audita todas as 23 unidades, garantindo conformidade Pydantic, política estrita Zero Romanização, integridade de papéis sintáticos SOV e ausência de colisões de IDs.
-- **Filtros por Livro na Home (`home_view.py`)** — Adicionado seletor com pílulas interativas (`Todas`, `📘 Livro 1A`, `📗 Livro 1B`) e card de progresso resumido de cada livro no topo da grade.
-- **Filtros por Livro nos Flashcards (`flashcards_view.py`)** — Suporte a filtragem de vocabulário e criação de frases por Livro Didático (1A vs 1B) combinado com os níveis de dificuldade.
-- **Badges de Origem no Active Recall (`review_view.py`)** — Indicador visual de qual livro e unidade cada cartão pertence durante a revisão adaptativa.
-- **Hardening e Resiliência de Armazenamento (`ProgressService`)** — Auto-recuperação de sessões corrompidas com backup automático `.corrupt.bak` e clamping de progresso estrito entre $0.0$ e $1.0$.
-- **Correção de Compatibilidade Flet 0.28+ (`admin_view.py`)** — Migração de `ft.Tabs` para a sintaxe moderna `TabBar` + `TabBarView` com `label` e `icon`.
+### Added — Onboarding, Persistência & Identidade
+- **Onboarding e Identificação Institucional (`onboarding_view.py`)** — Tela acolhedora de boas-vindas do Centro Cultural Coreano no Brasil para novos estudantes cadastrarem seu Nome e Sobrenome, vinculando-os ao seu Student ID permanente, com suporte a restauração de progresso para alunos que trocam de aparelho.
+- **Persistência Real Multiplataforma (`ft.SharedPreferences`)** — Integração assíncrona com o storage nativo do cliente durante o handshake do `splash_view.py`, garantindo que desbloquear a tela do celular ou reabrir o navegador preserve 100% da sessão sem criar alunos anônimos duplicados.
+- **Saudação Nominal e Modal de Perfil na Home (`home_view.py`)** — Abertura personalizada com *"Olá, [Nome do Aluno]! 👋"* e diálogo de perfil com exibição do Código Institucional e edição do nome.
+- **Identificação Nominal no Portal do Professor (`admin_view.py` & `services.py`)** — Relatórios pedagógicos e listagens da turma identificando os alunos nominalmente (ex: *"A aluna Marina Silva..."*).
+
+### Added — Infraestrutura & Áudio
+- **Deploy 24/7 na Oracle Cloud Infrastructure (OCI Always Free)** — Container multi-arch com Caddy reverse proxy e HTTPS automático no domínio `sejongcompanion.duckdns.org`.
+- **Binário Canônico `assets/silent.wav` & BUG-08 Catalogado** — Destravamento definitivo da política de autoplay em navegadores móveis (flet-dev/flet#3695) e documentação formal em `Documentacao/Bugs_Criticos/bug_08_politica_autoplay_navegador_e_silent_wav.md`.
 
 ### Added — Suíte de Testes
-- **91 Testes Automatizados (100% OK)** — Inclusão de `tests/test_curriculum_integrity.py` e novos testes de resiliência a corrupção de disco e clamping em `tests/test_progress_service.py`.
+- **93 Testes Automatizados (100% OK)** — Inclusão de `tests/test_student_identity_and_persistence.py` validando o fluxo de identidade nominal, persistência entre sessões e normalização fonética/sintática no Sentence Builder.
 
 ---
 
