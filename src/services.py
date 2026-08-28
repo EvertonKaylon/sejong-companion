@@ -3,6 +3,7 @@ import os
 import hmac
 import time
 import secrets
+import hashlib
 from collections import defaultdict
 from typing import Any, Dict, List, Optional, Tuple
 from datetime import datetime, date
@@ -308,6 +309,11 @@ class ProgressService:
         return new_id
 
     @classmethod
+    def set_file_path_override(cls, path: Optional[str]) -> None:
+        """Define ou limpa um caminho de arquivo customizado para testes."""
+        cls._file_path_override = path
+
+    @classmethod
     def _get_storage_path(cls, session_id: str) -> str:
         if cls._file_path_override:
             return cls._file_path_override
@@ -372,6 +378,116 @@ class ProgressService:
     def get_student_name(self) -> str:
         """Retorna o nome personalizado do aluno ou o padrão."""
         return str(self._store.get("student_name", "Estudante Sejong"))
+
+    @staticmethod
+    def generate_recovery_code() -> str:
+        """Gera um código de recuperação seguro e legível no formato XXXX-XXXX-XXXX."""
+        charset = "23456789ABCDEFGHJKMNPQRSTUVWXYZ"
+        p1 = "".join(secrets.choice(charset) for _ in range(4))
+        p2 = "".join(secrets.choice(charset) for _ in range(4))
+        p3 = "".join(secrets.choice(charset) for _ in range(4))
+        return f"{p1}-{p2}-{p3}"
+
+    @classmethod
+    def _hash_recovery_code(cls, salt: str, code: str) -> str:
+        """Calcula o hash SHA-256 seguro do código de recuperação normalizado."""
+        clean_code = str(code).strip().upper().replace(" ", "").replace("-", "")
+        data = (salt + clean_code).encode("utf-8")
+        return hashlib.sha256(data).hexdigest()
+
+    def get_or_create_recovery_code(self) -> str:
+        """Gera e registra uma credencial de recuperação caso o perfil ainda não possua."""
+        salt = self._store.get("recovery_salt")
+        hashed = self._store.get("recovery_hash")
+        if salt and hashed:
+            return ""
+        code = self.generate_recovery_code()
+        salt = secrets.token_hex(16)
+        hashed = self._hash_recovery_code(salt, code)
+        self._store["recovery_salt"] = salt
+        self._store["recovery_hash"] = hashed
+        ProgressService._save_to_disk(self._session_id, self._store)
+        return code
+
+    def has_recovery_code(self) -> bool:
+        """Indica se o perfil já possui credencial de recuperação registrada no servidor."""
+        return bool(self._store.get("recovery_salt") and self._store.get("recovery_hash"))
+
+    @classmethod
+    def verify_and_restore_student(
+        cls,
+        student_id_or_name: str,
+        recovery_code: str,
+        sessions_dir: Optional[str] = None
+    ) -> Tuple[bool, Optional[str], Optional[str], str]:
+        """Verifica a credencial de recuperação antes de permitir a restauração de um perfil.
+        
+        Retorna:
+            (sucesso: bool, student_id: Optional[str], student_name: Optional[str], mensagem: str)
+        """
+        if not student_id_or_name or not str(student_id_or_name).strip():
+            return False, None, None, "Identificador ou nome do aluno não informado."
+        if not recovery_code or not str(recovery_code).strip():
+            return False, None, None, "Chave de recuperação não informada."
+
+        target_id = str(student_id_or_name).strip()
+        target_code = str(recovery_code).strip()
+
+        base_dir = sessions_dir or os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "sessions")
+        if not os.path.exists(base_dir):
+            return False, None, None, "Nenhum diretório de sessões localizado no servidor."
+
+        target_file = None
+        target_data = None
+
+        # 1. Tentar localizar arquivo direto pelo ID
+        safe_id = "".join(c for c in target_id if c.isalnum() or c in ("-", "_"))
+        direct_path = os.path.join(base_dir, f"{safe_id}.json")
+        if os.path.exists(direct_path):
+            try:
+                with open(direct_path, "r", encoding="utf-8") as f:
+                    d = json.load(f)
+                    if isinstance(d, dict):
+                        target_file = direct_path
+                        target_data = d
+            except Exception:
+                pass
+
+        # 2. Se não achou pelo ID, buscar por student_id gravado no json ou student_name
+        if not target_data:
+            for fname in os.listdir(base_dir):
+                if not fname.endswith(".json"):
+                    continue
+                fpath = os.path.join(base_dir, fname)
+                try:
+                    with open(fpath, "r", encoding="utf-8") as f:
+                        d = json.load(f)
+                    if isinstance(d, dict):
+                        s_id = d.get("student_id") or fname[:-5]
+                        s_name = d.get("student_name", "")
+                        if s_id.lower() == target_id.lower() or (s_name and s_name.strip().lower() == target_id.lower()):
+                            target_file = fpath
+                            target_data = d
+                            break
+                except Exception:
+                    pass
+
+        if not target_data:
+            return False, None, None, "Perfil de aluno não localizado no servidor."
+
+        salt = target_data.get("recovery_salt")
+        expected_hash = target_data.get("recovery_hash")
+
+        if not salt or not expected_hash:
+            return False, None, None, "Este perfil não possui chave de recuperação configurada. Contate o suporte docente."
+
+        computed_hash = cls._hash_recovery_code(salt, target_code)
+        if not hmac.compare_digest(computed_hash, expected_hash):
+            return False, None, None, "Chave de recuperação incorreta para este perfil."
+
+        resolved_id = target_data.get("student_id") or os.path.basename(target_file)[:-5]
+        resolved_name = target_data.get("student_name", "Aluno Sejong")
+        return True, resolved_id, resolved_name, "Perfil e progresso restaurados com sucesso!"
 
     def set_student_name(self, name: str) -> str:
         """Atualiza o nome do aluno no perfil e sincroniza."""
