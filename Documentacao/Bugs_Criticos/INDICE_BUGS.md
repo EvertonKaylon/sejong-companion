@@ -16,6 +16,7 @@ Este documento cataloga os bugs mais complexos e desafiadores identificados e re
 | **BUG-06** | Falha de Bind de Redes no Windows (`FLET_SERVER_IP="0.0.0.0"`) | 🟠 Alta | Network / Windows OS | [bug_06_bind_windows_flet_server_ip.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentação/Bugs_Criticos/bug_06_bind_windows_flet_server_ip.md) |
 | **BUG-07** | Renderização de Tofu (Caixas Vazias) em Hangul por Fallback de Fonte | 🟠 Alta | Tipografia / Flutter Web | [bug_07_flutter_font_fallback_tofu_hangul.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentação/Bugs_Criticos/bug_07_flutter_font_fallback_tofu_hangul.md) |
 | **BUG-08** | Bloqueio de Autoplay em Navegadores Web (Issue Flet #3695) & `silent.wav` | 🔴 Crítica | Áudio / Web Autoplay Policy | [bug_08_politica_autoplay_navegador_e_silent_wav.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Bugs_Criticos/bug_08_politica_autoplay_navegador_e_silent_wav.md) |
+| **BUG-09** | Vulnerabilidades de Autenticação Administrativa e Hardening de Sessão | 🔴 Crítica | Segurança / Autenticação & Identidade | [bug_09_vulnerabilidades_seguranca_e_hardening_autenticacao.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Bugs_Criticos/bug_09_vulnerabilidades_seguranca_e_hardening_autenticacao.md) |
 
 ---
 

@@ -21,6 +21,27 @@ Pré-Alpha → Alpha → Beta → RC → RTM → GA
 | **RC** | `1.0.0-rc.1` | Feature-complete, testes E2E, zero bugs críticos |
 | **GA** | `1.0.0` | Pronto para distribuição pública |
 
+## [0.3.2-security] — 2026-08-28
+
+### Classificação: Security Hardening (Resolução de Bloqueadores P0/P1)
+> Milestone de Segurança e Integridade Operacional: Resolução formal dos apontamentos críticos da auditoria de segurança da branch `main`. Eliminação total de PIN administrativo padrão com postura fail-closed obrigatória, implementação de rate limiting e lockout progressivo com mitigação de timing attacks (`hmac.compare_digest`), desacoplamento estrito entre Student ID (público) e Recovery Key (segredo protegido via salted SHA-256), isolamento de cache mutável fora de `assets/` (`data/cache/audio/`), política de rotação e retenção de telemetria, regras rigorosas de privacidade no `.gitignore`, implementação do pipeline CI no GitHub Actions (`.github/workflows/ci.yml`) e expansão da suíte para **106 testes automatizados (100% OK)**.
+
+### Fixed — Autenticação Administrativa & Governança (P0 / P1)
+- **Eliminação de PIN Padrão (P0)** — Removido `DEFAULT_PIN = "sejong2026"` do `AdminService`. Variável `SEJONG_ADMIN_PIN` torna-se obrigatória para qualquer acesso ao `/admin` (fail-closed).
+- **Docker Fail-Closed** — Sintaxe de interpolação `${SEJONG_ADMIN_PIN:?SEJONG_ADMIN_PIN environment variable is required}` no `docker-compose.yml`, impedindo que containers subam sem credencial configurada.
+- **Proteção contra Brute Force & Timing Attacks (P1)** — Rate limiter em memória com lockout escalonado (5 falhas $\rightarrow$ 30s / 10 falhas $\rightarrow$ 5 min) e verificação via `hmac.compare_digest`.
+- **Sessões Administrativas Temporárias (P1)** — Emissão de tokens efêmeros com expiração automática em 1 hora e revogação ativa no logout.
+
+### Security — Identidade, Dados & Armazenamento (P1)
+- **Desacoplamento de Student ID e Chave de Recuperação** — O Student ID (`student_XXXXXXXXXXXX`) passa a ser estritamente um identificador público. Para restaurar sessões entre navegadores/dispositivos, o aluno deve fornecer a Chave Secreta de Recuperação (`XXXX-XXXX-XXXX`).
+- **Zero Plaintext no Servidor** — A chave de recuperação é armazenada apenas como hash SHA-256 com salt criptográfico (`recovery_salt` + `recovery_hash`).
+- **Isolamento de Armazenamento Mutável** — Cache de áudio sintetizado em runtime transferido para `data/cache/audio/`, tornando a pasta `assets/` 100% estática (read-only bundle).
+- **Proteção de Privacidade & Rotação de Telemetria** — `.gitignore` atualizado para ignorar `data/sessions/`, `data/telemetry/`, `data/reports/`, `data/cache/`, `*.jsonl`, com rotação automática em `TelemetryService` (`MAX_EVENTS_PER_FILE = 5000`).
+
+### Added — CI & Suíte de Testes
+- **Pipeline GitHub Actions (`.github/workflows/ci.yml`)** — Validação automatizada em Python 3.11 e 3.12, compilação de bytecode, scan de segredos e execução de testes.
+- **106 Testes Automatizados (100% OK)** — Inclusão de `tests/test_admin_auth_hardening.py`, `tests/test_student_identity_security.py` e `tests/test_telemetry_privacy_and_rotation.py`.
+
 ---
 
 ## [0.3.2-alpha] — 2026-08-22
