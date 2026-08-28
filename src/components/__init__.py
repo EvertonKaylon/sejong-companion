@@ -7,15 +7,19 @@ from .quiz_widget import QuizWidget
 from .vocab_card import VocabCard
 from .flashcard_widget import FlashcardWidget
 from .sentence_builder_widget import SentenceBuilderWidget
+from .calligraphy_widget import CalligraphyWidget, calculate_stroke_similarity, get_reference_strokes
 
 __all__ = [
     "CONTENT_MAX_WIDTH",
     "DEFAULT_VIEWPORT_WIDTH",
+    "CalligraphyWidget",
     "HangulCard",
     "QuizWidget",
     "VocabCard",
     "FlashcardWidget",
     "SentenceBuilderWidget",
     "build_oclusive_lab",
+    "calculate_stroke_similarity",
     "centered_content",
+    "get_reference_strokes",
 ]
