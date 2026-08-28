@@ -116,9 +116,12 @@ def admin_view(page: ft.Page) -> ft.View:
     colors = get_theme_colors(is_dark)
     w = page.width or 400
 
-    # Estado de autenticação e idioma da sessão
-    if not hasattr(page, "_admin_authenticated"):
+    # Estado de autenticação e validação de expiração de sessão
+    session_token = getattr(page, "_admin_session_token", None)
+    if not AdminService.validate_session(session_token):
         page._admin_authenticated = False
+        page._admin_session_token = None
+
     if not hasattr(page, "_admin_lang"):
         page._admin_lang = "pt"
 
@@ -135,6 +138,19 @@ def admin_view(page: ft.Page) -> ft.View:
 
     # ─── 1. TELA DE LOGIN / AUTENTICAÇÃO POR PIN ───
     if not page._admin_authenticated:
+        error_text = ft.Text(t["pin_error"], size=12, color=colors["incorrect"], weight=ft.FontWeight.W_500)
+        error_banner = ft.Container(
+            content=ft.Row(
+                controls=[
+                    ft.Icon(ft.Icons.ERROR_OUTLINE_ROUNDED, color=colors["incorrect"], size=16),
+                    error_text,
+                ],
+                spacing=6,
+            ),
+            visible=False,
+            margin=ft.Margin.only(top=6, bottom=4),
+        )
+
         pin_input = ft.TextField(
             label=t["pin_label"],
             password=True,
@@ -145,25 +161,19 @@ def admin_view(page: ft.Page) -> ft.View:
             cursor_color=colors["primary"],
             text_size=15,
             autofocus=True,
-        )
-        error_banner = ft.Container(
-            content=ft.Row(
-                controls=[
-                    ft.Icon(ft.Icons.ERROR_OUTLINE_ROUNDED, color=colors["incorrect"], size=16),
-                    ft.Text(t["pin_error"], size=12, color=colors["incorrect"], weight=ft.FontWeight.W_500),
-                ],
-                spacing=6,
-            ),
-            visible=False,
-            margin=ft.Margin.only(top=6, bottom=4),
+            disabled=not AdminService.is_configured(),
         )
 
         def handle_login(e):
             entered_pin = pin_input.value or ""
-            if AdminService.authenticate(entered_pin):
+            client_key = getattr(page, "_sejong_student_id", None) or "admin_client"
+            success, token, msg = AdminService.login(entered_pin, client_key=client_key)
+            if success:
                 page._admin_authenticated = True
+                page._admin_session_token = token
                 rebuild_view()
             else:
+                error_text.value = msg
                 error_banner.visible = True
                 pin_input.border_color = colors["incorrect"]
                 page.update()
@@ -265,7 +275,10 @@ def admin_view(page: ft.Page) -> ft.View:
     all_students = AdminService.get_all_students_summary()
 
     def handle_logout(e):
+        token = getattr(page, "_admin_session_token", None)
+        AdminService.revoke_session(token)
         page._admin_authenticated = False
+        page._admin_session_token = None
         rebuild_view()
 
     def handle_refresh(e):

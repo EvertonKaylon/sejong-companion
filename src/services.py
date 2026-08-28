@@ -1,7 +1,10 @@
 import json
 import os
+import hmac
+import time
+import secrets
 from collections import defaultdict
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 from datetime import datetime, date
 import flet as ft
 from .models import FlashcardItem, Unit, UnitIntroData, UnitOneData, UnitData, MemoryNode, PedagogicalEvent
@@ -968,6 +971,16 @@ class AdminService:
     e geração de relatórios pedagógicos executivos.
     """
 
+    _failed_attempts: Dict[str, List[float]] = {}
+    _lockouts: Dict[str, float] = {}
+    _active_tokens: Dict[str, float] = {}
+
+    MAX_ATTEMPTS_TIER_1: int = 5
+    LOCKOUT_DURATION_TIER_1: float = 30.0
+    MAX_ATTEMPTS_TIER_2: int = 10
+    LOCKOUT_DURATION_TIER_2: float = 300.0
+    SESSION_DURATION_SECONDS: float = 3600.0
+
     @classmethod
     def get_configured_pin(cls) -> Optional[str]:
         """Retorna o PIN configurado via variável de ambiente SEJONG_ADMIN_PIN."""
@@ -982,15 +995,87 @@ class AdminService:
         return cls.get_configured_pin() is not None
 
     @classmethod
-    def authenticate(cls, pin: str) -> bool:
-        """Verifica se o PIN fornecido corresponde ao PIN configurado.
-        Falha fechado (retorna False) se SEJONG_ADMIN_PIN não estiver configurado."""
-        if not pin:
-            return False
+    def reset_rate_limit(cls, client_key: str = "default") -> None:
+        """Limpa o histórico de tentativas e lockouts de um cliente."""
+        cls._failed_attempts.pop(client_key, None)
+        cls._lockouts.pop(client_key, None)
+
+    @classmethod
+    def get_lockout_remaining(cls, client_key: str = "default") -> float:
+        """Retorna os segundos restantes de lockout (ou 0.0 se não bloqueado)."""
+        lockout_until = cls._lockouts.get(client_key, 0.0)
+        now = time.time()
+        if lockout_until > now:
+            return lockout_until - now
+        cls._lockouts.pop(client_key, None)
+        return 0.0
+
+    @classmethod
+    def login(cls, pin: str, client_key: str = "default") -> Tuple[bool, Optional[str], str]:
+        """Autentica o PIN com proteção contra timing attack, brute force e rate limit.
+        Retorna (sucesso, token_de_sessao, mensagem)."""
+        remaining = cls.get_lockout_remaining(client_key)
+        if remaining > 0:
+            return False, None, f"Muitas tentativas. Bloqueio ativo por mais {int(remaining) + 1}s."
+
+        if not pin or not str(pin).strip():
+            return False, None, "PIN de acesso não informado."
+
         expected = cls.get_configured_pin()
         if not expected:
+            return False, None, "Autenticação administrativa desabilitada (SEJONG_ADMIN_PIN não configurado)."
+
+        entered_clean = str(pin).strip()
+        is_valid = hmac.compare_digest(entered_clean, expected)
+        now = time.time()
+
+        if not is_valid:
+            attempts = cls._failed_attempts.setdefault(client_key, [])
+            attempts = [t for t in attempts if (now - t) < 3600.0]
+            attempts.append(now)
+            cls._failed_attempts[client_key] = attempts
+
+            count = len(attempts)
+            if count >= cls.MAX_ATTEMPTS_TIER_2:
+                cls._lockouts[client_key] = now + cls.LOCKOUT_DURATION_TIER_2
+                return False, None, f"Acesso administrativo bloqueado por {int(cls.LOCKOUT_DURATION_TIER_2 // 60)} minutos."
+            elif count >= cls.MAX_ATTEMPTS_TIER_1:
+                cls._lockouts[client_key] = now + cls.LOCKOUT_DURATION_TIER_1
+                return False, None, f"Muitas tentativas incorretas. Bloqueio temporário de {int(cls.LOCKOUT_DURATION_TIER_1)}s."
+
+            remaining_tries = cls.MAX_ATTEMPTS_TIER_1 - count
+            return False, None, f"PIN incorreto. {remaining_tries} tentativa(s) restante(s) antes do bloqueio."
+
+        # Autenticação bem-sucedida: limpar rate limit e gerar token de sessão efêmero
+        cls.reset_rate_limit(client_key)
+        token = secrets.token_urlsafe(32)
+        cls._active_tokens[token] = now + cls.SESSION_DURATION_SECONDS
+        return True, token, "Autenticado com sucesso."
+
+    @classmethod
+    def authenticate(cls, pin: str, client_key: str = "default") -> bool:
+        """Método de autenticação simplificado (booleano) mantendo rate limiting e timing safety."""
+        success, _, _ = cls.login(pin, client_key=client_key)
+        return success
+
+    @classmethod
+    def validate_session(cls, token: Optional[str]) -> bool:
+        """Valida se o token de sessão administrativa existe e não expirou."""
+        if not token:
             return False
-        return pin.strip() == expected
+        expires_at = cls._active_tokens.get(token)
+        if not expires_at:
+            return False
+        if time.time() > expires_at:
+            cls._active_tokens.pop(token, None)
+            return False
+        return True
+
+    @classmethod
+    def revoke_session(cls, token: Optional[str]) -> None:
+        """Revoga uma sessão administrativa ativa (logout)."""
+        if token:
+            cls._active_tokens.pop(token, None)
 
     @classmethod
     def _get_sessions_dir(cls, custom_dir: Optional[str] = None) -> str:
