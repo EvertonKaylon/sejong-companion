@@ -21,6 +21,22 @@ Pré-Alpha → Alpha → Beta → RC → RTM → GA
 | **RC** | `1.0.0-rc.1` | Feature-complete, testes E2E, zero bugs críticos |
 | **GA** | `1.0.0` | Pronto para distribuição pública |
 
+## [0.3.3-alpha] — 2026-08-28
+
+### Classificação: Alpha (Motor de Caligrafia & Reconhecimento Tátil 원고지)
+> Milestone de Caligrafia e Prática Motora de Escrita: Introdução da grade tradicional de manuscrito coreano 원고지 (Wongoji) para prática de escrita dos livros e workbooks. Implementação de decomposição aritmética Unicode (KS X 1001), classificação de 6 geometrias de blocos silábicos (CV/CVC), motor de validação de traços em tempo real por Path Matching (tolerância euclidiana, direcionalidade vetorial e desvio ponto-segmento), camada de modelo fantasma (ghost layer) com indicadores de ponto de início, dataset de stroke order para os 40 Jamo básicos e expansão da suíte para **134 testes automatizados (100% OK)**.
+
+### Added — Caligrafia & Reconhecimento Tátil
+- **Componente `CalligraphyWidget` (`src/components/calligraphy_widget.py`)** — Grade interativa 원고지 em Flet Canvas + GestureDetector com proporção 1:1, linhas pontilhadas de cruz central, feedback em tempo real (~60fps), botões de alternância de modelo e reinício.
+- **Decomposição Unicode e Layout de Blocos (`src/jamo_utils.py`)** — Decomposição aritmética pura de sílabas Hangul (가-힣) em Choseong, Jungseong e Jongseong, classificação de 6 tipos de blocos (`CV_VERTICAL`, `CV_HORIZONTAL`, `CV_COMPOUND`, `CVC_VERTICAL`, `CVC_HORIZONTAL`, `CVC_COMPOUND`) e mapeamento espacial de caixas delimitadoras.
+- **Dataset de Stroke Order (`assets/stroke_order/jamo_strokes.json`)** — Vetores de traços normalizados [0.0, 1.0] para 14 consoantes básicas e 11 vogais essenciais (adaptado de *hangeul-stroke-order*, CC BY-SA 4.0).
+- **Documento Conceitual Mestre (`Documentacao/Conceitos/Reconhecimento_Tatil_e_Caligrafia_Hangul.md`)** — Fundamentos do Hunminjeongeum, princípios neuropedagógicos de memória motora e comparação arquitetural entre Path Matching e OCR.
+
+### Added — Suíte de Testes
+- **134 Testes Automatizados (100% OK)** — Inclusão de `tests/test_jamo_utils.py` (16 testes) e `tests/test_calligraphy_widget.py` (12 testes).
+
+---
+
 ## [0.3.2-security] — 2026-08-28
 
 ### Classificação: Security Hardening (Resolução de Bloqueadores P0/P1)

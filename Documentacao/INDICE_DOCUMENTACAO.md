@@ -16,6 +16,7 @@ Bem-vindo ao repositório central de documentação e conhecimento do projeto **
 - 📱 **[[Desenvolvimento_Multiplataforma_Python]]** — Base única Python para Web, Android e iOS.
 - 🎮 **[[Neuropedagogia_e_Gamificacao]]** — Cronobiologia, repetição espaçada e máquina de estados de quiz.
 - 🎙️ **[[Integracao_TTS_Typecast_e_Audio]]** — Arquitetura de reprodução de voz natural em coreano com `AudioService`.
+- ✍️ **[[Reconhecimento_Tatil_e_Caligrafia_Hangul]]** — Grade de caligrafia 원고지 (Wongoji), decomposição Unicode e reconhecimento tátil de traços (Stroke Order).
 
 ---
 
