@@ -968,14 +968,28 @@ class AdminService:
     e geração de relatórios pedagógicos executivos.
     """
 
-    DEFAULT_PIN: str = "sejong2026"
+    @classmethod
+    def get_configured_pin(cls) -> Optional[str]:
+        """Retorna o PIN configurado via variável de ambiente SEJONG_ADMIN_PIN."""
+        pin = os.environ.get("SEJONG_ADMIN_PIN")
+        if pin:
+            pin = pin.strip()
+        return pin if pin else None
+
+    @classmethod
+    def is_configured(cls) -> bool:
+        """Indica se a autenticação administrativa está configurada no ambiente."""
+        return cls.get_configured_pin() is not None
 
     @classmethod
     def authenticate(cls, pin: str) -> bool:
-        """Verifica se o PIN fornecido corresponde ao PIN configurado ou ao padrão."""
+        """Verifica se o PIN fornecido corresponde ao PIN configurado.
+        Falha fechado (retorna False) se SEJONG_ADMIN_PIN não estiver configurado."""
         if not pin:
             return False
-        expected = os.environ.get("SEJONG_ADMIN_PIN", cls.DEFAULT_PIN).strip()
+        expected = cls.get_configured_pin()
+        if not expected:
+            return False
         return pin.strip() == expected
 
     @classmethod
