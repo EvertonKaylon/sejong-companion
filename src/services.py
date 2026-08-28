@@ -850,13 +850,34 @@ class TelemetryService:
         safe_id = "".join(c for c in session_id if c.isalnum() or c in ("-", "_")) or "default"
         return os.path.join(cls._get_telemetry_dir(), f"events_{safe_id}.jsonl")
 
+    MAX_EVENTS_PER_FILE: int = 5000
+
+    @classmethod
+    def _rotate_if_needed(cls, path: str) -> None:
+        """Mantém os eventos da sessão limitados a MAX_EVENTS_PER_FILE para evitar uso excessivo de disco."""
+        if not os.path.exists(path):
+            return
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                lines = f.readlines()
+            if len(lines) > cls.MAX_EVENTS_PER_FILE:
+                kept = lines[-cls.MAX_EVENTS_PER_FILE:]
+                tmp_path = f"{path}.tmp.{secrets.token_hex(4)}"
+                with open(tmp_path, "w", encoding="utf-8") as f:
+                    f.writelines(kept)
+                os.replace(tmp_path, path)
+        except Exception:
+            pass
+
     @classmethod
     def record(cls, session_id: str, event: PedagogicalEvent) -> bool:
-        """Grava um evento pedagógico no arquivo JSONL da sessão em modo append."""
+        """Grava um evento pedagógico no arquivo JSONL da sessão com rotação automática."""
         try:
             path = cls._get_log_path(session_id)
+            os.makedirs(os.path.dirname(path), exist_ok=True)
             with open(path, "a", encoding="utf-8") as f:
                 f.write(event.model_dump_json() + "\n")
+            cls._rotate_if_needed(path)
             return True
         except Exception as e:
             print(f"[TelemetryService] Erro ao gravar evento: {e}")
