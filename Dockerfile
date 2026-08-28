@@ -25,8 +25,8 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copiar todo o código-fonte da aplicação
 COPY . .
 
-# Criar e garantir permissões para os diretórios persistentes de dados e áudio
-RUN mkdir -p /app/assets/audio_cache /app/data/sessions /app/data/telemetry /app/data/reports
+# Criar e garantir permissões para os diretórios persistentes de dados e cache de áudio
+RUN mkdir -p /app/data/cache/audio /app/data/sessions /app/data/telemetry /app/data/reports
 
 # Expor a porta web padrão do Flet
 EXPOSE 8554

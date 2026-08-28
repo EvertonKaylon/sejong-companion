@@ -23,14 +23,25 @@ class AudioService:
     # timeout is kept short so the fallback is still responsive offline.
     REQUEST_TIMEOUT = (5, 60)
 
+    @classmethod
+    def get_cache_dir(cls) -> str:
+        """Retorna o diretório isolado de cache de áudio mutável."""
+        env_dir = os.environ.get("SEJONG_AUDIO_CACHE_DIR")
+        if env_dir:
+            return env_dir
+        storage_cache = os.environ.get("FLET_APP_STORAGE_CACHE")
+        if storage_cache:
+            return os.path.join(storage_cache, "audio")
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        return os.path.join(base_dir, "data", "cache", "audio")
+
     def __init__(self, page: ft.Page):
         self.page = page
         self._is_loading = False
         self._use_native_windows_player = sys.platform == "win32" and not getattr(page, "web", False)
         self.audio_format = "wav" if self._use_native_windows_player else "mp3"
 
-        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        self.cache_dir = os.path.join(base_dir, "assets", "audio_cache")
+        self.cache_dir = self.get_cache_dir()
         os.makedirs(self.cache_dir, exist_ok=True)
 
         self.player = None
