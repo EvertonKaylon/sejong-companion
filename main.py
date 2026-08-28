@@ -37,12 +37,10 @@ load_local_env()
 #     dois pontos -- a única perda é acesso via celular/rede local (troque
 #     pra "0.0.0.0" manualmente aqui se precisar testar no celular).
 _IS_CLOUD_DEPLOY = "PORT" in os.environ
-_HOST = "0.0.0.0" if _IS_CLOUD_DEPLOY else "127.0.0.1"
+_DEFAULT_HOST = "0.0.0.0" if _IS_CLOUD_DEPLOY else "127.0.0.1"
+_HOST = os.environ.get("FLET_SERVER_IP", _DEFAULT_HOST)
 
-# FLET_SERVER_IP sobrescreve o host= passado pra ft.app() internamente (ver
-# flet/app.py:run_async, "env_host = os.getenv('FLET_SERVER_IP')") -- os
-# dois precisam ficar sincronizados, ou um valor divergente aqui reabre o
-# ERR_ADDRESS_INVALID mesmo com o host= "certo" na chamada de ft.app().
+# Sincronizar FLET_SERVER_IP com o host selecionado
 os.environ["FLET_SERVER_IP"] = _HOST
 
 import flet as ft
