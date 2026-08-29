@@ -41,24 +41,27 @@ class Router:
         except Exception:
             pass
 
+    def _go_to(self, route_name: str):
+        try:
+            if hasattr(self.page, "push_route"):
+                self.page.push_route(route_name)
+            elif hasattr(self.page, "go"):
+                self.page.go(route_name)
+        except Exception:
+            pass
+
     def view_pop(self, e: ft.ViewPopEvent = None):
         try:
             if len(self._history) > 1:
                 self._history.pop()
                 prev_route = self._history[-1]
-                self.page.go(prev_route)
+                self._go_to(prev_route)
             else:
-                self.page.go("/home")
+                self._go_to("/home")
         except Exception:
-            try:
-                self.page.go("/home")
-            except Exception:
-                pass
+            self._go_to("/home")
 
     def navigate_to(self, route_name: str, unit_id: str = None):
         if unit_id:
             self.current_unit_id = unit_id
-        try:
-            self.page.go(route_name)
-        except Exception:
-            pass
+        self._go_to(route_name)
