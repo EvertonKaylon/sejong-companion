@@ -589,7 +589,7 @@ def hangul_view(page: ft.Page) -> ft.View:
     )
 
     # ─── Seção 5: Caligrafia 원고지 ───
-    grid_sz = min(170, int((page.width or 380) * 0.46))
+    grid_sz = min(175, int((page.width or 380) * 0.48))
     calligraphy_widget = CalligraphyWidget(
         target_char="가",
         size=grid_sz,
@@ -600,7 +600,7 @@ def hangul_view(page: ft.Page) -> ft.View:
 
     char_title = ft.Text(
         f"Praticando: {calligraphy_widget.target_char}",
-        size=12,
+        size=13,
         weight=ft.FontWeight.BOLD,
         color=colors["primary"],
     )
@@ -622,9 +622,9 @@ def hangul_view(page: ft.Page) -> ft.View:
     for c in sample_chars:
         is_selected = (c == calligraphy_widget.target_char)
         btn = ft.Container(
-            content=ft.Text(c, size=13, weight=ft.FontWeight.BOLD, color=colors["text"]),
-            width=36,
-            height=30,
+            content=ft.Text(c, size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),
+            width=41,
+            height=35,
             alignment=ft.Alignment.CENTER,
             bgcolor=colors["card_bg"] if is_selected else colors["surface"],
             border=ft.Border.all(2, colors["primary"]) if is_selected else ft.Border.all(1, colors["border"]),
@@ -643,30 +643,30 @@ def hangul_view(page: ft.Page) -> ft.View:
                         controls=[
                             ft.Row(
                                 controls=[
-                                    ft.Text("✍️", size=14),
-                                    ft.Text("Caligrafia na Grade 원고지", size=12, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                                    ft.Text("✍️", size=15),
+                                    ft.Text("Caligrafia na Grade 원고지", size=13, weight=ft.FontWeight.BOLD, color=colors["text"]),
                                 ],
-                                spacing=4,
+                                spacing=6,
                             ),
                             ft.Text(
                                 "Escreva com o dedo ou mouse sobre a grade seguindo a ordem correta dos traços (획순).",
-                                size=10,
+                                size=11,
                                 color=colors["text_sec"],
                             ),
                         ],
-                        spacing=1,
+                        spacing=2,
                     ),
-                    padding=ft.Padding.symmetric(horizontal=8, vertical=4),
+                    padding=ft.Padding.symmetric(horizontal=13, vertical=8),
                     bgcolor=colors["surface"],
                     border_radius=Styles.BORDER_RADIUS_MD,
                     border=ft.Border.all(1, colors["border"]),
                 ),
-                ft.Text("Selecione um caractere para treinar:", size=11, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                ft.Text("Selecione um caractere para treinar:", size=12, weight=ft.FontWeight.BOLD, color=colors["text"]),
                 ft.Row(
                     controls=char_buttons,
                     wrap=True,
-                    spacing=4,
-                    run_spacing=4,
+                    spacing=5,
+                    run_spacing=5,
                     alignment=ft.MainAxisAlignment.CENTER,
                 ),
                 char_title,
@@ -676,7 +676,7 @@ def hangul_view(page: ft.Page) -> ft.View:
                 ),
             ],
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            spacing=3,
+            spacing=5,
             expand=True,
         ),
         padding=ft.Padding.symmetric(horizontal=6, vertical=2),
