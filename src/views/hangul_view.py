@@ -589,24 +589,25 @@ def hangul_view(page: ft.Page) -> ft.View:
     )
 
     # ─── Seção 5: Caligrafia 원고지 ───
+    grid_sz = min(210, int((page.width or 380) * 0.62))
     calligraphy_widget = CalligraphyWidget(
         target_char="가",
-        size=min(250, int((page.width or 380) * 0.72)),
+        size=grid_sz,
         is_dark=is_dark,
     )
 
-    sample_chars = ["가", "나", "다", "한", "글", "세", "종", "ㄱ", "ㄴ", "ㄷ", "ㅏ", "ㅓ", "ㅗ"]
+    sample_chars = ["가", "나", "다", "한", "글", "세", "종", "ㄱ", "ㄴ", "ㄷ", "ㅏ", "ㅓ", "ㅗ", "ㅜ", "ㅡ", "ㅣ"]
 
     char_title = ft.Text(
-        f"Praticando: {calligraphy_widget.target_char}",
-        size=15,
+        f"Caractere: {calligraphy_widget.target_char}",
+        size=13,
         weight=ft.FontWeight.BOLD,
         color=colors["primary"],
     )
 
     def on_select_char(char):
         calligraphy_widget.set_target_character(char)
-        char_title.value = f"Praticando: {char}"
+        char_title.value = f"Caractere: {char}"
         try:
             page.update()
         except Exception:
@@ -614,54 +615,43 @@ def hangul_view(page: ft.Page) -> ft.View:
 
     chips = [
         ft.Chip(
-            label=ft.Text(c, weight=ft.FontWeight.BOLD),
+            label=ft.Text(c, weight=ft.FontWeight.BOLD, size=12),
             on_click=lambda e, ch=c: on_select_char(ch),
+            padding=ft.Padding.symmetric(horizontal=4, vertical=0),
         )
         for c in sample_chars
     ]
 
+    chips_row = ft.Row(
+        controls=chips,
+        scroll=ft.ScrollMode.AUTO,
+        spacing=6,
+    )
+
     caligrafia_col = ft.Container(
         content=ft.Column(
             controls=[
-                ft.Container(
-                    content=ft.Column(
-                        controls=[
-                            ft.Row(
-                                controls=[
-                                    ft.Text("✍️", size=18),
-                                    ft.Text("Caligrafia na Grade 원고지", size=13, weight=ft.FontWeight.BOLD, color=colors["text"]),
-                                ],
-                                spacing=6,
-                            ),
-                            ft.Text(
-                                "Escreva com o dedo ou mouse sobre a grade seguindo a ordem correta dos traços (획순).",
-                                size=11,
-                                color=colors["text_sec"],
-                            ),
-                        ],
-                        spacing=2,
-                    ),
-                    padding=8,
-                    bgcolor=colors["surface"],
-                    border_radius=Styles.BORDER_RADIUS_MD,
-                    border=ft.Border.all(1, colors["border"]),
-                ),
-                ft.Text("Selecione um caractere para treinar:", size=11, weight=ft.FontWeight.BOLD, color=colors["text"]),
                 ft.Row(
-                    controls=chips,
-                    wrap=True,
-                    spacing=4,
-                    run_spacing=4,
+                    controls=[
+                        ft.Text("✍️", size=14),
+                        char_title,
+                        ft.Text("(deslize os chips para escolher)", size=10, color=colors["text_sec"], italic=True),
+                    ],
                     alignment=ft.MainAxisAlignment.CENTER,
+                    spacing=6,
                 ),
-                char_title,
-                calligraphy_widget,
+                chips_row,
+                ft.Container(height=2),
+                ft.Container(
+                    content=calligraphy_widget,
+                    alignment=ft.Alignment.CENTER,
+                ),
             ],
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            spacing=6,
+            spacing=4,
             expand=True,
         ),
-        padding=ft.Padding.symmetric(horizontal=8, vertical=4),
+        padding=ft.Padding.symmetric(horizontal=6, vertical=2),
         alignment=ft.Alignment.TOP_CENTER,
         expand=True,
     )
@@ -688,10 +678,30 @@ def hangul_view(page: ft.Page) -> ft.View:
         expand=True,
     )
 
+    # Botão de Teste Fixo Inferior
+    quiz_button = ft.Container(
+        content=ft.ElevatedButton(
+            content="Testar Conhecimentos (Desafio)",
+            icon=ft.Icons.QUIZ_ROUNDED,
+            style=ft.ButtonStyle(
+                color=ft.Colors.WHITE,
+                bgcolor=colors["secondary"],
+                shape=ft.RoundedRectangleBorder(radius=Styles.BORDER_RADIUS_SM),
+                padding=14
+            ),
+            on_click=lambda e: page.router.navigate_to("/quiz", "unit_intro"),
+        ),
+        padding=ft.Padding.symmetric(horizontal=12, vertical=10),
+        bgcolor=colors["surface"],
+        border=ft.Border.only(top=ft.BorderSide(1, colors["border"])),
+        visible=True,
+    )
+
     def on_tab_change(e):
         idx = getattr(tabs, "selected_index", 0)
         if 0 <= idx < len(tab_views):
             current_tab_container.content = tab_views[idx]
+            quiz_button.visible = (idx != 4)
             try:
                 page.update()
             except Exception:
@@ -714,24 +724,6 @@ def hangul_view(page: ft.Page) -> ft.View:
                 current_tab_container,
             ]
         )
-    )
-
-    # Botão de Teste Fixo Inferior
-    quiz_button = ft.Container(
-        content=ft.ElevatedButton(
-            content="Testar Conhecimentos (Desafio)",
-            icon=ft.Icons.QUIZ_ROUNDED,
-            style=ft.ButtonStyle(
-                color=ft.Colors.WHITE,
-                bgcolor=colors["secondary"],
-                shape=ft.RoundedRectangleBorder(radius=Styles.BORDER_RADIUS_SM),
-                padding=14
-            ),
-            on_click=lambda e: page.router.navigate_to("/quiz", "unit_intro"),
-        ),
-        padding=ft.Padding.symmetric(horizontal=12, vertical=10),
-        bgcolor=colors["surface"],
-        border=ft.Border.only(top=ft.BorderSide(1, colors["border"])),
     )
 
     return ft.View(
