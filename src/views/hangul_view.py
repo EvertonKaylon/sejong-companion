@@ -589,7 +589,7 @@ def hangul_view(page: ft.Page) -> ft.View:
     )
 
     # ─── Seção 5: Caligrafia 원고지 ───
-    grid_sz = min(175, int((page.width or 380) * 0.48))
+    grid_sz = min(180, int((page.width or 380) * 0.50))
     calligraphy_widget = CalligraphyWidget(
         target_char="가",
         size=grid_sz,

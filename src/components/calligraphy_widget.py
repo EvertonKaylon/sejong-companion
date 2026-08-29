@@ -465,22 +465,48 @@ class CalligraphyWidget(ft.Container):
         if self.is_completed or not self.current_drawn_points:
             return
 
-        if self.current_stroke_index < len(self.reference_strokes):
-            ref_stroke = self.reference_strokes[self.current_stroke_index]
-            is_valid, score = calculate_stroke_similarity(self.current_drawn_points, ref_stroke)
+        total_strokes = len(self.reference_strokes)
+        if self.current_stroke_index < total_strokes:
+            validated_count = 0
+            best_score = 0.0
 
+            # 1. Tentar validar traço individual atual
+            ref_stroke = self.reference_strokes[self.current_stroke_index]
+            is_valid, score = calculate_stroke_similarity(
+                self.current_drawn_points, ref_stroke, tolerance=0.36
+            )
             if is_valid:
+                validated_count = 1
+                best_score = score
+            else:
+                # 2. Reconhecimento Fluido Contínuo: testar se o usuário fez múltiplos traços contínuos juntos
+                for m in range(2, total_strokes - self.current_stroke_index + 1):
+                    sub_strokes = self.reference_strokes[self.current_stroke_index : self.current_stroke_index + m]
+                    combined_ref = []
+                    for s in sub_strokes:
+                        combined_ref.extend(s)
+
+                    is_comb_valid, comb_score = calculate_stroke_similarity(
+                        self.current_drawn_points, combined_ref, tolerance=0.40
+                    )
+                    if is_comb_valid:
+                        validated_count = m
+                        best_score = comb_score
+                        break
+
+            if validated_count > 0:
                 self.completed_strokes.append(list(self.current_drawn_points))
-                self.scores.append(score)
-                self.current_stroke_index += 1
+                for _ in range(validated_count):
+                    self.scores.append(best_score)
+                self.current_stroke_index += validated_count
 
                 if self.on_stroke_validated:
                     self.on_stroke_validated(
-                        self.current_stroke_index, len(self.reference_strokes), True
+                        self.current_stroke_index, total_strokes, True
                     )
 
                 # Verificar se todos os traços foram completados
-                if self.current_stroke_index >= len(self.reference_strokes):
+                if self.current_stroke_index >= total_strokes:
                     self.is_completed = True
                     avg_score = sum(self.scores) / max(1, len(self.scores))
                     if self.on_completed:
@@ -488,7 +514,7 @@ class CalligraphyWidget(ft.Container):
             else:
                 if self.on_stroke_validated:
                     self.on_stroke_validated(
-                        self.current_stroke_index, len(self.reference_strokes), False
+                        self.current_stroke_index, total_strokes, False
                     )
 
         self.current_drawn_points = []

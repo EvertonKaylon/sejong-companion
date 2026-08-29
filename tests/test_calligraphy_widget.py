@@ -124,3 +124,20 @@ class TestCalligraphyWidgetUI:
         assert len(w.scores) == 0
         assert len(w.completed_strokes) == 0
         assert "Traço 1 de 4" in w.status_text.value
+
+    def test_widget_continuous_multi_stroke_validation(self):
+        w = CalligraphyWidget(target_char="ㄱ")
+        assert len(w.reference_strokes) == 2
+        # Desenhar os dois traços de 'ㄱ' continuamente em um único gesto
+        combined_pts = list(w.reference_strokes[0]) + list(w.reference_strokes[1])
+        w.current_drawn_points = combined_pts
+
+        class MockDragEndEvent:
+            pass
+
+        w._on_pan_end(MockDragEndEvent())
+        # Deve ter validado ambos os traços e completado o Jamo
+        assert w.current_stroke_index == 2
+        assert w.is_completed is True
+        assert len(w.completed_strokes) == 1
+        assert len(w.scores) == 2
