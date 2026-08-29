@@ -613,7 +613,7 @@ def hangul_view(page: ft.Page) -> ft.View:
             pass
 
     chips = [
-        ft.ActionChip(
+        ft.Chip(
             label=ft.Text(c, weight=ft.FontWeight.BOLD),
             on_click=lambda e, ch=c: on_select_char(ch),
         )
