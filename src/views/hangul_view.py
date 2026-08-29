@@ -1,5 +1,5 @@
 import flet as ft
-from ..components import HangulCard, centered_content, build_oclusive_lab
+from ..components import HangulCard, centered_content, build_oclusive_lab, CalligraphyWidget
 from ..theme import get_theme_colors, Styles, Responsive
 from ..services import DataService
 
@@ -588,12 +588,94 @@ def hangul_view(page: ft.Page) -> ft.View:
         alignment=ft.Alignment.TOP_CENTER,
     )
 
+    # ─── Seção 5: Caligrafia 원고지 ───
+    calligraphy_widget = CalligraphyWidget(
+        target_char="가",
+        size=min(250, int((page.width or 380) * 0.72)),
+        is_dark=is_dark,
+    )
+
+    sample_chars = ["가", "나", "다", "한", "글", "세", "종", "ㄱ", "ㄴ", "ㄷ", "ㅏ", "ㅓ", "ㅗ"]
+
+    char_title = ft.Text(
+        f"Praticando: {calligraphy_widget.target_char}",
+        size=15,
+        weight=ft.FontWeight.BOLD,
+        color=colors["primary"],
+    )
+
+    def on_select_char(char):
+        calligraphy_widget.set_target_character(char)
+        char_title.value = f"Praticando: {char}"
+        try:
+            page.update()
+        except Exception:
+            pass
+
+    chips = [
+        ft.ActionChip(
+            label=ft.Text(c, weight=ft.FontWeight.BOLD),
+            on_click=lambda e, ch=c: on_select_char(ch),
+        )
+        for c in sample_chars
+    ]
+
+    caligrafia_col = ft.Container(
+        content=ft.Column(
+            controls=[
+                ft.Container(
+                    content=ft.Column(
+                        controls=[
+                            ft.Row(
+                                controls=[
+                                    ft.Text("✍️", size=20),
+                                    ft.Text("Caligrafia na Grade 원고지", size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                                ],
+                                spacing=8,
+                            ),
+                            ft.Text(
+                                "Escreva com o dedo ou mouse sobre a grade seguindo a ordem correta dos traços (획순).",
+                                size=11,
+                                color=colors["text_sec"],
+                            ),
+                        ],
+                        spacing=4,
+                    ),
+                    padding=10,
+                    bgcolor=colors["surface"],
+                    border_radius=Styles.BORDER_RADIUS_MD,
+                    border=ft.Border.all(1, colors["border"]),
+                ),
+                ft.Container(height=4),
+                ft.Text("Selecione um caractere para treinar:", size=12, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                ft.Row(
+                    controls=chips,
+                    wrap=True,
+                    spacing=6,
+                    run_spacing=6,
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+                ft.Container(height=6),
+                char_title,
+                calligraphy_widget,
+                ft.Container(height=16),
+            ],
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            scroll=ft.ScrollMode.AUTO,
+            spacing=8,
+            expand=True,
+        ),
+        padding=ft.Padding.symmetric(horizontal=8, vertical=6),
+        alignment=ft.Alignment.TOP_CENTER,
+    )
+
     # ─── Abas (Tabs) ───
     tab_headers = [
         ft.Tab(label="Vogais", icon=ft.Icons.FONT_DOWNLOAD_OUTLINED),
         ft.Tab(label="Consoantes", icon=ft.Icons.SPELLCHECK_ROUNDED),
         ft.Tab(label="받침", icon=ft.Icons.LAYERS_ROUNDED),
         ft.Tab(label="Sílabas", icon=ft.Icons.GRID_VIEW_ROUNDED),
+        ft.Tab(label="Caligrafia", icon=ft.Icons.DRAW_ROUNDED),
     ]
 
     tabs = ft.Tabs(
@@ -617,6 +699,7 @@ def hangul_view(page: ft.Page) -> ft.View:
                         consonants_col,
                         batchim_section,
                         syllables_col,
+                        caligrafia_col,
                     ]
                 )
             ]
