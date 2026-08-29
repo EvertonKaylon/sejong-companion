@@ -420,22 +420,37 @@ class CalligraphyWidget(ft.Container):
 
         return shapes
 
+    def _extract_coords(self, e: Any) -> Optional[tuple[float, float]]:
+        if hasattr(e, "local_position") and e.local_position is not None:
+            return float(e.local_position.x), float(e.local_position.y)
+        if hasattr(e, "local_x") and hasattr(e, "local_y"):
+            return float(e.local_x), float(e.local_y)
+        if hasattr(e, "x") and hasattr(e, "y"):
+            return float(e.x), float(e.y)
+        return None
+
     # ── Handlers de Gestos (Toque / Mouse) ──
     def _on_pan_start(self, e: ft.DragStartEvent):
         if self.is_completed:
             return
+        coords = self._extract_coords(e)
+        if not coords:
+            return
         sz = self.grid_size
-        norm_x = max(0.0, min(1.0, e.local_x / sz))
-        norm_y = max(0.0, min(1.0, e.local_y / sz))
+        norm_x = max(0.0, min(1.0, coords[0] / sz))
+        norm_y = max(0.0, min(1.0, coords[1] / sz))
         self.current_drawn_points = [(norm_x, norm_y)]
         self._refresh_canvas()
 
     def _on_pan_update(self, e: ft.DragUpdateEvent):
         if self.is_completed or not self.current_drawn_points:
             return
+        coords = self._extract_coords(e)
+        if not coords:
+            return
         sz = self.grid_size
-        norm_x = max(0.0, min(1.0, e.local_x / sz))
-        norm_y = max(0.0, min(1.0, e.local_y / sz))
+        norm_x = max(0.0, min(1.0, coords[0] / sz))
+        norm_y = max(0.0, min(1.0, coords[1] / sz))
         self.current_drawn_points.append((norm_x, norm_y))
         self._refresh_canvas()
 
