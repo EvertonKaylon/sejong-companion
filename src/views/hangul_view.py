@@ -628,10 +628,10 @@ def hangul_view(page: ft.Page) -> ft.View:
                         controls=[
                             ft.Row(
                                 controls=[
-                                    ft.Text("✍️", size=20),
-                                    ft.Text("Caligrafia na Grade 원고지", size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                                    ft.Text("✍️", size=18),
+                                    ft.Text("Caligrafia na Grade 원고지", size=13, weight=ft.FontWeight.BOLD, color=colors["text"]),
                                 ],
-                                spacing=8,
+                                spacing=6,
                             ),
                             ft.Text(
                                 "Escreva com o dedo ou mouse sobre a grade seguindo a ordem correta dos traços (획순).",
@@ -639,34 +639,31 @@ def hangul_view(page: ft.Page) -> ft.View:
                                 color=colors["text_sec"],
                             ),
                         ],
-                        spacing=4,
+                        spacing=2,
                     ),
-                    padding=10,
+                    padding=8,
                     bgcolor=colors["surface"],
                     border_radius=Styles.BORDER_RADIUS_MD,
                     border=ft.Border.all(1, colors["border"]),
                 ),
-                ft.Container(height=4),
-                ft.Text("Selecione um caractere para treinar:", size=12, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                ft.Text("Selecione um caractere para treinar:", size=11, weight=ft.FontWeight.BOLD, color=colors["text"]),
                 ft.Row(
                     controls=chips,
                     wrap=True,
-                    spacing=6,
-                    run_spacing=6,
+                    spacing=4,
+                    run_spacing=4,
                     alignment=ft.MainAxisAlignment.CENTER,
                 ),
-                ft.Container(height=6),
                 char_title,
                 calligraphy_widget,
-                ft.Container(height=16),
             ],
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            scroll=ft.ScrollMode.AUTO,
-            spacing=8,
+            spacing=6,
             expand=True,
         ),
-        padding=ft.Padding.symmetric(horizontal=8, vertical=6),
+        padding=ft.Padding.symmetric(horizontal=8, vertical=4),
         alignment=ft.Alignment.TOP_CENTER,
+        expand=True,
     )
 
     # ─── Abas (Tabs) ───
@@ -678,11 +675,33 @@ def hangul_view(page: ft.Page) -> ft.View:
         ft.Tab(label="Caligrafia", icon=ft.Icons.DRAW_ROUNDED),
     ]
 
+    tab_views = [
+        vowels_col,
+        consonants_col,
+        batchim_section,
+        syllables_col,
+        caligrafia_col,
+    ]
+
+    current_tab_container = ft.Container(
+        content=tab_views[0],
+        expand=True,
+    )
+
+    def on_tab_change(e):
+        idx = getattr(tabs, "selected_index", 0)
+        if 0 <= idx < len(tab_views):
+            current_tab_container.content = tab_views[idx]
+            try:
+                page.update()
+            except Exception:
+                pass
+
     tabs = ft.Tabs(
         selected_index=0,
-        animation_duration=200,
         expand=True,
         length=len(tab_headers),
+        on_change=on_tab_change,
         content=ft.Column(
             expand=True,
             controls=[
@@ -690,18 +709,9 @@ def hangul_view(page: ft.Page) -> ft.View:
                     tabs=tab_headers,
                     label_color=colors["primary"],
                     unselected_label_color=colors["text_sec"],
-                    indicator_color=colors["primary"]
+                    indicator_color=colors["primary"],
                 ),
-                ft.TabBarView(
-                    expand=True,
-                    controls=[
-                        vowels_col,
-                        consonants_col,
-                        batchim_section,
-                        syllables_col,
-                        caligrafia_col,
-                    ]
-                )
+                current_tab_container,
             ]
         )
     )

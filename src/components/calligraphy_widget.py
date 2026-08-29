@@ -252,7 +252,8 @@ class CalligraphyWidget(ft.Container):
             on_pan_start=self._on_pan_start,
             on_pan_update=self._on_pan_update,
             on_pan_end=self._on_pan_end,
-            drag_interval=16,  # ~60fps
+            drag_interval=10,
+            mouse_cursor=ft.MouseCursor.PRECISE,
         )
 
         # 3. Informações de Status e Controles
