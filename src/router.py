@@ -43,10 +43,7 @@ class Router:
 
     def _go_to(self, route_name: str):
         try:
-            if hasattr(self.page, "push_route"):
-                self.page.push_route(route_name)
-            elif hasattr(self.page, "go"):
-                self.page.go(route_name)
+            self.page.go(route_name)
         except Exception:
             pass
 
