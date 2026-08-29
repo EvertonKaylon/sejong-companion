@@ -141,3 +141,27 @@ class TestCalligraphyWidgetUI:
         assert w.is_completed is True
         assert len(w.completed_strokes) == 1
         assert len(w.scores) == 2
+
+    def test_syllable_structure_classification(self):
+        from src.components.calligraphy_widget import get_syllable_structure_label
+
+        assert "Consoante" in get_syllable_structure_label("ㄱ")
+        assert "Vogal" in get_syllable_structure_label("ㅏ")
+        assert "Consoante + Vogal" in get_syllable_structure_label("가")
+        assert "Batchim" in get_syllable_structure_label("한")
+
+    def test_dashboard_metrics_update(self):
+        w = CalligraphyWidget(target_char="가")
+        assert w.metric_points_text.value == "0"
+        assert w.metric_strokes_text.value == "0/4"
+        assert "Consoante + Vogal" in w.metric_structure_text.value
+
+        # Simular início de toque
+        class MockDragStartEvent:
+            local_x = 50.0
+            local_y = 50.0
+
+        w._on_pan_start(MockDragStartEvent())
+        assert w.sampled_points_count == 1
+        assert w.metric_points_text.value == "1"
+        assert w.metric_dtw_text.value == "Desenhando..."

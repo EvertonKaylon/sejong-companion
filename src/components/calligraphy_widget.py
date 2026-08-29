@@ -197,13 +197,33 @@ def calculate_stroke_similarity(
 
 
 # ============================================================
+def get_syllable_structure_label(char: str) -> str:
+    """Retorna a classificação morfológica e estrutural do caractere coreano."""
+    if is_hangul_jamo(char) or len(char) == 1 and not is_hangul_syllable(char):
+        dataset = load_stroke_dataset()
+        fname = JAMO_TO_FILENAME.get(char, "")
+        if fname in dataset.get("consonants", {}):
+            return "Consoante Inicial (초성)"
+        elif fname in dataset.get("vowels", {}):
+            return "Vogal Medial (중성)"
+        return "Jamo Individual"
+    if is_hangul_syllable(char):
+        decomp = decompose(char)
+        if decomp.has_batchim:
+            return "Bloco com Batchim (초성+중성+종성)"
+        return "Consoante + Vogal (초성+중성)"
+    return "Hangul (한글)"
+
+
+# ============================================================
 # Componente de Interface: CalligraphyWidget (Flet)
 # ============================================================
 class CalligraphyWidget(ft.Container):
     """Grade interativa 원고지 para prática de caligrafia Hangul.
 
-    Renderiza uma célula tradicional com linhas guia de cruz central,
-    camada modelo (ghost), feedback tátil e reconhecimento de traços.
+    Renderiza uma célula tradicional de papel manuscrito coreano com
+    linhas guia em coral/rubi, dashboard de telemetria silábica em tempo
+    real e validação tátil contínua com feedback sonoro.
     """
 
     def __init__(
@@ -225,13 +245,14 @@ class CalligraphyWidget(ft.Container):
 
         self.colors = get_theme_colors(is_dark)
 
-        # Estado dos traços
+        # Estado dos traços e telemetria
         self.reference_strokes = get_reference_strokes(self.target_char)
         self.current_stroke_index = 0
         self.completed_strokes: list[list[tuple[float, float]]] = []
         self.current_drawn_points: list[tuple[float, float]] = []
         self.is_completed = False
         self.scores: list[float] = []
+        self.sampled_points_count = 0
 
         # Inicializar UI
         self._build_ui()
@@ -259,7 +280,7 @@ class CalligraphyWidget(ft.Container):
         # 3. Informações de Status e Controles
         self.status_text = ft.Text(
             self._get_status_label(),
-            size=12,
+            size=11,
             weight=ft.FontWeight.BOLD,
             color=self.colors["text_sec"],
         )
@@ -267,9 +288,9 @@ class CalligraphyWidget(ft.Container):
         self.btn_reset = ft.IconButton(
             icon=ft.Icons.REFRESH,
             icon_color=self.colors["primary"],
-            icon_size=23,
+            icon_size=20,
             visual_density=ft.VisualDensity.COMPACT,
-            padding=3,
+            padding=2,
             tooltip="Limpar e recomeçar",
             on_click=lambda _: self.reset(),
         )
@@ -277,28 +298,104 @@ class CalligraphyWidget(ft.Container):
         self.btn_toggle_ghost = ft.IconButton(
             icon=ft.Icons.VISIBILITY if self.show_ghost else ft.Icons.VISIBILITY_OFF,
             icon_color=self.colors["secondary"],
-            icon_size=23,
+            icon_size=20,
             visual_density=ft.VisualDensity.COMPACT,
-            padding=3,
+            padding=2,
             tooltip="Mostrar/ocultar guia",
             on_click=lambda _: self.toggle_ghost(),
         )
 
-        # 4. Estrutura Principal
+        # 4. Mini-Dashboard de Telemetria Silábica (Estilo Laboratório Wongoji)
+        self.metric_points_text = ft.Text("0", size=12, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE)
+        self.metric_strokes_text = ft.Text(f"0/{len(self.reference_strokes)}", size=12, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE)
+        self.metric_dtw_text = ft.Text("Aguardando traço", size=10, weight=ft.FontWeight.BOLD, color="#FBBF24")
+        self.metric_structure_text = ft.Text(get_syllable_structure_label(self.target_char), size=10, weight=ft.FontWeight.BOLD, color="#FDE68A")
+
+        paper_bg = "#FAF8F5" if not self.is_dark else "#1C1917"
+        paper_border = "#EF4444" if not self.is_dark else "#F87171"
+
+        self.dashboard_card = ft.Container(
+            content=ft.Column(
+                controls=[
+                    ft.Row(
+                        controls=[
+                            ft.Container(
+                                content=ft.Column(
+                                    controls=[
+                                        ft.Text("Pontos:", size=9, color="#A8A29E"),
+                                        self.metric_points_text,
+                                    ],
+                                    spacing=1,
+                                ),
+                                bgcolor="#292524",
+                                padding=ft.Padding.symmetric(horizontal=6, vertical=3),
+                                border_radius=4,
+                                expand=True,
+                            ),
+                            ft.Container(
+                                content=ft.Column(
+                                    controls=[
+                                        ft.Text("Traços:", size=9, color="#A8A29E"),
+                                        self.metric_strokes_text,
+                                    ],
+                                    spacing=1,
+                                ),
+                                bgcolor="#292524",
+                                padding=ft.Padding.symmetric(horizontal=6, vertical=3),
+                                border_radius=4,
+                                expand=True,
+                            ),
+                        ],
+                        spacing=4,
+                    ),
+                    ft.Container(
+                        content=ft.Column(
+                            controls=[
+                                ft.Row(
+                                    controls=[
+                                        ft.Text("Ordem (DTW):", size=9, color="#D6D3D1"),
+                                        self.metric_dtw_text,
+                                    ],
+                                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                                ),
+                                ft.Row(
+                                    controls=[
+                                        ft.Text("Estrutura:", size=9, color="#D6D3D1"),
+                                        self.metric_structure_text,
+                                    ],
+                                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                                ),
+                            ],
+                            spacing=1,
+                        ),
+                        bgcolor="#292524",
+                        padding=ft.Padding.symmetric(horizontal=6, vertical=4),
+                        border_radius=4,
+                    ),
+                ],
+                spacing=3,
+            ),
+            width=self.grid_size,
+            bgcolor="#1C1917",
+            padding=5,
+            border_radius=Styles.BORDER_RADIUS_SM,
+        )
+
+        # 5. Estrutura Principal
         self.content = ft.Column(
             controls=[
-                # Célula Wongoji com borda arredondada e sombra
+                # Célula Wongoji com papel de caligrafia tradicional
                 ft.Container(
                     content=self.gesture_detector,
                     width=self.grid_size,
                     height=self.grid_size,
-                    bgcolor=self.colors["card_bg"],
-                    border=ft.Border.all(2, self.colors["primary"]),
+                    bgcolor=paper_bg,
+                    border=ft.Border.all(2, paper_border),
                     border_radius=Styles.BORDER_RADIUS_MD,
                     shadow=Styles.CARD_SHADOW,
                     clip_behavior=ft.ClipBehavior.HARD_EDGE,
                 ),
-                # Barra inferior de controles e progresso
+                # Barra inferior de controles
                 ft.Row(
                     controls=[
                         self.status_text,
@@ -313,9 +410,11 @@ class CalligraphyWidget(ft.Container):
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                     width=self.grid_size,
                 ),
+                # Mini Dashboard de Análise Silábica
+                self.dashboard_card,
             ],
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            spacing=4,
+            spacing=3,
         )
 
     def _get_status_label(self) -> str:
@@ -332,31 +431,43 @@ class CalligraphyWidget(ft.Container):
         """Gera as formas do Canvas: linhas da grade 원고지, ghost e traços desenhados."""
         shapes = []
         sz = self.grid_size
-        border_color = "#33004C97" if not self.is_dark else "#337C4DFF"
-        guide_color = "#1A004C97" if not self.is_dark else "#1A7C4DFF"
 
-        # ── Grade Wongoji (Cruz Central e Diagonais Sutis) ──
-        # Linha vertical central
+        # Cores tradicionais da grade 원고지 (Paper & Coral)
+        wongoji_border = "#EF4444" if not self.is_dark else "#F87171"
+        wongoji_guide = "#F87171" if not self.is_dark else "#F87171"
+        ink_color = "#1C1917" if not self.is_dark else "#F5F5F4"
+
+        # ── Grade Wongoji (Moldura Externa e Cruz Central Pontilhada) ──
+        # Moldura interna de margem tradicional
         shapes.append(
-            cv.Line(
-                x1=sz / 2, y1=8,
-                x2=sz / 2, y2=sz - 8,
-                paint=ft.Paint(color=guide_color, stroke_width=1, stroke_dash_pattern=[4, 4]),
+            cv.Rect(
+                x=6, y=6,
+                width=sz - 12, height=sz - 12,
+                border_radius=4,
+                paint=ft.Paint(color=wongoji_border, stroke_width=1.5, style=ft.PaintingStyle.STROKE),
             )
         )
-        # Linha horizontal central
+        # Linha vertical central pontilhada
         shapes.append(
             cv.Line(
-                x1=8, y1=sz / 2,
-                x2=sz - 8, y2=sz / 2,
-                paint=ft.Paint(color=guide_color, stroke_width=1, stroke_dash_pattern=[4, 4]),
+                x1=sz / 2, y1=6,
+                x2=sz / 2, y2=sz - 6,
+                paint=ft.Paint(color=wongoji_guide, stroke_width=1, stroke_dash_pattern=[4, 4]),
+            )
+        )
+        # Linha horizontal central pontilhada
+        shapes.append(
+            cv.Line(
+                x1=6, y1=sz / 2,
+                x2=sz - 6, y2=sz / 2,
+                paint=ft.Paint(color=wongoji_guide, stroke_width=1, stroke_dash_pattern=[4, 4]),
             )
         )
 
         # ── Camada Modelo (Ghost) ──
         if self.show_ghost and not self.is_completed:
-            ghost_color = "#20000000" if not self.is_dark else "#33FFFFFF"
-            active_ghost_color = self.colors["primary_light"]
+            ghost_color = "#E2E8F0" if not self.is_dark else "#3F3F46"
+            active_ghost_color = "#FB7185" if not self.is_dark else "#FDA4AF"
 
             for idx, stroke in enumerate(self.reference_strokes):
                 is_active = (idx == self.current_stroke_index)
@@ -386,12 +497,12 @@ class CalligraphyWidget(ft.Container):
                         cv.Circle(
                             x=start_pt[0] * sz,
                             y=start_pt[1] * sz,
-                            radius=6,
-                            paint=ft.Paint(color=self.colors["accent"], style=ft.PaintingStyle.FILL),
+                            radius=5.5,
+                            paint=ft.Paint(color="#EF4444", style=ft.PaintingStyle.FILL),
                         )
                     )
 
-        # ── Traços Já Validados com Sucesso ──
+        # ── Traços Já Validados com Sucesso (Tinta Caligráfica) ──
         for completed_stroke in self.completed_strokes:
             for i in range(len(completed_stroke) - 1):
                 p1 = completed_stroke[i]
@@ -401,14 +512,14 @@ class CalligraphyWidget(ft.Container):
                         x1=p1[0] * sz, y1=p1[1] * sz,
                         x2=p2[0] * sz, y2=p2[1] * sz,
                         paint=ft.Paint(
-                            color=self.colors["primary"],
+                            color=ink_color,
                             stroke_width=6,
                             stroke_cap=ft.StrokeCap.ROUND,
                         ),
                     )
                 )
 
-        # ── Traço Atual Sendo Desenhado em Tempo Real ──
+        # ── Traço Atual Sendo Desenhado em Tempo Real (Teal/Emerald) ──
         if len(self.current_drawn_points) > 1:
             for i in range(len(self.current_drawn_points) - 1):
                 p1 = self.current_drawn_points[i]
@@ -418,8 +529,8 @@ class CalligraphyWidget(ft.Container):
                         x1=p1[0] * sz, y1=p1[1] * sz,
                         x2=p2[0] * sz, y2=p2[1] * sz,
                         paint=ft.Paint(
-                            color=self.colors["secondary"],
-                            stroke_width=5,
+                            color="#0D9488" if not self.is_dark else "#2DD4BF",
+                            stroke_width=5.5,
                             stroke_cap=ft.StrokeCap.ROUND,
                         ),
                     )
@@ -447,6 +558,10 @@ class CalligraphyWidget(ft.Container):
         norm_x = max(0.0, min(1.0, coords[0] / sz))
         norm_y = max(0.0, min(1.0, coords[1] / sz))
         self.current_drawn_points = [(norm_x, norm_y)]
+        self.sampled_points_count += 1
+        self.metric_points_text.value = str(self.sampled_points_count)
+        self.metric_dtw_text.value = "Desenhando..."
+        self.metric_dtw_text.color = ft.Colors.AMBER_400
         self._refresh_canvas()
 
     def _on_pan_update(self, e: ft.DragUpdateEvent):
@@ -459,6 +574,8 @@ class CalligraphyWidget(ft.Container):
         norm_x = max(0.0, min(1.0, coords[0] / sz))
         norm_y = max(0.0, min(1.0, coords[1] / sz))
         self.current_drawn_points.append((norm_x, norm_y))
+        self.sampled_points_count += 1
+        self.metric_points_text.value = str(self.sampled_points_count)
         self._refresh_canvas()
 
     def _on_pan_end(self, e: ft.DragEndEvent):
@@ -505,13 +622,21 @@ class CalligraphyWidget(ft.Container):
                         self.current_stroke_index, total_strokes, True
                     )
 
+                self.metric_strokes_text.value = f"{self.current_stroke_index}/{total_strokes}"
+                self.metric_dtw_text.value = f"Aprovado ({int(best_score * 100)}%)"
+                self.metric_dtw_text.color = "#34D399"
+
                 # Verificar se todos os traços foram completados
                 if self.current_stroke_index >= total_strokes:
                     self.is_completed = True
                     avg_score = sum(self.scores) / max(1, len(self.scores))
+                    self.metric_dtw_text.value = f"Concluído ({int(avg_score * 100)}%)"
+                    self.metric_dtw_text.color = "#34D399"
                     if self.on_completed:
                         self.on_completed(self.target_char, round(avg_score, 3))
             else:
+                self.metric_dtw_text.value = "Tente novamente"
+                self.metric_dtw_text.color = "#FB923C"
                 if self.on_stroke_validated:
                     self.on_stroke_validated(
                         self.current_stroke_index, total_strokes, False
@@ -530,12 +655,19 @@ class CalligraphyWidget(ft.Container):
 
     def reset(self):
         """Reinicia o exercício de caligrafia atual."""
+        total_strokes = len(self.reference_strokes)
         self.current_stroke_index = 0
         self.completed_strokes = []
         self.current_drawn_points = []
         self.is_completed = False
         self.scores = []
+        self.sampled_points_count = 0
         self.status_text.value = self._get_status_label()
+        self.metric_points_text.value = "0"
+        self.metric_strokes_text.value = f"0/{total_strokes}"
+        self.metric_dtw_text.value = "Aguardando traço"
+        self.metric_dtw_text.color = "#FBBF24"
+        self.metric_structure_text.value = get_syllable_structure_label(self.target_char)
         self._refresh_canvas()
 
     def toggle_ghost(self):

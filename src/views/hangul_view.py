@@ -590,10 +590,16 @@ def hangul_view(page: ft.Page) -> ft.View:
 
     # ─── Seção 5: Caligrafia 원고지 ───
     grid_sz = min(180, int((page.width or 380) * 0.50))
+
+    def on_calligraphy_completed(char: str, score: float):
+        if hasattr(page, "audio_service") and page.audio_service:
+            page.audio_service.play_korean(char)
+
     calligraphy_widget = CalligraphyWidget(
         target_char="가",
         size=grid_sz,
         is_dark=is_dark,
+        on_completed=on_calligraphy_completed,
     )
 
     sample_chars = ["가", "나", "다", "한", "글", "세", "종", "ㄱ", "ㄴ", "ㄷ", "ㅏ", "ㅓ", "ㅗ"]
@@ -613,6 +619,8 @@ def hangul_view(page: ft.Page) -> ft.View:
         for b, ch in char_btn_containers:
             b.border = ft.Border.all(2, colors["primary"]) if ch == char else ft.Border.all(1, colors["border"])
             b.bgcolor = colors["card_bg"] if ch == char else colors["surface"]
+        if hasattr(page, "audio_service") and page.audio_service:
+            page.audio_service.play_korean(char)
         try:
             page.update()
         except Exception:
