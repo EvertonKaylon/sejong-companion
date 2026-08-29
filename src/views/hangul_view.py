@@ -657,7 +657,7 @@ def hangul_view(page: ft.Page) -> ft.View:
                                 spacing=6,
                             ),
                             ft.Text(
-                                "Escreva com o dedo ou mouse sobre a grade seguindo a ordem correta dos traços (획순).",
+                                "Desenhe o caractere livremente sobre a grade e clique em Avaliar Sílaba para ver o diagnóstico de forma e ouvir a pronúncia!",
                                 size=11,
                                 color=colors["text_sec"],
                             ),
@@ -682,9 +682,11 @@ def hangul_view(page: ft.Page) -> ft.View:
                     content=calligraphy_widget,
                     alignment=ft.Alignment.CENTER,
                 ),
+                ft.Container(height=16),
             ],
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             spacing=5,
+            scroll=ft.ScrollMode.AUTO,
             expand=True,
         ),
         padding=ft.Padding.symmetric(horizontal=6, vertical=2),
@@ -737,6 +739,7 @@ def hangul_view(page: ft.Page) -> ft.View:
         idx = getattr(tabs, "selected_index", 0)
         if 0 <= idx < len(tab_views):
             current_tab_container.content = tab_views[idx]
+            quiz_button.visible = (idx != 4)
             try:
                 page.update()
             except Exception:

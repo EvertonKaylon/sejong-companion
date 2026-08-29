@@ -7,7 +7,13 @@ from .quiz_widget import QuizWidget
 from .vocab_card import VocabCard
 from .flashcard_widget import FlashcardWidget
 from .sentence_builder_widget import SentenceBuilderWidget
-from .calligraphy_widget import CalligraphyWidget, calculate_stroke_similarity, get_reference_strokes
+from .calligraphy_widget import (
+    CalligraphyWidget,
+    calculate_iou,
+    generate_diagnostic_overlay,
+    render_reference_bitmap,
+    render_strokes_bitmap,
+)
 
 __all__ = [
     "CONTENT_MAX_WIDTH",
@@ -19,7 +25,9 @@ __all__ = [
     "FlashcardWidget",
     "SentenceBuilderWidget",
     "build_oclusive_lab",
-    "calculate_stroke_similarity",
+    "calculate_iou",
+    "generate_diagnostic_overlay",
+    "render_reference_bitmap",
+    "render_strokes_bitmap",
     "centered_content",
-    "get_reference_strokes",
 ]

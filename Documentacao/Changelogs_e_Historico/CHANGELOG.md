@@ -21,6 +21,24 @@ Pré-Alpha → Alpha → Beta → RC → RTM → GA
 | **RC** | `1.0.0-rc.1` | Feature-complete, testes E2E, zero bugs críticos |
 | **GA** | `1.0.0` | Pronto para distribuição pública |
 
+## [0.3.4-alpha] — 2026-08-28
+
+### Classificação: Alpha (Wongoji Lab: Escrita Livre & Diagnóstico Visual Matricial)
+> Evolução do Motor de Caligrafia Hangul: Substituição do modelo rígido de stroke order por um ambiente de escrita 100% livre com avaliação matemática real por Bitmap IoU (Intersection over Union 48×48 com a fonte oficial `Pretendard-Bold.otf` e Pillow). Introdução de mapa visual de diagnóstico colorido (🟢 Verde = Acerto, 🔴 Vermelho = Excesso/Desvio, ⚪ Cinza = Omissão/Falta), telemetria ao vivo (pontos amostrados, traços), botões de controle tátil ("Limpar", "Avaliar Sílaba", "Diagnóstico") e expansão para **135 testes automatizados (100% OK)**.
+
+### Added — Wongoji Lab & Visão Computacional
+- **Escrita Livre & Natural (`src/components/calligraphy_widget.py`)** — O aluno escreve livremente qualquer traço na grade 원고지 sem interrupções ou rejeições durante o movimento.
+- **Motor de Visão Tipográfica & IoU (`calculate_iou`, `render_reference_bitmap`, `render_strokes_bitmap`)** — Rasterização 48×48 com fonte Pretendard oficial, permitindo validar qualquer uma das 11.172 sílabas Hangul KS X 1001 e Jamo isolados com precisão métrica.
+- **Overlay Colorido de Diagnóstico (`generate_diagnostic_overlay`)** — Mapa de calor em 3 canais renderizado diretamente no Flet Canvas pós-avaliação, destacando com precisão os acertos, excessos e omissões.
+- **Controles de Ação & Telemetria** — Botões "Limpar", "Avaliar Sílaba", alternador de guia fantasma e alternador de diagnóstico, com contagem viva de pontos e traços.
+- **Integração de Áudio Nativo** — Disparo automático da pronúncia em coreano via `AudioService` ao atingir o limiar de acerto.
+- **Dependência Pillow (`requirements.txt`)** — Adicionado `Pillow>=10.0.0` para geração e processamento matricial.
+
+### Added — Suíte de Testes
+- **135 Testes Automatizados (100% OK)** — Testes unitários para `calculate_iou`, `render_reference_bitmap`, `render_strokes_bitmap`, `generate_diagnostic_overlay` e fluxo de UI completo no `tests/test_calligraphy_widget.py`.
+
+---
+
 ## [0.3.3-alpha] — 2026-08-28
 
 ### Classificação: Alpha (Motor de Caligrafia & Reconhecimento Tátil 원고지)

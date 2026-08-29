@@ -1,86 +1,92 @@
-"""Testes automatizados para o CalligraphyWidget e algoritmo de validação de traços."""
+"""Testes automatizados para o CalligraphyWidget (Wongoji Lab) e motor de visão/IoU."""
 
 import pytest
 from src.components.calligraphy_widget import (
     CalligraphyWidget,
-    calculate_stroke_similarity,
-    get_reference_strokes,
-    load_stroke_dataset,
+    calculate_iou,
+    generate_diagnostic_overlay,
+    get_syllable_structure_label,
+    render_reference_bitmap,
+    render_strokes_bitmap,
 )
 
 
-class TestCalligraphyLogic:
-    """Testes para algoritmos puros de extração de traços e similaridade."""
+class TestCalligraphyVisionEngine:
+    """Testes para o motor de rasterização tipográfica e comparação de bitmaps."""
 
-    def test_load_stroke_dataset(self):
-        data = load_stroke_dataset()
-        assert "consonants" in data
-        assert "vowels" in data
-        assert len(data["consonants"]) >= 14
-        assert len(data["vowels"]) >= 11
+    def test_render_reference_bitmap_hangul_syllables(self):
+        # Sílaba básica
+        bm_ga = render_reference_bitmap("가", size=48)
+        assert len(bm_ga) == 48
+        assert len(bm_ga[0]) == 48
+        total_pixels_ga = sum(sum(row) for row in bm_ga)
+        assert total_pixels_ga > 50
 
-    def test_get_reference_strokes_jamo(self):
-        strokes_g = get_reference_strokes("ㄱ")
-        assert len(strokes_g) == 2
-        # Verifica normalização 0.0 - 1.0
-        for stroke in strokes_g:
-            for pt in stroke:
-                assert 0.0 <= pt[0] <= 1.0
-                assert 0.0 <= pt[1] <= 1.0
+        # Sílaba complexa com batchim
+        bm_han = render_reference_bitmap("한", size=48)
+        total_pixels_han = sum(sum(row) for row in bm_han)
+        assert total_pixels_han > total_pixels_ga
 
-        strokes_a = get_reference_strokes("ㅏ")
-        assert len(strokes_a) == 2
+    def test_render_reference_bitmap_jamo(self):
+        bm_g = render_reference_bitmap("ㄱ", size=48)
+        total_pixels_g = sum(sum(row) for row in bm_g)
+        assert total_pixels_g > 30
 
-    def test_get_reference_strokes_composed_syllable(self):
-        # '가' = ㄱ (2 strokes) + ㅏ (2 strokes) = 4 strokes
-        strokes_ga = get_reference_strokes("가")
-        assert len(strokes_ga) == 4
+    def test_render_strokes_bitmap(self):
+        strokes = [
+            [(0.2, 0.2), (0.8, 0.2)],
+            [(0.8, 0.2), (0.8, 0.8)],
+        ]
+        bm = render_strokes_bitmap(strokes, size=48, stroke_width=3)
+        assert len(bm) == 48
+        total_pixels = sum(sum(row) for row in bm)
+        assert total_pixels > 20
 
-        # '한' = ㅎ (3 strokes) + ㅏ (2 strokes) + ㄴ (2 strokes) = 7 strokes
-        strokes_han = get_reference_strokes("한")
-        assert len(strokes_han) == 7
+    def test_calculate_iou_identical_bitmaps(self):
+        bm = [[1 if (r > 10 and c > 10) else 0 for c in range(30)] for r in range(30)]
+        score = calculate_iou(bm, bm)
+        assert score == 1.0
 
-        # '고' = ㄱ (2 strokes) + ㅗ (2 strokes) = 4 strokes
-        strokes_go = get_reference_strokes("고")
-        assert len(strokes_go) == 4
+    def test_calculate_iou_disjoint_bitmaps(self):
+        bm1 = [[1 if r < 10 else 0 for _ in range(30)] for r in range(30)]
+        bm2 = [[1 if r >= 20 else 0 for _ in range(30)] for r in range(30)]
+        score = calculate_iou(bm1, bm2)
+        assert score == 0.0
 
-    def test_calculate_stroke_similarity_perfect_match(self):
-        ref = [(0.2, 0.2), (0.5, 0.2), (0.8, 0.2)]
-        drawn = [(0.2, 0.2), (0.5, 0.2), (0.8, 0.2)]
-        is_valid, score = calculate_stroke_similarity(drawn, ref)
-        assert is_valid is True
-        assert score >= 0.90
+    def test_calculate_iou_partial_overlap(self):
+        bm_ref = render_reference_bitmap("가", size=48)
+        # Traço semelhante desenhado
+        strokes = [
+            [(0.2, 0.2), (0.8, 0.2)],
+            [(0.8, 0.2), (0.8, 0.8)],
+        ]
+        bm_drawn = render_strokes_bitmap(strokes, size=48)
+        score = calculate_iou(bm_ref, bm_drawn)
+        assert 0.0 < score < 1.0
 
-    def test_calculate_stroke_similarity_close_match(self):
-        ref = [(0.2, 0.2), (0.8, 0.2)]
-        # Leve desvio de 3% no eixo Y
-        drawn = [(0.22, 0.23), (0.50, 0.21), (0.78, 0.22)]
-        is_valid, score = calculate_stroke_similarity(drawn, ref, tolerance=0.30)
-        assert is_valid is True
-        assert score >= 0.60
-
-    def test_calculate_stroke_similarity_reversed_direction_fails(self):
-        ref = [(0.2, 0.2), (0.8, 0.2)]
-        # Desenhado da direita para a esquerda (direção invertida)
-        drawn = [(0.8, 0.2), (0.5, 0.2), (0.2, 0.2)]
-        is_valid, score = calculate_stroke_similarity(drawn, ref)
-        assert is_valid is False
-
-    def test_calculate_stroke_similarity_wrong_location_fails(self):
-        ref = [(0.1, 0.1), (0.9, 0.1)]
-        # Desenhado na parte inferior
-        drawn = [(0.1, 0.9), (0.9, 0.9)]
-        is_valid, score = calculate_stroke_similarity(drawn, ref, tolerance=0.30)
-        assert is_valid is False
-
-    def test_calculate_stroke_similarity_empty_or_single_point(self):
-        ref = [(0.1, 0.1), (0.9, 0.1)]
-        assert calculate_stroke_similarity([], ref) == (False, 0.0)
-        assert calculate_stroke_similarity([(0.1, 0.1)], ref) == (False, 0.0)
+    def test_generate_diagnostic_overlay(self):
+        bm_ref = [
+            [1, 1, 0],
+            [0, 1, 0],
+            [0, 0, 0],
+        ]
+        bm_drawn = [
+            [1, 0, 0],
+            [0, 1, 1],
+            [0, 0, 0],
+        ]
+        diag = generate_diagnostic_overlay(bm_ref, bm_drawn)
+        # Acertos (1 e 1): (0,0), (1,1)
+        assert (0, 0) in diag["hit_cells"]
+        assert (1, 1) in diag["hit_cells"]
+        # Omissões (ref=1, drawn=0): (0,1)
+        assert (0, 1) in diag["miss_cells"]
+        # Excessos (ref=0, drawn=1): (1,2)
+        assert (1, 2) in diag["excess_cells"]
 
 
 class TestCalligraphyWidgetUI:
-    """Testes de inicialização e ciclo de vida do CalligraphyWidget."""
+    """Testes de inicialização, ciclo de vida e interação do CalligraphyWidget."""
 
     def test_widget_initialization(self):
         completed_data = []
@@ -90,10 +96,10 @@ class TestCalligraphyWidgetUI:
 
         w = CalligraphyWidget(target_char="가", is_dark=False, on_completed=on_done)
         assert w.target_char == "가"
-        assert len(w.reference_strokes) == 4
-        assert w.current_stroke_index == 0
-        assert w.is_completed is False
-        assert "Traço 1 de 4" in w.status_text.value
+        assert w.stroke_count == 0
+        assert w.sampled_points_count == 0
+        assert w.is_evaluated is False
+        assert "Escreva: 가" in w.status_text.value
         assert len(w.canvas.shapes) > 0
 
     def test_widget_toggle_ghost(self):
@@ -106,62 +112,64 @@ class TestCalligraphyWidgetUI:
 
     def test_widget_set_target_character(self):
         w = CalligraphyWidget(target_char="가")
-        assert len(w.reference_strokes) == 4
         w.set_target_character("한")
         assert w.target_char == "한"
-        assert len(w.reference_strokes) == 7
-        assert w.current_stroke_index == 0
-        assert "Traço 1 de 7" in w.status_text.value
+        assert "Escreva: 한" in w.status_text.value
+        assert "Batchim" in w.metric_structure_text.value
 
     def test_widget_reset(self):
         w = CalligraphyWidget(target_char="가")
-        w.current_stroke_index = 2
-        w.is_completed = True
-        w.scores = [0.85, 0.90]
-        w.reset()
-        assert w.current_stroke_index == 0
-        assert w.is_completed is False
-        assert len(w.scores) == 0
-        assert len(w.completed_strokes) == 0
-        assert "Traço 1 de 4" in w.status_text.value
+        w.stroke_count = 3
+        w.sampled_points_count = 50
+        w.last_score = 0.85
+        w.is_evaluated = True
+        w.show_overlay = True
 
-    def test_widget_continuous_multi_stroke_validation(self):
-        w = CalligraphyWidget(target_char="ㄱ")
-        assert len(w.reference_strokes) == 2
-        # Desenhar os dois traços de 'ㄱ' continuamente em um único gesto
-        combined_pts = list(w.reference_strokes[0]) + list(w.reference_strokes[1])
-        w.current_drawn_points = combined_pts
+        w.reset()
+        assert w.stroke_count == 0
+        assert w.sampled_points_count == 0
+        assert w.last_score is None
+        assert w.is_evaluated is False
+        assert w.show_overlay is False
+        assert w.metric_points_text.value == "0"
+        assert w.metric_strokes_text.value == "0"
+
+    def test_widget_freeform_drawing_and_evaluate(self):
+        evaluated_records = []
+
+        def on_eval(char, score, diag):
+            evaluated_records.append((char, score, diag))
+
+        w = CalligraphyWidget(target_char="가", on_evaluated=on_eval)
+
+        # 1. Simular desenho de traço
+        class MockDragStartEvent:
+            local_position = type("Pos", (), {"x": 50.0, "y": 50.0})()
+
+        class MockDragUpdateEvent:
+            local_position = type("Pos", (), {"x": 100.0, "y": 50.0})()
 
         class MockDragEndEvent:
             pass
 
+        w._on_pan_start(MockDragStartEvent())
+        w._on_pan_update(MockDragUpdateEvent())
         w._on_pan_end(MockDragEndEvent())
-        # Deve ter validado ambos os traços e completado o Jamo
-        assert w.current_stroke_index == 2
-        assert w.is_completed is True
-        assert len(w.completed_strokes) == 1
-        assert len(w.scores) == 2
+
+        assert w.stroke_count == 1
+        assert w.sampled_points_count == 2
+        assert len(w.all_strokes) == 1
+
+        # 2. Avaliar
+        w.evaluate()
+        assert w.is_evaluated is True
+        assert w.show_overlay is True
+        assert w.last_score is not None
+        assert len(evaluated_records) == 1
+        assert evaluated_records[0][0] == "가"
+        assert "hit_cells" in evaluated_records[0][2]
 
     def test_syllable_structure_classification(self):
-        from src.components.calligraphy_widget import get_syllable_structure_label
-
-        assert "Consoante" in get_syllable_structure_label("ㄱ")
-        assert "Vogal" in get_syllable_structure_label("ㅏ")
+        assert "Jamo" in get_syllable_structure_label("ㄱ")
         assert "Consoante + Vogal" in get_syllable_structure_label("가")
         assert "Batchim" in get_syllable_structure_label("한")
-
-    def test_dashboard_metrics_update(self):
-        w = CalligraphyWidget(target_char="가")
-        assert w.metric_points_text.value == "0"
-        assert w.metric_strokes_text.value == "0/4"
-        assert "Consoante + Vogal" in w.metric_structure_text.value
-
-        # Simular início de toque
-        class MockDragStartEvent:
-            local_x = 50.0
-            local_y = 50.0
-
-        w._on_pan_start(MockDragStartEvent())
-        assert w.sampled_points_count == 1
-        assert w.metric_points_text.value == "1"
-        assert w.metric_dtw_text.value == "Desenhando..."
