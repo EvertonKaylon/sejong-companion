@@ -259,7 +259,7 @@ class CalligraphyWidget(ft.Container):
         # 3. Informações de Status e Controles
         self.status_text = ft.Text(
             self._get_status_label(),
-            size=12,
+            size=11,
             weight=ft.FontWeight.BOLD,
             color=self.colors["text_sec"],
         )
@@ -267,6 +267,9 @@ class CalligraphyWidget(ft.Container):
         self.btn_reset = ft.IconButton(
             icon=ft.Icons.REFRESH,
             icon_color=self.colors["primary"],
+            icon_size=18,
+            visual_density=ft.VisualDensity.COMPACT,
+            padding=2,
             tooltip="Limpar e recomeçar",
             on_click=lambda _: self.reset(),
         )
@@ -274,6 +277,9 @@ class CalligraphyWidget(ft.Container):
         self.btn_toggle_ghost = ft.IconButton(
             icon=ft.Icons.VISIBILITY if self.show_ghost else ft.Icons.VISIBILITY_OFF,
             icon_color=self.colors["secondary"],
+            icon_size=18,
+            visual_density=ft.VisualDensity.COMPACT,
+            padding=2,
             tooltip="Mostrar/ocultar guia",
             on_click=lambda _: self.toggle_ghost(),
         )
@@ -309,7 +315,7 @@ class CalligraphyWidget(ft.Container):
                 ),
             ],
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            spacing=8,
+            spacing=4,
         )
 
     def _get_status_label(self) -> str:

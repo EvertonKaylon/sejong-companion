@@ -589,66 +589,94 @@ def hangul_view(page: ft.Page) -> ft.View:
     )
 
     # ─── Seção 5: Caligrafia 원고지 ───
-    grid_sz = min(210, int((page.width or 380) * 0.62))
+    grid_sz = min(170, int((page.width or 380) * 0.46))
     calligraphy_widget = CalligraphyWidget(
         target_char="가",
         size=grid_sz,
         is_dark=is_dark,
     )
 
-    sample_chars = ["가", "나", "다", "한", "글", "세", "종", "ㄱ", "ㄴ", "ㄷ", "ㅏ", "ㅓ", "ㅗ", "ㅜ", "ㅡ", "ㅣ"]
+    sample_chars = ["가", "나", "다", "한", "글", "세", "종", "ㄱ", "ㄴ", "ㄷ", "ㅏ", "ㅓ", "ㅗ"]
 
     char_title = ft.Text(
-        f"Caractere: {calligraphy_widget.target_char}",
-        size=13,
+        f"Praticando: {calligraphy_widget.target_char}",
+        size=12,
         weight=ft.FontWeight.BOLD,
         color=colors["primary"],
     )
 
+    char_btn_containers = []
+
     def on_select_char(char):
         calligraphy_widget.set_target_character(char)
-        char_title.value = f"Caractere: {char}"
+        char_title.value = f"Praticando: {char}"
+        for b, ch in char_btn_containers:
+            b.border = ft.Border.all(2, colors["primary"]) if ch == char else ft.Border.all(1, colors["border"])
+            b.bgcolor = colors["card_bg"] if ch == char else colors["surface"]
         try:
             page.update()
         except Exception:
             pass
 
-    chips = [
-        ft.Chip(
-            label=ft.Text(c, weight=ft.FontWeight.BOLD, size=12),
+    char_buttons = []
+    for c in sample_chars:
+        is_selected = (c == calligraphy_widget.target_char)
+        btn = ft.Container(
+            content=ft.Text(c, size=13, weight=ft.FontWeight.BOLD, color=colors["text"]),
+            width=36,
+            height=30,
+            alignment=ft.Alignment.CENTER,
+            bgcolor=colors["card_bg"] if is_selected else colors["surface"],
+            border=ft.Border.all(2, colors["primary"]) if is_selected else ft.Border.all(1, colors["border"]),
+            border_radius=6,
             on_click=lambda e, ch=c: on_select_char(ch),
-            padding=ft.Padding.symmetric(horizontal=4, vertical=0),
+            animate=100,
         )
-        for c in sample_chars
-    ]
-
-    chips_row = ft.Row(
-        controls=chips,
-        scroll=ft.ScrollMode.AUTO,
-        spacing=6,
-    )
+        char_btn_containers.append((btn, c))
+        char_buttons.append(btn)
 
     caligrafia_col = ft.Container(
         content=ft.Column(
             controls=[
-                ft.Row(
-                    controls=[
-                        ft.Text("✍️", size=14),
-                        char_title,
-                        ft.Text("(deslize os chips para escolher)", size=10, color=colors["text_sec"], italic=True),
-                    ],
-                    alignment=ft.MainAxisAlignment.CENTER,
-                    spacing=6,
+                ft.Container(
+                    content=ft.Column(
+                        controls=[
+                            ft.Row(
+                                controls=[
+                                    ft.Text("✍️", size=14),
+                                    ft.Text("Caligrafia na Grade 원고지", size=12, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                                ],
+                                spacing=4,
+                            ),
+                            ft.Text(
+                                "Escreva com o dedo ou mouse sobre a grade seguindo a ordem correta dos traços (획순).",
+                                size=10,
+                                color=colors["text_sec"],
+                            ),
+                        ],
+                        spacing=1,
+                    ),
+                    padding=ft.Padding.symmetric(horizontal=8, vertical=4),
+                    bgcolor=colors["surface"],
+                    border_radius=Styles.BORDER_RADIUS_MD,
+                    border=ft.Border.all(1, colors["border"]),
                 ),
-                chips_row,
-                ft.Container(height=2),
+                ft.Text("Selecione um caractere para treinar:", size=11, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                ft.Row(
+                    controls=char_buttons,
+                    wrap=True,
+                    spacing=4,
+                    run_spacing=4,
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+                char_title,
                 ft.Container(
                     content=calligraphy_widget,
                     alignment=ft.Alignment.CENTER,
                 ),
             ],
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            spacing=4,
+            spacing=3,
             expand=True,
         ),
         padding=ft.Padding.symmetric(horizontal=6, vertical=2),
@@ -687,11 +715,11 @@ def hangul_view(page: ft.Page) -> ft.View:
                 color=ft.Colors.WHITE,
                 bgcolor=colors["secondary"],
                 shape=ft.RoundedRectangleBorder(radius=Styles.BORDER_RADIUS_SM),
-                padding=14
+                padding=10
             ),
             on_click=lambda e: page.router.navigate_to("/quiz", "unit_intro"),
         ),
-        padding=ft.Padding.symmetric(horizontal=12, vertical=10),
+        padding=ft.Padding.symmetric(horizontal=12, vertical=6),
         bgcolor=colors["surface"],
         border=ft.Border.only(top=ft.BorderSide(1, colors["border"])),
         visible=True,
@@ -701,7 +729,6 @@ def hangul_view(page: ft.Page) -> ft.View:
         idx = getattr(tabs, "selected_index", 0)
         if 0 <= idx < len(tab_views):
             current_tab_container.content = tab_views[idx]
-            quiz_button.visible = (idx != 4)
             try:
                 page.update()
             except Exception:
