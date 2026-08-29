@@ -589,17 +589,25 @@ def hangul_view(page: ft.Page) -> ft.View:
     )
 
     # ─── Seção 5: Caligrafia 원고지 ───
-    grid_sz = min(180, int((page.width or 380) * 0.50))
+    grid_sz = min(260, max(240, int((page.width or 390) * 0.72)))
 
     def on_calligraphy_completed(char: str, score: float):
         if hasattr(page, "audio_service") and page.audio_service:
             page.audio_service.play_korean(char)
+
+    def on_drawing_state_changed(is_drawing: bool):
+        caligrafia_inner_col.scroll = None if is_drawing else ft.ScrollMode.AUTO
+        try:
+            page.update()
+        except Exception:
+            pass
 
     calligraphy_widget = CalligraphyWidget(
         target_char="가",
         size=grid_sz,
         is_dark=is_dark,
         on_completed=on_calligraphy_completed,
+        on_drawing_active=on_drawing_state_changed,
     )
 
     sample_chars = ["가", "나", "다", "한", "글", "세", "종", "ㄱ", "ㄴ", "ㄷ", "ㅏ", "ㅓ", "ㅗ"]
@@ -643,52 +651,54 @@ def hangul_view(page: ft.Page) -> ft.View:
         char_btn_containers.append((btn, c))
         char_buttons.append(btn)
 
+    caligrafia_inner_col = ft.Column(
+        controls=[
+            ft.Container(
+                content=ft.Column(
+                    controls=[
+                        ft.Row(
+                            controls=[
+                                ft.Text("✍️", size=14),
+                                ft.Text("Caligrafia na Grade 원고지", size=12, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                            ],
+                            spacing=6,
+                        ),
+                        ft.Text(
+                            "Desenhe o caractere livremente sobre a grade e clique em Avaliar Sílaba para ver o diagnóstico de forma e ouvir a pronúncia!",
+                            size=10,
+                            color=colors["text_sec"],
+                        ),
+                    ],
+                    spacing=2,
+                ),
+                padding=ft.Padding.symmetric(horizontal=10, vertical=6),
+                bgcolor=colors["surface"],
+                border_radius=Styles.BORDER_RADIUS_MD,
+                border=ft.Border.all(1, colors["border"]),
+            ),
+            ft.Text("Selecione um caractere para treinar:", size=11, weight=ft.FontWeight.BOLD, color=colors["text"]),
+            ft.Row(
+                controls=char_buttons,
+                wrap=True,
+                spacing=5,
+                run_spacing=5,
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
+            char_title,
+            ft.Container(
+                content=calligraphy_widget,
+                alignment=ft.Alignment.CENTER,
+            ),
+            ft.Container(height=24),
+        ],
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        spacing=4,
+        scroll=ft.ScrollMode.AUTO,
+        expand=True,
+    )
+
     caligrafia_col = ft.Container(
-        content=ft.Column(
-            controls=[
-                ft.Container(
-                    content=ft.Column(
-                        controls=[
-                            ft.Row(
-                                controls=[
-                                    ft.Text("✍️", size=15),
-                                    ft.Text("Caligrafia na Grade 원고지", size=13, weight=ft.FontWeight.BOLD, color=colors["text"]),
-                                ],
-                                spacing=6,
-                            ),
-                            ft.Text(
-                                "Desenhe o caractere livremente sobre a grade e clique em Avaliar Sílaba para ver o diagnóstico de forma e ouvir a pronúncia!",
-                                size=11,
-                                color=colors["text_sec"],
-                            ),
-                        ],
-                        spacing=2,
-                    ),
-                    padding=ft.Padding.symmetric(horizontal=13, vertical=8),
-                    bgcolor=colors["surface"],
-                    border_radius=Styles.BORDER_RADIUS_MD,
-                    border=ft.Border.all(1, colors["border"]),
-                ),
-                ft.Text("Selecione um caractere para treinar:", size=12, weight=ft.FontWeight.BOLD, color=colors["text"]),
-                ft.Row(
-                    controls=char_buttons,
-                    wrap=True,
-                    spacing=5,
-                    run_spacing=5,
-                    alignment=ft.MainAxisAlignment.CENTER,
-                ),
-                char_title,
-                ft.Container(
-                    content=calligraphy_widget,
-                    alignment=ft.Alignment.CENTER,
-                ),
-                ft.Container(height=16),
-            ],
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            spacing=5,
-            scroll=ft.ScrollMode.AUTO,
-            expand=True,
-        ),
+        content=caligrafia_inner_col,
         padding=ft.Padding.symmetric(horizontal=6, vertical=2),
         alignment=ft.Alignment.TOP_CENTER,
         expand=True,

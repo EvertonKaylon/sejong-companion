@@ -230,6 +230,7 @@ class CalligraphyWidget(ft.Container):
         show_ghost: bool = True,
         on_completed: Optional[Callable[[str, float], None]] = None,
         on_evaluated: Optional[Callable[[str, float, dict], None]] = None,
+        on_drawing_active: Optional[Callable[[bool], None]] = None,
     ):
         super().__init__()
         self.target_char = target_char
@@ -238,6 +239,7 @@ class CalligraphyWidget(ft.Container):
         self.show_ghost = show_ghost
         self.on_completed = on_completed
         self.on_evaluated = on_evaluated
+        self.on_drawing_active = on_drawing_active
 
         self.colors = get_theme_colors(is_dark)
 
@@ -630,6 +632,8 @@ class CalligraphyWidget(ft.Container):
 
     # ── Handlers de Gestos (Escrita Livre) ──
     def _on_pan_start(self, e: ft.DragStartEvent):
+        if self.on_drawing_active:
+            self.on_drawing_active(True)
         coords = self._extract_coords(e)
         if not coords:
             return
@@ -670,6 +674,8 @@ class CalligraphyWidget(ft.Container):
         self._refresh_canvas()
 
     def _on_pan_end(self, e: ft.DragEndEvent):
+        if self.on_drawing_active:
+            self.on_drawing_active(False)
         if self.current_drawn_points:
             self.all_strokes.append(list(self.current_drawn_points))
             self.current_drawn_points = []
