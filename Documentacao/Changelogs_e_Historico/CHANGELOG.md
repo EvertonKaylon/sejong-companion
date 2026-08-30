@@ -11,15 +11,37 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 Pré-Alpha → Alpha → Beta → RC → RTM → GA
                ▲
           ESTAMOS AQUI
-          v0.3.2-alpha
+          v0.3.5-alpha
 ```
 
 | Fase | Versão Alvo | Critérios de Entrada |
 |------|-------------|----------------------|
-| **Alpha** (atual) | `0.3.2-alpha` | Auditoria Global de Conteúdo (23 Unidades), 91 Testes Automatizados (100% OK), Hardening de Sessão, Filtros por Livro 1A/1B, Dashboard Admin Flet 0.28+ |
+| **Alpha** (atual) | `0.3.5-alpha` | Wongoji Lab & Caligrafia Multi-Célula (23 Unidades), 161 Testes Automatizados (100% OK), IoU Tolerante, Focus Mode Modal, Fonte Kyobo, BUG-10 Resolvido |
 | **Beta** | `0.6.0-beta` | Sincronização Cloud, Banco de dados persistente, PWA Mobile Audit, modo offline |
 | **RC** | `1.0.0-rc.1` | Feature-complete, testes E2E, zero bugs críticos |
 | **GA** | `1.0.0` | Pronto para distribuição pública |
+
+## [0.3.5-alpha] — 2026-08-30
+
+### Classificação: Alpha (Modo de Escrita Ampliado, Fonte Caligráfica Kyobo & IoU Tolerante)
+> Milestone de Estabilização e Calibração Tátil no Wongoji Lab: Resolução de conflitos de gestos na Gesture Arena do Flutter mediante introdução do Modo de Escrita em foco modal (`ft.AlertDialog` dedicado sem viewport rolável) e prévia passiva na aba de caligrafia (eliminando scroll jumps e resets de posição). Adoção da tipografia manuscrita oficial coreana `Kyobo Handwriting 2025` (`assets/fonts/KyoboHandwriting2025lyb.otf`) para prática de traçado, preservando `Pretendard` como fonte global do sistema. Implementação de camada modelo fantasma (Ghost Layer) vetorial suave, algoritmo de IoU Tolerante Espacialmente (`calculate_tolerant_iou`) com dilatação morfológica para calibração justa de scores humanos, correção do empilhamento de camadas no Canvas (Z-Index do mapa de diagnóstico acima dos traços), sincronização bidirecional entre modal e prévia, catálogo completo de 획순 (51 jamo KS X 1001) em `jamo_utils`, e expansão da suíte para **161 testes automatizados (100% OK)**.
+
+### Added & Changed — Wongoji Lab & Experiência Tátil
+- **Modo de Escrita em Modal / Wongoji Focus Mode (`src/views/hangul_view.py` & `src/components/calligraphy_widget.py`)** — A grade da aba Caligrafia opera como prévia passiva, permitindo rolagem fluida sem interferência na Gesture Arena. O toque na prévia abre o modo de escrita ampliado em diálogo modal sem ancestrais roláveis, com isolamento total dos eventos de desenho.
+- **Tipografia Caligráfica Oficial Kyobo (`assets/fonts/KyoboHandwriting2025lyb.otf`)** — Integração da fonte de caligrafia coreana Kyobo Handwriting no motor de rasterização e no guia visual da grade, enquanto Pretendard permanece como fonte de alta legibilidade para a interface do app.
+- **Ghost Layer Vetorial Suave (`src/components/calligraphy_widget.py`)** — Substituição da projeção matricial pixelada por glifos vetoriais nítidos em `cv.Text` com renderização suave em ambos os modos claro e escuro.
+- **IoU Tolerante a Variação Motora (`calculate_tolerant_iou`)** — Algoritmo de dilatação morfológica com raio espacial ajustável ($\pm 1$ pixel em 48×48) para premiar a precisão anatômica do aluno sem penalizar microdesvios naturais de traçado manual.
+- **Correção da Ordem de Camadas do Canvas (Z-Index)** — O overlay de diagnóstico (acertos verdes, excessos vermelhos e omissões cinzas) agora é renderizado no topo dos traços de tinta do aluno, garantindo clareza visual pós-avaliação.
+- **Sincronização de Estado & Limpeza em Cancelamento** — Coordenadas, pontuações e diagnósticos persistem e são atualizados na prévia ao fechar o diálogo; traços incompletos por cancelamento de gesto são descartados de forma limpa.
+- **Catálogo Completo de Stroke Order (`assets/stroke_order/jamo_strokes.json` & `src/jamo_utils.py`)** — Dataset de 획순 alinhado ao mapa KS X 1001: 19 consoantes (incluindo tensas), 21 vogais e 11 겹받침. Correção da ordem oficial de ㅓ/ㅕ, ㄹ com 5 traços (L inferior unificado) e API `load_stroke_catalog` / `get_stroke_data` / `layout_syllable_strokes`.
+- **Tipo de Questão 'Calligraphy' nos Quizzes (`src/models.py` & `src/components/quiz_widget.py`)** — Suporte a exercícios de fixação de escrita Hangul no Quiz Engine com contrato fail-closed via `@model_validator` (`validate_calligraphy_metadata`), suporte a `target_text` para palavras e frases, renderização de `WongojiMultiCellWidget` em `_build_calligraphy_exercise()`, fluxo pedagógico com retry orientativo e submissão explícita via botão **"✅ Terminei"**.
+- **Componente WongojiMultiCellWidget (`src/components/wongoji_multi_cell_widget.py`)** — Grade multi-célula virtualizada em Canvas Único com `cv.Path` otimizado, suporte a espaçamento canônico (*띄어쓰기*), avaliação individualizada por célula via IoU tolerante e reprodução de pronúncia de palavras/frases completas via `AudioService`.
+- **Alinhamento com os Gabaritos Oficiais do Sejong 1A e 1B (국립국어원 익힘책 모범 답안)** — Integração de exercícios práticos de caligrafia nos workbooks de todas as 23 unidades curriculares (`unit_intro.json`, `unit_01.json` a `unit_10.json` e `unit_1b_01.json` a `unit_1b_12.json`), cobrindo combinações léxicas fundamentais em 1A (ex: `한국 사람`, `밥을 먹어요`, `집에서 쉬었어요`) e estruturas sintáticas compostas em 1B (ex: `불고기를 자주 먹어요`, `자전거를 못 타요`, `커피를 좋아해서`, `제주도에 여행을 갔어요`).
+
+### Added — Suíte de Testes
+- **161 Testes Automatizados (100% OK)** — Inclusão de testes unitários para `calculate_tolerant_iou`, validação de descarte de traços em `_on_pan_cancel`, escala de prévia passiva, consistência de tipografia no guia, cálculo de espessura proporcional de traço no `tests/test_calligraphy_widget.py`, cobertura do catálogo completo de jamo em `tests/test_jamo_utils.py`, testes de contrato e UI de caligrafia multi-célula no quiz em `tests/test_quiz_calligraphy.py` e validação curricular em `tests/test_workbook_quiz_content.py` e `tests/test_unit_1b_content.py`.
+
+---
 
 ## [0.3.4-alpha] — 2026-08-28
 

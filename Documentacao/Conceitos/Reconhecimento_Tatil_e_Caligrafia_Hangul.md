@@ -108,12 +108,52 @@ O Sejong Companion utiliza um **Motor de Similaridade de Traços por Path Matchi
 
 ---
 
-## 5. Estrutura de Código e Componentes
+## 5. Wongoji Lab: Escrita Livre, Visão Tipográfica & IoU Tolerante
+
+Com a evolução para a versão `0.3.5-alpha`, introduziu-se o **Wongoji Lab (Laboratório de Escrita Livre)**, ampliando o paradigma puramente sequencial para avaliação visual morfológica de alta fidelidade:
+
+```
+                      PIPELINE DE VISÃO TIPOGRÁFICA (WONGOJI LAB)
+
+   Letra Alvo (ex: "가")                      Traços Livres do Usuário
+          │                                              │
+          ▼                                              ▼
+   ┌─────────────────────────────┐                ┌─────────────────────────────┐
+   │ Rasterização Kyobo 2025     │                │ Rasterização de Traços      │
+   │ (Matriz 48×48 binária)      │                │ (Espessura Proporcional)    │
+   └──────────────┬──────────────┘                └──────────────┬──────────────┘
+                  │                                              │
+                  ▼                                              ▼
+            Bitmap Referência                              Bitmap Usuário
+                  │                                              │
+                  └──────────────────────┬───────────────────────┘
+                                         ▼
+                  ┌──────────────────────────────────────────────┐
+                  │ 1. Dilatação Morfológica de Tolerância       │
+                  │    (Absorve microdesvios motores de ±1px)    │
+                  ├──────────────────────────────────────────────┤
+                  │ 2. Cálculo do Índice IoU Tolerante           │
+                  │    IoU = Area(Intersecção) / Area(União)     │
+                  ├──────────────────────────────────────────────┤
+                  │ 3. Diagnóstico Visual em 3 Canais (Canvas)   │
+                  │    🟢 Verde: Acertos (Sobreposição precisa)  │
+                  │    🔴 Vermelho: Excessos (Fora do glifo)     │
+                  │    ⚪ Cinza: Omissões (Faltou cobrir)        │
+                  └──────────────────────────────────────────────┘
+```
+
+### Isolamento da Gesture Arena (Modo de Foco Modal)
+Para evitar que gestos verticais do pincel concorram com o scroll da página no Flutter (BUG-10), a grade na aba principal opera como **prévia passiva**, e o desenho interativo ocorre dentro de um modal ampliado (`ft.AlertDialog`) sem ancestrais roláveis.
+
+---
+
+## 6. Estrutura de Código e Componentes
 
 | Arquivo | Responsabilidade |
 | :--- | :--- |
-| [`src/jamo_utils.py`](file:///c:/Users/Pichau/Documents/sejong_companion/src/jamo_utils.py) | Decomposição aritmética Unicode KS X 1001, classificação geométrica de blocos e cálculo de caixas delimitadoras de jamo. |
-| [`assets/stroke_order/jamo_strokes.json`](file:///c:/Users/Pichau/Documents/sejong_companion/assets/stroke_order/jamo_strokes.json) | Base de vetores normalizados [0.0, 1.0] dos 40 Jamo básicos (adaptado de *hangeul-stroke-order*, CC BY-SA 4.0). |
-| [`src/components/calligraphy_widget.py`](file:///c:/Users/Pichau/Documents/sejong_companion/src/components/calligraphy_widget.py) | Componente visual `CalligraphyWidget` Flet com grade, ghost layer, GestureDetector e feedback em tempo real. |
-| [`tests/test_jamo_utils.py`](file:///c:/Users/Pichau/Documents/sejong_companion/tests/test_jamo_utils.py) | 16 testes automatizados validando decomposição, composição e integridade do dataset. |
-| [`tests/test_calligraphy_widget.py`](file:///c:/Users/Pichau/Documents/sejong_companion/tests/test_calligraphy_widget.py) | 12 testes automatizados cobrindo similaridade, direcionalidade e ciclo de vida do widget. |
+| [`src/jamo_utils.py`](file:///c:/Users/Pichau/Documents/sejong_companion/src/jamo_utils.py) | Decomposição aritmética Unicode KS X 1001, classificação geométrica de blocos, carregamento do catálogo de 획순 e projeção dos traços nas caixas da célula. |
+| [`src/components/calligraphy_widget.py`](file:///c:/Users/Pichau/Documents/sejong_companion/src/components/calligraphy_widget.py) | Componente visual `CalligraphyWidget` com grade 원고지, ghost layer vetorial Kyobo, motor IoU tolerante, telemetria viva e overlay diagnóstico. |
+| [`assets/fonts/KyoboHandwriting2025lyb.otf`](file:///c:/Users/Pichau/Documents/sejong_companion/assets/fonts/KyoboHandwriting2025lyb.otf) | Fonte oficial de caligrafia coreana usada como modelo de referência para desenho e avaliação no laboratório. |
+| [`tests/test_jamo_utils.py`](file:///c:/Users/Pichau/Documents/sejong_companion/tests/test_jamo_utils.py) | Testes de decomposição, composição, catálogo de stroke order (51 jamo) e projeção espacial na célula. |
+| [`tests/test_calligraphy_widget.py`](file:///c:/Users/Pichau/Documents/sejong_companion/tests/test_calligraphy_widget.py) | Testes automatizados cobrindo IoU tolerante, overlay diagnóstico, tipografia e ciclo de vida do widget (140 testes no projeto). |
+
