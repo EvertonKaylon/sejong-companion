@@ -184,26 +184,82 @@
       "type": "order_words",
       "question": "Ordene: 'Por favor, me mostre um tamanho maior'",
       "explanation": "Adjetivo modificador (더 큰) + Objeto (사이즈를) + Pedido (보여 주세요).",
-      "words": ["보여 주세요", "사이즈를", "더 큰"],
-      "correct_order": ["더 큰", "사이즈를", "보여 주세요"]
+      "words": [
+        "보여 주세요",
+        "사이즈를",
+        "더 큰"
+      ],
+      "correct_order": [
+        "더 큰",
+        "사이즈를",
+        "보여 주세요"
+      ]
     },
     {
       "id": "u1b_04_q04",
       "type": "drag_and_drop_sov",
       "question": "Monte a frase: 'Eu comprei sapatos confortáveis'",
       "explanation": "Sujeito (저는) + Objeto Modificado (편한 구두를) + Verbo (샀습니다).",
-      "words": ["저는", "편한 구두를", "샀습니다"],
-      "correct_order": ["저는", "편한 구두를", "샀습니다"],
+      "words": [
+        "저는",
+        "편한 구두를",
+        "샀습니다"
+      ],
+      "correct_order": [
+        "저는",
+        "편한 구두를",
+        "샀습니다"
+      ],
       "sov_items": [
-        { "word": "저는", "role": "SUBJECT", "snap_anchor": "round" },
-        { "word": "편한 구두를", "role": "OBJECT", "snap_anchor": "round" },
-        { "word": "샀습니다", "role": "PREDICATE", "snap_anchor": "square" }
+        {
+          "word": "저는",
+          "role": "SUBJECT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "편한 구두를",
+          "role": "OBJECT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "샀습니다",
+          "role": "PREDICATE",
+          "snap_anchor": "square"
+        }
       ],
       "sov_slots": [
-        { "role": "SUBJECT", "label": "주어 (Sujeito)", "accepted_roles": ["SUBJECT"] },
-        { "role": "OBJECT", "label": "목적어 (Objeto Modificado)", "accepted_roles": ["OBJECT"] },
-        { "role": "PREDICATE", "label": "서술어 (Predicado Formal)", "accepted_roles": ["PREDICATE", "VERB"] }
+        {
+          "role": "SUBJECT",
+          "label": "주어 (Sujeito)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "OBJECT",
+          "label": "목적어 (Objeto Modificado)",
+          "accepted_roles": [
+            "OBJECT"
+          ]
+        },
+        {
+          "role": "PREDICATE",
+          "label": "서술어 (Predicado Formal)",
+          "accepted_roles": [
+            "PREDICATE",
+            "VERB"
+          ]
+        }
       ]
+    },
+    {
+      "id": "u1b_04_q05",
+      "type": "calligraphy",
+      "question": "Prática de Escrita do Workbook 1B: Escreva a frase '커피를 좋아해서' (porque gosto de café) na grade 원고지:",
+      "target_text": "커피를 좋아해서",
+      "min_iou": 0.4,
+      "show_ghost": true,
+      "explanation": "커피를 (café + obj) + 좋아해서 (porque gosto - conectivo -아/어서)."
     }
   ]
 }

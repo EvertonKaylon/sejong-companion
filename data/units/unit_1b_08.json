@@ -157,26 +157,83 @@
       "type": "order_words",
       "question": "Ordene: 'Esta viagem foi melhor do que a da última vez'",
       "explanation": "Sujeito (이번 여행이) + Comparado (지난번보다) + Adjetivo no passado (좋았어요).",
-      "words": ["좋았어요", "지난번보다", "이번 여행이"],
-      "correct_order": ["이번 여행이", "지난번보다", "좋았어요"]
+      "words": [
+        "좋았어요",
+        "지난번보다",
+        "이번 여행이"
+      ],
+      "correct_order": [
+        "이번 여행이",
+        "지난번보다",
+        "좋았어요"
+      ]
     },
     {
       "id": "u1b_08_q04",
       "type": "drag_and_drop_sov",
       "question": "Monte a frase comparativa: 'A melancia é maior do que a maçã'",
       "explanation": "Sujeito (수박이) + Comparação (사과보다) + Adjetivo (커요).",
-      "words": ["수박이", "사과보다", "커요"],
-      "correct_order": ["수박이", "사과보다", "커요"],
+      "words": [
+        "수박이",
+        "사과보다",
+        "커요"
+      ],
+      "correct_order": [
+        "수박이",
+        "사과보다",
+        "커요"
+      ],
       "sov_items": [
-        { "word": "수박이", "role": "SUBJECT", "snap_anchor": "square" },
-        { "word": "사과보다", "role": "OBJECT", "snap_anchor": "round" },
-        { "word": "커요", "role": "PREDICATE", "snap_anchor": "round" }
+        {
+          "word": "수박이",
+          "role": "SUBJECT",
+          "snap_anchor": "square"
+        },
+        {
+          "word": "사과보다",
+          "role": "OBJECT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "커요",
+          "role": "PREDICATE",
+          "snap_anchor": "round"
+        }
       ],
       "sov_slots": [
-        { "role": "SUBJECT", "label": "주어 (Sujeito)", "accepted_roles": ["SUBJECT"] },
-        { "role": "OBJECT", "label": "비교 (Padrão de Comparação)", "accepted_roles": ["OBJECT", "LOCATION"] },
-        { "role": "PREDICATE", "label": "서술어 (Qualidade)", "accepted_roles": ["PREDICATE", "VERB"] }
+        {
+          "role": "SUBJECT",
+          "label": "주어 (Sujeito)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "OBJECT",
+          "label": "비교 (Padrão de Comparação)",
+          "accepted_roles": [
+            "OBJECT",
+            "LOCATION"
+          ]
+        },
+        {
+          "role": "PREDICATE",
+          "label": "서술어 (Qualidade)",
+          "accepted_roles": [
+            "PREDICATE",
+            "VERB"
+          ]
+        }
       ]
+    },
+    {
+      "id": "u1b_08_q05",
+      "type": "calligraphy",
+      "question": "Prática de Escrita do Workbook 1B: Escreva a frase '봄에는 꽃이 피어요' (na primavera as flores desabrocham) na grade 원고지:",
+      "target_text": "봄에는 꽃이 피어요",
+      "min_iou": 0.4,
+      "show_ghost": true,
+      "explanation": "봄에는 (na primavera) + 꽃이 피어요 (flores desabrocham)."
     }
   ]
 }

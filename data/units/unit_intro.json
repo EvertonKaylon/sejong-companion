@@ -327,11 +327,12 @@
     },
     {
       "id": "wb_intro_q1",
-      "type": "multiple_choice",
-      "question": "No treino de escrita do workbook, qual consoante tem o traçado em forma de canto?",
-      "options": ["ㄱ", "ㅁ", "ㅇ", "ㅅ"],
-      "correct_index": 0,
-      "explanation": "A atividade de escrita começa com ㄱ, cuja forma é um canto." 
+      "type": "calligraphy",
+      "question": "Prática de Escrita do Workbook: Escreva a consoante 'ㄱ' na grade 원고지 abaixo:",
+      "target_text": "ㄱ",
+      "min_iou": 0.40,
+      "show_ghost": true,
+      "explanation": "A atividade de escrita do 익힘책 começa com a consoante ㄱ (기역)."
     },
     {
       "id": "wb_intro_q2",

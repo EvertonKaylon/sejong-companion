@@ -166,26 +166,82 @@
       "type": "order_words",
       "question": "Ordene: 'Pretendo ir à Ilha de Jeju amanhã'",
       "explanation": "Tempo (내일) + Destino (제주도에) + Intenção (가려고 해요).",
-      "words": ["가려고 해요", "제주도에", "내일"],
-      "correct_order": ["내일", "제주도에", "가려고 해요"]
+      "words": [
+        "가려고 해요",
+        "제주도에",
+        "내일"
+      ],
+      "correct_order": [
+        "내일",
+        "제주도에",
+        "가려고 해요"
+      ]
     },
     {
       "id": "u1b_07_q04",
       "type": "drag_and_drop_sov",
       "question": "Monte a frase: 'Eu pretendo reservar a passagem de avião'",
       "explanation": "Sujeito (저는) + Objeto (비행기 표를) + Verbo de Intenção (예약하려고 해요).",
-      "words": ["저는", "비행기 표를", "예약하려고 해요"],
-      "correct_order": ["저는", "비행기 표를", "예약하려고 해요"],
+      "words": [
+        "저는",
+        "비행기 표를",
+        "예약하려고 해요"
+      ],
+      "correct_order": [
+        "저는",
+        "비행기 표를",
+        "예약하려고 해요"
+      ],
       "sov_items": [
-        { "word": "저는", "role": "SUBJECT", "snap_anchor": "round" },
-        { "word": "비행기 표를", "role": "OBJECT", "snap_anchor": "round" },
-        { "word": "예약하려고 해요", "role": "PREDICATE", "snap_anchor": "round" }
+        {
+          "word": "저는",
+          "role": "SUBJECT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "비행기 표를",
+          "role": "OBJECT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "예약하려고 해요",
+          "role": "PREDICATE",
+          "snap_anchor": "round"
+        }
       ],
       "sov_slots": [
-        { "role": "SUBJECT", "label": "주어 (Sujeito)", "accepted_roles": ["SUBJECT"] },
-        { "role": "OBJECT", "label": "목적어 (Objeto)", "accepted_roles": ["OBJECT"] },
-        { "role": "PREDICATE", "label": "서술어 (Intenção)", "accepted_roles": ["PREDICATE", "VERB"] }
+        {
+          "role": "SUBJECT",
+          "label": "주어 (Sujeito)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "OBJECT",
+          "label": "목적어 (Objeto)",
+          "accepted_roles": [
+            "OBJECT"
+          ]
+        },
+        {
+          "role": "PREDICATE",
+          "label": "서술어 (Intenção)",
+          "accepted_roles": [
+            "PREDICATE",
+            "VERB"
+          ]
+        }
       ]
+    },
+    {
+      "id": "u1b_07_q05",
+      "type": "calligraphy",
+      "question": "Prática de Escrita do Workbook 1B: Escreva a frase '전화를 잘못 걸었어요' (ligou para o número errado) na grade 원고지:",
+      "target_text": "전화를 잘못 걸었어요",
+      "min_iou": 0.4,
+      "show_ghost": true,
+      "explanation": "전화를 (telefone) + 잘못 걸었어요 (ligou errado)."
     }
   ]
 }
