@@ -1,4 +1,5 @@
 import flet as ft
+import flet.canvas as cv
 from ..components import HangulCard, centered_content, build_oclusive_lab, CalligraphyWidget
 from ..theme import get_theme_colors, Styles, Responsive
 from ..services import DataService
@@ -589,67 +590,171 @@ def hangul_view(page: ft.Page) -> ft.View:
     )
 
     # ─── Seção 5: Caligrafia 원고지 ───
-    grid_sz = min(260, max(240, int((page.width or 390) * 0.72)))
+    page_width = page.width or 390
+    preview_grid_sz = min(220, max(180, int(page_width * 0.52)))
+    editor_grid_sz = min(320, max(280, int(page_width * 0.82)))
 
     def on_calligraphy_completed(char: str, score: float):
         if hasattr(page, "audio_service") and page.audio_service:
             page.audio_service.play_korean(char)
 
-    def on_drawing_state_changed(is_drawing: bool):
-        caligrafia_inner_col.scroll = None if is_drawing else ft.ScrollMode.AUTO
-        try:
-            page.update()
-        except Exception:
-            pass
-
     calligraphy_widget = CalligraphyWidget(
         target_char="가",
-        size=grid_sz,
+        size=editor_grid_sz,
         is_dark=is_dark,
         on_completed=on_calligraphy_completed,
-        on_drawing_active=on_drawing_state_changed,
     )
 
     sample_chars = ["가", "나", "다", "한", "글", "세", "종", "ㄱ", "ㄴ", "ㄷ", "ㅏ", "ㅓ", "ㅗ"]
 
-    char_title = ft.Text(
+    preview_char_title = ft.Text(
+        f"Praticando: {calligraphy_widget.target_char}",
+        size=13,
+        weight=ft.FontWeight.BOLD,
+        color=colors["primary"],
+    )
+    editor_char_title = ft.Text(
         f"Praticando: {calligraphy_widget.target_char}",
         size=13,
         weight=ft.FontWeight.BOLD,
         color=colors["primary"],
     )
 
-    char_btn_containers = []
+    preview_canvas = cv.Canvas(
+        shapes=calligraphy_widget._generate_canvas_shapes(size=preview_grid_sz),
+        width=preview_grid_sz,
+        height=preview_grid_sz,
+    )
+    char_button_groups = []
+
+    def refresh_preview():
+        """Espelha no cartão da aba o estado do editor sem recriar seu viewport."""
+        preview_canvas.shapes = calligraphy_widget._generate_canvas_shapes(size=preview_grid_sz)
+        try:
+            preview_canvas.update()
+        except Exception:
+            pass
 
     def on_select_char(char):
         calligraphy_widget.set_target_character(char)
-        char_title.value = f"Praticando: {char}"
-        for b, ch in char_btn_containers:
-            b.border = ft.Border.all(2, colors["primary"]) if ch == char else ft.Border.all(1, colors["border"])
-            b.bgcolor = colors["card_bg"] if ch == char else colors["surface"]
+        preview_char_title.value = f"Praticando: {char}"
+        editor_char_title.value = f"Praticando: {char}"
+        for group in char_button_groups:
+            for b, ch in group:
+                b.border = ft.Border.all(2, colors["primary"]) if ch == char else ft.Border.all(1, colors["border"])
+                b.bgcolor = colors["card_bg"] if ch == char else colors["surface"]
         if hasattr(page, "audio_service") and page.audio_service:
             page.audio_service.play_korean(char)
+        refresh_preview()
         try:
             page.update()
         except Exception:
             pass
 
-    char_buttons = []
-    for c in sample_chars:
-        is_selected = (c == calligraphy_widget.target_char)
-        btn = ft.Container(
-            content=ft.Text(c, size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),
-            width=41,
-            height=35,
-            alignment=ft.Alignment.CENTER,
-            bgcolor=colors["card_bg"] if is_selected else colors["surface"],
-            border=ft.Border.all(2, colors["primary"]) if is_selected else ft.Border.all(1, colors["border"]),
-            border_radius=6,
-            on_click=lambda e, ch=c: on_select_char(ch),
-            animate=100,
-        )
-        char_btn_containers.append((btn, c))
-        char_buttons.append(btn)
+    def build_character_buttons():
+        """Cria seletores independentes para a prévia e o modal de escrita."""
+        group = []
+        buttons = []
+        for c in sample_chars:
+            is_selected = c == calligraphy_widget.target_char
+            btn = ft.Container(
+                content=ft.Text(c, size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                width=41,
+                height=35,
+                alignment=ft.Alignment.CENTER,
+                bgcolor=colors["card_bg"] if is_selected else colors["surface"],
+                border=ft.Border.all(2, colors["primary"]) if is_selected else ft.Border.all(1, colors["border"]),
+                border_radius=6,
+                on_click=lambda e, ch=c: on_select_char(ch),
+                animate=100,
+            )
+            group.append((btn, c))
+            buttons.append(btn)
+        char_button_groups.append(group)
+        return buttons
+
+    preview_char_buttons = build_character_buttons()
+    editor_char_buttons = build_character_buttons()
+
+    def close_writing_mode(_=None):
+        refresh_preview()
+        try:
+            page.pop_dialog()
+        except Exception:
+            pass
+
+    writing_dialog = ft.AlertDialog(
+        modal=True,
+        scrollable=False,
+        inset_padding=ft.Padding.symmetric(horizontal=8, vertical=8),
+        title=ft.Row(
+            controls=[
+                ft.Icon(ft.Icons.DRAW_ROUNDED, color=colors["primary"]),
+                ft.Text("Modo de escrita · 원고지", size=16, weight=ft.FontWeight.BOLD),
+            ],
+            spacing=6,
+        ),
+        content=ft.Container(
+            width=editor_grid_sz + 16,
+            content=ft.Column(
+                controls=[
+                    ft.Text("Selecione um caractere:", size=11, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                    ft.Row(
+                        controls=editor_char_buttons,
+                        wrap=True,
+                        spacing=5,
+                        run_spacing=5,
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                    editor_char_title,
+                    calligraphy_widget,
+                ],
+                tight=True,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                spacing=5,
+            ),
+        ),
+        actions=[
+            ft.TextButton("Fechar / Voltar", icon=ft.Icons.ARROW_BACK_ROUNDED, on_click=close_writing_mode),
+        ],
+        actions_alignment=ft.MainAxisAlignment.END,
+        on_dismiss=lambda _: refresh_preview(),
+    )
+
+    def open_writing_mode(_=None):
+        try:
+            page.show_dialog(writing_dialog)
+        except Exception:
+            pass
+
+    preview_card = ft.Container(
+        content=ft.Column(
+            controls=[
+                ft.GestureDetector(
+                    content=ft.Container(
+                        content=preview_canvas,
+                        width=preview_grid_sz,
+                        height=preview_grid_sz,
+                        bgcolor="#FAF8F5" if not is_dark else "#1C1917",
+                        border=ft.Border.all(2, "#EF4444" if not is_dark else "#F87171"),
+                        border_radius=Styles.BORDER_RADIUS_MD,
+                        clip_behavior=ft.ClipBehavior.HARD_EDGE,
+                    ),
+                    on_tap=open_writing_mode,
+                    mouse_cursor=ft.MouseCursor.CLICK,
+                ),
+                ft.Text(
+                    "Toque na grade para abrir o modo de escrita",
+                    size=10,
+                    color=colors["text_sec"],
+                    text_align=ft.TextAlign.CENTER,
+                ),
+            ],
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=4,
+        ),
+        alignment=ft.Alignment.CENTER,
+    )
 
     caligrafia_inner_col = ft.Column(
         controls=[
@@ -664,7 +769,7 @@ def hangul_view(page: ft.Page) -> ft.View:
                             spacing=6,
                         ),
                         ft.Text(
-                            "Desenhe o caractere livremente sobre a grade e clique em Avaliar Sílaba para ver o diagnóstico de forma e ouvir a pronúncia!",
+                            "A prévia não captura arrastos: role a aba normalmente ou toque na grade para escrever em tela ampliada.",
                             size=10,
                             color=colors["text_sec"],
                         ),
@@ -678,17 +783,14 @@ def hangul_view(page: ft.Page) -> ft.View:
             ),
             ft.Text("Selecione um caractere para treinar:", size=11, weight=ft.FontWeight.BOLD, color=colors["text"]),
             ft.Row(
-                controls=char_buttons,
+                controls=preview_char_buttons,
                 wrap=True,
                 spacing=5,
                 run_spacing=5,
                 alignment=ft.MainAxisAlignment.CENTER,
             ),
-            char_title,
-            ft.Container(
-                content=calligraphy_widget,
-                alignment=ft.Alignment.CENTER,
-            ),
+            preview_char_title,
+            preview_card,
             ft.Container(height=24),
         ],
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,

@@ -5,6 +5,8 @@ import flet as ft
 from typing import Callable, List, Optional
 from ..theme import get_theme_colors, Styles
 from ..models import is_role_accepted
+from .calligraphy_widget import CalligraphyWidget
+from .wongoji_multi_cell_widget import WongojiMultiCellWidget
 
 class QuizWidget(ft.Container):
     """Widget unificado para múltipla escolha, ordenação e SOV semântico.
@@ -30,7 +32,7 @@ class QuizWidget(ft.Container):
         )
 
         self.explanation_container = ft.Container(visible=False, animate_opacity=200)
-        self.next_button = ft.ElevatedButton(
+        self.next_button = ft.Button(
             content="Próxima Pergunta",
             icon=ft.Icons.ARROW_FORWARD_ROUNDED,
             style=ft.ButtonStyle(
@@ -49,6 +51,8 @@ class QuizWidget(ft.Container):
             quiz_body = self._build_drag_drop_sov()
         elif question_data.type == "order_words":
             quiz_body = self._build_order_words()
+        elif question_data.type == "calligraphy":
+            quiz_body = self._build_calligraphy_exercise()
         else:
             quiz_body = self._build_multiple_choice()
 
@@ -462,7 +466,10 @@ class QuizWidget(ft.Container):
         self.explanation_container.opacity = 1
         self.next_button.visible = True
 
-        self.update()
+        try:
+            self.update()
+        except Exception:
+            pass
 
         if self.on_answer:
             elapsed_ms = int((time.monotonic() - getattr(self, "start_time", time.monotonic())) * 1000)
@@ -474,6 +481,105 @@ class QuizWidget(ft.Container):
     def handle_next(self, e):
         if self.on_next:
             self.on_next()
+
+    # ─── CALIGRAFIA HANGUL (WONGOJI LAB & WORKBOOKS) ───
+
+    def _build_calligraphy_exercise(self):
+        """Constrói o exercício de prática de caligrafia Hangul (palavras e frases) na grade 원고지."""
+        target = self.q_data.target_text or self.q_data.target_char or "가"
+        show_ghost = bool(self.q_data.show_ghost)
+        min_threshold = self.q_data.min_iou if self.q_data.min_iou is not None else 0.40
+
+        num_chars = len(target)
+        if num_chars == 1:
+            cell_sz = 180.0
+        elif num_chars <= 4:
+            cell_sz = 75.0
+        else:
+            cell_sz = 62.0
+
+        self.calligraphy_comp = WongojiMultiCellWidget(
+            target_text=target,
+            cell_size=cell_sz,
+            is_dark=self.is_dark,
+            show_ghost=show_ghost,
+            min_iou=min_threshold,
+        )
+
+        self.calligraphy_status_msg = ft.Text(
+            "Escreva na grade acima e clique em 'Terminei'.",
+            size=12,
+            color=self.colors["text_sec"],
+            text_align=ft.TextAlign.CENTER,
+        )
+
+        self.btn_calligraphy_check = ft.Button(
+            content="✅ Terminei",
+            style=ft.ButtonStyle(
+                color=ft.Colors.WHITE,
+                bgcolor=self.colors["primary"],
+                shape=ft.RoundedRectangleBorder(radius=Styles.BORDER_RADIUS_SM),
+                padding=ft.Padding.symmetric(horizontal=20, vertical=10),
+            ),
+            on_click=self._check_calligraphy,
+        )
+
+        self.btn_calligraphy_clear = ft.TextButton(
+            content="🔄 Limpar",
+            style=ft.ButtonStyle(color=self.colors["text_sec"]),
+            on_click=lambda _: self.calligraphy_comp.reset(),
+        )
+
+        return ft.Column(
+            controls=[
+                ft.Container(
+                    content=self.calligraphy_comp,
+                    alignment=ft.Alignment.CENTER,
+                    padding=ft.Padding.symmetric(vertical=4),
+                ),
+                self.calligraphy_status_msg,
+                ft.Row(
+                    controls=[self.btn_calligraphy_clear, self.btn_calligraphy_check],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    spacing=12,
+                ),
+            ],
+            spacing=8,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        )
+
+    def _check_calligraphy(self, e):
+        """Avalia a caligrafia desenhada pelo aluno contra o texto alvo."""
+        if self.answered:
+            return
+
+        all_passed, avg_score, scores = self.calligraphy_comp.evaluate()
+        min_threshold = self.q_data.min_iou if self.q_data.min_iou is not None else 0.40
+        pct = int(avg_score * 100)
+
+        if all_passed:
+            self.answered = True
+            self.btn_calligraphy_check.disabled = True
+            self.btn_calligraphy_clear.disabled = True
+            self.calligraphy_status_msg.value = f"Excelente! Similaridade média de {pct}%."
+            self.calligraphy_status_msg.color = self.colors["correct"]
+            self._show_feedback(is_correct=True)
+        else:
+            failed_cells = [idx + 1 for idx, score in scores.items() if score < min_threshold]
+            if len(failed_cells) == 1:
+                detalhe = f"Célula {failed_cells[0]} precisa de ajuste."
+            else:
+                detalhe = f"Células {', '.join(map(str, failed_cells))} precisam de ajuste."
+
+            self.calligraphy_status_msg.value = (
+                f"Similaridade de {pct}% (mínimo: {int(min_threshold * 100)}%). "
+                f"{detalhe} Tente novamente!"
+            )
+            self.calligraphy_status_msg.color = self.colors["incorrect"]
+            try:
+                self.update()
+            except Exception:
+                pass
 
     # ─── DRAG & DROP SOV SEMÂNTICO ───
 

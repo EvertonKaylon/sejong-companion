@@ -3,7 +3,7 @@
 Permite que os alunos pratiquem a escrita de Jamo e sílabas Hangul completas
 de forma 100% livre sobre uma grade tradicional de manuscrito coreano (원고지).
 A avaliação é feita por análise de forma real (Bitmap IoU 48x48 com a fonte
-Pretendard) e gera um mapa visual de diagnóstico (Verde = acerto, Vermelho = excesso,
+Kyobo Handwriting) e gera um mapa visual de diagnóstico (Verde = acerto, Vermelho = excesso,
 Cinza = faltou), acompanhado de telemetria viva e feedback de áudio nativo.
 """
 
@@ -29,18 +29,22 @@ from ..theme import Styles, get_theme_colors
 # Cache e Carregador de Fonte Tipográfica Hangul
 # ============================================================
 _FONT_CACHE: dict[int, ImageFont.FreeTypeFont] = {}
+_REFERENCE_BITMAP_SIZE = 48
+_REFERENCE_BITMAP_CACHE: dict[str, list[list[int]]] = {}
+_RASTER_STROKE_WIDTH = 3
+_IOU_TOLERANCE_RADIUS = 1
 
 
 def _get_korean_font(size: int) -> ImageFont.FreeTypeFont:
-    """Carrega e armazena em cache a fonte Pretendard-Bold para rasterização."""
+    """Carrega e armazena em cache a fonte Kyobo Handwriting para rasterização."""
     if size in _FONT_CACHE:
         return _FONT_CACHE[size]
 
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    font_path = os.path.join(base_dir, "..", "..", "assets", "fonts", "Pretendard-Bold.otf")
+    font_path = os.path.join(base_dir, "..", "..", "assets", "fonts", "KyoboHandwriting2025lyb.otf")
 
     if not os.path.exists(font_path):
-        font_path = os.path.join("assets", "fonts", "Pretendard-Bold.otf")
+        font_path = os.path.join("assets", "fonts", "KyoboHandwriting2025lyb.otf")
 
     try:
         font = ImageFont.truetype(font_path, size)
@@ -90,6 +94,15 @@ def render_reference_bitmap(char: str, size: int = 48) -> list[list[int]]:
         bitmap.append(row)
 
     return bitmap
+
+
+def _get_reference_bitmap(char: str) -> list[list[int]]:
+    """Retorna a mesma matriz usada tanto pelo guia quanto pela avaliação."""
+    if char not in _REFERENCE_BITMAP_CACHE:
+        _REFERENCE_BITMAP_CACHE[char] = render_reference_bitmap(
+            char, size=_REFERENCE_BITMAP_SIZE
+        )
+    return _REFERENCE_BITMAP_CACHE[char]
 
 
 def render_strokes_bitmap(
@@ -165,9 +178,40 @@ def calculate_iou(bitmap_ref: list[list[int]], bitmap_drawn: list[list[int]]) ->
     return round(intersection / union, 4)
 
 
+def _dilate_bitmap(bitmap: list[list[int]], radius: int) -> list[list[int]]:
+    """Expande uma máscara binária para absorver pequenas imprecisões humanas."""
+    if radius <= 0 or not bitmap:
+        return bitmap
+
+    rows = len(bitmap)
+    cols = len(bitmap[0])
+    expanded = [[0 for _ in range(cols)] for _ in range(rows)]
+    for r, row in enumerate(bitmap):
+        for c, pixel in enumerate(row):
+            if not pixel:
+                continue
+            for rr in range(max(0, r - radius), min(rows, r + radius + 1)):
+                for cc in range(max(0, c - radius), min(cols, c + radius + 1)):
+                    expanded[rr][cc] = 1
+    return expanded
+
+
+def calculate_tolerant_iou(
+    bitmap_ref: list[list[int]],
+    bitmap_drawn: list[list[int]],
+    tolerance_radius: int = _IOU_TOLERANCE_RADIUS,
+) -> float:
+    """Calcula IoU após tolerar desvios de poucos pixels da escrita manual."""
+    return calculate_iou(
+        _dilate_bitmap(bitmap_ref, tolerance_radius),
+        _dilate_bitmap(bitmap_drawn, tolerance_radius),
+    )
+
+
 def generate_diagnostic_overlay(
     bitmap_ref: list[list[int]],
     bitmap_drawn: list[list[int]],
+    tolerance_radius: int = 0,
 ) -> dict[str, list[tuple[int, int]]]:
     """Gera o mapa de calor em 3 zonas de diagnóstico pedagógico:
 
@@ -179,6 +223,8 @@ def generate_diagnostic_overlay(
     misses: list[tuple[int, int]] = []
     excess: list[tuple[int, int]] = []
 
+    tolerated_ref = _dilate_bitmap(bitmap_ref, tolerance_radius)
+    tolerated_drawn = _dilate_bitmap(bitmap_drawn, tolerance_radius)
     rows = len(bitmap_ref)
     cols = len(bitmap_ref[0]) if rows > 0 else 0
 
@@ -186,11 +232,11 @@ def generate_diagnostic_overlay(
         for c in range(cols):
             vr = bitmap_ref[r][c]
             vd = bitmap_drawn[r][c]
-            if vr == 1 and vd == 1:
+            if vr == 1 and tolerated_drawn[r][c] == 1:
                 hits.append((r, c))
-            elif vr == 1 and vd == 0:
+            elif vr == 1:
                 misses.append((r, c))
-            elif vr == 0 and vd == 1:
+            elif vd == 1 and tolerated_ref[r][c] == 0:
                 excess.append((r, c))
 
     return {
@@ -230,7 +276,6 @@ class CalligraphyWidget(ft.Container):
         show_ghost: bool = True,
         on_completed: Optional[Callable[[str, float], None]] = None,
         on_evaluated: Optional[Callable[[str, float, dict], None]] = None,
-        on_drawing_active: Optional[Callable[[bool], None]] = None,
     ):
         super().__init__()
         self.target_char = target_char
@@ -239,7 +284,6 @@ class CalligraphyWidget(ft.Container):
         self.show_ghost = show_ghost
         self.on_completed = on_completed
         self.on_evaluated = on_evaluated
-        self.on_drawing_active = on_drawing_active
 
         self.colors = get_theme_colors(is_dark)
 
@@ -248,6 +292,7 @@ class CalligraphyWidget(ft.Container):
         self.current_drawn_points: list[tuple[float, float]] = []
         self.sampled_points_count = 0
         self.stroke_count = 0
+        self._current_stroke_samples = 0
 
         # Estado da avaliação e diagnóstico
         self.last_score: Optional[float] = None
@@ -261,20 +306,33 @@ class CalligraphyWidget(ft.Container):
     def _build_ui(self):
         """Monta a hierarquia de controles do widget."""
         # 1. Canvas de Desenho e Grade
-        self.canvas_shapes = self._generate_canvas_shapes()
+        self.guide_canvas = cv.Canvas(
+            shapes=self._generate_static_canvas_shapes(),
+            width=self.grid_size,
+            height=self.grid_size,
+        )
+        self.canvas_shapes = self._generate_dynamic_canvas_shapes()
         self.canvas = cv.Canvas(
             shapes=self.canvas_shapes,
+            width=self.grid_size,
+            height=self.grid_size,
+        )
+        self.drawing_surface = ft.Stack(
+            controls=[self.guide_canvas, self.canvas],
             width=self.grid_size,
             height=self.grid_size,
         )
 
         # 2. GestureDetector para captura de toque livre
         self.gesture_detector = ft.GestureDetector(
-            content=self.canvas,
+            content=self.drawing_surface,
             on_pan_start=self._on_pan_start,
             on_pan_update=self._on_pan_update,
             on_pan_end=self._on_pan_end,
-            drag_interval=10,
+            on_pan_cancel=self._on_pan_cancel,
+            # 60 fps limita as mensagens enviadas ao servidor sem gerar fila de
+            # eventos durante a escrita, que deixava o pincel aparentemente preso.
+            drag_interval=16,
             mouse_cursor=ft.MouseCursor.PRECISE,
         )
 
@@ -483,14 +541,13 @@ class CalligraphyWidget(ft.Container):
             return f"Desenhando ({self.stroke_count} traços)"
         return f"Escreva: {self.target_char}"
 
-    def _generate_canvas_shapes(self) -> list:
-        """Gera as formas do Canvas: linhas da grade 원고지, ghost, traços e overlay de diagnóstico."""
+    def _generate_static_canvas_shapes(self, size: Optional[float] = None) -> list:
+        """Gera a grade e o guia, que não devem ser reenviados a cada ponto."""
         shapes = []
-        sz = self.grid_size
+        sz = size if size is not None else self.grid_size
 
         wongoji_border = "#EF4444" if not self.is_dark else "#F87171"
         wongoji_guide = "#F87171" if not self.is_dark else "#F87171"
-        ink_color = "#1C1917" if not self.is_dark else "#F5F5F4"
 
         # ── Grade Wongoji (Moldura Externa e Cruz Central Pontilhada) ──
         shapes.append(
@@ -516,7 +573,9 @@ class CalligraphyWidget(ft.Container):
             )
         )
 
-        # ── Camada Modelo (Ghost Tipográfico) ──
+        # ── Camada Modelo ──
+        # O guia usa a Kyobo como texto vetorial para preservar seus contornos
+        # manuscritos; a referência do IoU usa o mesmo arquivo de fonte via Pillow.
         if self.show_ghost and not self.show_overlay:
             ghost_color = "#E2E8F0" if not self.is_dark else "#3F3F46"
             shapes.append(
@@ -526,100 +585,45 @@ class CalligraphyWidget(ft.Container):
                     value=self.target_char,
                     alignment=ft.Alignment.CENTER,
                     style=ft.TextStyle(
-                        size=sz * 0.56,
-                        font_family="Pretendard",
-                        weight=ft.FontWeight.BOLD,
+                        size=sz * 0.68,
+                        font_family="Kyobo Handwriting",
                         color=ghost_color,
                     ),
                 )
             )
 
-        # ── Camada de Overlay de Diagnóstico (Pós-Avaliação) ──
-        if self.show_overlay and self.diagnostic_data:
-            cell_sz = sz / 48.0
+        return shapes
 
-            # 1. Misses (Omissão - Cinza)
-            for r, c in self.diagnostic_data.get("miss_cells", []):
-                shapes.append(
-                    cv.Rect(
-                        x=c * cell_sz,
-                        y=r * cell_sz,
-                        width=cell_sz + 0.3,
-                        height=cell_sz + 0.3,
-                        paint=ft.Paint(color="#94A3B8", style=ft.PaintingStyle.FILL),
-                    )
-                )
+    def _generate_dynamic_canvas_shapes(self, size: Optional[float] = None) -> list:
+        """Gera tinta e diagnóstico, as únicas camadas mutáveis durante o traço."""
+        shapes = []
+        sz = size if size is not None else self.grid_size
+        stroke_width = sz * _RASTER_STROKE_WIDTH / _REFERENCE_BITMAP_SIZE
+        stroke_color = "#1C1917" if not self.is_dark else "#F5F5F4"
+        if self.show_overlay:
+            stroke_color = "#1E293B"
 
-            # 2. Excess (Excesso - Vermelho)
-            for r, c in self.diagnostic_data.get("excess_cells", []):
-                shapes.append(
-                    cv.Rect(
-                        x=c * cell_sz,
-                        y=r * cell_sz,
-                        width=cell_sz + 0.3,
-                        height=cell_sz + 0.3,
-                        paint=ft.Paint(color="#EF4444", style=ft.PaintingStyle.FILL),
-                    )
-                )
-
-            # 3. Hits (Acerto - Verde)
-            for r, c in self.diagnostic_data.get("hit_cells", []):
-                shapes.append(
-                    cv.Rect(
-                        x=c * cell_sz,
-                        y=r * cell_sz,
-                        width=cell_sz + 0.3,
-                        height=cell_sz + 0.3,
-                        paint=ft.Paint(color="#10B981", style=ft.PaintingStyle.FILL),
-                    )
-                )
-
-        # ── Traços Concluídos (Tinta Caligráfica) ──
-        stroke_color = ink_color if not self.show_overlay else "#1E293B"
         for stroke in self.all_strokes:
             if len(stroke) == 1:
-                shapes.append(
-                    cv.Circle(
-                        x=stroke[0][0] * sz,
-                        y=stroke[0][1] * sz,
-                        radius=3,
-                        paint=ft.Paint(color=stroke_color, style=ft.PaintingStyle.FILL),
-                    )
-                )
+                shapes.append(cv.Circle(x=stroke[0][0] * sz, y=stroke[0][1] * sz, radius=stroke_width / 2, paint=ft.Paint(color=stroke_color, style=ft.PaintingStyle.FILL)))
             else:
-                for i in range(len(stroke) - 1):
-                    p1 = stroke[i]
-                    p2 = stroke[i + 1]
-                    shapes.append(
-                        cv.Line(
-                            x1=p1[0] * sz, y1=p1[1] * sz,
-                            x2=p2[0] * sz, y2=p2[1] * sz,
-                            paint=ft.Paint(
-                                color=stroke_color,
-                                stroke_width=6,
-                                stroke_cap=ft.StrokeCap.ROUND,
-                            ),
-                        )
-                    )
+                for p1, p2 in zip(stroke, stroke[1:]):
+                    shapes.append(cv.Line(x1=p1[0] * sz, y1=p1[1] * sz, x2=p2[0] * sz, y2=p2[1] * sz, paint=ft.Paint(color=stroke_color, stroke_width=stroke_width, stroke_cap=ft.StrokeCap.ROUND)))
 
-        # ── Traço em Andamento (Teal) ──
-        if len(self.current_drawn_points) > 1:
-            for i in range(len(self.current_drawn_points) - 1):
-                p1 = self.current_drawn_points[i]
-                p2 = self.current_drawn_points[i + 1]
-                shapes.append(
-                    cv.Line(
-                        x1=p1[0] * sz, y1=p1[1] * sz,
-                        x2=p2[0] * sz, y2=p2[1] * sz,
-                        paint=ft.Paint(
-                            color="#0D9488" if not self.is_dark else "#2DD4BF",
-                            stroke_width=5.5,
-                            stroke_cap=ft.StrokeCap.ROUND,
-                        ),
-                    )
-                )
+        for p1, p2 in zip(self.current_drawn_points, self.current_drawn_points[1:]):
+            shapes.append(cv.Line(x1=p1[0] * sz, y1=p1[1] * sz, x2=p2[0] * sz, y2=p2[1] * sz, paint=ft.Paint(color="#0D9488" if not self.is_dark else "#2DD4BF", stroke_width=stroke_width, stroke_cap=ft.StrokeCap.ROUND)))
 
+        # O diagnóstico é a camada mais alta, para não ser encoberto pela tinta.
+        if self.show_overlay and self.diagnostic_data:
+            cell_sz = sz / _REFERENCE_BITMAP_SIZE
+            for key, color in (("miss_cells", "#94A3B8"), ("excess_cells", "#EF4444"), ("hit_cells", "#10B981")):
+                for r, c in self.diagnostic_data.get(key, []):
+                    shapes.append(cv.Rect(x=c * cell_sz, y=r * cell_sz, width=cell_sz + 0.3, height=cell_sz + 0.3, paint=ft.Paint(color=color, style=ft.PaintingStyle.FILL)))
         return shapes
+
+    def _generate_canvas_shapes(self, size: Optional[float] = None) -> list:
+        """Combina camadas para prévias estáticas fora do editor de escrita."""
+        return self._generate_static_canvas_shapes(size) + self._generate_dynamic_canvas_shapes(size)
 
     def _extract_coords(self, e: Any) -> Optional[tuple[float, float]]:
         if hasattr(e, "local_position") and e.local_position is not None:
@@ -632,8 +636,6 @@ class CalligraphyWidget(ft.Container):
 
     # ── Handlers de Gestos (Escrita Livre) ──
     def _on_pan_start(self, e: ft.DragStartEvent):
-        if self.on_drawing_active:
-            self.on_drawing_active(True)
         coords = self._extract_coords(e)
         if not coords:
             return
@@ -643,6 +645,7 @@ class CalligraphyWidget(ft.Container):
         self.current_drawn_points = [(norm_x, norm_y)]
         self.sampled_points_count += 1
         self.stroke_count += 1
+        self._current_stroke_samples = 1
 
         self.metric_points_text.value = str(self.sampled_points_count)
         self.metric_strokes_text.value = str(self.stroke_count)
@@ -651,12 +654,13 @@ class CalligraphyWidget(ft.Container):
         self.status_text.value = self._get_status_label()
 
         # Ocultar overlay se voltar a desenhar
-        if self.show_overlay:
+        guide_changed = self.show_overlay
+        if guide_changed:
             self.show_overlay = False
             self.btn_toggle_overlay.visible = False
             self.legend_row.visible = False
 
-        self._refresh_canvas()
+        self._refresh_canvas(refresh_guide=guide_changed)
 
     def _on_pan_update(self, e: ft.DragUpdateEvent):
         if not self.current_drawn_points:
@@ -669,20 +673,32 @@ class CalligraphyWidget(ft.Container):
         norm_y = max(0.0, min(1.0, coords[1] / sz))
         self.current_drawn_points.append((norm_x, norm_y))
         self.sampled_points_count += 1
+        self._current_stroke_samples += 1
 
         self.metric_points_text.value = str(self.sampled_points_count)
         self._refresh_canvas()
 
     def _on_pan_end(self, e: ft.DragEndEvent):
-        if self.on_drawing_active:
-            self.on_drawing_active(False)
         if self.current_drawn_points:
             self.all_strokes.append(list(self.current_drawn_points))
             self.current_drawn_points = []
+            self._current_stroke_samples = 0
             self.metric_iou_text.value = "Clique em Avaliar"
             self.metric_iou_text.color = "#FBBF24"
             self.status_text.value = self._get_status_label()
             self._refresh_canvas()
+
+    def _on_pan_cancel(self, e: Any):
+        """Descarta um traço interrompido por outro reconhecedor de gesto."""
+        if self.current_drawn_points:
+            self.sampled_points_count = max(0, self.sampled_points_count - self._current_stroke_samples)
+            self.stroke_count = max(0, self.stroke_count - 1)
+            self.metric_points_text.value = str(self.sampled_points_count)
+            self.metric_strokes_text.value = str(self.stroke_count)
+        self.current_drawn_points = []
+        self._current_stroke_samples = 0
+        self.status_text.value = self._get_status_label()
+        self._refresh_canvas()
 
     def evaluate(self):
         """Avalia a forma desenhada contra o caractere de referência via Bitmap IoU."""
@@ -695,14 +711,27 @@ class CalligraphyWidget(ft.Container):
         if self.current_drawn_points:
             self.all_strokes.append(list(self.current_drawn_points))
             self.current_drawn_points = []
+            self._current_stroke_samples = 0
 
         # 1. Rasterizar bitmaps 48x48
-        ref_bitmap = render_reference_bitmap(self.target_char, size=48)
-        drawn_bitmap = render_strokes_bitmap(self.all_strokes, size=48)
+        ref_bitmap = _get_reference_bitmap(self.target_char)
+        drawn_bitmap = render_strokes_bitmap(
+            self.all_strokes,
+            size=_REFERENCE_BITMAP_SIZE,
+            stroke_width=_RASTER_STROKE_WIDTH,
+        )
 
         # 2. Calcular IoU e gerar diagnóstico
-        score = calculate_iou(ref_bitmap, drawn_bitmap)
-        diag = generate_diagnostic_overlay(ref_bitmap, drawn_bitmap)
+        score = calculate_tolerant_iou(
+            ref_bitmap,
+            drawn_bitmap,
+            tolerance_radius=_IOU_TOLERANCE_RADIUS,
+        )
+        diag = generate_diagnostic_overlay(
+            ref_bitmap,
+            drawn_bitmap,
+            tolerance_radius=_IOU_TOLERANCE_RADIUS,
+        )
 
         self.last_score = score
         self.diagnostic_data = diag
@@ -729,10 +758,12 @@ class CalligraphyWidget(ft.Container):
         if score >= 0.40 and self.on_completed:
             self.on_completed(self.target_char, score)
 
-        self._refresh_canvas()
+        self._refresh_canvas(refresh_guide=True)
 
-    def _refresh_canvas(self):
-        self.canvas.shapes = self._generate_canvas_shapes()
+    def _refresh_canvas(self, refresh_guide: bool = False):
+        self.canvas.shapes = self._generate_dynamic_canvas_shapes()
+        if refresh_guide:
+            self.guide_canvas.shapes = self._generate_static_canvas_shapes()
         try:
             self.update()
         except Exception:
@@ -744,6 +775,7 @@ class CalligraphyWidget(ft.Container):
         self.current_drawn_points = []
         self.sampled_points_count = 0
         self.stroke_count = 0
+        self._current_stroke_samples = 0
         self.last_score = None
         self.is_evaluated = False
         self.show_overlay = False
@@ -757,7 +789,7 @@ class CalligraphyWidget(ft.Container):
         self.metric_iou_text.value = "Aguardando avaliação"
         self.metric_iou_text.color = "#FBBF24"
         self.metric_structure_text.value = get_syllable_structure_label(self.target_char)
-        self._refresh_canvas()
+        self._refresh_canvas(refresh_guide=True)
 
     def toggle_ghost(self):
         """Alterna a exibição do caractere modelo (ghost)."""
@@ -765,7 +797,7 @@ class CalligraphyWidget(ft.Container):
         self.btn_toggle_ghost.icon = (
             ft.Icons.VISIBILITY if self.show_ghost else ft.Icons.VISIBILITY_OFF
         )
-        self._refresh_canvas()
+        self._refresh_canvas(refresh_guide=True)
 
     def toggle_overlay(self):
         """Alterna a exibição do mapa de diagnóstico colorido."""
@@ -773,7 +805,7 @@ class CalligraphyWidget(ft.Container):
             return
         self.show_overlay = not self.show_overlay
         self.legend_row.visible = self.show_overlay
-        self._refresh_canvas()
+        self._refresh_canvas(refresh_guide=True)
 
     def set_target_character(self, new_char: str):
         """Altera o caractere de treino."""

@@ -101,9 +101,10 @@ class QuizQuestion(BaseModel):
     - type='multiple_choice': usa options + correct_index
     - type='order_words': usa words + correct_order
     - type='drag_and_drop_sov': usa words + correct_order
+    - type='calligraphy': usa target_char (+ min_iou, show_ghost)
     """
     id: str
-    type: str  # 'multiple_choice' | 'order_words' | 'drag_and_drop_sov'
+    type: str  # 'multiple_choice' | 'order_words' | 'drag_and_drop_sov' | 'calligraphy'
     question: str
     explanation: Optional[str] = ""
     # Campos para multiple_choice
@@ -115,6 +116,11 @@ class QuizQuestion(BaseModel):
     # Metadados obrigatórios para a variante de drag-and-drop semântico.
     sov_items: Optional[List[SovWordItem]] = None
     sov_slots: Optional[List[SovSlotDefinition]] = None
+    # Metadados para a variante de caligrafia (Wongoji Lab & Workbooks).
+    target_text: Optional[str] = None
+    target_char: Optional[str] = None
+    min_iou: Optional[float] = 0.40
+    show_ghost: Optional[bool] = False
 
     @model_validator(mode="after")
     def validate_sov_metadata(self):
@@ -135,6 +141,20 @@ class QuizQuestion(BaseModel):
         for slot in self.sov_slots:
             if "ANY" not in slot.accepted_roles and not item_roles.intersection(slot.accepted_roles):
                 raise ValueError(f"slot SOV sem papel disponível: {slot.label}")
+        return self
+
+    @model_validator(mode="after")
+    def validate_calligraphy_metadata(self):
+        """Impede que uma questão de caligrafia chegue à UI sem target_text/target_char válido."""
+        if self.type != "calligraphy":
+            return self
+        text = self.target_text or self.target_char
+        if not text or not text.strip():
+            raise ValueError("calligraphy requer 'target_text' ou 'target_char' não vazio")
+        if not self.target_text:
+            self.target_text = text
+        if self.min_iou is not None and not (0.0 < self.min_iou <= 1.0):
+            raise ValueError("min_iou deve estar no intervalo (0.0, 1.0]")
         return self
 
 class UnitIntroData(BaseModel):

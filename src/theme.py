@@ -253,13 +253,8 @@ def apply_app_theme(page: ft.Page):
     page.title = f"Sejong Companion v{__version__}"
     page.fonts = {
         "Pretendard": "fonts/Pretendard-Regular.otf",
-        "Pretendard-Regular": "fonts/Pretendard-Regular.otf",
-        "Pretendard-Medium": "fonts/Pretendard-Medium.otf",
-        "Pretendard-SemiBold": "fonts/Pretendard-SemiBold.otf",
         "Pretendard-Bold": "fonts/Pretendard-Bold.otf",
-        "Pretendard-ExtraBold": "fonts/Pretendard-ExtraBold.otf",
-        "Pretendard-Black": "fonts/Pretendard-Black.otf",
-        "PretendardVariable": "fonts/PretendardVariable.ttf",
+        "Kyobo Handwriting": "fonts/KyoboHandwriting2025lyb.otf",
         "Noto Sans KR": "https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap",
         "Inter": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
         "Seollip-che": "fonts/establish_retrosans.ttf",

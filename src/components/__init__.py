@@ -7,6 +7,7 @@ from .quiz_widget import QuizWidget
 from .vocab_card import VocabCard
 from .flashcard_widget import FlashcardWidget
 from .sentence_builder_widget import SentenceBuilderWidget
+from .wongoji_multi_cell_widget import WongojiMultiCellWidget
 from .calligraphy_widget import (
     CalligraphyWidget,
     calculate_iou,
@@ -19,6 +20,7 @@ __all__ = [
     "CONTENT_MAX_WIDTH",
     "DEFAULT_VIEWPORT_WIDTH",
     "CalligraphyWidget",
+    "WongojiMultiCellWidget",
     "HangulCard",
     "QuizWidget",
     "VocabCard",

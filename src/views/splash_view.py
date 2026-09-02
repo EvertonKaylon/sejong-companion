@@ -27,7 +27,7 @@ def splash_view(page: ft.Page) -> ft.View:
                 ft.Text(
                     "COMPANION",
                     size=13,
-                    font_family="Pretendard",
+                    font_family="Kyobo Handwriting",
                     weight=ft.FontWeight.BOLD,
                     color=Colors.SECONDARY_LIGHT if is_dark else Colors.PRIMARY,
                     style=ft.TextStyle(letter_spacing=Responsive.value(w, compact=2, medium=6)),
@@ -48,7 +48,6 @@ def splash_view(page: ft.Page) -> ft.View:
     status_label = ft.Text(
         "⚡ Sincronizando pronúncias em áudio HD...",
         size=12,
-        font_family="Pretendard",
         color=colors["text_sec"],
         weight=ft.FontWeight.W_500,
         text_align=ft.TextAlign.CENTER,
@@ -77,7 +76,6 @@ def splash_view(page: ft.Page) -> ft.View:
             ft.Text(
                 "Centro Cultural Coreano no Brasil • 세종학당재단",
                 size=12,
-                font_family="Pretendard",
                 color=colors["text_sec"],
                 weight=ft.FontWeight.W_500,
             ),
