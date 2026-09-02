@@ -1,4 +1,4 @@
-﻿"""Testes automatizados para questões de caligrafia (Wongoji Lab & Workbooks) no Quiz Engine."""
+"""Testes automatizados para questões de caligrafia (Wongoji Lab & Workbooks) no Quiz Engine."""
 
 import unittest
 from unittest.mock import MagicMock
@@ -113,14 +113,14 @@ class TestWongojiMultiCellWidget(unittest.TestCase):
     def test_multi_cell_initialization(self):
         widget = WongojiMultiCellWidget(
             target_text="한국어 공부",
-            cell_size=60.0,
+            cell_size=210.0,
             is_dark=False,
             show_ghost=True,
             min_iou=0.45,
         )
         self.assertEqual(widget.target_text, "한국어 공부")
         self.assertEqual(widget.num_cells, 6)
-        self.assertEqual(widget.width_total, 360.0)
+        self.assertEqual(widget.active_cell_size, 210.0)
         self.assertEqual(len(widget.strokes_by_cell), 6)
 
     def test_space_cell_identified_and_neutral(self):

@@ -490,24 +490,16 @@ class QuizWidget(ft.Container):
         show_ghost = bool(self.q_data.show_ghost)
         min_threshold = self.q_data.min_iou if self.q_data.min_iou is not None else 0.40
 
-        num_chars = len(target)
-        if num_chars == 1:
-            cell_sz = 180.0
-        elif num_chars <= 4:
-            cell_sz = 75.0
-        else:
-            cell_sz = 62.0
-
         self.calligraphy_comp = WongojiMultiCellWidget(
             target_text=target,
-            cell_size=cell_sz,
+            cell_size=210.0,
             is_dark=self.is_dark,
             show_ghost=show_ghost,
             min_iou=min_threshold,
         )
 
         self.calligraphy_status_msg = ft.Text(
-            "Escreva na grade acima e clique em 'Terminei'.",
+            "Escreva na grade ampliada e clique em 'Terminei'.",
             size=12,
             color=self.colors["text_sec"],
             text_align=ft.TextAlign.CENTER,
@@ -525,9 +517,9 @@ class QuizWidget(ft.Container):
         )
 
         self.btn_calligraphy_clear = ft.TextButton(
-            content="🔄 Limpar",
+            content="🔄 Limpar Sílaba",
             style=ft.ButtonStyle(color=self.colors["text_sec"]),
-            on_click=lambda _: self.calligraphy_comp.reset(),
+            on_click=lambda _: self.calligraphy_comp.reset_current_cell(),
         )
 
         return ft.Column(
@@ -535,7 +527,7 @@ class QuizWidget(ft.Container):
                 ft.Container(
                     content=self.calligraphy_comp,
                     alignment=ft.Alignment.CENTER,
-                    padding=ft.Padding.symmetric(vertical=4),
+                    padding=ft.Padding.symmetric(vertical=2),
                 ),
                 self.calligraphy_status_msg,
                 ft.Row(
@@ -544,7 +536,7 @@ class QuizWidget(ft.Container):
                     spacing=12,
                 ),
             ],
-            spacing=8,
+            spacing=6,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         )
 
