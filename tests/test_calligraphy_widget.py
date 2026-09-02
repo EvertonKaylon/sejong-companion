@@ -1,9 +1,11 @@
 """Testes automatizados para o CalligraphyWidget (Wongoji Lab) e motor de visão/IoU."""
 
 import pytest
+import flet.canvas as cv
 from src.components.calligraphy_widget import (
     CalligraphyWidget,
     calculate_iou,
+    calculate_tolerant_iou,
     generate_diagnostic_overlay,
     get_syllable_structure_label,
     render_reference_bitmap,
@@ -55,14 +57,32 @@ class TestCalligraphyVisionEngine:
 
     def test_calculate_iou_partial_overlap(self):
         bm_ref = render_reference_bitmap("가", size=48)
-        # Traço semelhante desenhado
+        # Traço curto ancorado em um pixel real do glifo, sem depender da
+        # geometria de uma fonte específica.
+        row, col = next(
+            (r, c)
+            for r, values in enumerate(bm_ref)
+            for c, value in enumerate(values)
+            if value
+        )
         strokes = [
-            [(0.2, 0.2), (0.8, 0.2)],
-            [(0.8, 0.2), (0.8, 0.8)],
+            [
+                (col / 47, row / 47),
+                (min(col + 2, 47) / 47, row / 47),
+            ],
         ]
         bm_drawn = render_strokes_bitmap(strokes, size=48)
         score = calculate_iou(bm_ref, bm_drawn)
         assert 0.0 < score < 1.0
+
+    def test_tolerant_iou_rewards_small_handwriting_offset(self):
+        reference = [[0 for _ in range(9)] for _ in range(9)]
+        reference[4][2:7] = [1] * 5
+        shifted = [[0 for _ in range(9)] for _ in range(9)]
+        shifted[5][2:7] = [1] * 5
+
+        assert calculate_iou(reference, shifted) == 0.0
+        assert calculate_tolerant_iou(reference, shifted, tolerance_radius=1) >= 0.5
 
     def test_generate_diagnostic_overlay(self):
         bm_ref = [
@@ -100,7 +120,7 @@ class TestCalligraphyWidgetUI:
         assert w.sampled_points_count == 0
         assert w.is_evaluated is False
         assert "Escreva: 가" in w.status_text.value
-        assert len(w.canvas.shapes) > 0
+        assert len(w.guide_canvas.shapes) > 0
 
     def test_widget_toggle_ghost(self):
         w = CalligraphyWidget(target_char="가", show_ghost=True)
@@ -168,6 +188,40 @@ class TestCalligraphyWidgetUI:
         assert len(evaluated_records) == 1
         assert evaluated_records[0][0] == "가"
         assert "hit_cells" in evaluated_records[0][2]
+
+    def test_pan_cancel_discards_unfinished_stroke(self):
+        w = CalligraphyWidget()
+
+        # Um gesto cancelado por outro reconhecedor não mantém um traço parcial.
+        w.current_drawn_points = [(0.2, 0.2)]
+        w._on_pan_cancel(object())
+        assert w.current_drawn_points == []
+
+    def test_preview_shapes_scale_without_changing_drawing_state(self):
+        w = CalligraphyWidget(size=300)
+        w.all_strokes = [[(0.2, 0.2), (0.8, 0.8)]]
+
+        preview_shapes = w._generate_canvas_shapes(size=180)
+
+        assert preview_shapes
+        assert w.grid_size == 300
+        assert w.all_strokes == [[(0.2, 0.2), (0.8, 0.8)]]
+
+    def test_guide_uses_the_kyobo_font_used_by_iou_reference(self):
+        w = CalligraphyWidget(target_char="가", size=240)
+
+        guide = w.guide_canvas.shapes[-1]
+        assert isinstance(guide, cv.Text)
+        assert guide.value == "가"
+        assert guide.style.font_family == "Kyobo Handwriting"
+
+    def test_stroke_width_scales_from_the_iou_raster(self):
+        w = CalligraphyWidget(size=240)
+        w.all_strokes = [[(0.2, 0.2), (0.8, 0.8)]]
+
+        shapes = w._generate_dynamic_canvas_shapes()
+
+        assert shapes[0].paint.stroke_width == 15
 
     def test_syllable_structure_classification(self):
         assert "Jamo" in get_syllable_structure_label("ㄱ")

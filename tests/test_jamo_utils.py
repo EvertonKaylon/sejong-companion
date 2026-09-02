@@ -5,17 +5,18 @@ import os
 import pytest
 from src.jamo_utils import (
     BlockType,
-    CHOSEONG_TABLE,
-    JUNGSEONG_TABLE,
-    JONGSEONG_TABLE,
     JAMO_TO_FILENAME,
-    is_hangul_syllable,
-    is_hangul_jamo,
     classify_block_type,
-    decompose,
     compose,
+    decompose,
     decompose_string,
     get_jamo_layout,
+    get_stroke_data,
+    is_hangul_jamo,
+    is_hangul_syllable,
+    jamo_to_key,
+    layout_syllable_strokes,
+    load_stroke_catalog,
 )
 
 
@@ -151,6 +152,30 @@ class TestJamoUtils:
                 assert 0.0 < coords["w"] <= 1.0
                 assert 0.0 < coords["h"] <= 1.0
 
+    def test_classify_block_type_rejects_unknown_vowel(self):
+        with pytest.raises(ValueError):
+            classify_block_type("A", False)
+
+    def test_jamo_to_key(self):
+        assert jamo_to_key("ㄱ") == "giyeok"
+        assert jamo_to_key("ㅘ") == "wa"
+        assert jamo_to_key("ㄳ") == "giyeok_siot"
+        with pytest.raises(ValueError):
+            jamo_to_key("가")
+
+    def test_stroke_data_on_decomposition(self):
+        strokes = decompose("한").stroke_data()
+        assert [item.jamo for item in strokes] == ["ㅎ", "ㅏ", "ㄴ"]
+        assert all(item.stroke_count == len(item.strokes) for item in strokes)
+
+    def test_layout_syllable_strokes_in_unit_square(self):
+        placed = layout_syllable_strokes("한")
+        assert len(placed) > 0
+        for stroke in placed:
+            for x, y in stroke:
+                assert 0.0 <= x <= 1.0
+                assert 0.0 <= y <= 1.0
+
 
 class TestStrokeOrderData:
     """Testes para o dataset de stroke order (jamo_strokes.json)."""
@@ -166,19 +191,48 @@ class TestStrokeOrderData:
 
     def test_consonants_present(self, stroke_data):
         consonants = stroke_data.get("consonants", {})
-        expected = ["giyeok", "nieun", "digeut", "rieul", "mieum", "bieup", "siot",
-                    "ieung", "jieut", "chieut", "kieuk", "tieut", "pieup", "hieut"]
+        expected = [
+            "giyeok", "ssang_giyeok", "nieun", "digeut", "ssang_digeut", "rieul",
+            "mieum", "bieup", "ssang_bieup", "siot", "ssang_siot", "ieung",
+            "jieut", "ssang_jieut", "chieut", "kieuk", "tieut", "pieup", "hieut",
+        ]
         for name in expected:
             assert name in consonants, f"Consoante {name} ausente em jamo_strokes.json"
 
     def test_vowels_present(self, stroke_data):
         vowels = stroke_data.get("vowels", {})
-        expected = ["a", "eo", "o", "u", "eu", "i", "ae", "ya", "yeo", "yo", "yu"]
+        expected = [
+            "a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o",
+            "wa", "wae", "oe", "yo", "u", "wo", "we", "wi", "yu", "eu", "ui", "i",
+        ]
         for name in expected:
             assert name in vowels, f"Vogal {name} ausente em jamo_strokes.json"
 
+    def test_compound_batchim_present(self, stroke_data):
+        compounds = stroke_data.get("compounds", {})
+        expected = [
+            "giyeok_siot", "nieun_jieut", "nieun_hieut", "rieul_giyeok",
+            "rieul_mieum", "rieul_bieup", "rieul_siot", "rieul_tieut",
+            "rieul_pieup", "rieul_hieut", "bieup_siot",
+        ]
+        for name in expected:
+            assert name in compounds, f"Batchim composto {name} ausente em jamo_strokes.json"
+
+    def test_catalog_covers_all_jamo_keys(self, stroke_data):
+        listed = set()
+        for category in ("consonants", "vowels", "compounds"):
+            listed.update(stroke_data.get(category, {}))
+        assert listed == set(JAMO_TO_FILENAME.values())
+
+    def test_stroke_count_matches_path_length(self, stroke_data):
+        for category in ("consonants", "vowels", "compounds"):
+            for name, item in stroke_data.get(category, {}).items():
+                strokes = item.get("strokes", [])
+                assert item["stroke_count"] == len(strokes), f"{name}: stroke_count divergente"
+                assert item["romanization"] == name
+
     def test_stroke_coordinates_valid(self, stroke_data):
-        for category in ["consonants", "vowels"]:
+        for category in ("consonants", "vowels", "compounds"):
             for name, item in stroke_data.get(category, {}).items():
                 strokes = item.get("strokes", [])
                 assert len(strokes) > 0, f"{name} não possui strokes definidos"
@@ -189,3 +243,13 @@ class TestStrokeOrderData:
                         x, y = point
                         assert 0.0 <= x <= 1.0, f"X fora do intervalo em {name}: {x}"
                         assert 0.0 <= y <= 1.0, f"Y fora do intervalo em {name}: {y}"
+
+    def test_load_stroke_catalog_indexes_jamo_and_key(self):
+        catalog = load_stroke_catalog()
+        giyeok = get_stroke_data("ㄱ")
+        assert giyeok is catalog["giyeok"]
+        assert giyeok.jamo == "ㄱ"
+        assert giyeok.stroke_count == 2
+        assert get_stroke_data("wa").jamo == "ㅘ"
+        with pytest.raises(KeyError):
+            get_stroke_data("unknown_jamo")

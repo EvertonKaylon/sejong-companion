@@ -63,6 +63,8 @@ def test_all_1b_units_load_and_validate():
                 assert len(ex.sov_items) == len(ex.sov_slots)
                 assert ex.correct_order
                 assert sorted(i.word for i in ex.sov_items) == sorted(ex.correct_order)
+            elif ex.type == "calligraphy":
+                assert ex.target_text and len(ex.target_text) > 0
 
         assert has_mc, f"Unidade {u_id} deve ter questão de múltipla escolha"
         assert has_order or has_sov, f"Unidade {u_id} deve ter questão de ordenação ou SOV"
