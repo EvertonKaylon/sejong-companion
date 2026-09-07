@@ -18,6 +18,7 @@ Este documento cataloga os bugs mais complexos e desafiadores identificados e re
 | **BUG-08** | Bloqueio de Autoplay em Navegadores Web (Issue Flet #3695) & `silent.wav` | 🔴 Crítica | Áudio / Web Autoplay Policy | [bug_08_politica_autoplay_navegador_e_silent_wav.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Bugs_Criticos/bug_08_politica_autoplay_navegador_e_silent_wav.md) |
 | **BUG-09** | Vulnerabilidades de Autenticação Administrativa e Hardening de Sessão | 🔴 Crítica | Segurança / Autenticação & Identidade | [bug_09_vulnerabilidades_seguranca_e_hardening_autenticacao.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Bugs_Criticos/bug_09_vulnerabilidades_seguranca_e_hardening_autenticacao.md) |
 | **BUG-10** | Disputa de Gestos na Gesture Arena & Calibração Espacial de IoU no Wongoji Lab | 🔴 Crítica | Gestos / Motor de Caligrafia & Visão | [bug_10_disputa_gesture_arena_e_calibracao_iou_caligrafia.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Bugs_Criticos/bug_10_disputa_gesture_arena_e_calibracao_iou_caligrafia.md) |
+| **BUG-11** | Tela Preta no Flutter Web por Resolução Relativa de Imagens (`/`) e Esvaziamento de Views no Router | 🔴 Crítica | Flutter Web / Roteamento & Assets Estáticos | [bug_11_tela_preta_flutter_web_assets_e_views_router.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Bugs_Criticos/bug_11_tela_preta_flutter_web_assets_e_views_router.md) |
 
 ---
 
