@@ -92,10 +92,10 @@ def main(page: ft.Page):
     router.navigate_to("/splash")
 
 if __name__ == "__main__":
-    print(f"Sejong Companion v{__version__}")
+    print(f"Saebom Companion v{__version__}")
     port = int(os.environ.get("PORT", 8554))
 
-    parser = argparse.ArgumentParser(description="Sejong Companion")
+    parser = argparse.ArgumentParser(description="Saebom Companion")
     parser.add_argument(
         "--browser",
         action="store_true",
