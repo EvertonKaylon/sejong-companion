@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 160" width="720" height="160">
+  <defs>
+    <style>
+      @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+      .hangul { font-family: 'Pretendard', 'NanumSquare', sans-serif; font-weight: 800; font-size: 64px; fill: #02060F; text-anchor: start; }
+      .companion { font-family: 'Pretendard', 'NanumSquare', sans-serif; font-weight: 700; font-size: 18px; fill: #8B4DFF; text-anchor: start; letter-spacing: 8px; }
+      .sub { font-family: 'Pretendard', 'NanumBarunGothic', sans-serif; font-weight: 500; font-size: 12px; fill: #9EA2AE; text-anchor: start; letter-spacing: 4px; }
+    </style>
+  </defs>
+  <!-- Bloco Hangul -->
+  <text x="40" y="102" class="hangul">새봄</text>
+  <!-- Linha Divisória Hairline -->
+  <line x1="200" y1="45" x2="200" y2="115" stroke="#9EA2AE" stroke-width="2" opacity="0.6"/>
+  <!-- Bloco Categoria & Assinatura Latina -->
+  <text x="230" y="75" class="companion">COMPANION</text>
+  <text x="230" y="105" class="sub">SAEBOM COMPANION</text>
+</svg>

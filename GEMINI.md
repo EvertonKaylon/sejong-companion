@@ -1,9 +1,9 @@
 # Sejong Companion — Regras do Projeto
 
 ## Identidade do Projeto
-- **Nome:** Sejong Companion (세종학당 컴패니언)
+- **Nome:** Saebom Companion (새봄 컴패니언)
 - **Stack:** Python + Flet (Flutter Engine) — Web, Android, iOS, Desktop
-- **Fase atual:** Alpha (`v0.3.5-alpha`)
+- **Fase atual:** Alpha (`v0.3.6-alpha`)
 - **Documentação oficial:** `Documentacao/` (estrutura Obsidian com wikilinks)
 
 ## Rigor Técnico e Epistêmico (Regra Inviolável)

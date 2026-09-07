@@ -20,7 +20,12 @@ Bem-vindo ao repositório central de documentação e conhecimento do projeto **
 
 ---
 
-### 🎯 2. Planos e Arquitetura (`/Planos_e_Arquitetura`)
+### 🎨 2. Identidade Visual, Design & Branding (`/Design_e_Branding`)
+- 🌸 **[MANUAL_DE_IDENTIDADE_SAEBOM.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Design_e_Branding/MANUAL_DE_IDENTIDADE_SAEBOM.md)** — Manual oficial do sistema de marca Saebom Companion (새봄 컴패니언), rebranding pedagógico, sistema 60/20/12/8, catálogo de assets e governança.
+
+---
+
+### 🎯 3. Planos e Arquitetura (`/Planos_e_Arquitetura`)
 - 🗺️ **[ROADMAP_MESTRE_COMPANION.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Planos_e_Arquitetura/ROADMAP_MESTRE_COMPANION.md)** — Roteiro oficial de releases (0.3.0 → 0.3.1 [Livro 1B] → 0.3.2 [Estabilização] → 0.4.0 → 0.5.0 → 0.6.0 → 0.8.0 → 1.0.0).
 - 📜 **[manifesto_estrategico_develop_vs_main.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Planos_e_Arquitetura/manifesto_estrategico_develop_vs_main.md)** — Análise comparativa aprofundada da `develop` vs `main` e os 28 pontos estratégicos.
 - 🏛️ **[decisao_arquitetural_motor_adaptativo_local_vs_llm.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Planos_e_Arquitetura/decisao_arquitetural_motor_adaptativo_local_vs_llm.md)** — ADR-001: Decisão formal pelo Motor Adaptativo Local vs. IA Generativa (LLM).

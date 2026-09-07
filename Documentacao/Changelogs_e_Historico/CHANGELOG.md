@@ -16,10 +16,21 @@ Pré-Alpha → Alpha → Beta → RC → RTM → GA
 
 | Fase | Versão Alvo | Critérios de Entrada |
 |------|-------------|----------------------|
-| **Alpha** (atual) | `0.3.5-alpha` | Wongoji Lab & Caligrafia Multi-Célula (23 Unidades), 161 Testes Automatizados (100% OK), IoU Tolerante, Focus Mode Modal, Fonte Kyobo, BUG-10 Resolvido |
+| **Alpha** (atual) | `0.3.6-alpha` | Rebranding Saebom Companion (새봄), Manual de Marca v3.1, 20 Assets Oficiais, 186 Testes Automatizados (100% OK), Wongoji Lab Multi-Célula (23 Unidades) |
 | **Beta** | `0.6.0-beta` | Sincronização Cloud, Banco de dados persistente, PWA Mobile Audit, modo offline |
 | **RC** | `1.0.0-rc.1` | Feature-complete, testes E2E, zero bugs críticos |
 | **GA** | `1.0.0` | Pronto para distribuição pública |
+
+## [0.3.6-alpha] — 2026-09-06
+
+### Classificação: Alpha (Rebranding Saebom Companion, Pacote de Branding Oficial & Manual de Identidade Visual)
+> Milestone de Rebranding Institucional e Padronização de Marca: Transição do projeto para **Saebom Companion (새봄 컴패니언)** por diretriz pedagógica estrita da professora (descontinuação do nome "Sejong" para preservar separação institucional e foco como companion de estudo). Implementação do pipeline determinístico de geração de assets gráficos em `scripts/generate_branding_assets.py` com supersampling Pillow e tipografia Pretendard, produzindo 20 arquivos oficiais em `assets/branding/` (logotipos verticais e horizontais em modos dark e light, anéis concêntricos de expansão, app icons 512/192, favicons web e splash banner 1080×1920). Elaboração do Manual de Identidade Visual oficial (`Documentacao/Design_e_Branding/MANUAL_DE_IDENTIDADE_SAEBOM.md`) baseado no Branding Book v3.1, detalhando o sistema cromático 60/20/12/8 (Midnight Navy, Cream/Slate, Violet, Gold, Lilac), arquitetura de marca de 4 camadas, regras de uso correto/proibições e checklist de governança. Expansão da suíte de testes para **186 testes automatizados (100% OK)**.
+
+### Added — Sistema de Marca & Assets Gráficos
+- **Gerador de Assets de Marca (`scripts/generate_branding_assets.py`)** — Script determinístico para renderização de logotipos vetoriais SVG e imagens rasterizadas de alta fidelidade com supersampling 2x/3x e renderização CJK precisa.
+- **20 Assets Oficiais de Marca (`assets/branding/`)** — Logotipo vertical Dark e Light (SVG, PNG transparente e sólido), assinatura horizontal para AppBar (SVG e PNG), símbolo oficial de Anéis Concêntricos de Expansão (SVG e PNG 512px), Ícones de aplicativo squircle (SVG, 512px, 192px), Favicons web (32px, 16px e multi-resolução `favicon.ico`) e Splash Banner mobile Full HD vertical (1080×1920).
+- **Manual de Identidade Visual Saebom Companion (`Documentacao/Design_e_Branding/MANUAL_DE_IDENTIDADE_SAEBOM.md`)** — Documentação mestre completa em 8 seções transcrevendo e estruturando o Branding Book v3.1 oficial para o Obsidian.
+- **Suíte de Testes de Branding (`tests/test_branding_assets.py`)** — 25 novos testes automatizados cobrindo existência física, integridade de arquivos, dimensões exatas de ícones e banners, e conformidade vetorial dos SVGs, elevando a suíte para **186 testes automatizados (100% OK)**.
 
 ## [0.3.5-alpha] — 2026-08-30
 
