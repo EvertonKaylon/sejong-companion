@@ -1,10 +1,24 @@
-# Sejong Companion — Regras do Projeto
+# Saebom Companion — Regras do Projeto
 
 ## Identidade do Projeto
 - **Nome:** Saebom Companion (새봄 컴패니언)
 - **Stack:** Python + Flet (Flutter Engine) — Web, Android, iOS, Desktop
 - **Fase atual:** Alpha (`v0.3.6-alpha`)
 - **Documentação oficial:** `Documentacao/` (estrutura Obsidian com wikilinks)
+
+## Rebranding & Diretriz Pedagógica da Professora (Regras Invioláveis)
+- **Proibição Estrita do Nome "Sejong":** Por ordem expressa da professora do curso, o termo "Sejong" foi categoricamente proibido. É estritamente vedado introduzir o nome "Sejong" em novas views, componentes, títulos de janela, documentações ou assets. O nome oficial da marca é **Saebom Companion (새봄 컴패니언)**.
+- **Regra de Ouro Pedagógica:** *"A tecnologia acompanha a pedagogia. Nunca compete com ela."* O aplicativo atua como companion de estudo e fixação fora da sala de aula; nunca como escola paralela ou substituto da professora.
+- **Hierarquia Cromática do Brand Book v3.1 (60/20/12/8):**
+  - *Navy é território:* `#02060F` (60%) — Fundo escuro silencioso para estudo e foco noturno.
+  - *Violet é sistema:* `#8B4DFF` (12%) — Cor primária (`PRIMARY`) para navegação, progresso e botões funcionais.
+  - *Gold é sinal:* `#FFAB22` (8%) — Cor de acento (`ACCENT`) para conquistas, medalhas, atenção e CTAs primários.
+  - *Superfície e Apoio:* Cream (`#F7F4EC`) e Slate (`#9EA2AE`) para leitura/bordas; Lilac (`#B28AFF`) para apoio (`SECONDARY`).
+  - O antigo azul Sejong (`#004C97`) foi descontinuado e não deve ser reutilizado.
+- **Invariantes e Proibições Visuais:**
+  - É expressamente proibido inserir flores de cerejeira literais (🌸) na logo ou usar primavera como tema decorativo infantil; a primavera (*새봄*) é exclusivamente metáfora pedagógica de recomeço e florescimento.
+  - Zero infantilização, estética caricata de K-pop ou promessas mágicas de fluência rápida.
+  - Tipografia de interface sempre em Pretendard (prevenção absoluta de *tofu* `□□□□`) e caligrafia em Kyobo Handwriting 2025.
 
 ## Rigor Técnico e Epistêmico (Regra Inviolável)
 - NUNCA emitir diagnósticos de viabilidade, arquitetura ou estimativas de complexidade baseados em inferência ou memória de sessões passadas.

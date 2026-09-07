@@ -1,13 +1,13 @@
 ---
-name: sejong-docs-sync
+name: saebom-docs-sync
 description: >-
-  Sincroniza a documentação oficial do Sejong Companion após a conclusão de uma
+  Sincroniza a documentação oficial do Saebom Companion (새봄 컴패니언) após a conclusão de uma
   branch ou release. Use quando finalizar commits de feature, fix, security ou
   refactor para garantir que CHANGELOG, INDICE_BUGS, INDICE_DOCUMENTACAO e
   arquivos de bug dedicados estejam atualizados antes do commit final.
 ---
 
-# Sincronização de Documentação Oficial — Sejong Companion
+# Sincronização de Documentação Oficial — Saebom Companion
 
 ## Quando Ativar
 - Após o último commit técnico de uma branch (feature, fix, security, refactor)
