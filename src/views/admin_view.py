@@ -199,7 +199,7 @@ def admin_view(page: ft.Page) -> ft.View:
                         width=72,
                         height=72,
                         alignment=ft.Alignment.CENTER,
-                        bgcolor=f"{colors['primary']}18",
+                        bgcolor=ft.Colors.with_opacity(0.10, colors["primary"]),
                         shape=ft.BoxShape.CIRCLE,
                     ),
                     ft.Container(height=8),

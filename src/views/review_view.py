@@ -97,8 +97,8 @@ def review_view(page: ft.Page) -> ft.View:
                     ],
                     spacing=4,
                 ),
-                bgcolor=f"{colors['secondary']}18",
-                border=ft.Border.all(1, f"{colors['secondary']}44"),
+                bgcolor=ft.Colors.with_opacity(0.10, colors["secondary"]),
+                border=ft.Border.all(1, ft.Colors.with_opacity(0.25, colors["secondary"])),
                 border_radius=Styles.BORDER_RADIUS_SM,
                 padding=ft.Padding.symmetric(horizontal=8, vertical=3),
             )
@@ -112,8 +112,8 @@ def review_view(page: ft.Page) -> ft.View:
                     ],
                     spacing=4,
                 ),
-                bgcolor=f"{colors['primary']}18",
-                border=ft.Border.all(1, f"{colors['primary']}44"),
+                bgcolor=ft.Colors.with_opacity(0.10, colors["primary"]),
+                border=ft.Border.all(1, ft.Colors.with_opacity(0.25, colors["primary"])),
                 border_radius=Styles.BORDER_RADIUS_SM,
                 padding=ft.Padding.symmetric(horizontal=8, vertical=3),
             )

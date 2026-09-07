@@ -17,7 +17,7 @@ def splash_view(page: ft.Page) -> ft.View:
         content=ft.Column(
             controls=[
                 ft.Image(
-                    src="branding/app_icon_512.png",
+                    src="/branding/app_icon_512.png",
                     width=Responsive.value(w, compact=84, medium=96),
                     height=Responsive.value(w, compact=84, medium=96),
                     border_radius=Styles.BORDER_RADIUS_LG,
@@ -54,8 +54,8 @@ def splash_view(page: ft.Page) -> ft.View:
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         ),
         padding=ft.Padding.symmetric(horizontal=Responsive.value(w, compact=16, medium=28), vertical=18),
-        bgcolor=f"{colors['primary']}12",
-        border=ft.Border.all(1.5, f"{colors['primary']}40"),
+        bgcolor=ft.Colors.with_opacity(0.12, colors["primary"]),
+        border=ft.Border.all(1.5, ft.Colors.with_opacity(0.25, colors["primary"])),
         border_radius=Styles.BORDER_RADIUS_LG,
         shadow=Styles.CARD_SHADOW,
     )
@@ -72,7 +72,7 @@ def splash_view(page: ft.Page) -> ft.View:
     progress_bar = ft.ProgressBar(
         width=180,
         color=colors["accent"],
-        bgcolor=f"{colors['primary']}25",
+        bgcolor=ft.Colors.with_opacity(0.15, colors["primary"]),
         border_radius=Styles.BORDER_RADIUS_SM,
         visible=False,
     )
@@ -145,28 +145,55 @@ def splash_view(page: ft.Page) -> ft.View:
             # ─── VERIFICAÇÃO DE IDENTIDADE PERSISTENTE ───
             next_route = "/onboarding"
             try:
-                sp = ft.SharedPreferences()
-                if hasattr(page, "services") and sp not in page.services:
-                    page.services.append(sp)
-                saved_id = await sp.get("saebom_student_id") or await sp.get("sejong_student_id")
-                saved_name = await sp.get("saebom_student_name") or await sp.get("sejong_student_name")
-                if saved_id and str(saved_id).strip():
-                    clean_id = str(saved_id).strip()
-                    page._sejong_student_id = clean_id
-                    if saved_name and str(saved_name).strip() and str(saved_name).strip() != "Aluno Anônimo":
-                        page._sejong_student_name = str(saved_name).strip()
-                        from ..services import ProgressService
-                        ps = ProgressService(page)
-                        ps.set_student_name(page._sejong_student_name)
-                        next_route = "/home"
+                from ..services import StudentIdentity, ProgressService
+                existing_id = StudentIdentity.get_student_id(page)
+                ps = ProgressService(page)
+                saved_name = ps.get_student_name()
+
+                if existing_id and not existing_id.startswith("student_") and saved_name and saved_name != "Aluno Anônimo":
+                    page._sejong_student_id = existing_id
+                    page._sejong_student_name = saved_name
+                    next_route = "/home"
+                else:
+                    # Tentar SharedPreferences de forma estritamente defensiva com timeout de 0.8s
+                    try:
+                        sp = ft.SharedPreferences()
+                        if hasattr(page, "services") and sp not in page.services:
+                            page.services.append(sp)
+
+                        async def _safe_get(k: str):
+                            try:
+                                return await asyncio.wait_for(sp.get(k), timeout=0.8)
+                            except Exception:
+                                return None
+
+                        saved_id = await _safe_get("saebom_student_id") or await _safe_get("sejong_student_id")
+                        saved_name = await _safe_get("saebom_student_name") or await _safe_get("sejong_student_name")
+
+                        if saved_id and str(saved_id).strip():
+                            clean_id = str(saved_id).strip()
+                            page._sejong_student_id = clean_id
+                            if saved_name and str(saved_name).strip() and str(saved_name).strip() != "Aluno Anônimo":
+                                page._sejong_student_name = str(saved_name).strip()
+                                ps.set_student_name(page._sejong_student_name)
+                                next_route = "/home"
+                    except Exception as e:
+                        print(f"[Splash] SharedPreferences inacessível ou ignorado: {e}")
             except Exception as e:
-                print(f"[Splash] Erro ao consultar SharedPreferences: {e}")
+                print(f"[Splash] Erro na checagem de identidade: {e}")
 
             # Tempo mínimo para visualização suave da marca (~1.2s)
             await asyncio.sleep(1.2)
 
             # Navegar para a rota correta (Home ou Onboarding)
-            page.router.navigate_to(next_route)
+            try:
+                page.router.navigate_to(next_route)
+            except Exception as e:
+                print(f"[Splash] Erro ao navegar para {next_route}: {e}")
+                try:
+                    page.router.navigate_to("/home")
+                except Exception:
+                    pass
 
             # Em segundo plano: continuar baixando silenciosamente o restante do currículo
             if audio_service:

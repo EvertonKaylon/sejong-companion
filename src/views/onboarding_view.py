@@ -185,7 +185,7 @@ def onboarding_view(page: ft.Page) -> ft.View:
                         controls=[
                             ft.Container(
                                 content=ft.Image(
-                                    src="branding/app_icon_192.png",
+                                    src="/branding/app_icon_192.png",
                                     width=54,
                                     height=54,
                                     border_radius=12,
@@ -200,8 +200,8 @@ def onboarding_view(page: ft.Page) -> ft.View:
                                     ft.Container(
                                         content=ft.Text("COMPANION", size=10, weight=ft.FontWeight.BOLD, color=colors["accent"]),
                                         padding=ft.Padding.symmetric(horizontal=6, vertical=2),
-                                        bgcolor=f"{colors['primary']}22",
-                                        border=ft.Border.all(1, f"{colors['primary']}44"),
+                                        bgcolor=ft.Colors.with_opacity(0.12, colors["primary"]),
+                                        border=ft.Border.all(1, ft.Colors.with_opacity(0.25, colors["primary"])),
                                         border_radius=4,
                                     ),
                                 ],

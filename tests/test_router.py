@@ -65,5 +65,26 @@ class TestRouter(unittest.TestCase):
         self.assertEqual(len(self.page.views), 1)
         self.assertEqual(self.page.route, "/home")
 
+    def test_root_route_normalization(self):
+        """Valida que rota raiz '/' e vazia '' são normalizadas para /splash."""
+        self.page.go("/")
+        self.assertEqual(len(self.page.views), 1)
+        self.assertEqual(self.page.views[0].route, "/splash")
+
+        self.page.go("")
+        self.assertEqual(len(self.page.views), 1)
+        self.assertEqual(self.page.views[0].route, "/splash")
+
+    def test_route_error_fallback_prevents_empty_views(self):
+        """Garante que falhas de construção de view nunca deixem page.views vazia (evita tela preta)."""
+        def buggy_builder(page):
+            raise RuntimeError("Erro proposital na montagem da view")
+
+        self.router.register_route("/broken", buggy_builder)
+        self.page.go("/broken")
+        # O router deve capturar o erro e manter uma view de fallback (ex: /home ou /splash)
+        self.assertGreater(len(self.page.views), 0)
+        self.assertIn(self.page.views[-1].route, ["/home", "/splash", "/broken"])
+
 if __name__ == "__main__":
     unittest.main()
