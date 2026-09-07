@@ -377,7 +377,7 @@ class ProgressService:
 
     def get_student_name(self) -> str:
         """Retorna o nome personalizado do aluno ou o padrão."""
-        return str(self._store.get("student_name", "Estudante Sejong"))
+        return str(self._store.get("student_name", "Estudante Saebom"))
 
     @staticmethod
     def generate_recovery_code() -> str:
@@ -486,12 +486,12 @@ class ProgressService:
             return False, None, None, "Chave de recuperação incorreta para este perfil."
 
         resolved_id = target_data.get("student_id") or os.path.basename(target_file)[:-5]
-        resolved_name = target_data.get("student_name", "Aluno Sejong")
+        resolved_name = target_data.get("student_name", "Aluno Saebom")
         return True, resolved_id, resolved_name, "Perfil e progresso restaurados com sucesso!"
 
     def set_student_name(self, name: str) -> str:
         """Atualiza o nome do aluno no perfil e sincroniza."""
-        clean_name = name.strip() or "Estudante Sejong"
+        clean_name = name.strip() or "Estudante Saebom"
         self._store["student_name"] = clean_name
         ProgressService._save_to_disk(self._session_id, self._store)
         try:
@@ -1120,8 +1120,8 @@ class AdminService:
 
     @classmethod
     def get_configured_pin(cls) -> Optional[str]:
-        """Retorna o PIN configurado via variável de ambiente SEJONG_ADMIN_PIN."""
-        pin = os.environ.get("SEJONG_ADMIN_PIN")
+        """Retorna o PIN configurado via variável de ambiente SAEBOM_ADMIN_PIN ou SEJONG_ADMIN_PIN."""
+        pin = os.environ.get("SAEBOM_ADMIN_PIN") or os.environ.get("SEJONG_ADMIN_PIN")
         if pin:
             pin = pin.strip()
         return pin if pin else None
@@ -1160,7 +1160,7 @@ class AdminService:
 
         expected = cls.get_configured_pin()
         if not expected:
-            return False, None, "Autenticação administrativa desabilitada (SEJONG_ADMIN_PIN não configurado)."
+            return False, None, "Autenticação administrativa desabilitada (SAEBOM_ADMIN_PIN não configurado)."
 
         entered_clean = str(pin).strip()
         is_valid = hmac.compare_digest(entered_clean, expected)
@@ -1255,7 +1255,7 @@ class AdminService:
                 # Extrair do nome do arquivo: student_{id}.json ou {uuid}.json
                 s_id = filename[:-5]
 
-            s_name = data.get("student_name") or "Estudante Sejong"
+            s_name = data.get("student_name") or "Estudante Saebom"
             streak = data.get("streak", 0)
             total_xp = data.get("total_xp", 0)
             last_date = data.get("last_study_date") or data.get("updated_at") or "—"
@@ -1369,8 +1369,8 @@ class AdminService:
         now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         lines = [
-            "# 🏛️ Relatório Executivo & Diagnóstico Pedagógico — Sejong Companion",
-            f"*Gerado em: {now_str} | Corpo Docente CCCB / Sejong Hakdang*",
+            "# 🏛️ Relatório Executivo & Diagnóstico Pedagógico — Saebom Companion",
+            f"*Gerado em: {now_str} | Corpo Docente / Saebom Companion*",
             "",
             "---",
             "",

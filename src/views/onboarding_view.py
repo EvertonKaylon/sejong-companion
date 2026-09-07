@@ -179,14 +179,38 @@ def onboarding_view(page: ft.Page) -> ft.View:
     card_content = ft.Container(
         content=ft.Column(
             controls=[
-                # Brasão e Título Institucional
+                # Brasão e Título Institucional Oficial Saebom Companion
                 ft.Container(
                     content=ft.Column(
                         controls=[
-                            ft.Text("세종학당", size=28, font_family="Seollip-che", weight=ft.FontWeight.W_900, color=colors["primary"]),
-                            ft.Text("SEJONG COMPANION", size=11, font_family="Pretendard", weight=ft.FontWeight.BOLD, color=colors["secondary"]),
-                            ft.Container(height=6),
-                            ft.Text("Centro Cultural Coreano no Brasil", size=12, color=colors["text_sec"], weight=ft.FontWeight.W_500),
+                            ft.Container(
+                                content=ft.Image(
+                                    src="branding/app_icon_192.png",
+                                    width=54,
+                                    height=54,
+                                    border_radius=12,
+                                    fit=ft.ImageFit.CONTAIN,
+                                ),
+                                alignment=ft.Alignment.CENTER,
+                                margin=ft.Margin.only(bottom=6),
+                            ),
+                            ft.Row(
+                                controls=[
+                                    ft.Text("새봄", size=26, font_family="Pretendard", weight=ft.FontWeight.W_900, color=colors["text"]),
+                                    ft.Container(
+                                        content=ft.Text("COMPANION", size=10, weight=ft.FontWeight.BOLD, color=colors["accent"]),
+                                        padding=ft.Padding.symmetric(horizontal=6, vertical=2),
+                                        bgcolor=f"{colors['primary']}22",
+                                        border=ft.Border.all(1, f"{colors['primary']}44"),
+                                        border_radius=4,
+                                    ),
+                                ],
+                                alignment=ft.MainAxisAlignment.CENTER,
+                                spacing=8,
+                            ),
+                            ft.Text("SAEBOM COMPANION", size=10, font_family="Pretendard", weight=ft.FontWeight.BOLD, color=colors["secondary"]),
+                            ft.Container(height=4),
+                            ft.Text("Companion Institucional de Aprendizagem de Coreano", size=11, color=colors["text_sec"], weight=ft.FontWeight.W_500),
                         ],
                         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                         spacing=2,
@@ -203,7 +227,7 @@ def onboarding_view(page: ft.Page) -> ft.View:
                     color=colors["text"],
                 ),
                 ft.Text(
-                    "Informe seu nome e sobrenome para que seus professores acompanhem sua frequência e evolução no Sejong Hakdang:",
+                    "Informe seu nome e sobrenome para que seus professores acompanhem sua frequência e evolução nos estudos:",
                     size=12,
                     color=colors["text_sec"],
                     style=ft.TextStyle(height=1.4),

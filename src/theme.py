@@ -66,7 +66,7 @@ class Colors:
     DESTRUCTIVE_900 = "#550118"
     DESTRUCTIVE_950 = "#32010E"
 
-    # Info — Sejong Royal Blue
+    # Info — Royal Blue
     INFO_50 = "#EBF3FF"
     INFO_100 = "#CDE2FE"
     INFO_200 = "#96C2FD"

@@ -1,4 +1,4 @@
-"""Componentes reutilizáveis da interface do Sejong Companion."""
+"""Componentes reutilizáveis da interface do Saebom Companion."""
 
 from .hangul_card import HangulCard
 from .layout import CONTENT_MAX_WIDTH, DEFAULT_VIEWPORT_WIDTH, centered_content

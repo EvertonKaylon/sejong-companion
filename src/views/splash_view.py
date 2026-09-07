@@ -12,35 +12,51 @@ def splash_view(page: ft.Page) -> ft.View:
 
     from ..theme import Colors
 
-    # Logo central (estilo brasão retrô-industrial Seollip-che)
+    # Logo central oficial Saebom Companion (Brand Book v3.1)
     logo_badge = ft.Container(
         content=ft.Column(
             controls=[
+                ft.Image(
+                    src="branding/app_icon_512.png",
+                    width=Responsive.value(w, compact=84, medium=96),
+                    height=Responsive.value(w, compact=84, medium=96),
+                    border_radius=Styles.BORDER_RADIUS_LG,
+                    fit=ft.ImageFit.CONTAIN,
+                ),
+                ft.Container(height=6),
                 ft.Text(
-                    "세종학당",
-                    size=32,
-                    font_family="Seollip-che",
+                    "새봄",
+                    size=Responsive.value(w, compact=32, medium=38),
+                    font_family="Pretendard-Bold",
                     weight=ft.FontWeight.W_900,
-                    color=Colors.ACCENT if is_dark else Colors.PRIMARY_DARK,
-                    style=ft.TextStyle(letter_spacing=Responsive.value(w, compact=1, medium=3)),
+                    color=colors["text"],
+                    style=ft.TextStyle(letter_spacing=Responsive.value(w, compact=2, medium=4)),
                 ),
                 ft.Text(
-                    "COMPANION",
-                    size=13,
-                    font_family="Kyobo Handwriting",
+                    "C O M P A N I O N",
+                    size=12,
+                    font_family="Pretendard-Bold",
                     weight=ft.FontWeight.BOLD,
-                    color=Colors.SECONDARY_LIGHT if is_dark else Colors.PRIMARY,
-                    style=ft.TextStyle(letter_spacing=Responsive.value(w, compact=2, medium=6)),
+                    color=colors["accent"],
+                    style=ft.TextStyle(letter_spacing=Responsive.value(w, compact=4, medium=8)),
+                ),
+                ft.Text(
+                    "SAEBOM COMPANION",
+                    size=9,
+                    font_family="Pretendard",
+                    weight=ft.FontWeight.W_600,
+                    color=colors["text_sec"],
+                    style=ft.TextStyle(letter_spacing=Responsive.value(w, compact=2, medium=4)),
                 ),
             ],
             spacing=2,
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         ),
-        padding=ft.Padding.symmetric(horizontal=Responsive.value(w, compact=12, medium=24), vertical=16),
-        bgcolor="#14004C97" if not is_dark else "#1E7C4DFF",
-        border=ft.Border.all(3, Colors.PRIMARY if not is_dark else Colors.SECONDARY),
-        border_radius=Styles.BORDER_RADIUS_MD,
+        padding=ft.Padding.symmetric(horizontal=Responsive.value(w, compact=16, medium=28), vertical=18),
+        bgcolor=f"{colors['primary']}12",
+        border=ft.Border.all(1.5, f"{colors['primary']}40"),
+        border_radius=Styles.BORDER_RADIUS_LG,
         shadow=Styles.CARD_SHADOW,
     )
 
@@ -55,8 +71,8 @@ def splash_view(page: ft.Page) -> ft.View:
 
     progress_bar = ft.ProgressBar(
         width=180,
-        color=Colors.ACCENT,
-        bgcolor="#1E7C4DFF",
+        color=colors["accent"],
+        bgcolor=f"{colors['primary']}25",
         border_radius=Styles.BORDER_RADIUS_SM,
         visible=False,
     )
@@ -64,30 +80,31 @@ def splash_view(page: ft.Page) -> ft.View:
     logo_layout = ft.Column(
         controls=[
             logo_badge,
-            ft.Container(height=12),
+            ft.Container(height=14),
             ft.Text(
-                "세종학당 컴패니언",
-                size=26,
-                font_family="Seollip-che",
-                weight=ft.FontWeight.W_900,
-                color=Colors.PRIMARY if not is_dark else Colors.ACCENT,
-                style=ft.TextStyle(letter_spacing=2),
-            ),
-            ft.Text(
-                "Centro Cultural Coreano no Brasil • 세종학당재단",
+                "“Uma nova primavera para a aprendizagem.”",
                 size=12,
                 color=colors["text_sec"],
                 weight=ft.FontWeight.W_500,
+                italic=True,
+                text_align=ft.TextAlign.CENTER,
+            ),
+            ft.Text(
+                "Companion Institucional de Aprendizagem de Coreano",
+                size=11,
+                color=colors["text_sec"],
+                weight=ft.FontWeight.W_400,
+                text_align=ft.TextAlign.CENTER,
             ),
             ft.Container(height=20),
-            ft.ProgressRing(color=colors["secondary"], width=28, height=28),
-            ft.Container(height=4),
+            ft.ProgressRing(color=colors["primary"], width=28, height=28),
+            ft.Container(height=6),
             status_label,
             progress_bar,
         ],
         alignment=ft.MainAxisAlignment.CENTER,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-        spacing=4,
+        spacing=3,
     )
 
     # Pré-carregar lote prioritário de áudios no splash e continuar o restante em background
@@ -131,8 +148,8 @@ def splash_view(page: ft.Page) -> ft.View:
                 sp = ft.SharedPreferences()
                 if hasattr(page, "services") and sp not in page.services:
                     page.services.append(sp)
-                saved_id = await sp.get("sejong_student_id")
-                saved_name = await sp.get("sejong_student_name")
+                saved_id = await sp.get("saebom_student_id") or await sp.get("sejong_student_id")
+                saved_name = await sp.get("saebom_student_name") or await sp.get("sejong_student_name")
                 if saved_id and str(saved_id).strip():
                     clean_id = str(saved_id).strip()
                     page._sejong_student_id = clean_id

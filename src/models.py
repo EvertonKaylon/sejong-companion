@@ -173,7 +173,7 @@ class UnitIntroData(BaseModel):
 # ─── Unit 1+ Models ───
 
 class VocabItem(BaseModel):
-    """Item de vocabulário — SEM romanização, conforme metodologia Sejong."""
+    """Item de vocabulário — SEM romanização, conforme metodologia Saebom."""
     word: str
     meaning: str
     example_kr: str

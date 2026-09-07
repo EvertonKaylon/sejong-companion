@@ -25,10 +25,29 @@ def home_view(page: ft.Page) -> ft.View:
 
     app_bar = ft.AppBar(
         leading=ft.Container(
-            content=ft.Icon(ft.Icons.MENU_BOOK_ROUNDED, color=colors["primary"], size=22),
-            padding=ft.Padding.only(left=12)
+            content=ft.Image(
+                src="branding/app_icon_192.png",
+                width=28,
+                height=28,
+                fit=ft.ImageFit.CONTAIN,
+                border_radius=6,
+            ),
+            padding=ft.Padding.only(left=12),
         ),
-        title=ft.Text("Sejong Companion", weight=ft.FontWeight.BOLD, size=20, color=colors["text"]),
+        title=ft.Row(
+            controls=[
+                ft.Text("Saebom", weight=ft.FontWeight.BOLD, size=19, color=colors["text"]),
+                ft.Container(
+                    content=ft.Text("COMPANION", size=9, weight=ft.FontWeight.BOLD, color=colors["accent"]),
+                    padding=ft.Padding.symmetric(horizontal=5, vertical=2),
+                    bgcolor=f"{colors['primary']}22",
+                    border=ft.Border.all(1, f"{colors['primary']}44"),
+                    border_radius=4,
+                ),
+            ],
+            spacing=8,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+        ),
         bgcolor=colors["surface"],
         elevation=0,
         actions=[
@@ -101,7 +120,7 @@ def home_view(page: ft.Page) -> ft.View:
                     controls=[
                         ft.Text(f"Olá, {student_name}! 👋", size=22, weight=ft.FontWeight.BOLD, color=colors["text"]),
                         ft.Text(
-                            "Acompanhe o currículo do Sejong Hakdang de forma complementar e interativa.",
+                            "Acompanhe o seu aprendizado de coreano de forma complementar e interativa.",
                             size=13,
                             color=colors["text_sec"]
                         )
@@ -513,7 +532,7 @@ def home_view(page: ft.Page) -> ft.View:
                             content=ft.Row(
                                 controls=[
                                     ft.Icon(ft.Icons.MENU_BOOK_ROUNDED, size=16, color=colors["primary"]),
-                                    ft.Text("Sejong Coreano 1A · 세종한국어 1A", size=13, weight=ft.FontWeight.BOLD, color=colors["primary"]),
+                                    ft.Text("Nível 1A · 한국어 1A", size=13, weight=ft.FontWeight.BOLD, color=colors["primary"]),
                                 ],
                                 spacing=6,
                             ),
@@ -527,7 +546,7 @@ def home_view(page: ft.Page) -> ft.View:
                             content=ft.Row(
                                 controls=[
                                     ft.Icon(ft.Icons.AUTO_STORIES_ROUNDED, size=16, color=colors["secondary"]),
-                                    ft.Text("Sejong Coreano 1B · 세종한국어 1B", size=13, weight=ft.FontWeight.BOLD, color=colors["secondary"]),
+                                    ft.Text("Nível 1B · 한국어 1B", size=13, weight=ft.FontWeight.BOLD, color=colors["secondary"]),
                                 ],
                                 spacing=6,
                             ),

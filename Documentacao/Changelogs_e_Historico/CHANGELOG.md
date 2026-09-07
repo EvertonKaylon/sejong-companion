@@ -30,7 +30,15 @@ Pré-Alpha → Alpha → Beta → RC → RTM → GA
 - **Gerador de Assets de Marca (`scripts/generate_branding_assets.py`)** — Script determinístico para renderização de logotipos vetoriais SVG e imagens rasterizadas de alta fidelidade com supersampling 2x/3x e renderização CJK precisa.
 - **20 Assets Oficiais de Marca (`assets/branding/`)** — Logotipo vertical Dark e Light (SVG, PNG transparente e sólido), assinatura horizontal para AppBar (SVG e PNG), símbolo oficial de Anéis Concêntricos de Expansão (SVG e PNG 512px), Ícones de aplicativo squircle (SVG, 512px, 192px), Favicons web (32px, 16px e multi-resolução `favicon.ico`) e Splash Banner mobile Full HD vertical (1080×1920).
 - **Manual de Identidade Visual Saebom Companion (`Documentacao/Design_e_Branding/MANUAL_DE_IDENTIDADE_SAEBOM.md`)** — Documentação mestre completa em 8 seções transcrevendo e estruturando o Branding Book v3.1 oficial para o Obsidian.
-- **Suíte de Testes de Branding (`tests/test_branding_assets.py`)** — 25 novos testes automatizados cobrindo existência física, integridade de arquivos, dimensões exatas de ícones e banners, e conformidade vetorial dos SVGs, elevando a suíte para **186 testes automatizados (100% OK)**.
+- **Suíte de Testes de Branding & Tema (`tests/test_branding_assets.py` & `tests/test_theme.py`)** — 31 novos testes automatizados cobrindo integridade física dos 20 assets, conformidade vetorial de SVG, regras estritas de proibição de nomes legados no título da janela, e aderência estrita aos tokens da paleta 60/20/12/8 do Brand Book v3.1, elevando a suíte para **192 testes automatizados (100% OK)**.
+
+### Changed — Aplicação Visual nas Telas & Descontinuação do Termo Legado
+- **Splash View (`src/views/splash_view.py`)** — Tela de abertura reestruturada com badge oficial Saebom Companion, ícone squircle 512px, tipografia Pretendard para '새봄', micro-badge 'COMPANION' em Gold/Violet, e slogan oficial *"Uma nova primavera para a aprendizagem."*.
+- **Home View & AppBar (`src/views/home_view.py`)** — AppBar atualizada com o novo ícone oficial de 192px e título estilizado 'Saebom COMPANION'; cabeçalhos de seções atualizados para 'Nível 1A · 한국어 1A' e 'Nível 1B · 한국어 1B'; subtítulo de boas-vindas reformulado com foco pedagógico autônomo.
+- **Onboarding View (`src/views/onboarding_view.py`)** — Brasão institucional substituído pelo emblema oficial Saebom Companion com ícone de 192px, tipografia Pretendard e subtítulo "Companion Institucional de Aprendizagem de Coreano".
+- **Review & Lesson Views (`src/views/review_view.py`, `src/views/lesson_view.py`)** — Badges de origem de cartas atualizados para 'Nível 1A' / 'Nível 1B' e tela de lição em construção atualizada para a equipe Saebom Companion.
+- **Admin View (`src/views/admin_view.py`)** — Descrições de login e relatórios i18n atualizados em português e coreano ('새봄 교수 포털') removendo termos legados.
+- **Services & Retrocompatibilidade (`src/services.py`, `src/audio_service.py`)** — Suporte às novas variáveis `SAEBOM_ADMIN_PIN` e `SAEBOM_AUDIO_CACHE_DIR` com postura fail-closed e retrocompatibilidade para variáveis legadas; fallback de identidade de aluno atualizado para "Estudante Saebom".
 
 ## [0.3.5-alpha] — 2026-08-30
 

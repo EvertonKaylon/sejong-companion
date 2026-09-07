@@ -7,7 +7,7 @@ class VocabCard(ft.Container):
         self.colors = get_theme_colors(is_dark)
         self.on_audio_click = on_audio_click
         
-        # Elementos de Texto — SEM romanização (metodologia Sejong)
+        # Elementos de Texto — SEM romanização (metodologia Saebom)
         word_txt = ft.Text(
             value=vocab_item.word,
             size=22,

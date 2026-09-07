@@ -38,7 +38,7 @@ class TestStudentIdentityAndPersistence(unittest.TestCase):
         page._sejong_student_id = "student_test_123"
         ps = ProgressService(page)
         
-        self.assertEqual(ps.get_student_name(), "Estudante Sejong")
+        self.assertEqual(ps.get_student_name(), "Estudante Saebom")
         
         ps.set_student_name("Marina Silva")
         self.assertEqual(ps.get_student_name(), "Marina Silva")

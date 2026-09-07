@@ -93,7 +93,7 @@ def review_view(page: ft.Page) -> ft.View:
                 content=ft.Row(
                     controls=[
                         ft.Icon(ft.Icons.AUTO_STORIES_ROUNDED, size=12, color=colors["secondary"]),
-                        ft.Text(f"Sejong 1B · Unidade {u_num:02d}", size=11, weight=ft.FontWeight.BOLD, color=colors["secondary"]),
+                        ft.Text(f"Nível 1B · Unidade {u_num:02d}", size=11, weight=ft.FontWeight.BOLD, color=colors["secondary"]),
                     ],
                     spacing=4,
                 ),
@@ -108,7 +108,7 @@ def review_view(page: ft.Page) -> ft.View:
                 content=ft.Row(
                     controls=[
                         ft.Icon(ft.Icons.MENU_BOOK_ROUNDED, size=12, color=colors["primary"]),
-                        ft.Text(f"Sejong 1A · Unidade {u_num:02d}", size=11, weight=ft.FontWeight.BOLD, color=colors["primary"]),
+                        ft.Text(f"Nível 1A · Unidade {u_num:02d}", size=11, weight=ft.FontWeight.BOLD, color=colors["primary"]),
                     ],
                     spacing=4,
                 ),

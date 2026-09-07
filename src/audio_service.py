@@ -26,7 +26,7 @@ class AudioService:
     @classmethod
     def get_cache_dir(cls) -> str:
         """Retorna o diretório isolado de cache de áudio mutável."""
-        env_dir = os.environ.get("SEJONG_AUDIO_CACHE_DIR")
+        env_dir = os.environ.get("SAEBOM_AUDIO_CACHE_DIR") or os.environ.get("SEJONG_AUDIO_CACHE_DIR")
         if env_dir:
             return env_dir
         storage_cache = os.environ.get("FLET_APP_STORAGE_CACHE")

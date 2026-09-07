@@ -57,7 +57,7 @@ def lesson_view(page: ft.Page) -> ft.View:
                                     ),
                                     ft.Container(height=8),
                                     ft.Text(
-                                        "Esta lição está sendo preparada com muito carinho pela equipe Sejong Companion.\n\nEm breve, novos conteúdos estarão disponíveis!",
+                                        "Esta lição está sendo preparada com muito carinho pela equipe Saebom Companion.\n\nEm breve, novos conteúdos estarão disponíveis!",
                                         size=14,
                                         color=colors["text_sec"],
                                         text_align=ft.TextAlign.CENTER,
