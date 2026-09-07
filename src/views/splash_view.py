@@ -21,7 +21,7 @@ def splash_view(page: ft.Page) -> ft.View:
                     width=Responsive.value(w, compact=84, medium=96),
                     height=Responsive.value(w, compact=84, medium=96),
                     border_radius=Styles.BORDER_RADIUS_LG,
-                    fit=ft.ImageFit.CONTAIN,
+                    fit=ft.BoxFit.CONTAIN,
                 ),
                 ft.Container(height=6),
                 ft.Text(

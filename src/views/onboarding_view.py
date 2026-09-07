@@ -189,7 +189,7 @@ def onboarding_view(page: ft.Page) -> ft.View:
                                     width=54,
                                     height=54,
                                     border_radius=12,
-                                    fit=ft.ImageFit.CONTAIN,
+                                    fit=ft.BoxFit.CONTAIN,
                                 ),
                                 alignment=ft.Alignment.CENTER,
                                 margin=ft.Margin.only(bottom=6),

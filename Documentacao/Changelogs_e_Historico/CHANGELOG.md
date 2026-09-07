@@ -40,6 +40,10 @@ Pré-Alpha → Alpha → Beta → RC → RTM → GA
 - **Admin View (`src/views/admin_view.py`)** — Descrições de login e relatórios i18n atualizados em português e coreano ('새봄 교수 포털') removendo termos legados.
 - **Services & Retrocompatibilidade (`src/services.py`, `src/audio_service.py`)** — Suporte às novas variáveis `SAEBOM_ADMIN_PIN` e `SAEBOM_AUDIO_CACHE_DIR` com postura fail-closed e retrocompatibilidade para variáveis legadas; fallback de identidade de aluno atualizado para "Estudante Saebom".
 
+### Fixed — Compatibilidade Flet
+- **Correção de Controle de Ajuste de Imagem (`ft.BoxFit.CONTAIN`)** — Resolução de `AttributeError: module 'flet' has no attribute 'ImageFit'` em `splash_view.py`, `home_view.py` e `onboarding_view.py`, substituindo referências pelo enumerador canônico `ft.BoxFit.CONTAIN`.
+- **Suíte de Testes de Renderização de Views (`tests/test_views_rendering.py`)** — Adicionados 18 testes automatizados que instanciam e validam todas as rotas do app em ambos os modos (Dark e Light Mode), elevando a suíte total para **210 testes automatizados (100% OK)**.
+
 ## [0.3.5-alpha] — 2026-08-30
 
 ### Classificação: Alpha (Modo de Escrita Ampliado, Fonte Caligráfica Kyobo & IoU Tolerante)

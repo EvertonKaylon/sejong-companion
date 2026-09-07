@@ -29,7 +29,7 @@ def home_view(page: ft.Page) -> ft.View:
                 src="branding/app_icon_192.png",
                 width=28,
                 height=28,
-                fit=ft.ImageFit.CONTAIN,
+                fit=ft.BoxFit.CONTAIN,
                 border_radius=6,
             ),
             padding=ft.Padding.only(left=12),
