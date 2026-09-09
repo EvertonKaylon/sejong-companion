@@ -369,7 +369,7 @@ def admin_view(page: ft.Page) -> ft.View:
                                 width=32,
                                 height=32,
                                 alignment=ft.Alignment.CENTER,
-                                bgcolor=f"{color_hex}15",
+                                bgcolor=ft.Colors.with_opacity(0.08, color_hex),
                                 border_radius=Styles.BORDER_RADIUS_SM,
                             ),
                             ft.Text(title, size=12, weight=ft.FontWeight.W_600, color=colors["text_sec"]),

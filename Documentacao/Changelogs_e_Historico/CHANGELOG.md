@@ -30,7 +30,8 @@ Pré-Alpha → Alpha → Beta → RC → RTM → GA
 - **Gerador de Assets de Marca (`scripts/generate_branding_assets.py`)** — Script determinístico para renderização de logotipos vetoriais SVG e imagens rasterizadas de alta fidelidade com supersampling 2x/3x e renderização CJK precisa.
 - **20 Assets Oficiais de Marca (`assets/branding/`)** — Logotipo vertical Dark e Light (SVG, PNG transparente e sólido), assinatura horizontal para AppBar (SVG e PNG), símbolo oficial de Anéis Concêntricos de Expansão (SVG e PNG 512px), Ícones de aplicativo squircle (SVG, 512px, 192px), Favicons web (32px, 16px e multi-resolução `favicon.ico`) e Splash Banner mobile Full HD vertical (1080×1920).
 - **Manual de Identidade Visual Saebom Companion (`Documentacao/Design_e_Branding/MANUAL_DE_IDENTIDADE_SAEBOM.md`)** — Documentação mestre completa em 8 seções transcrevendo e estruturando o Branding Book v3.1 oficial para o Obsidian.
-- **Suíte de Testes de Branding & Tema (`tests/test_branding_assets.py` & `tests/test_theme.py`)** — 31 novos testes automatizados cobrindo integridade física dos 20 assets, conformidade vetorial de SVG, regras estritas de proibição de nomes legados no título da janela, e aderência estrita aos tokens da paleta 60/20/12/8 do Brand Book v3.1, elevando a suíte para **192 testes automatizados (100% OK)**.
+- **Suíte de Testes de Branding & Tema (`tests/test_branding_assets.py` & `tests/test_theme.py`)** — 31 novos testes automatizados cobrindo integridade física dos 20 assets, conformidade vetorial de SVG, regras estritas de proibição de nomes legados no título da janela, e aderência estrita aos tokens da paleta 60/20/12/8 do Brand Book v3.1.
+- **Suíte E2E de Cobertura Total (`tests/test_e2e_full_coverage.py`)** — 16 novos testes ponta a ponta cobrindo os 5 pilares fundamentais (Infraestrutura, Segurança, Arquitetura Web, Rebranding e Caligrafia Curricular), elevando a suíte global para **229 testes automatizados (100% OK)**.
 
 ### Changed — Aplicação Visual nas Telas & Descontinuação do Termo Legado
 - **Splash View (`src/views/splash_view.py`)** — Tela de abertura reestruturada com badge oficial Saebom Companion, ícone squircle 512px, tipografia Pretendard para '새봄', micro-badge 'COMPANION' em Gold/Violet, e slogan oficial *"Uma nova primavera para a aprendizagem."*.
@@ -38,7 +39,8 @@ Pré-Alpha → Alpha → Beta → RC → RTM → GA
 - **Onboarding View (`src/views/onboarding_view.py`)** — Brasão institucional substituído pelo emblema oficial Saebom Companion com ícone de 192px, tipografia Pretendard e subtítulo "Companion Institucional de Aprendizagem de Coreano".
 - **Review & Lesson Views (`src/views/review_view.py`, `src/views/lesson_view.py`)** — Badges de origem de cartas atualizados para 'Nível 1A' / 'Nível 1B' e tela de lição em construção atualizada para a equipe Saebom Companion.
 - **Admin View (`src/views/admin_view.py`)** — Descrições de login e relatórios i18n atualizados em português e coreano ('새봄 교수 포털') removendo termos legados.
-- **Services & Retrocompatibilidade (`src/services.py`, `src/audio_service.py`)** — Suporte às novas variáveis `SAEBOM_ADMIN_PIN` e `SAEBOM_AUDIO_CACHE_DIR` com postura fail-closed e retrocompatibilidade para variáveis legadas; fallback de identidade de aluno atualizado para "Estudante Saebom".
+- **Services & Retrocompatibilidade (`src/services.py`, `src/audio_service.py`)** — Suporte às novas variáveis `SAEBOM_ADMIN_PIN` e `SAEBOM_AUDIO_CACHE_DIR` com postura fail-closed e retrocompatibilidade para variáveis legadas; fallback de identidade de aluno atualizado para "Estudante Saebom". Implementação da classe `StudentIdentity` com persistência segura.
+- **Hardening de Rede Docker (`docker-compose.yml`)** — Alteração do container `app` de `ports: - "8554:8554"` para `expose: - "8554"`, fechando a interface para a internet e eliminando alertas de requisições HTTP inválidas originadas por scanners TLS externos.
 
 ### Fixed — Compatibilidade Flet & Estabilização Web (BUG-11)
 - **Correção de Controle de Ajuste de Imagem (`ft.BoxFit.CONTAIN`)** — Resolução de `AttributeError: module 'flet' has no attribute 'ImageFit'` em `splash_view.py`, `home_view.py` e `onboarding_view.py`, substituindo referências pelo enumerador canônico `ft.BoxFit.CONTAIN`.
@@ -46,8 +48,8 @@ Pré-Alpha → Alpha → Beta → RC → RTM → GA
   - *Caminhos Absolutos de Assets:* Inclusão de barra inicial `/` em todos os `src` de imagem (`/branding/app_icon_512.png`, `/branding/app_icon_192.png`), evitando 404 em rotas aninhadas (`/splash`, `/home`, `/onboarding`).
   - *Roteamento Resiliente (`src/router.py`):* Esvaziamento de `page.views` agora ocorre de forma atômica somente após o sucesso do construtor da view com fallback de emergência para tela de carregamento, garantindo que `page.views` nunca fique vazia.
   - *Timeout de Segurança no Splash (`src/views/splash_view.py`):* Timeout de 0.8s para consultas de persistência (`SharedPreferences`), impedindo bloqueios indefinidos na inicialização.
-  - *Padronização de Opacidade Hex:* Substituição de sufixos de opacidade concatenados pela função nativa `ft.Colors.with_opacity`.
-- **Suíte de Testes Expandida (`tests/test_router.py`, `tests/test_views_rendering.py`)** — Adicionados testes de integridade de caminhos absolutos de imagem e resiliência de roteamento com fallbacks, elevando a suíte para **213 testes automatizados (100% OK)**.
+  - *Padronização de Opacidade Hex (`BUG-03`):* Substituição de sufixos de opacidade concatenados pela função nativa `ft.Colors.with_opacity` em `oclusive_lab.py`, `admin_view.py` e `home_view.py`.
+- **Suíte de Testes Expandida (`tests/test_router.py`, `tests/test_views_rendering.py`, `tests/test_e2e_full_coverage.py`)** — Total de **229 testes automatizados aprovados sem falhas (100% OK)**.
 
 ## [0.3.5-alpha] — 2026-08-30
 

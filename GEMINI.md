@@ -86,3 +86,5 @@ Ao concluir qualquer alteração significativa (feature, bugfix, security, refac
 - Toda alteração de código deve ser acompanhada de testes automatizados em `tests/`.
 - Ao finalizar uma branch, executar `pytest tests/ -v` e confirmar 100% de aprovação antes de commitar documentação ou solicitar merge.
 - O CI (`.github/workflows/ci.yml`) valida: compileall, secret scanning e pytest.
+- **Testes E2E e Renderização Web (Playwright):** Para alterações críticas que envolvam o ciclo de vida do Flutter Web (CanvasKit, rotas de View, `AudioService` autoplay com `silent.wav`, ou canvas de caligrafia no 원고지), utilizar testes automatizados ponta a ponta via Playwright (`tests/e2e/`) para garantir ausência de tela preta (`BUG-11`), desbloqueio de áudio (`BUG-08`) e prevenção visual de tofu em caracteres Hangul (`BUG-07`).
+

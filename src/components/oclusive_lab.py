@@ -108,7 +108,7 @@ def _build_oclusive_button(
         border=ft.Border.all(border_width, border_color),
         shadow=[
             ft.BoxShadow(
-                color=f"{border_color}30",
+                color=ft.Colors.with_opacity(0.19, border_color),
                 blur_radius=10,
                 spread_radius=1,
             )

@@ -210,6 +210,51 @@ class DataService:
                 deduped.append(clean)
         return deduped
 
+
+class StudentIdentity:
+    """Gerencia a identidade pública do aluno de forma segura e padronizada."""
+
+    @staticmethod
+    def get_student_id(page) -> Optional[str]:
+        """Obtém o student_id persistente a partir da página ou client_storage."""
+        if page is None:
+            return None
+
+        # 1. Se cacheado na sessão em memória
+        if hasattr(page, "_sejong_student_id") and page._sejong_student_id:
+            return str(page._sejong_student_id).strip()
+        if hasattr(page, "_saebom_student_id") and page._saebom_student_id:
+            return str(page._saebom_student_id).strip()
+
+        # 2. Se salvo no client_storage
+        try:
+            if hasattr(page, "client_storage") and page.client_storage:
+                sid = page.client_storage.get("saebom_student_id") or page.client_storage.get("sejong_student_id")
+                if sid and str(sid).strip():
+                    clean_id = str(sid).strip()
+                    page._sejong_student_id = clean_id
+                    return clean_id
+        except Exception:
+            pass
+
+        return None
+
+    @staticmethod
+    def set_student_id(page, student_id: str) -> None:
+        """Armazena o student_id no objeto page e no client_storage."""
+        if not page or not student_id:
+            return
+        clean_id = str(student_id).strip()
+        page._sejong_student_id = clean_id
+        page._saebom_student_id = clean_id
+        try:
+            if hasattr(page, "client_storage") and page.client_storage:
+                page.client_storage.set("saebom_student_id", clean_id)
+                page.client_storage.set("sejong_student_id", clean_id)
+        except Exception:
+            pass
+
+
 class ProgressService:
     """Motor de Gestão do Aluno, Progresso e Retenção Adaptativa por Meia-Vida.
     

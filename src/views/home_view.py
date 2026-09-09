@@ -176,7 +176,7 @@ def home_view(page: ft.Page) -> ft.View:
                     width=48,
                     height=48,
                     alignment=ft.Alignment.CENTER,
-                    bgcolor=f"{tip_color}15",
+                    bgcolor=ft.Colors.with_opacity(0.08, tip_color),
                     border_radius=Styles.BORDER_RADIUS_SM,
                 ),
                 ft.Column(
@@ -192,7 +192,7 @@ def home_view(page: ft.Page) -> ft.View:
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
         ),
         bgcolor=colors["surface"],
-        border=ft.Border.all(1, f"{tip_color}30"),
+        border=ft.Border.all(1, ft.Colors.with_opacity(0.19, tip_color)),
         border_radius=Styles.BORDER_RADIUS_MD,
         padding=14,
         margin=ft.Margin.only(bottom=12),

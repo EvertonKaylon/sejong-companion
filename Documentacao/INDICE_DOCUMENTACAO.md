@@ -22,6 +22,7 @@ Bem-vindo ao repositório central de documentação e conhecimento do projeto **
 
 ### 🎨 2. Identidade Visual, Design & Branding (`/Design_e_Branding`)
 - 🌸 **[MANUAL_DE_IDENTIDADE_SAEBOM.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Design_e_Branding/MANUAL_DE_IDENTIDADE_SAEBOM.md)** — Manual oficial do sistema de marca Saebom Companion (새봄 컴패니언), rebranding pedagógico, sistema 60/20/12/8, catálogo de assets e governança.
+- 📐 **[DESIGN.md](file:///c:/Users/Pichau/Documents/sejong_companion/DESIGN.md)** — Especificação unificada do Design System, Tokens 60/20/12/8, Mecânicas de Neurociência Cognitiva e Roadmap Mestre sincronizado ao Google Stitch MCP (Projeto `10905381626038373944`).
 
 ---
 
