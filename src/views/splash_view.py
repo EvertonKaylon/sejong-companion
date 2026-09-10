@@ -182,6 +182,10 @@ def splash_view(page: ft.Page) -> ft.View:
             except Exception as e:
                 print(f"[Splash] Erro na checagem de identidade: {e}")
 
+            # Não redirecionar se a rota solicitou modo estático (ex: /splash?no_redirect=1 para auditorias visuais)
+            if "no_redirect" in (getattr(page, "route", "") or ""):
+                return
+
             # Tempo mínimo para visualização suave da marca (~1.2s)
             await asyncio.sleep(1.2)
 

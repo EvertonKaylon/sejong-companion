@@ -88,8 +88,11 @@ def main(page: ft.Page):
     from src.audio_service import AudioService
     page.audio_service = AudioService(page)
 
-    # Iniciar navegando para a tela de abertura
-    router.navigate_to("/splash")
+    # Iniciar navegando para a rota solicitada na URL ou para a tela de abertura
+    initial_route = getattr(page, "route", None) or "/splash"
+    if initial_route in ("", "/"):
+        initial_route = "/splash"
+    router.navigate_to(initial_route)
 
 if __name__ == "__main__":
     print(f"Saebom Companion v{__version__}")

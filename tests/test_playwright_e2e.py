@@ -84,8 +84,17 @@ def flet_server():
                 proc.kill()
 
 
+import hashlib
+
+
+def file_hash(filepath: str) -> str:
+    """Calcula o hash MD5 de um arquivo de screenshot."""
+    with open(filepath, "rb") as f:
+        return hashlib.md5(f.read()).hexdigest()
+
+
 class TestPlaywrightE2E:
-    """Bateria de 5 testes E2E com Chromium real via Playwright."""
+    """Bateria de 5 testes E2E com Chromium real via Playwright com validação de unicidade visual."""
 
     def test_p1_infra_and_server_handshake(self, flet_server):
         """Teste 1 (Infra): Valida HTTP 200, WebSockets e título 'Saebom Companion' no Chromium real."""
@@ -126,10 +135,10 @@ class TestPlaywrightE2E:
             failed_requests = []
             page.on("requestfailed", lambda req: failed_requests.append(req.url))
 
-            # Acessar a rota /splash
-            page.goto(f"{flet_server}/splash", timeout=30000)
+            # Acessar a rota /splash em modo estático de auditoria visual (sem auto-redirect)
+            page.goto(f"{flet_server}/splash?no_redirect=1", timeout=30000)
 
-            # Aguardar renderização inicial do CanvasKit (pelo menos 3 segundos para desenhar)
+            # Aguardar renderização inicial do CanvasKit
             page.wait_for_function("() => document.title.includes('Saebom')", timeout=20000)
             time.sleep(3.0)
 
@@ -145,7 +154,6 @@ class TestPlaywrightE2E:
 
             # Auditoria de luminância: verificar se a imagem não é tela preta vazia (BUG-11)
             img = Image.open(screenshot_path).convert("RGB")
-            # Obter pixels compatível com Pillow <14 e >=14
             pixels = list(img.get_flattened_data()) if hasattr(img, "get_flattened_data") else list(img.getdata())
             # Pixels não-pretos (com alguma luminosidade visível)
             non_black = [px for px in pixels if sum(px) > 30]
@@ -160,7 +168,7 @@ class TestPlaywrightE2E:
             browser.close()
 
     def test_p3_user_navigation_and_console_integrity(self, flet_server):
-        """Teste 3 (Roteamento & Ciclo de Vida): Valida transição para /onboarding e zero erros JS."""
+        """Teste 3 (Roteamento & Ciclo de Vida): Valida rota direta /onboarding e zero erros JS."""
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
             context = browser.new_context(viewport={"width": 384, "height": 715})
@@ -169,7 +177,7 @@ class TestPlaywrightE2E:
             console_errors = []
             page.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" else None)
 
-            # Acessar rota /onboarding
+            # Acessar rota /onboarding diretamente
             page.goto(f"{flet_server}/onboarding", timeout=30000)
             page.wait_for_function("() => document.title.includes('Saebom')", timeout=20000)
             time.sleep(2.5)
@@ -182,6 +190,11 @@ class TestPlaywrightE2E:
             # Verificar ausência de erros graves de JavaScript ou WebAssembly no console
             critical_errors = [e for e in console_errors if "Uncaught" in e or "panic" in e or "TypeError" in e]
             assert not critical_errors, f"Erros críticos de JavaScript no console: {critical_errors}"
+
+            # Garantir que a tela de onboarding não é idêntica à tela de splash
+            p2_path = os.path.join(SCREENSHOT_DIR, "p2_splash_screen.png")
+            if os.path.exists(p2_path):
+                assert file_hash(screenshot_path) != file_hash(p2_path), "Tela de Onboarding está idêntica à Splash!"
 
             browser.close()
 
@@ -205,10 +218,17 @@ class TestPlaywrightE2E:
             html = page.content()
             assert "TestAdmin#2026" not in html, "Vazamento do PIN administrativo no HTML do cliente!"
 
+            # Assegurar que a tela de login do admin é ÚNICA e não foi redirecionada para o onboarding
+            p3_path = os.path.join(SCREENSHOT_DIR, "p3_onboarding_screen.png")
+            if os.path.exists(p3_path):
+                assert file_hash(screenshot_path) != file_hash(p3_path), (
+                    "A rota /admin foi indevidamente redirecionada para o Onboarding!"
+                )
+
             browser.close()
 
     def test_p5_wongoji_calligraphy_and_touch_interaction(self, flet_server):
-        """Teste 5 (Caligrafia/Wongoji): Valida renderização da aba /hangul e despacho de gestos touch."""
+        """Teste 5 (Caligrafia/Wongoji): Valida rota /hangul, alternância de aba e unicidade visual."""
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
             context = browser.new_context(viewport={"width": 384, "height": 715})
@@ -218,24 +238,48 @@ class TestPlaywrightE2E:
             page.wait_for_function("() => document.title.includes('Saebom')", timeout=20000)
             time.sleep(2.5)
 
+            # Screenshot inicial da rota /hangul (aba Vogais/Consoantes)
             screenshot_path = os.path.join(SCREENSHOT_DIR, "p5_hangul_view.png")
             page.screenshot(path=screenshot_path)
             assert os.path.exists(screenshot_path)
-            print(f"\n[Playwright] Screenshot pré-interação salvo em: {screenshot_path}")
+            print(f"\n[Playwright] Screenshot da aba Hangul salvo em: {screenshot_path}")
 
-            # Simular gestos de toque/desenho no viewport (traço caligráfico de Hangul ㄱ)
-            page.mouse.move(192, 350)
-            page.mouse.down()
-            page.mouse.move(260, 350, steps=6)
-            page.mouse.move(260, 430, steps=6)
-            page.mouse.up()
-            time.sleep(0.5)
+            # Garantir que a tela do Hangul não foi redirecionada para Onboarding ou Admin
+            p3_path = os.path.join(SCREENSHOT_DIR, "p3_onboarding_screen.png")
+            p4_path = os.path.join(SCREENSHOT_DIR, "p4_admin_login.png")
+            if os.path.exists(p3_path):
+                assert file_hash(screenshot_path) != file_hash(p3_path), "A rota /hangul foi redirecionada para Onboarding!"
+            if os.path.exists(p4_path):
+                assert file_hash(screenshot_path) != file_hash(p4_path), "A rota /hangul está idêntica ao Admin!"
 
-            # Capturar screenshot pós-desenho
+            # Clicar na aba Caligrafia 원고지 (5ª aba na barra horizontal ~x=350, y=165)
+            page.mouse.click(350, 165)
+            time.sleep(1.5)
+
+            # Capturar screenshot da grade de caligrafia 원고지
             post_draw_path = os.path.join(SCREENSHOT_DIR, "p5_hangul_drawn.png")
             page.screenshot(path=post_draw_path)
             assert os.path.exists(post_draw_path)
-            print(f"[Playwright] Screenshot pós-interação salvo em: {post_draw_path}")
+            print(f"[Playwright] Screenshot da grade Wongoji salvo em: {post_draw_path}")
+
+            # Assegurar que a aba de caligrafia atualizou a tela
+            assert file_hash(post_draw_path) != file_hash(screenshot_path), (
+                "A aba de caligrafia não atualizou visualmente a tela do Hangul!"
+            )
+
+            # Auditoria de unicidade global: todas as 5 telas salvas DEVEM ter hashes MD5 distintos
+            all_screenshots = [
+                os.path.join(SCREENSHOT_DIR, "p2_splash_screen.png"),
+                os.path.join(SCREENSHOT_DIR, "p3_onboarding_screen.png"),
+                os.path.join(SCREENSHOT_DIR, "p4_admin_login.png"),
+                os.path.join(SCREENSHOT_DIR, "p5_hangul_view.png"),
+                os.path.join(SCREENSHOT_DIR, "p5_hangul_drawn.png"),
+            ]
+            existing_hashes = [file_hash(p) for p in all_screenshots if os.path.exists(p)]
+            assert len(existing_hashes) == len(set(existing_hashes)), (
+                f"Existem screenshots idênticas detectadas! Hashes encontrados: {existing_hashes}"
+            )
+            print(f"\n[Playwright] Auditoria de Unicidade Visual: {len(set(existing_hashes))}/5 telas únicas confirmadas!")
 
             browser.close()
 

@@ -14,9 +14,8 @@ class Router:
     def register_route(self, route_name: str, view_builder: Callable[[ft.Page], ft.View]):
         self.routes[route_name] = view_builder
 
-    def route_change(self, e: ft.RouteChangeEvent):
-        route = e.route or "/splash"
-        base_route = route.split("?")[0]
+    def render_route(self, route: str):
+        base_route = (route or "/splash").split("?")[0]
         if base_route in ("", "/"):
             base_route = "/splash"
         
@@ -72,6 +71,10 @@ class Router:
         except Exception:
             pass
 
+    def route_change(self, e = None):
+        route = getattr(e, "route", None) or getattr(self.page, "route", None) or "/splash"
+        self.render_route(route)
+
     def _go_to(self, route_name: str):
         try:
             self.page.go(route_name)
@@ -93,3 +96,5 @@ class Router:
         if unit_id:
             self.current_unit_id = unit_id
         self._go_to(route_name)
+        if not self.page.views or self.page.views[-1].route != route_name:
+            self.render_route(route_name)
