@@ -48,9 +48,10 @@ Pré-Alpha → Alpha → Beta → RC → RTM → GA
 - **Prevenção de Tela Preta no Flutter Web (BUG-11)** — Resolução definitiva de tela preta ao executar `python main.py --browser`:
   - *Caminhos Absolutos de Assets:* Inclusão de barra inicial `/` em todos os `src` de imagem (`/branding/app_icon_512.png`, `/branding/app_icon_192.png`), evitando 404 em rotas aninhadas (`/splash`, `/home`, `/onboarding`).
   - *Roteamento Resiliente (`src/router.py`):* Esvaziamento de `page.views` agora ocorre de forma atômica somente após o sucesso do construtor da view com fallback de emergência para tela de carregamento, garantindo que `page.views` nunca fique vazia.
+  - *Roteamento Web Direto e Renderização Atômica (`src/router.py`, `main.py`):* Resolução do comportamento em que URLs diretas do navegador (`/admin`, `/hangul`, `/onboarding`) eram forçadas incondicionalmente para `/splash` e redirecionadas para `/onboarding`. Implementado método `render_route` resiliente que previne duplicação de renders e respeita o `page.route` inicial, garantindo que cada rota exiba sua respectiva view com integridade e unicidade visual comprovada (5/5 screenshots Playwright distintas).
   - *Timeout de Segurança no Splash (`src/views/splash_view.py`):* Timeout de 0.8s para consultas de persistência (`SharedPreferences`), impedindo bloqueios indefinidos na inicialização.
   - *Padronização de Opacidade Hex (`BUG-03`):* Substituição de sufixos de opacidade concatenados pela função nativa `ft.Colors.with_opacity` em `oclusive_lab.py`, `admin_view.py` e `home_view.py`.
-- **Suíte de Testes Expandida (`tests/test_router.py`, `tests/test_views_rendering.py`, `tests/test_e2e_full_coverage.py`)** — Total de **229 testes automatizados aprovados sem falhas (100% OK)**.
+- **Suíte de Testes Expandida (`tests/test_router.py`, `tests/test_views_rendering.py`, `tests/test_e2e_full_coverage.py`, `tests/test_playwright_e2e.py`)** — Total de **234 testes automatizados aprovados sem falhas (100% OK)**.
 
 ## [0.3.5-alpha] — 2026-08-30
 
