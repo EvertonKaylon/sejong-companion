@@ -1,4 +1,4 @@
-# Changelog — Sejong Companion
+# Changelog — Saebom Companion
 
 Todas as mudanças notáveis do projeto serão documentadas neste arquivo.
 
@@ -11,20 +11,20 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 Pré-Alpha → Alpha → Beta → RC → RTM → GA
                ▲
           ESTAMOS AQUI
-          v0.3.5-alpha
+          v0.3.6-alpha
 ```
 
 | Fase | Versão Alvo | Critérios de Entrada |
 |------|-------------|----------------------|
-| **Alpha** (atual) | `0.3.6-alpha` | Rebranding Saebom Companion (새봄), Manual de Marca v3.1, 20 Assets Oficiais, 186 Testes Automatizados (100% OK), Wongoji Lab Multi-Célula (23 Unidades) |
+| **Alpha** (atual) | `0.3.6-alpha` | Rebranding Saebom Companion (새봄), Manual de Marca v3.1, 20 Assets Oficiais, 234 Testes Automatizados (100% OK, incluindo Playwright E2E), Wongoji Lab Multi-Célula (23 Unidades) |
 | **Beta** | `0.6.0-beta` | Sincronização Cloud, Banco de dados persistente, PWA Mobile Audit, modo offline |
 | **RC** | `1.0.0-rc.1` | Feature-complete, testes E2E, zero bugs críticos |
 | **GA** | `1.0.0` | Pronto para distribuição pública |
 
-## [0.3.6-alpha] — 2026-09-06
+## [0.3.6-alpha] — 2026-09-09
 
 ### Classificação: Alpha (Rebranding Saebom Companion, Pacote de Branding Oficial & Manual de Identidade Visual)
-> Milestone de Rebranding Institucional e Padronização de Marca: Transição do projeto para **Saebom Companion (새봄 컴패니언)** por diretriz pedagógica estrita da professora (descontinuação do nome "Sejong" para preservar separação institucional e foco como companion de estudo). Implementação do pipeline determinístico de geração de assets gráficos em `scripts/generate_branding_assets.py` com supersampling Pillow e tipografia Pretendard, produzindo 20 arquivos oficiais em `assets/branding/` (logotipos verticais e horizontais em modos dark e light, anéis concêntricos de expansão, app icons 512/192, favicons web e splash banner 1080×1920). Elaboração do Manual de Identidade Visual oficial (`Documentacao/Design_e_Branding/MANUAL_DE_IDENTIDADE_SAEBOM.md`) baseado no Branding Book v3.1, detalhando o sistema cromático 60/20/12/8 (Midnight Navy, Cream/Slate, Violet, Gold, Lilac), arquitetura de marca de 4 camadas, regras de uso correto/proibições e checklist de governança. Expansão da suíte de testes para **186 testes automatizados (100% OK)**.
+> Milestone de Rebranding Institucional e Padronização de Marca: Transição do projeto para **Saebom Companion (새봄 컴패니언)** por diretriz pedagógica estrita da professora (descontinuação do nome "Sejong" para preservar separação institucional e foco como companion de estudo). Implementação do pipeline determinístico de geração de assets gráficos em `scripts/generate_branding_assets.py` com supersampling Pillow e tipografia Pretendard, produzindo 20 arquivos oficiais em `assets/branding/` (logotipos verticais e horizontais em modos dark e light, anéis concêntricos de expansão, app icons 512/192, favicons web e splash banner 1080×1920). Elaboração do Manual de Identidade Visual oficial (`Documentacao/Design_e_Branding/MANUAL_DE_IDENTIDADE_SAEBOM.md`) baseado no Branding Book v3.1, detalhando o sistema cromático 60/20/12/8 (Midnight Navy, Cream/Slate, Violet, Gold, Lilac), arquitetura de marca de 4 camadas, regras de uso correto/proibições e checklist de governança. Expansão da suíte de testes para **234 testes automatizados (100% OK, incluindo Playwright E2E Chromium)**.
 
 ### Added — Sistema de Marca & Assets Gráficos
 - **Gerador de Assets de Marca (`scripts/generate_branding_assets.py`)** — Script determinístico para renderização de logotipos vetoriais SVG e imagens rasterizadas de alta fidelidade com supersampling 2x/3x e renderização CJK precisa.

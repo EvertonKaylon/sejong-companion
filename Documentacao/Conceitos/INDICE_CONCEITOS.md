@@ -106,7 +106,7 @@ graph TD
 
 ## 🔗 Atalhos de Navegação Direta
 
-- 📂 **[Diretório de Planos e Arquitetura](file:///c:/Users/Pichau/Documents/sejong_companion/Documentação/Planos_e_Arquitetura)**
-- 📂 **[Diretório de Viabilidade e Pesquisa](file:///c:/Users/Pichau/Documents/sejong_companion/Documentação/Viabilidade_e_Pesquisa)**
-- 📂 **[Diretório de Changelogs e Histórico](file:///c:/Users/Pichau/Documents/sejong_companion/Documentação/Changelogs_e_Historico)**
-- 📂 **[Diretório de Bugs Críticos Catalogados](file:///c:/Users/Pichau/Documents/sejong_companion/Documentação/Bugs_Criticos)**
+- 📂 **[Diretório de Planos e Arquitetura](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Planos_e_Arquitetura)**
+- 📂 **[Diretório de Viabilidade e Pesquisa](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Viabilidade_e_Pesquisa)**
+- 📂 **[Diretório de Changelogs e Histórico](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Changelogs_e_Historico)**
+- 📂 **[Diretório de Bugs Críticos Catalogados](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Bugs_Criticos)**

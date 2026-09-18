@@ -5,9 +5,9 @@
 | **ID do Bug** | `BUG-11` |
 | **Severidade** | 🔴 Crítica (Bloqueador de Inicialização e Renderização Web) |
 | **Componentes Afetados** | `Router` (`src/router.py`), `splash_view` (`src/views/splash_view.py`), `home_view` (`src/views/home_view.py`), `onboarding_view` (`src/views/onboarding_view.py`) |
-| **Data de Resolução** | 2026-09-07 |
+| **Data de Resolução** | 2026-09-09 |
 | **Branch** | `feature/branding` |
-| **Testes Automatizados** | `tests/test_router.py`, `tests/test_views_rendering.py` (213 testes 100% aprovados) |
+| **Testes Automatizados** | `tests/test_router.py`, `tests/test_views_rendering.py`, `tests/test_e2e_full_coverage.py`, `tests/test_playwright_e2e.py` (234 testes 100% aprovados) |
 
 ---
 
@@ -21,7 +21,7 @@ A anomalia manifestava-se especialmente após erros não tratados no handler de 
 
 ## 2. Causa Raiz Técnica
 
-A investigação e testes automatizados identificaram quatro fatores interligados:
+A investigação e testes automatizados identificaram cinco fatores interligados:
 
 ### A. Resolução de Caminhos Relativos no Flutter Web StaticFiles
 No Flet Web, o servidor FastAPI mapeia `assets_dir="assets"` na raiz `/`. Ao declarar controles de imagem com caminhos relativos sem barra inicial (ex: `src="branding/app_icon_512.png"`), o navegador tenta resolver o recurso em relação à rota ativa atual. Quando a rota é `/splash`, a requisição emitida é:
@@ -36,6 +36,9 @@ Em `splash_view.py`, uma nova instância `sp = ft.SharedPreferences()` era criad
 
 ### D. Formatação Incorreta de Opacidade Hex (`#AARRGGBB` vs `#RRGGBBAA`)
 Concatenações de sufixo alfa em hexadecimais (ex: `f"{colors['primary']}12"`) produziam valores como `#8B4DFF12`. O Flutter Engine interpreta cores de 8 dígitos exclusivamente no formato nativo `#AARRGGBB` (onde os primeiros dois dígitos são o canal Alfa). Isso corrompia as cores primárias em tons esverdeados/cianuras imprevistos. A solução canônica do Flet é o uso de `ft.Colors.with_opacity(0.12, colors['primary'])`.
+
+### E. Redirecionamento Incondicional e Sobrescrita de Rota Web Direta no Entrypoint
+No `main.py`, o entrypoint executava `page.go("/splash")` incondicionalmente, sem consultar se `page.route` já continha uma rota direta solicitada pelo navegador (deep link como `/admin`, `/hangul`, `/onboarding`). Isso forçava qualquer acesso web direto a passar pela Splash Screen, que após seu timer redirecionava para `/onboarding` ou `/home`, impedindo a renderização direta da tela requisitada. Além disso, invocar `route_change` exigia instanciar `ft.RouteChangeEvent`, cujo construtor em Flet 0.85+ exige parâmetros internos da sessão. A solução consistiu em expor `Router.render_route(route: str)` desacoplado de eventos e respeitar `initial_route = getattr(page, "route", None) or "/splash"` no `main.py`.
 
 ---
 
@@ -148,9 +151,46 @@ else:
 
 ---
 
+### D. Preservação de Rota Web Direta e Renderização Desacoplada (`main.py` & `src/router.py`)
+
+#### Antes:
+```python
+# ❌ Forçava /splash incondicionalmente, sobrescrevendo deep links e dependendo de RouteChangeEvent
+def main(page: ft.Page):
+    ...
+    page.go("/splash")
+```
+
+#### Depois:
+```python
+# ✅ Respeita deep links diretos do navegador e utiliza render_route atômico
+def main(page: ft.Page):
+    ...
+    router = Router(page)
+    page.on_route_change = router.route_change
+
+    initial_route = getattr(page, "route", None) or "/splash"
+    router.render_route(initial_route)
+```
+
+No `src/router.py`:
+```python
+def render_route(self, route_name: str):
+    """Renderiza a rota sem depender de instância externa de RouteChangeEvent."""
+    class _DummyRoute:
+        def __init__(self, r):
+            self.route = r
+    self.route_change(_DummyRoute(route_name))
+```
+
+---
+
 ## 4. Regras Preventivas
 
 1. **Caminhos de Assets Sempre Absolutos:** Imagens e ícones em `ft.Image(src=...)` DEVEM sempre começar com barra inicial (`/branding/...` ou `/icons/...`) para que o servidor estático web nunca tente resolvê-los relativamente ao segmento de rota atual.
 2. **Nunca Limpar `page.views` Antes de Garantir a Próxima View:** Em arquiteturas de roteamento Flet/Flutter, a substituição da view deve ser atômica. Se a construção falhar, mantenha a view anterior ou apresente uma view de fallback.
 3. **Timeouts Obrigatórios em Métodos de Serviços Flet:** Toda chamada assíncrona a serviços Flet (`SharedPreferences.get`, `invoke_method`, etc.) executada no fluxo principal de carregamento de view DEVE possuir `asyncio.wait_for(..., timeout=...)` para evitar que a interface fique congelada caso o runtime cliente não envie confirmação.
 4. **Opacidade via `ft.Colors.with_opacity`:** Não concatenar números hexadecimais no final de strings de cor; usar sempre a função canônica `ft.Colors.with_opacity(opacity, color)`.
+5. **Preservação de Rota Web Direta (Deep Links):** No `main.py`, nunca forçar estaticamente `/splash` sem consultar `page.route`. O entrypoint deve inspecionar `initial_route = getattr(page, "route", None) or "/splash"` e delegar a montagem ao roteador.
+6. **Desacoplamento de Renderização no Router (`render_route`):** O roteador deve oferecer o método `render_route(route: str)` desacoplado de construtores internos do Flet (`ft.RouteChangeEvent`).
+7. **Auditoria de Unicidade Visual em Testes Playwright:** Testes E2E de navegador devem verificar que screenshots de rotas distintas possuem hashes MD5 únicos, garantindo que cada rota atinja e renderize a tela correspondente.

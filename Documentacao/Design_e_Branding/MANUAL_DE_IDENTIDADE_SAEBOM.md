@@ -8,7 +8,7 @@
 
 ---
 
-## 1. 🌸 Essência da Marca (브랜드 본질)
+## 1. 🌱 Essência da Marca (브랜드 본질)
 
 ### A. Contexto Histórico e a Transição de Naming
 Em setembro de 2026, por diretriz pedagógica estrita da professora e coordenação do curso de coreano, **o uso do nome "Sejong" foi expressamente descontinuado**. 
