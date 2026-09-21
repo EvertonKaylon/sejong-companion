@@ -47,18 +47,16 @@ def flet_server():
         [sys.executable, "main.py"],
         env=env,
         cwd=root_dir,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
     )
 
     start_time = time.time()
     started = False
     while time.time() - start_time < 20:
         if proc.poll() is not None:
-            stdout, stderr = proc.communicate()
             raise RuntimeError(
-                f"Flet server process terminated early with code {proc.returncode}.\nSTDOUT: {stdout}\nSTDERR: {stderr}"
+                f"Flet server process terminated early with code {proc.returncode}."
             )
         try:
             with socket.create_connection(("127.0.0.1", port), timeout=0.5):

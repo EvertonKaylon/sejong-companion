@@ -72,7 +72,6 @@ class Colors:
     INFO_200 = "#96C2FD"
     INFO_300 = "#4F99FC"
     INFO_400 = "#0066CC"
-    INFO_500 = "#004C97"
     INFO_600 = "#003B75"
     INFO_700 = "#003366"
     INFO_800 = "#00254B"
@@ -174,7 +173,15 @@ class Colors:
     OCLUSIVE_ASPIRATED = "#38BDF8"   # Aspirada (ㅅ, ㅊ, ㅋ): Expansão Azul Ar
     OCLUSIVE_TENSE = "#EF4444"       # Tensa (ㅃ, ㄸ, ㄲ): Vermelho Tensão Glotal
 
+    # Conectores Metálicos (Fase 2 Interativa)
+    CONNECTOR_VOWEL = "#B87333"      # Cobre Metálico
+    CONNECTOR_BATCHIM = "#C0C0C0"    # Prata Metálica
+
 class Styles:
+    # Conectores Metálicos
+    CONNECTOR_VOWEL = Colors.CONNECTOR_VOWEL
+    CONNECTOR_BATCHIM = Colors.CONNECTOR_BATCHIM
+
     # Bordas — escala do design system
     BORDER_RADIUS_SM = 9
     BORDER_RADIUS_MD = 12
@@ -265,6 +272,9 @@ def get_theme_colors(is_dark: bool):
         "oclusive_lax": Colors.OCLUSIVE_LAX,
         "oclusive_aspirated": Colors.OCLUSIVE_ASPIRATED,
         "oclusive_tense": Colors.OCLUSIVE_TENSE,
+        # Conectores Metálicos
+        "connector_vowel": Colors.CONNECTOR_VOWEL,
+        "connector_batchim": Colors.CONNECTOR_BATCHIM,
     }
 
 def apply_app_theme(page: ft.Page):

@@ -215,7 +215,7 @@ def admin_view(page: ft.Page) -> ft.View:
                     pin_input,
                     error_banner,
                     ft.Container(height=10),
-                    ft.ElevatedButton(
+                    ft.Button(
                         content=ft.Row(
                             controls=[
                                 ft.Icon(ft.Icons.LOGIN_ROUNDED, size=18),

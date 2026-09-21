@@ -26,6 +26,12 @@ class SentenceBuilderWidget(ft.Container):
             border_radius=Styles.BORDER_RADIUS_LG, padding=16, content=self._build_content(),
         )
 
+    def update(self):
+        try:
+            super().update()
+        except Exception:
+            pass
+
     def _build_content(self):
         mode_controls = ft.Row(
             controls=[
@@ -70,19 +76,23 @@ class SentenceBuilderWidget(ft.Container):
             ft.Row(controls=word_controls, wrap=True, alignment=ft.MainAxisAlignment.CENTER, spacing=6),
             ft.Row(controls=[
                 ft.TextButton(content=ft.Text("Desfazer"), on_click=self._undo),
-                ft.ElevatedButton(content=ft.Text("Conferir"), on_click=self._check_blocks, style=ft.ButtonStyle(color=ft.Colors.WHITE, bgcolor=self.colors["primary"])),
+                ft.Button(content=ft.Text("Conferir"), on_click=self._check_blocks, style=ft.ButtonStyle(color=ft.Colors.WHITE, bgcolor=self.colors["primary"])),
             ], alignment=ft.MainAxisAlignment.CENTER),
         ], spacing=8, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
 
     def _build_typing(self):
         return ft.Column(controls=[
             self.answer_input,
-            ft.ElevatedButton(content=ft.Text("Validar frase"), on_click=self._check_typing, style=ft.ButtonStyle(color=ft.Colors.WHITE, bgcolor=self.colors["primary"])),
+            ft.Button(content=ft.Text("Validar frase"), on_click=self._check_typing, style=ft.ButtonStyle(color=ft.Colors.WHITE, bgcolor=self.colors["primary"])),
         ], horizontal_alignment=ft.CrossAxisAlignment.CENTER)
 
     def _set_mode(self, mode: str):
         self.mode = mode
         self._refresh()
+
+    def _select_block(self, index: int):
+        """Alias para seleção de bloco compatível com a suíte de testes sensoriais."""
+        self._add_word(index)
 
     def _add_word(self, index: int):
         self.selected_indexes.append(index)

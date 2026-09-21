@@ -8,6 +8,11 @@ from .vocab_card import VocabCard
 from .flashcard_widget import FlashcardWidget
 from .sentence_builder_widget import SentenceBuilderWidget
 from .wongoji_multi_cell_widget import WongojiMultiCellWidget
+from .air_particle_effect import AirParticleEffect
+from .syllable_factory import SyllableFactory
+from .number_training import NumberTraining
+from .spatial_stage import SpatialStage
+from .whats_new_dialog import WhatsNewDialog
 from .calligraphy_widget import (
     CalligraphyWidget,
     calculate_iou,
@@ -26,6 +31,11 @@ __all__ = [
     "VocabCard",
     "FlashcardWidget",
     "SentenceBuilderWidget",
+    "SyllableFactory",
+    "NumberTraining",
+    "SpatialStage",
+    "AirParticleEffect",
+    "WhatsNewDialog",
     "build_oclusive_lab",
     "calculate_iou",
     "generate_diagnostic_overlay",

@@ -49,7 +49,7 @@ def review_view(page: ft.Page) -> ft.View:
                 ft.Text("Revisão concluída!", size=24, weight=ft.FontWeight.BOLD, color=colors["text"]),
                 ft.Text(f"{reviewed} recordações consolidadas · +{progress_service.get_total_xp() - state['starting_xp']} XP hoje", size=14, color=colors["text_sec"], text_align=ft.TextAlign.CENTER),
                 ft.Text(f"📅 {progress_service.get_daily_streak()} dias estudados · ✨ {progress_service.get_total_xp()} XP", size=14, color=colors["accent"]),
-                ft.ElevatedButton(content=ft.Text("Voltar à Home"), icon=ft.Icons.HOME_ROUNDED, on_click=back,
+                ft.Button(content=ft.Text("Voltar à Home"), icon=ft.Icons.HOME_ROUNDED, on_click=back,
                     style=ft.ButtonStyle(color=ft.Colors.WHITE, bgcolor=colors["primary"])),
             ],
             horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=14,
@@ -236,7 +236,7 @@ def review_view(page: ft.Page) -> ft.View:
                 ft.Container(height=4),
                 ft.Row(
                     controls=[
-                        ft.ElevatedButton(
+                        ft.Button(
                             content=ft.Text("Continuar Trilha"),
                             icon=ft.Icons.EXPLORE_ROUNDED,
                             on_click=lambda e: page.router.navigate_to("/home"),

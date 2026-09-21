@@ -7,8 +7,94 @@ import hashlib
 from collections import defaultdict
 from typing import Any, Dict, List, Optional, Tuple
 from datetime import datetime, date
+import re
+import unicodedata
 import flet as ft
 from .models import FlashcardItem, Unit, UnitIntroData, UnitOneData, UnitData, MemoryNode, PedagogicalEvent
+
+
+def _capitalize_token(token: str) -> str:
+    """Capitaliza tokens respeitando hífens e apóstrofos (ex: D'Angelo, Ana-Paula)."""
+    m = re.match(r"^(\W*)(.*?)(\W*)$", token)
+    if not m:
+        return token
+    prefix, core, suffix = m.groups()
+    if not core:
+        return token
+    if "-" in core:
+        parts = core.split("-")
+        core_formatted = "-".join(_capitalize_token(p) for p in parts)
+    elif "'" in core:
+        parts = core.split("'")
+        core_formatted = "'".join(_capitalize_token(p) for p in parts)
+    else:
+        core_formatted = core.capitalize()
+    return f"{prefix}{core_formatted}{suffix}"
+
+
+def canonicalize_student_name(raw_name: str) -> str:
+    """Formata o nome em PascalCase / Title Case, preservando Hangul e pontuações."""
+    if not raw_name:
+        return "Estudante Saebom"
+    cleaned = unicodedata.normalize("NFKC", str(raw_name).strip())
+    cleaned = re.sub(r"\s+", " ", cleaned)
+    if not cleaned or cleaned.lower() in ("estudante saebom", "estudante sejong"):
+        return "Estudante Saebom"
+
+    words = cleaned.split(" ")
+    return " ".join(_capitalize_token(w) for w in words if w)
+
+
+def normalize_name_key(name: str) -> str:
+    """Gera chave canônica NFKC em minúsculas para busca case-insensitive."""
+    if not name:
+        return ""
+    norm = unicodedata.normalize("NFKC", str(name).strip())
+    norm = re.sub(r"\s+", " ", norm)
+    return norm.casefold()
+
+
+def merge_session_data(primary: dict, secondary: dict) -> dict:
+    """Funde atomicamente duas sessões de um mesmo aluno:
+    - União de study_dates
+    - Max de daily_streak e total_xp
+    - União de unidades desbloqueadas e maior progresso por unidade
+    - Preservação e fusão de memory_nodes (SRS)
+    """
+    merged = dict(primary)
+
+    # 1. Datas de estudo
+    dates_p = set(primary.get("study_dates") or [])
+    dates_s = set(secondary.get("study_dates") or [])
+    merged["study_dates"] = sorted(list(dates_p | dates_s))
+
+    # 2. XP e Streak
+    merged["total_xp"] = max(primary.get("total_xp", 0), secondary.get("total_xp", 0))
+    merged["streak"] = max(primary.get("streak", 0), secondary.get("streak", 0))
+
+    # 3. Unidades e progresso
+    for k, v in secondary.items():
+        if k.startswith("progress_"):
+            merged[k] = max(float(primary.get(k, 0.0)), float(v))
+        elif k.startswith("unlocked_"):
+            merged[k] = primary.get(k, False) or v
+
+    # 4. Memory Nodes (SRS)
+    nodes_p = dict(primary.get("memory_nodes") or {})
+    nodes_s = dict(secondary.get("memory_nodes") or {})
+    for node_id, s_data in nodes_s.items():
+        if node_id not in nodes_p:
+            nodes_p[node_id] = s_data
+        else:
+            p_data = nodes_p[node_id]
+            p_hl = float(p_data.get("half_life", 5.0))
+            s_hl = float(s_data.get("half_life", 5.0))
+            if s_hl > p_hl:
+                nodes_p[node_id] = s_data
+    merged["memory_nodes"] = nodes_p
+
+    return merged
+
 
 class DataService:
     @staticmethod
@@ -306,6 +392,8 @@ class ProgressService:
             return "__default__"
 
         # 1. Se já cacheado no objeto page da sessão ativa
+        if hasattr(page, "_saebom_student_id") and page._saebom_student_id:
+            return str(page._saebom_student_id).strip()
         if hasattr(page, "_sejong_student_id") and page._sejong_student_id:
             return str(page._sejong_student_id).strip()
         if hasattr(page, "_sejong_session_id") and page._sejong_session_id:
@@ -315,12 +403,13 @@ class ProgressService:
         student_id = None
         try:
             if hasattr(page, "client_storage") and page.client_storage:
-                student_id = page.client_storage.get("sejong_student_id")
+                student_id = page.client_storage.get("saebom_student_id") or page.client_storage.get("sejong_student_id")
         except Exception:
             student_id = None
 
         if student_id and isinstance(student_id, str) and student_id.strip():
             safe_id = student_id.strip()
+            page._saebom_student_id = safe_id
             page._sejong_student_id = safe_id
             page._sejong_session_id = safe_id
             return safe_id
@@ -328,8 +417,9 @@ class ProgressService:
         # 3. Se salvo na sessão do Flet (page.session)
         try:
             if hasattr(page, "session") and page.session:
-                sess_id = page.session.get("sejong_student_id")
+                sess_id = page.session.get("saebom_student_id") or page.session.get("sejong_student_id")
                 if sess_id and str(sess_id).strip():
+                    page._saebom_student_id = str(sess_id).strip()
                     page._sejong_student_id = str(sess_id).strip()
                     return page._sejong_student_id
         except Exception:
@@ -340,14 +430,17 @@ class ProgressService:
         new_id = f"student_{uuid.uuid4().hex[:12]}"
         try:
             if hasattr(page, "client_storage") and page.client_storage:
+                page.client_storage.set("saebom_student_id", new_id)
                 page.client_storage.set("sejong_student_id", new_id)
         except Exception:
             pass
 
+        page._saebom_student_id = new_id
         page._sejong_student_id = new_id
         page._sejong_session_id = new_id
         try:
             if hasattr(page, "session") and page.session:
+                page.session.set("saebom_student_id", new_id)
                 page.session.set("sejong_student_id", new_id)
         except Exception:
             pass
@@ -357,18 +450,28 @@ class ProgressService:
     def set_file_path_override(cls, path: Optional[str]) -> None:
         """Define ou limpa um caminho de arquivo customizado para testes."""
         cls._file_path_override = path
+        cls._sessions.clear()
 
     @classmethod
-    def _get_storage_path(cls, session_id: str) -> str:
+    def _get_storage_dir(cls, sessions_dir: Optional[str] = None) -> str:
+        if sessions_dir:
+            return sessions_dir
         if cls._file_path_override:
-            return cls._file_path_override
+            return os.path.dirname(cls._file_path_override)
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        safe_id = "".join(c for c in session_id if c.isalnum() or c in ("-", "_")) or "default"
-        return os.path.join(base_dir, "data", "sessions", f"{safe_id}.json")
+        return os.path.join(base_dir, "data", "sessions")
 
     @classmethod
-    def _load_from_disk(cls, session_id: str) -> dict:
-        path = cls._get_storage_path(session_id)
+    def _get_storage_path(cls, session_id: str, sessions_dir: Optional[str] = None) -> str:
+        if cls._file_path_override and not sessions_dir:
+            return cls._file_path_override
+        safe_id = "".join(c for c in session_id if c.isalnum() or c in ("-", "_")) or "default"
+        directory = cls._get_storage_dir(sessions_dir)
+        return os.path.join(directory, f"{safe_id}.json")
+
+    @classmethod
+    def _load_from_disk(cls, session_id: str, sessions_dir: Optional[str] = None) -> dict:
+        path = cls._get_storage_path(session_id, sessions_dir=sessions_dir)
         if os.path.exists(path):
             try:
                 with open(path, "r", encoding="utf-8") as f:
@@ -387,8 +490,8 @@ class ProgressService:
         return {}
 
     @classmethod
-    def _save_to_disk(cls, session_id: str, data: dict) -> None:
-        path = cls._get_storage_path(session_id)
+    def _save_to_disk(cls, session_id: str, data: dict, sessions_dir: Optional[str] = None) -> None:
+        path = cls._get_storage_path(session_id, sessions_dir=sessions_dir)
         os.makedirs(os.path.dirname(path), exist_ok=True)
         import uuid
         tmp_path = f"{path}.tmp.{uuid.uuid4().hex[:8]}"
@@ -403,6 +506,75 @@ class ProgressService:
                     os.remove(tmp_path)
                 except Exception:
                     pass
+
+    @classmethod
+    def resolve_or_create_student(
+        cls,
+        name: str,
+        client_storage: Optional[Any] = None,
+        sessions_dir: Optional[str] = None,
+    ) -> Tuple[str, dict]:
+        """Busca ou cria perfil do aluno por nome com busca case-insensitive e fusão automática."""
+        canonical_name = canonicalize_student_name(name)
+        target_key = normalize_name_key(canonical_name)
+        directory = cls._get_storage_dir(sessions_dir)
+        os.makedirs(directory, exist_ok=True)
+
+        matching_files: List[Tuple[str, dict]] = []
+        for filename in os.listdir(directory):
+            if not filename.endswith(".json"):
+                continue
+            file_path = os.path.join(directory, filename)
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                if isinstance(data, dict):
+                    s_name = data.get("student_name", "")
+                    if normalize_name_key(s_name) == target_key:
+                        s_id = data.get("student_id") or filename[:-5]
+                        matching_files.append((s_id, data))
+            except Exception:
+                continue
+
+        if matching_files:
+            primary_id, primary_data = matching_files[0]
+            for other_id, other_data in matching_files[1:]:
+                primary_data = merge_session_data(primary_data, other_data)
+            primary_data["student_name"] = canonical_name
+            primary_data["student_id"] = primary_id
+            cls._sessions[primary_id] = primary_data
+            cls._save_to_disk(primary_id, primary_data, sessions_dir=sessions_dir)
+            if client_storage and hasattr(client_storage, "set"):
+                try:
+                    client_storage.set("saebom_student_id", primary_id)
+                    client_storage.set("student_name", canonical_name)
+                except Exception:
+                    pass
+            return primary_id, primary_data
+        else:
+            student_id = f"student_{secrets.token_hex(6)}"
+            now_iso = datetime.now().isoformat()
+            new_data = {
+                "student_id": student_id,
+                "student_name": canonical_name,
+                "streak": 0,
+                "total_xp": 0,
+                "created_at": now_iso,
+                "last_study_date": None,
+                "unlocked_unit_intro": True,
+                "progress_unit_intro": 0.0,
+                "study_dates": [],
+                "memory_nodes": {},
+            }
+            cls._sessions[student_id] = new_data
+            cls._save_to_disk(student_id, new_data, sessions_dir=sessions_dir)
+            if client_storage and hasattr(client_storage, "set"):
+                try:
+                    client_storage.set("saebom_student_id", student_id)
+                    client_storage.set("student_name", canonical_name)
+                except Exception:
+                    pass
+            return student_id, new_data
 
     def __init__(self, page=None):
         self.page = page
@@ -422,7 +594,14 @@ class ProgressService:
 
     def get_student_name(self) -> str:
         """Retorna o nome personalizado do aluno ou o padrão."""
-        return str(self._store.get("student_name", "Estudante Saebom"))
+        raw = self._store.get("student_name", "Estudante Saebom")
+        return canonicalize_student_name(raw)
+
+    def set_student_name(self, name: str):
+        """Define e canonicaliza o nome do aluno."""
+        canonical = canonicalize_student_name(name)
+        self._store["student_name"] = canonical
+        ProgressService._save_to_disk(self._session_id, self._store)
 
     @staticmethod
     def generate_recovery_code() -> str:
@@ -1278,8 +1457,9 @@ class AdminService:
         curriculum = DataService.get_curriculum()
         total_units_count = len(curriculum) if curriculum else 23
 
-        # Listar todos os arquivos .json na pasta de sessões
-        for filename in os.listdir(directory):
+        # Listar e consolidar arquivos .json na pasta de sessões agrupando por chave normalizada
+        grouped_by_key: Dict[str, dict] = {}
+        for filename in sorted(os.listdir(directory)):
             if not filename.endswith(".json"):
                 continue
 
@@ -1294,13 +1474,21 @@ class AdminService:
             if not isinstance(data, dict):
                 continue
 
-            # Extrair student_id
-            s_id = data.get("student_id")
-            if not s_id:
-                # Extrair do nome do arquivo: student_{id}.json ou {uuid}.json
-                s_id = filename[:-5]
-
+            s_id = data.get("student_id") or filename[:-5]
+            data["student_id"] = s_id
             s_name = data.get("student_name") or "Estudante Saebom"
+            key = normalize_name_key(s_name)
+            if not key:
+                key = s_id
+
+            if key in grouped_by_key:
+                grouped_by_key[key] = merge_session_data(grouped_by_key[key], data)
+            else:
+                grouped_by_key[key] = data
+
+        for data in grouped_by_key.values():
+            s_id = data.get("student_id") or "unknown"
+            s_name = canonicalize_student_name(data.get("student_name"))
             streak = data.get("streak", 0)
             total_xp = data.get("total_xp", 0)
             last_date = data.get("last_study_date") or data.get("updated_at") or "—"

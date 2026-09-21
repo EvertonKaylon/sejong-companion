@@ -1,6 +1,7 @@
 import flet as ft
 from datetime import datetime
-from ..components import centered_content
+from .. import __version__
+from ..components import centered_content, WhatsNewDialog
 from ..theme import get_theme_colors, Styles, Responsive
 from ..services import DataService, ProgressService, FullscreenService
 
@@ -19,9 +20,45 @@ def home_view(page: ft.Page) -> ft.View:
         # a rota que já está ativa. Por isso o tema só "aplicava" depois de
         # entrar em outra tela e voltar. Aqui reconstruímos a view atual
         # diretamente, no lugar, para o toggle ser instantâneo.
-        page.views.clear()
-        page.views.append(home_view(page))
-        page.update()
+        try:
+            new_view = home_view(page)
+            page.views.clear()
+            page.views.append(new_view)
+            page.update()
+        except Exception:
+            pass
+
+    def open_whats_new(is_auto: bool = False):
+        def on_dialog_dismiss():
+            try:
+                if hasattr(page, "client_storage") and page.client_storage:
+                    page.client_storage.set("last_seen_release", __version__)
+            except Exception:
+                pass
+
+        dialog = WhatsNewDialog(page=page, on_dismiss=on_dialog_dismiss)
+        try:
+            if hasattr(page, "show_dialog"):
+                page.show_dialog(dialog)
+            elif hasattr(page, "open"):
+                page.open(dialog)
+            else:
+                page.dialog = dialog
+                dialog.open = True
+                if hasattr(page, "update"):
+                    page.update()
+        except Exception:
+            pass
+        return dialog
+
+    # Auto-display trigger: Novidades do Saebom (새봄 소식)
+    try:
+        if hasattr(page, "client_storage") and page.client_storage:
+            last_seen = page.client_storage.get("last_seen_release")
+            if last_seen != __version__:
+                open_whats_new(is_auto=True)
+    except Exception:
+        pass
 
     app_bar = ft.AppBar(
         leading=ft.Container(
@@ -51,6 +88,12 @@ def home_view(page: ft.Page) -> ft.View:
         bgcolor=colors["surface"],
         elevation=0,
         actions=[
+            ft.IconButton(
+                icon=ft.Icons.AUTO_AWESOME_ROUNDED,
+                icon_color=colors["accent"],
+                on_click=lambda e: open_whats_new(),
+                tooltip="Novidades do Saebom (새봄 소식)",
+            ),
             ft.IconButton(
                 icon=ft.Icons.ADMIN_PANEL_SETTINGS_ROUNDED,
                 icon_color=colors["secondary"],
@@ -161,7 +204,7 @@ def home_view(page: ft.Page) -> ft.View:
         tip_icon = "🌙"
         tip_title = "Janela de Consolidação"
         tip_text = "Ótimo momento para revisar vocabulário e 한글 antes de dormir. A memória se consolida durante o sono!"
-        tip_color = "#7C4DFF"  # primary-500 do design system
+        tip_color = colors["primary"]
     else:
         tip_icon = "🌟"
         tip_title = "Sessão Noturna"
@@ -255,7 +298,7 @@ def home_view(page: ft.Page) -> ft.View:
         content=ft.Row(
             controls=[
                 ft.Container(content=ft.Text("🔥", size=26), width=44, height=44, alignment=ft.Alignment.CENTER,
-                             bgcolor="#14F5A623", border_radius=Styles.BORDER_RADIUS_SM),
+                             bgcolor=ft.Colors.with_opacity(0.12, colors["accent"]), border_radius=Styles.BORDER_RADIUS_SM),
                 ft.Column(controls=[
                     ft.Text("Revisão do Dia · 일일 복습", size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),
                     ft.Text(f"{due_count} item(ns) com retenção abaixo de 75%" if review_ready else "Tudo em dia! ✨ Faça uma revisão preventiva.",
@@ -272,7 +315,7 @@ def home_view(page: ft.Page) -> ft.View:
         content=ft.Row(
             controls=[
                 ft.Container(content=ft.Text("🃏", size=24), width=44, height=44, alignment=ft.Alignment.CENTER,
-                             bgcolor="#147C4DFF", border_radius=Styles.BORDER_RADIUS_SM),
+                             bgcolor=ft.Colors.with_opacity(0.08, colors["primary"]), border_radius=Styles.BORDER_RADIUS_SM),
                 ft.Column(
                     controls=[
                         ft.Text("Flashcards & Criação de Texto · 문장", size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),

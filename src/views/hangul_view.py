@@ -293,7 +293,7 @@ def hangul_view(page: ft.Page) -> ft.View:
                         spacing=6,
                         tight=True,
                     ),
-                    bgcolor="#14004C97",
+                    bgcolor=ft.Colors.with_opacity(0.08, colors["primary"]),
                     border=ft.Border.all(1, colors["primary_light"]),
                     border_radius=Styles.BORDER_RADIUS_SM,
                     padding=ft.Padding.symmetric(horizontal=10, vertical=6),
@@ -830,7 +830,7 @@ def hangul_view(page: ft.Page) -> ft.View:
 
     # Botão de Teste Fixo Inferior
     quiz_button = ft.Container(
-        content=ft.ElevatedButton(
+        content=ft.Button(
             content="Testar Conhecimentos (Desafio)",
             icon=ft.Icons.QUIZ_ROUNDED,
             style=ft.ButtonStyle(

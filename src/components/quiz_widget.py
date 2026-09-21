@@ -79,6 +79,12 @@ class QuizWidget(ft.Container):
             clip_behavior=ft.ClipBehavior.ANTI_ALIAS,
         )
 
+    def update(self):
+        try:
+            super().update()
+        except Exception:
+            pass
+
     # ─── MULTIPLE CHOICE ───
 
     def _build_multiple_choice(self):
@@ -139,7 +145,10 @@ class QuizWidget(ft.Container):
         else:
             btn.bgcolor = self.colors["card_bg"]
             btn.border = ft.Border.all(1, self.colors["border"])
-        btn.update()
+        try:
+            btn.update()
+        except Exception:
+            pass
 
     def handle_select(self, selected_index: int):
         if self.answered:
@@ -150,14 +159,17 @@ class QuizWidget(ft.Container):
         for i, btn in enumerate(self.option_buttons):
             btn.on_click = None
             if i == self.q_data.correct_index:
-                btn.bgcolor = "#26188150"
+                btn.bgcolor = ft.Colors.with_opacity(0.15, self.colors["correct"])
                 btn.border = ft.Border.all(2, self.colors["correct"])
             elif i == selected_index:
-                btn.bgcolor = "#26C50337"
+                btn.bgcolor = ft.Colors.with_opacity(0.15, self.colors["incorrect"])
                 btn.border = ft.Border.all(2, self.colors["incorrect"])
             else:
                 btn.opacity = 0.5
-            btn.update()
+            try:
+                btn.update()
+            except Exception:
+                pass
 
         self._show_feedback(is_correct)
 
@@ -210,7 +222,7 @@ class QuizWidget(ft.Container):
             style=ft.ButtonStyle(color=self.colors["text_sec"]),
             on_click=self._clear_order,
         )
-        self.check_btn = ft.ElevatedButton(
+        self.check_btn = ft.Button(
             content="✅ Verificar",
             style=ft.ButtonStyle(
                 color=ft.Colors.WHITE,
@@ -273,7 +285,10 @@ class QuizWidget(ft.Container):
             btn.shadow = Styles.CARD_SHADOW
             btn.border = ft.Border.all(1.5, self.colors["primary_light"])
             btn.scale = 1.0
-        btn.update()
+        try:
+            btn.update()
+        except Exception:
+            pass
 
     def _add_word(self, word: str):
         """Adiciona uma palavra à frase montada."""
@@ -287,7 +302,10 @@ class QuizWidget(ft.Container):
 
         # Habilitar verificação quando todas as palavras foram colocadas
         self.check_btn.disabled = len(self.available_words) > 0
-        self.update()
+        try:
+            self.update()
+        except Exception:
+            pass
 
     def _remove_word(self, word: str):
         """Remove uma palavra da frase montada e devolve aos chips."""
@@ -299,7 +317,10 @@ class QuizWidget(ft.Container):
         self._update_sentence_display()
         self._refresh_word_chips()
         self.check_btn.disabled = True
-        self.update()
+        try:
+            self.update()
+        except Exception:
+            pass
 
     def _update_sentence_display(self):
         """Atualiza a exibição da frase montada com chips removíveis."""
@@ -330,7 +351,7 @@ class QuizWidget(ft.Container):
                         no_wrap=False,
                     ),
                     padding=ft.Padding.symmetric(horizontal=14, vertical=8),
-                    bgcolor="#147C4DFF",
+                    bgcolor=ft.Colors.with_opacity(0.08, self.colors["primary"]),
                     border=ft.Border.all(1.5, self.colors["primary"]),
                     border_radius=Styles.BORDER_RADIUS_LG,
                     on_click=lambda e, w=word: self._remove_word(w),
@@ -354,7 +375,10 @@ class QuizWidget(ft.Container):
         self._update_sentence_display()
         self._refresh_word_chips()
         self.check_btn.disabled = True
-        self.update()
+        try:
+            self.update()
+        except Exception:
+            pass
 
     def _check_order(self, e):
         """Verifica se a ordem está correta."""
@@ -367,10 +391,10 @@ class QuizWidget(ft.Container):
         # Feedback visual
         if is_correct:
             self.sentence_display.border = ft.Border.all(2, self.colors["correct"])
-            self.sentence_display.bgcolor = "#14188150"
+            self.sentence_display.bgcolor = ft.Colors.with_opacity(0.08, self.colors["correct"])
         else:
             self.sentence_display.border = ft.Border.all(2, self.colors["incorrect"])
-            self.sentence_display.bgcolor = "#14C50337"
+            self.sentence_display.bgcolor = ft.Colors.with_opacity(0.08, self.colors["incorrect"])
             # Mostrar resposta correta abaixo
             self.sentence_display.content = ft.Column(
                 controls=[
@@ -382,7 +406,7 @@ class QuizWidget(ft.Container):
                                     color=self.colors["incorrect"], no_wrap=False,
                                 ),
                                 padding=ft.Padding.symmetric(horizontal=12, vertical=6),
-                                bgcolor="#14C50337",
+                                bgcolor=ft.Colors.with_opacity(0.08, self.colors["incorrect"]),
                                 border=ft.Border.all(1.5, self.colors["incorrect"]),
                                 border_radius=Styles.BORDER_RADIUS_LG,
                             ) for w in self.selected_words
@@ -401,7 +425,7 @@ class QuizWidget(ft.Container):
                                     color=self.colors["correct"], no_wrap=False,
                                 ),
                                 padding=ft.Padding.symmetric(horizontal=12, vertical=6),
-                                bgcolor="#14188150",
+                                bgcolor=ft.Colors.with_opacity(0.08, self.colors["correct"]),
                                 border=ft.Border.all(1.5, self.colors["correct"]),
                                 border_radius=Styles.BORDER_RADIUS_LG,
                             ) for w in self.q_data.correct_order
@@ -611,7 +635,7 @@ class QuizWidget(ft.Container):
             self.sov_slot_containers.append(slot_container)
             self._sov_render_empty_slot(index)
 
-        self.sov_check_btn = ft.ElevatedButton(
+        self.sov_check_btn = ft.Button(
             content="Verificar",
             style=ft.ButtonStyle(
                 color=ft.Colors.WHITE, bgcolor=self.colors["primary"],
@@ -646,7 +670,13 @@ class QuizWidget(ft.Container):
 
     def _sov_item_from_drag_event(self, e):
         """Resolve a fonte do drag por id; IDs evitam colisões de palavras repetidas."""
-        page = getattr(self, "page", None)
+        page = None
+        try:
+            page = self.page
+        except Exception:
+            pass
+        if page is None:
+            page = getattr(self, "_page", None) or getattr(self, "_mock_page", None)
         source = page.get_control(e.src_id) if page and getattr(e, "src_id", None) else None
         try:
             return self.sov_items_by_id.get(int(source.data)) if source else None
@@ -726,7 +756,10 @@ class QuizWidget(ft.Container):
             inner.border = ft.Border.all(2.5, self.colors["primary_light"])
         else:
             inner.border = ft.Border.all(2, self.colors["border"])
-        self.update()
+        try:
+            self.update()
+        except Exception:
+            pass
 
     def _sov_on_leave(self, e, slot_idx: int):
         if not self.answered:
@@ -735,7 +768,10 @@ class QuizWidget(ft.Container):
                 self._sov_render_empty_slot(slot_idx)
             else:
                 self._sov_render_filled_slot(slot_idx, item_id)
-            self.update()
+            try:
+                self.update()
+            except Exception:
+                pass
 
     def _sov_on_accept(self, e, slot_idx: int):
         """Aplica o physics gate no drop, antes de qualquer mudança de estado."""
@@ -755,27 +791,45 @@ class QuizWidget(ft.Container):
         self._sov_render_filled_slot(slot_idx, self.sov_slots[slot_idx])
         self._refresh_sov_drag_sources()
         self.sov_check_btn.disabled = any(item_id is None for item_id in self.sov_slots)
-        self.update()
+        try:
+            self.update()
+        except Exception:
+            pass
 
     def _sov_schedule_rejection(self, slot_idx: int):
         """Agenda o shake sem bloquear o evento de drag nem remover a palavra do pool."""
-        page = getattr(self, "page", None)
-        if page:
-            page.run_task(self._sov_rejection_animation, slot_idx)
+        page = None
+        try:
+            page = self.page
+        except Exception:
+            pass
+        if page is None:
+            page = getattr(self, "_page", None) or getattr(self, "_mock_page", None)
+        if page and hasattr(page, "run_task"):
+            try:
+                page.run_task(self._sov_rejection_animation, slot_idx)
+            except Exception:
+                pass
 
     async def _sov_rejection_animation(self, slot_idx: int):
         inner = self.sov_slot_containers[slot_idx].content
         try:
             for x_offset in (-0.04, 0.04, 0.0):
                 inner.offset = ft.Offset(x_offset, 0)
-                self.update()
+                try:
+                    self.update()
+                except Exception:
+                    pass
                 await asyncio.sleep(0.08)
         finally:
             # A condição de término é explícita: nunca deixamos o slot deslocado.
             inner.offset = ft.Offset(0, 0)
             if self.sov_slots[slot_idx] is None:
                 self._sov_render_empty_slot(slot_idx)
-            self.update()
+            try:
+                self.update()
+            except Exception:
+                pass
 
     def _sov_release_slot(self, slot_idx: int):
         """Devolve um item encaixado ao pool sem penalizar nem travar a questão."""
@@ -785,7 +839,10 @@ class QuizWidget(ft.Container):
         self._sov_render_empty_slot(slot_idx)
         self._refresh_sov_drag_sources()
         self.sov_check_btn.disabled = True
-        self.update()
+        try:
+            self.update()
+        except Exception:
+            pass
 
     def _sov_clear(self, e):
         if self.answered:
@@ -795,7 +852,10 @@ class QuizWidget(ft.Container):
             self._sov_render_empty_slot(index)
         self._refresh_sov_drag_sources()
         self.sov_check_btn.disabled = True
-        self.update()
+        try:
+            self.update()
+        except Exception:
+            pass
 
     def _sov_check_order(self, e):
         if self.answered or any(item_id is None for item_id in self.sov_slots):
@@ -808,7 +868,11 @@ class QuizWidget(ft.Container):
             inner = slot.content
             matches = placed_words[index] == self.sov_correct_order[index]
             inner.border = ft.Border.all(2.5, self.colors["correct"] if matches else self.colors["incorrect"])
-            inner.bgcolor = "#14188150" if matches else "#14C50337"
+            inner.bgcolor = (
+                ft.Colors.with_opacity(0.08, self.colors["correct"])
+                if matches
+                else ft.Colors.with_opacity(0.08, self.colors["incorrect"])
+            )
             inner.on_click = None
 
         self.sov_check_btn.disabled = True

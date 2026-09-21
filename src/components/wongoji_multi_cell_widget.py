@@ -281,7 +281,7 @@ class WongojiMultiCellWidget(ft.Container):
                 height=sz,
                 border=ft.Border.all(border_width, border_color),
                 border_radius=6,
-                bgcolor=self.colors["card_bg"] if not is_active else (self.colors["primary"] + "18" if not self.is_dark else self.colors["primary"] + "30"),
+                bgcolor=self.colors["card_bg"] if not is_active else (ft.Colors.with_opacity(0.10, self.colors["primary"]) if not self.is_dark else ft.Colors.with_opacity(0.19, self.colors["primary"])),
                 alignment=ft.Alignment.CENTER,
                 on_click=lambda _, i=idx: self.select_cell(i),
                 content=ft.Text(

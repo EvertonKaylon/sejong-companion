@@ -7,6 +7,7 @@ Cada botão circular tem cor fonética distinta (Neutro / Aspirada / Tensa),
 animação de escala ao toque e reprodução de áudio via AudioService.
 """
 
+from typing import Optional
 import flet as ft
 from ..theme import get_theme_colors, Styles, Responsive
 
@@ -119,8 +120,15 @@ def _build_oclusive_button(
     )
 
 
-def build_oclusive_lab(page: ft.Page, colors: dict, w: float) -> ft.Column:
+def build_oclusive_lab(
+    page: Optional[ft.Page] = None,
+    colors: Optional[dict] = None,
+    w: float = 400.0,
+    is_dark: bool = True,
+) -> ft.Container:
     """Constrói o Laboratório Fonético Oclusivo completo."""
+    if colors is None:
+        colors = get_theme_colors(is_dark)
     btn_size = Responsive.value(w, compact=64, medium=80)
 
     # Legenda
@@ -183,7 +191,9 @@ def build_oclusive_lab(page: ft.Page, colors: dict, w: float) -> ft.Column:
                             char_info["type"],
                             colors,
                             btn_size,
-                            lambda s: page.audio_service.play_korean(s),
+                            lambda s: getattr(page, "audio_service", None).play_korean(s)
+                            if getattr(page, "audio_service", None)
+                            else None,
                         ),
                         ft.Text(
                             _get_oclusive_label(char_info["type"]),
@@ -224,32 +234,34 @@ def build_oclusive_lab(page: ft.Page, colors: dict, w: float) -> ft.Column:
             )
         )
 
-    return ft.Column(
-        controls=[
-            ft.Container(height=8),
-            ft.Container(
-                content=ft.Row(
-                    controls=[
-                        ft.Text("🔬", size=18),
-                        ft.Text(
-                            "Laboratório Fonético Oclusivo",
-                            size=15,
-                            weight=ft.FontWeight.BOLD,
-                            color=colors["text"],
-                        ),
-                    ],
-                    spacing=8,
-                    alignment=ft.MainAxisAlignment.CENTER,
+    return ft.Container(
+        content=ft.Column(
+            controls=[
+                ft.Container(height=8),
+                ft.Container(
+                    content=ft.Row(
+                        controls=[
+                            ft.Text("🔬", size=18),
+                            ft.Text(
+                                "Laboratório Fonético Oclusivo",
+                                size=15,
+                                weight=ft.FontWeight.BOLD,
+                                color=colors["text"],
+                            ),
+                        ],
+                        spacing=8,
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                    margin=ft.Margin.only(bottom=4),
+                    alignment=ft.Alignment.CENTER,
                 ),
-                margin=ft.Margin.only(bottom=4),
-                alignment=ft.Alignment.CENTER,
-            ),
-            explanation,
-            legend,
-            *triad_cards,
-        ],
-        spacing=4,
-        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                explanation,
+                legend,
+                *triad_cards,
+            ],
+            spacing=4,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        )
     )
 
 

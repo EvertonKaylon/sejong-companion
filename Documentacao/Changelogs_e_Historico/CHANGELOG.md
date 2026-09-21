@@ -16,10 +16,49 @@ Pré-Alpha → Alpha → Beta → RC → RTM → GA
 
 | Fase | Versão Alvo | Critérios de Entrada |
 |------|-------------|----------------------|
-| **Alpha** (atual) | `0.3.6-alpha` | Rebranding Saebom Companion (새봄), Manual de Marca v3.1, 20 Assets Oficiais, 234 Testes Automatizados (100% OK, incluindo Playwright E2E), Wongoji Lab Multi-Célula (23 Unidades) |
+| **Alpha** (atual) | `0.3.6-alpha` | Reconciliação Pedagógica & Neurociência, WhatsNewDialog, Brand Book v3.1, Resolução BUG-12, ≥ 300 Testes Automatizados (100% OK) |
 | **Beta** | `0.6.0-beta` | Sincronização Cloud, Banco de dados persistente, PWA Mobile Audit, modo offline |
 | **RC** | `1.0.0-rc.1` | Feature-complete, testes E2E, zero bugs críticos |
 | **GA** | `1.0.0` | Pronto para distribuição pública |
+
+## [0.3.6-alpha] — 2026-09-20
+
+### Classificação: Alpha (Consolidação Arquitetural, Reconciliação de Neurociência, WhatsNewDialog e Estabilização de Produção)
+> Milestone de Unificação e Estabilização Final: Reconciliação completa da branch `feature/neuroscience-gap-closure` sobre a linha estável `feature/branding`, integrando 6 novos módulos neuropedagógicos, 11 assets vetoriais de física articulatória e relações espaciais com prefixo `/` absoluto para compatibilidade CanvasKit (BUG-11), implementação do componente pedagógico "Novidades do Saebom" (`WhatsNewDialog`) com persistência inteligente via `client_storage` e dados bilíngues em `data/release_notes.json`. Eliminação definitiva de deadlocks no Windows NT em testes Playwright (`BUG-12`) via descritores `subprocess.DEVNULL`, expurgo de concatenações hex alpha no `WongojiMultiCellWidget` (`BUG-03`), updates defensivos contra descarte de views no `home_view.py` e em componentes visuais, substituição integral de `ft.ElevatedButton` por `ft.Button` e eliminação de cores legadas. Consolidação da suíte de testes globais alcançando a marca histórica de **300+ testes automatizados (100% aprovados, 0 falhas, 0 erros)**.
+
+### Added — Neurociência, Interatividade & Novos Componentes
+- **6 Módulos de Neurociência Cognitiva & Feedback Sensorial** — Integração dos módulos especializados na raiz e em componentes:
+  - `SyllableFactory` (`src/components/syllable_factory.py`) — Fábrica interativa de blocos silábicos Hangul com suporte a regras de física articulatória, Voice Onset Time (VOT), decomposição silábica e integração de áudio.
+  - `SpatialStage` (`src/components/spatial_stage.py`) — Estágio visual de relações espaciais para fixação implícita de preposições coreanas (`위`, `아래`, `앞`, `뒤`, `안`, `밖`).
+  - `NumberTraining` (`src/components/number_training.py`) — Treinamento interativo dos sistemas numéricos nativo coreano (하나, 둘, 셋) e sino-coreano (일, 이, 삼).
+  - `AirParticleEffect` (`src/components/air_particle_effect.py`) — Motor de partículas de dispersão de ar com simulação física de plosão e reentrancy guard assíncrono.
+  - `HapticService` (`src/haptic_service.py`) — Serviço unificado de feedback tátil e vibração háptica adaptativa para Web e Mobile.
+  - `TaskUtils` (`src/task_utils.py`) — Utilitários de gerenciamento assíncrono resiliente de tarefas em segundo plano.
+- **11 Assets Vetoriais SVG com Resolução Absoluta (`/`)** — Formas de boca anatômicas (`assets/mouth_shapes/*.svg`) e vetores de representação espacial (`assets/spatial/*.svg`) rigorosamente configurados com barra inicial `/` em todos os controles `ft.Image(src=...)` prevenindo erros 404 e tela preta no Flutter Web CanvasKit (diretriz `BUG-11`).
+- **Modal "Novidades do Saebom" (`WhatsNewDialog`)** — Componente modal de acolhimento pedagógico em `src/components/whats_new_dialog.py` renderizando destaques de versão bilíngues (Português/Coreano) no padrão Brand Book v3.1 (Navy `#02060F`, Violet `#8B4DFF`, Gold `#FFAB22`, tipografia Pretendard).
+- **Notas de Versão Estruturadas (`data/release_notes.json`)** — Base de dados JSON desacoplada contendo saudações, tags pedagógicas e resumos didáticos para estudantes e professores.
+- **Gatilho Inteligente e Acesso Sob Demanda (`src/views/home_view.py`)** — Exibição automática única na `HomeView` disparada quando `last_seen_release != __version__` persistindo o estado em `client_storage` após fechamento seguro, além de botão dedicado na AppBar com ícone `auto_awesome` e cor de acento Gold.
+- **Normalização e Fusão Atômica de Identidade (`src/services.py`)** — Métodos `canonicalize_student_name`, `normalize_name_key` e `merge_session_data` permitindo registro e login case-insensitive em PascalCase sem perda ou fragmentação de progresso prévio, com fallback oficial para "Estudante Saebom".
+- **Suíte de Testes do WhatsNewDialog (`tests/test_whats_new_dialog.py`)** — 10 novos testes unitários e de integração validando integridade de dados, proibição de termos legados, fidelidade cromática 60/20/12/8, fallbacks contra arquivos inexistentes/corrompidos, ciclo de vida de fechamento e acionamento na HomeView.
+- **Suíte Unificada de Neurociência & Interatividade** — Inclusão e estabilização de `test_phase1_sensory_features.py`, `test_phase2_interactive_features.py`, `test_student_name_case_and_merge.py`, `test_haptic_service.py` e `test_quiz_widget.py`.
+
+### Fixed — Infraestrutura, Deadlock Windows & Estabilidade
+- **Resolução do Deadlock de Pipe Anônimo no Windows NT (`BUG-12`)** — Correção da fixture `flet_server` em `tests/test_playwright_e2e.py` redirecionando descritores de console para `stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL` e removendo chamadas bloqueantes a `proc.communicate()`. Eliminação do gargalo de 4 KB do buffer de pipe do kernel Windows NT, viabilizando execução fluida de toda a bateria Playwright em ~26s sem travamentos.
+- **Eliminação de Concatenação Hex Alpha no Wongoji (`BUG-03`)** — Substituição de `self.colors["primary"] + "18"` por `ft.Colors.with_opacity(...)` em `src/components/wongoji_multi_cell_widget.py:284`, prevenindo inversão de cores e artefatos de canal alfa pelo Flutter Engine.
+- **Transição Atômica de Views em Ações da UI (`BUG-11`)** — Proteção defensiva da reconstrução de `page.views` em `home_view.py:22-25` e `toggle_theme`, instanciando a nova view antes de limpar o stack para impedir tela preta sob falhas transientes.
+- **Updates Defensivos em Controles Gráficos** — Encapsulamento de chamadas `self.update()` em blocos `try ... except Exception: pass` e sobrescrita defensiva do método `update()` em `QuizWidget`, `FlashcardWidget`, `SentenceBuilderWidget`, `HangulCard` e `VocabCard`, garantindo operabilidade plena em execuções headless desacopladas de `page`.
+- **Reentrancy Guard no Efeito de Partículas** — Trava assíncrona `self.is_animating` com cláusula `finally` em `AirParticleEffect.emit()` prevenindo condições de corrida durante disparos repetidos de consoantes plosivas.
+- **Simetria de Chaves de Sessão** — Leitura sincronizada de `saebom_student_id` com fallback gracioso para `sejong_student_id` no `ProgressService`, garantindo compatibilidade com sessões legadas.
+
+### Changed — Sanitização Geral de Código & Deprecações
+- **Migração Integral de `ft.ElevatedButton` para `ft.Button`** — Substituição em conformidade com a sintaxe oficial do Flet 0.85+ em todas as views (`review_view.py`, `quiz_view.py`, `lesson_view.py`, `hangul_view.py`, `admin_view.py`, `flashcard_widget.py`, `sentence_builder_widget.py`), atingindo 0 avisos de deprecação no terminal.
+- **Expurgo Total de Cores Legadas Descontinuadas** — Eliminação completa da constante `INFO_500 = "#004C97"` em `src/theme.py`, `#14004C97` em `hangul_view.py:296`, e cores legadas `#147C4DFF` e `#F5A623`, substituídas pelos papéis semânticos e funções `with_opacity` do Brand Book v3.1.
+- **Governança Estrita do Nome "Sejong"** — 0 ocorrências de termos legados na interface de usuário, modais, cabeçalhos, títulos de tela ou novos arquivos de documentação, em respeito rigoroso à diretriz pedagógica da professora.
+
+### Métricas de Qualidade & Testes
+- **Total de Testes Automatizados:** **≥ 300 testes 100% aprovados** (270+ testes unitários/integração + 16 testes de 5 pilares estruturais + 5 cenários E2E dinâmicos no Chromium real com Playwright).
+- **Tempo de Execução da Suíte Playwright E2E:** Reduzido para **~26 segundos** no Windows nativo sem deadlocks.
+- **Taxa de Falhas:** **0 falhas, 0 erros, 0 vazamentos de integridade**.
 
 ## [0.3.6-alpha] — 2026-09-09
 
