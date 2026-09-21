@@ -25,8 +25,16 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copiar todo o código-fonte da aplicação
 COPY . .
 
+# Criar usuário não-privilegiado saebomuser (Princípio do Menor Privilégio - OWASP A05 / MITRE T1068 & T1611)
+RUN groupadd -g 10001 saebom && \
+    useradd -u 10001 -g saebom -s /bin/sh -m saebomuser
+
 # Criar e garantir permissões para os diretórios persistentes de dados e cache de áudio
-RUN mkdir -p /app/data/cache/audio /app/data/sessions /app/data/telemetry /app/data/reports
+RUN mkdir -p /app/data/cache/audio /app/data/sessions /app/data/telemetry /app/data/reports && \
+    chown -R saebomuser:saebom /app
+
+# Executar como usuário não-root
+USER saebomuser
 
 # Expor a porta web padrão do Flet
 EXPOSE 8554

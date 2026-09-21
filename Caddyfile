@@ -1,7 +1,7 @@
-# Configuração do Caddy para o Sejong Companion
-# Suporta tanto o domínio DuckDNS oficial quanto acesso direto por IP na porta 80
-sejongcompanion.duckdns.org, :80 {
-    # Proxy reverso para o container do Sejong Companion com suporte total a WebSockets Flet
+# Configuração do Caddy para o Saebom Companion (새봄 컴패니언)
+# Suporta domínio oficial DuckDNS e acesso direto HTTP/HTTPS
+saebomcompanion.duckdns.org, :80, :443 {
+    # Proxy reverso para o container da aplicação com suporte a WebSockets Flet
     reverse_proxy app:8554 {
         header_up Host {host}
         header_up X-Real-IP {remote_host}
@@ -11,4 +11,28 @@ sejongcompanion.duckdns.org, :80 {
 
     # Compressão de assets em tempo real
     encode zstd gzip
+
+    # Cabeçalhos de Segurança Defensiva (OWASP A05:2021 / MITRE ATT&CK T1189 & T1190)
+    header {
+        # Prevenção de MIME Sniffing
+        X-Content-Type-Options "nosniff"
+
+        # Prevenção de Clickjacking
+        X-Frame-Options "DENY"
+
+        # Prevenção de vazamento de URLs internas
+        Referrer-Policy "strict-origin-when-cross-origin"
+
+        # Restrição de APIs de hardware e sensores
+        Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+
+        # Forçar HTTPS com HSTS (1 ano + subdomínios)
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+        # Política de Segurança de Conteúdo (CSP) compatível com Flet Web CanvasKit & WebSockets
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: https: blob:; connect-src 'self' ws: wss:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+
+        # Ofuscação de assinatura de servidor web
+        -Server
+    }
 }

@@ -47,6 +47,10 @@ class AnnouncementService:
         except Exception:
             return False
 
+    MAX_TITLE_LENGTH: int = 120
+    MAX_CONTENT_LENGTH: int = 1000
+    MAX_AUTHOR_LENGTH: int = 50
+
     @classmethod
     def post_announcement(
         cls,
@@ -56,9 +60,15 @@ class AnnouncementService:
         page: Optional[ft.Page] = None,
         badge_color: str = "#FFAB22",
     ) -> Optional[Dict[str, Any]]:
-        """Publica um novo recado da professora e dispara notificação em tempo real via PubSub."""
-        clean_title = (title or "").strip()
-        clean_content = (content or "").strip()
+        """Publica um novo recado da professora e dispara notificação em tempo real via PubSub.
+        
+        Aplica limites estritos de comprimento e sanitização contra payload inflation (OWASP A04 / MITRE T1499).
+        """
+        # Sanitizar e truncar entradas para prevenir DoS por payload excessivo
+        clean_title = (title or "").strip().replace("\x00", "")[:cls.MAX_TITLE_LENGTH]
+        clean_content = (content or "").strip().replace("\x00", "")[:cls.MAX_CONTENT_LENGTH]
+        clean_author = (author or "Professora").strip().replace("\x00", "")[:cls.MAX_AUTHOR_LENGTH] or "Professora"
+
         if not clean_title or not clean_content:
             return None
 
@@ -66,7 +76,7 @@ class AnnouncementService:
             "id": f"ann_{uuid.uuid4().hex[:8]}",
             "title": clean_title,
             "content": clean_content,
-            "author": (author or "Professora").strip(),
+            "author": clean_author,
             "created_at": datetime.now().isoformat(),
             "active": True,
             "badge_color": badge_color,

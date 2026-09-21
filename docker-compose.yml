@@ -3,26 +3,31 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: sejong-companion-app
+    container_name: saebom-companion-app
     restart: always
+    security_opt:
+      - no-new-privileges:true
     environment:
       - PORT=8554
-      - SEJONG_ADMIN_PIN=${SEJONG_ADMIN_PIN:?SEJONG_ADMIN_PIN environment variable is required}
+      - SAEBOM_ADMIN_PIN=${SAEBOM_ADMIN_PIN:-}
       - TYPECAST_API_KEY=${TYPECAST_API_KEY:-}
     expose:
       - "8554"
     volumes:
-      # Volumes persistentes para que os dados dos alunos e áudios NUNCA sejam apagados
+      # Volumes persistentes para que dados de estudo, comunicados e áudio nunca sejam perdidos
       - ./data/cache/audio:/app/data/cache/audio
       - ./data/sessions:/app/data/sessions
       - ./data/telemetry:/app/data/telemetry
       - ./data/reports:/app/data/reports
+      - ./data/announcements.json:/app/data/announcements.json
 
   # Reverse Proxy Caddy para HTTPS automático com Let's Encrypt e compressão
   caddy:
     image: caddy:2-alpine
-    container_name: sejong-companion-caddy
+    container_name: saebom-companion-caddy
     restart: always
+    security_opt:
+      - no-new-privileges:true
     ports:
       - "80:80"
       - "443:443"

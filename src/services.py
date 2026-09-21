@@ -1397,11 +1397,50 @@ class AdminService:
             cls._failed_attempts[client_key] = attempts
 
             count = len(attempts)
+
+            # Registro de auditoria estruturado (OWASP A09:2021 / MITRE ATT&CK T1070 & T1110)
+            try:
+                TelemetryService.record(
+                    session_id=f"audit_{client_key}",
+                    event=PedagogicalEvent(
+                        event_type="security_audit",
+                        unit_id="admin_auth_barrier",
+                        item_id="login_failed",
+                        payload={"client_key": client_key, "action": "failed_attempt", "count": count},
+                    ),
+                )
+            except Exception:
+                pass
+
             if count >= cls.MAX_ATTEMPTS_TIER_2:
                 cls._lockouts[client_key] = now + cls.LOCKOUT_DURATION_TIER_2
+                try:
+                    TelemetryService.record(
+                        session_id=f"audit_{client_key}",
+                        event=PedagogicalEvent(
+                            event_type="security_audit",
+                            unit_id="admin_auth_barrier",
+                            item_id="lockout_tier2",
+                            payload={"client_key": client_key, "action": "lockout_tier2", "duration": cls.LOCKOUT_DURATION_TIER_2},
+                        ),
+                    )
+                except Exception:
+                    pass
                 return False, None, f"Acesso administrativo bloqueado por {int(cls.LOCKOUT_DURATION_TIER_2 // 60)} minutos."
             elif count >= cls.MAX_ATTEMPTS_TIER_1:
                 cls._lockouts[client_key] = now + cls.LOCKOUT_DURATION_TIER_1
+                try:
+                    TelemetryService.record(
+                        session_id=f"audit_{client_key}",
+                        event=PedagogicalEvent(
+                            event_type="security_audit",
+                            unit_id="admin_auth_barrier",
+                            item_id="lockout_tier1",
+                            payload={"client_key": client_key, "action": "lockout_tier1", "duration": cls.LOCKOUT_DURATION_TIER_1},
+                        ),
+                    )
+                except Exception:
+                    pass
                 return False, None, f"Muitas tentativas incorretas. Bloqueio temporário de {int(cls.LOCKOUT_DURATION_TIER_1)}s."
 
             remaining_tries = cls.MAX_ATTEMPTS_TIER_1 - count
@@ -1411,6 +1450,18 @@ class AdminService:
         cls.reset_rate_limit(client_key)
         token = secrets.token_urlsafe(32)
         cls._active_tokens[token] = now + cls.SESSION_DURATION_SECONDS
+        try:
+            TelemetryService.record(
+                session_id=f"audit_{client_key}",
+                event=PedagogicalEvent(
+                    event_type="security_audit",
+                    unit_id="admin_auth_barrier",
+                    item_id="login_success",
+                    payload={"client_key": client_key, "action": "authenticated"},
+                ),
+            )
+        except Exception:
+            pass
         return True, token, "Autenticado com sucesso."
 
     @classmethod
