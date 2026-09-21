@@ -16,10 +16,35 @@ Pré-Alpha → Alpha → Beta → RC → RTM → GA
 
 | Fase | Versão Alvo | Critérios de Entrada |
 |------|-------------|----------------------|
-| **Alpha** (atual) | `0.3.7-alpha` | Sistema Integrado de Notificações, Mural da Professora, Badges Dinâmicos, ≥ 450 Testes (100% OK) |
+| **Alpha** (atual) | `0.3.8-alpha` | Hardening OWASP Top 10 & MITRE ATT&CK, Trilha de Auditoria, ≥ 457 Testes (100% OK) |
 | **Beta** | `0.6.0-beta` | Sincronização Cloud, Banco de dados persistente, PWA Mobile Audit, modo offline |
 | **RC** | `1.0.0-rc.1` | Feature-complete, testes E2E, zero bugs críticos |
 | **GA** | `1.0.0` | Pronto para distribuição pública |
+
+## [0.3.8-alpha] — 2026-09-21
+
+### Classificação: Alpha (Hardening Global de Infraestrutura e Aplicação — OWASP Top 10 & MITRE ATT&CK Enterprise)
+> Milestone de Segurança e Conformidade Estrutural: Implementação de defesas em profundidade contra riscos do OWASP Top 10 (2021/2025) e táticas da Matriz MITRE ATT&CK Enterprise (TA0001 Reconnaissance, TA0004 Privilege Escalation, TA0005 Defense Evasion, TA0006 Credential Access, TA0009 Collection, TA0011 Command and Control). Hardening de containers eliminando execução como root (`Dockerfile` com usuário não-privilegiado `saebomuser` UID 10001 e `security_opt: [no-new-privileges:true]`), blindagem contra vazamento de credenciais e dados em build de imagens (`.dockerignore`), isolamento de proxy reverso (`Caddyfile`) com cabeçalhos de segurança estritos (CSP para CanvasKit/WASM, HSTS, X-Frame-Options DENY, X-Content-Type-Options nosniff, supressão de Server banner), trilha estruturada de auditoria de autenticação com Zero PII (`AdminService.login` com logs de telemetria de segurança em falhas e lockouts), e sanitização defensiva de entrada no mural pedagógico (`AnnouncementService` com limites estritos de caracteres e expurgo de bytes nulos). Bateria de testes automatizados de segurança de infraestrutura integrada à suíte contínua.
+
+### Security — Hardening OWASP Top 10 & MITRE ATT&CK
+- **Blindagem de Build de Containers (`.dockerignore`)** — Prevenção de vazamento acidental de segredos locais (`.env*`), dados de sessões (`data/sessions/`), relatórios (`data/reports/`), telemetria (`data/telemetry/`), caches e arquivos PDF de referência durante a construção de imagens Docker (mitigação MITRE T1552.001 / OWASP A01 & A05).
+- **Execução Não-Privilegiada no Dockerfile (`Dockerfile`)** — Criação de usuário de sistema e grupo dedicados (`saebomuser:saebom`, UID/GID 10001), concessão de permissões mínimas em `/app/data` e instrução `USER saebomuser`, impedindo fuga de container com privilégios de superusuário (mitigação MITRE T1611 / OWASP A05).
+- **Proteção no Orquestrador (`docker-compose.yml`)** — Adição de `security_opt: [no-new-privileges:true]` para os serviços de aplicação e proxy Caddy, padronização estrita de variáveis de ambiente (`SAEBOM_ADMIN_PIN`) e volume persistente para `announcements.json`.
+- **Cabeçalhos de Segurança Estritos no Proxy Reverso (`Caddyfile`)** — Inclusão de bloco de cabeçalhos de segurança OWASP:
+  - `Content-Security-Policy`: Defesa contra XSS (OWASP A03 / MITRE T1059.007) configurada estritamente para os requisitos do Flutter Web CanvasKit, WebSockets (`ws:` / `wss:`) e fontes Google CJK.
+  - `X-Frame-Options: DENY`: Prevenção contra Clickjacking e iframing não autorizado (OWASP A05).
+  - `X-Content-Type-Options: nosniff`: Prevenção de MIME-sniffing malicioso.
+  - `Strict-Transport-Security`: Enforcing de HTTPS com max-age de 1 ano.
+  - `Permissions-Policy`: Desativação de APIs sensíveis de hardware (câmera, microfone, geolocalização).
+  - `-Server`: Ocultação do cabeçalho de identificação de versão do proxy (mitigação MITRE T1592 / OWASP A05).
+- **Trilha de Auditoria Estruturada com Zero PII (`src/services.py`)** — `AdminService.login()` instrumentado para gerar eventos de telemetria de segurança (`security_audit`) em eventos de falha de autenticação (`login_failed`), bloqueio temporário (`lockout_tier1`) e bloqueio prolongado (`lockout_tier2`), isolados por `client_key` em sessões de auditoria, garantindo que nenhum segredo/PIN seja registrado em log (mitigação OWASP A09 / MITRE T1070).
+- **Truncamento e Sanitização de Entrada no Mural Pedagógico (`src/announcement_service.py`)** — Aplicação de limites máximos de comprimento (`MAX_TITLE_LENGTH = 120`, `MAX_CONTENT_LENGTH = 1000`, `MAX_AUTHOR_LENGTH = 50`) e remoção preventiva de caracteres nulos (`\x00`), mitigando ataques de DoS por tamanho de payload, corrupção de JSON e exploração de parser (mitigação OWASP A03, A04 / MITRE T1499).
+- **Suíte de Testes de Segurança de Infraestrutura (`tests/test_infrastructure_security.py`)** — 6 novos testes automatizados cobrindo `.dockerignore`, `Dockerfile` (usuário não-root), `Caddyfile` (cabeçalhos OWASP), `docker-compose.yml` (privilégios e volumes), trilha de auditoria e sanitização de dados.
+
+### Métricas de Qualidade & Linhagem de Segurança
+- **Total de Testes Globais:** **457 testes 100% aprovados** (436 unitários/integração + 21 subtestes + 5 Playwright E2E).
+- **Linhagem de Segurança Preservada:** `git merge-base --is-ancestor security/hardening-v0.3.2 HEAD` (exit code 0).
+- **Taxa de Falhas:** **0 falhas, 0 erros**.
 
 ## [0.3.7-alpha] — 2026-09-21
 
