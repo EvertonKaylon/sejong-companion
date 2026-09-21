@@ -99,11 +99,14 @@ graph TD
 - 📋 **[[plano_ensino_implicito_neurociencia]]** — Plano de execução técnica para substituição de avisos por escrito por sinalizações implícitas e mecânicas visuais.
   - *Documentos Relacionados:* [[Neuropedagogia_e_Gamificacao]], [[didactic_neuroscience_korean_ptbr]]
 
+- ✍️ **[[Reconhecimento_Tatil_e_Caligrafia_Hangul]]** — Fundamentos da grade 원고지 (Wongoji), decomposição aritmética Unicode KS X 1001, classificação de 6 tipos de blocos silábicos (CV/CVC) e validação de traços (Stroke Order) em tempo real via Path Matching.
+  - *Documentos Relacionados:* [[didactic_neuroscience_korean_ptbr]], [[Neuropedagogia_e_Gamificacao]], [[Motor_Adaptativo_e_Learning_Engine]]
+
 ---
 
 ## 🔗 Atalhos de Navegação Direta
 
-- 📂 **[Diretório de Planos e Arquitetura](file:///c:/Users/Pichau/Documents/sejong_companion/Documentação/Planos_e_Arquitetura)**
-- 📂 **[Diretório de Viabilidade e Pesquisa](file:///c:/Users/Pichau/Documents/sejong_companion/Documentação/Viabilidade_e_Pesquisa)**
-- 📂 **[Diretório de Changelogs e Histórico](file:///c:/Users/Pichau/Documents/sejong_companion/Documentação/Changelogs_e_Historico)**
-- 📂 **[Diretório de Bugs Críticos Catalogados](file:///c:/Users/Pichau/Documents/sejong_companion/Documentação/Bugs_Criticos)**
+- 📂 **[Diretório de Planos e Arquitetura](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Planos_e_Arquitetura)**
+- 📂 **[Diretório de Viabilidade e Pesquisa](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Viabilidade_e_Pesquisa)**
+- 📂 **[Diretório de Changelogs e Histórico](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Changelogs_e_Historico)**
+- 📂 **[Diretório de Bugs Críticos Catalogados](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Bugs_Criticos)**

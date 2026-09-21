@@ -28,7 +28,7 @@ class TestWorkbookQuizContent(unittest.TestCase):
                 ]
                 self.assertEqual(len(workbook_questions), 4)
                 self.assertTrue(
-                    all(question["type"] == "multiple_choice" for question in workbook_questions)
+                    all(question["type"] in ("multiple_choice", "calligraphy") for question in workbook_questions)
                 )
 
     def test_workbook_question_ids_are_unique(self):

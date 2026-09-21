@@ -57,14 +57,14 @@ def lesson_view(page: ft.Page) -> ft.View:
                                     ),
                                     ft.Container(height=8),
                                     ft.Text(
-                                        "Esta lição está sendo preparada com muito carinho pela equipe Sejong Companion.\n\nEm breve, novos conteúdos estarão disponíveis!",
+                                        "Esta lição está sendo preparada com muito carinho pela equipe Saebom Companion.\n\nEm breve, novos conteúdos estarão disponíveis!",
                                         size=14,
                                         color=colors["text_sec"],
                                         text_align=ft.TextAlign.CENTER,
                                         no_wrap=False,
                                     ),
                                     ft.Container(height=24),
-                                    ft.ElevatedButton(
+                                    ft.Button(
                                         content="Voltar ao Menu",
                                         icon=ft.Icons.HOME_ROUNDED,
                                         style=ft.ButtonStyle(
@@ -220,9 +220,9 @@ def lesson_view(page: ft.Page) -> ft.View:
                     vertical_alignment=ft.CrossAxisAlignment.START,
                 ),
                 padding=10,
-                bgcolor="#14F5A623",
+                bgcolor=ft.Colors.with_opacity(0.12, colors["accent"]),
                 border_radius=Styles.BORDER_RADIUS_SM,
-                border=ft.Border.all(1, "#33F5A623"),
+                border=ft.Border.all(1, ft.Colors.with_opacity(0.20, colors["accent"])),
                 margin=ft.Margin.only(top=8, bottom=2),
             )
 
@@ -344,7 +344,7 @@ def lesson_view(page: ft.Page) -> ft.View:
 
     # Botão de Exercícios
     exercise_button = ft.Container(
-        content=ft.ElevatedButton(
+        content=ft.Button(
             content="Praticar com Exercícios (Quiz)",
             icon=ft.Icons.PLAY_ARROW_ROUNDED,
             style=ft.ButtonStyle(

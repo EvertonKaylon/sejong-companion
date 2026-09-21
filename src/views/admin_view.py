@@ -52,7 +52,7 @@ ADMIN_I18N = {
         # Login
         "login_title": "Portal Pedagógico",
         "login_sub": "Área Administrativa · 관리자",
-        "login_desc": "Acesso restrito ao corpo docente do Sejong Hakdang e administradores para análise de evidência pedagógica.",
+        "login_desc": "Acesso restrito ao corpo docente e administradores para análise de evidência pedagógica.",
         "pin_label": "PIN de Acesso",
         "login_btn": "Entrar no Painel",
         "back_home": "Voltar para o Início",
@@ -64,7 +64,7 @@ ADMIN_I18N = {
         "students_kpi": "학습자 수",
         "students_sub": "등록된 학생 프로필",
         "progress_kpi": "평균 진도율",
-        "progress_sub": "세종한국어 1A + 1B",
+        "progress_sub": "한국어 1A + 1B",
         "retention_kpi": "SRS 기억 유지율",
         "cards_suffix": "개 카드",
         "quizzes_kpi": "완료된 퀴즈",
@@ -101,9 +101,9 @@ ADMIN_I18N = {
         "lang_toggle_btn": "🇧🇷 Ver em Português",
         "lang_toggle_tooltip": "Alternar para Português / 포르투갈어로 전환",
         # Login
-        "login_title": "세종학당 교수 포털",
+        "login_title": "새봄 교수 포털",
         "login_sub": "관리자 및 교수진 전용 · 관리자",
-        "login_desc": "세종학당 교수진 및 관리자 전용 교육 성과 분석 포털입니다.",
+        "login_desc": "새봄 컴패니언 교수진 및 관리자 전용 교육 성과 분석 포털입니다.",
         "pin_label": "접속 PIN 번호",
         "login_btn": "대시보드 로그인",
         "back_home": "홈 화면으로 돌아가기",
@@ -116,9 +116,12 @@ def admin_view(page: ft.Page) -> ft.View:
     colors = get_theme_colors(is_dark)
     w = page.width or 400
 
-    # Estado de autenticação e idioma da sessão
-    if not hasattr(page, "_admin_authenticated"):
+    # Estado de autenticação e validação de expiração de sessão
+    session_token = getattr(page, "_admin_session_token", None)
+    if not AdminService.validate_session(session_token):
         page._admin_authenticated = False
+        page._admin_session_token = None
+
     if not hasattr(page, "_admin_lang"):
         page._admin_lang = "pt"
 
@@ -135,6 +138,19 @@ def admin_view(page: ft.Page) -> ft.View:
 
     # ─── 1. TELA DE LOGIN / AUTENTICAÇÃO POR PIN ───
     if not page._admin_authenticated:
+        error_text = ft.Text(t["pin_error"], size=12, color=colors["incorrect"], weight=ft.FontWeight.W_500)
+        error_banner = ft.Container(
+            content=ft.Row(
+                controls=[
+                    ft.Icon(ft.Icons.ERROR_OUTLINE_ROUNDED, color=colors["incorrect"], size=16),
+                    error_text,
+                ],
+                spacing=6,
+            ),
+            visible=False,
+            margin=ft.Margin.only(top=6, bottom=4),
+        )
+
         pin_input = ft.TextField(
             label=t["pin_label"],
             password=True,
@@ -145,25 +161,19 @@ def admin_view(page: ft.Page) -> ft.View:
             cursor_color=colors["primary"],
             text_size=15,
             autofocus=True,
-        )
-        error_banner = ft.Container(
-            content=ft.Row(
-                controls=[
-                    ft.Icon(ft.Icons.ERROR_OUTLINE_ROUNDED, color=colors["incorrect"], size=16),
-                    ft.Text(t["pin_error"], size=12, color=colors["incorrect"], weight=ft.FontWeight.W_500),
-                ],
-                spacing=6,
-            ),
-            visible=False,
-            margin=ft.Margin.only(top=6, bottom=4),
+            disabled=not AdminService.is_configured(),
         )
 
         def handle_login(e):
             entered_pin = pin_input.value or ""
-            if AdminService.authenticate(entered_pin):
+            client_key = getattr(page, "_sejong_student_id", None) or "admin_client"
+            success, token, msg = AdminService.login(entered_pin, client_key=client_key)
+            if success:
                 page._admin_authenticated = True
+                page._admin_session_token = token
                 rebuild_view()
             else:
+                error_text.value = msg
                 error_banner.visible = True
                 pin_input.border_color = colors["incorrect"]
                 page.update()
@@ -189,7 +199,7 @@ def admin_view(page: ft.Page) -> ft.View:
                         width=72,
                         height=72,
                         alignment=ft.Alignment.CENTER,
-                        bgcolor=f"{colors['primary']}18",
+                        bgcolor=ft.Colors.with_opacity(0.10, colors["primary"]),
                         shape=ft.BoxShape.CIRCLE,
                     ),
                     ft.Container(height=8),
@@ -205,7 +215,7 @@ def admin_view(page: ft.Page) -> ft.View:
                     pin_input,
                     error_banner,
                     ft.Container(height=10),
-                    ft.ElevatedButton(
+                    ft.Button(
                         content=ft.Row(
                             controls=[
                                 ft.Icon(ft.Icons.LOGIN_ROUNDED, size=18),
@@ -265,7 +275,10 @@ def admin_view(page: ft.Page) -> ft.View:
     all_students = AdminService.get_all_students_summary()
 
     def handle_logout(e):
+        token = getattr(page, "_admin_session_token", None)
+        AdminService.revoke_session(token)
         page._admin_authenticated = False
+        page._admin_session_token = None
         rebuild_view()
 
     def handle_refresh(e):
@@ -356,7 +369,7 @@ def admin_view(page: ft.Page) -> ft.View:
                                 width=32,
                                 height=32,
                                 alignment=ft.Alignment.CENTER,
-                                bgcolor=f"{color_hex}15",
+                                bgcolor=ft.Colors.with_opacity(0.08, color_hex),
                                 border_radius=Styles.BORDER_RADIUS_SM,
                             ),
                             ft.Text(title, size=12, weight=ft.FontWeight.W_600, color=colors["text_sec"]),

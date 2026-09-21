@@ -1,6 +1,7 @@
 # Entradas de Ambiente e Segredos
 .env
 *.env
+.env.*
 
 # Cache do Python e Pytest
 __pycache__/
@@ -8,11 +9,14 @@ __pycache__/
 *.pyo
 *.pyd
 .pytest_cache/
+.coverage
+htmlcov/
 
 # Ambientes Virtuais Python
 .venv/
 venv/
 ENV/
+env/
 
 # IDE e Editores
 .vscode/
@@ -25,28 +29,31 @@ ENV/
 build/
 dist/
 
-# Áudios Pré-Instalados de Fábrica (Bundled HD Assets Typecast)
-# Arquivos .mp3 e .wav são versionados para funcionamento 100% offline de fábrica
-assets/audio_cache/*.part
-assets/audio_cache/*.tmp
-!assets/audio_cache/*.mp3
-!assets/audio_cache/*.wav
-!assets/audio_cache/.gitkeep
+# Cache de Áudio Mutável e Temporários
+assets/audio_cache/
+data/cache/
+*.part
+*.tmp
 
-# Estado do Obsidian (configurações locais da workspace, tabs abertas, plugins)
-# A documentação em si (os arquivos .md) PERMANECE versionada no Git para proteção e backup!
+# Dados Dinâmicos em Runtime, Telemetria e Relatórios (Proteção de Privacidade)
+data/sessions/
+data/telemetry/
+data/reports/
+data/user_progress.json*
+*.jsonl
+
+# Estado do Obsidian
 .obsidian/
 Documentacao/.obsidian/
 
 # Arquivos temporários e scratch
 scratch/
+WhatsApp*
+gabarito*
+tests/screenshots/
 
 # Sistema Operacional
 Thumbs.db
 Desktop.ini
 .DS_Store
 
-# Dados de progresso do estudante (gerados em runtime, por sessão)
-data/user_progress.json
-data/user_progress.json.tmp
-data/sessions/

@@ -1,5 +1,6 @@
 import flet as ft
-from ..components import HangulCard, centered_content, build_oclusive_lab
+import flet.canvas as cv
+from ..components import HangulCard, centered_content, build_oclusive_lab, CalligraphyWidget
 from ..theme import get_theme_colors, Styles, Responsive
 from ..services import DataService
 
@@ -292,7 +293,7 @@ def hangul_view(page: ft.Page) -> ft.View:
                         spacing=6,
                         tight=True,
                     ),
-                    bgcolor="#14004C97",
+                    bgcolor=ft.Colors.with_opacity(0.08, colors["primary"]),
                     border=ft.Border.all(1, colors["primary_light"]),
                     border_radius=Styles.BORDER_RADIUS_SM,
                     padding=ft.Padding.symmetric(horizontal=10, vertical=6),
@@ -588,19 +589,279 @@ def hangul_view(page: ft.Page) -> ft.View:
         alignment=ft.Alignment.TOP_CENTER,
     )
 
+    # ─── Seção 5: Caligrafia 원고지 ───
+    page_width = page.width or 390
+    preview_grid_sz = min(220, max(180, int(page_width * 0.52)))
+    editor_grid_sz = min(320, max(280, int(page_width * 0.82)))
+
+    def on_calligraphy_completed(char: str, score: float):
+        if hasattr(page, "audio_service") and page.audio_service:
+            page.audio_service.play_korean(char)
+
+    calligraphy_widget = CalligraphyWidget(
+        target_char="가",
+        size=editor_grid_sz,
+        is_dark=is_dark,
+        on_completed=on_calligraphy_completed,
+    )
+
+    sample_chars = ["가", "나", "다", "한", "글", "세", "종", "ㄱ", "ㄴ", "ㄷ", "ㅏ", "ㅓ", "ㅗ"]
+
+    preview_char_title = ft.Text(
+        f"Praticando: {calligraphy_widget.target_char}",
+        size=13,
+        weight=ft.FontWeight.BOLD,
+        color=colors["primary"],
+    )
+    editor_char_title = ft.Text(
+        f"Praticando: {calligraphy_widget.target_char}",
+        size=13,
+        weight=ft.FontWeight.BOLD,
+        color=colors["primary"],
+    )
+
+    preview_canvas = cv.Canvas(
+        shapes=calligraphy_widget._generate_canvas_shapes(size=preview_grid_sz),
+        width=preview_grid_sz,
+        height=preview_grid_sz,
+    )
+    char_button_groups = []
+
+    def refresh_preview():
+        """Espelha no cartão da aba o estado do editor sem recriar seu viewport."""
+        preview_canvas.shapes = calligraphy_widget._generate_canvas_shapes(size=preview_grid_sz)
+        try:
+            preview_canvas.update()
+        except Exception:
+            pass
+
+    def on_select_char(char):
+        calligraphy_widget.set_target_character(char)
+        preview_char_title.value = f"Praticando: {char}"
+        editor_char_title.value = f"Praticando: {char}"
+        for group in char_button_groups:
+            for b, ch in group:
+                b.border = ft.Border.all(2, colors["primary"]) if ch == char else ft.Border.all(1, colors["border"])
+                b.bgcolor = colors["card_bg"] if ch == char else colors["surface"]
+        if hasattr(page, "audio_service") and page.audio_service:
+            page.audio_service.play_korean(char)
+        refresh_preview()
+        try:
+            page.update()
+        except Exception:
+            pass
+
+    def build_character_buttons():
+        """Cria seletores independentes para a prévia e o modal de escrita."""
+        group = []
+        buttons = []
+        for c in sample_chars:
+            is_selected = c == calligraphy_widget.target_char
+            btn = ft.Container(
+                content=ft.Text(c, size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                width=41,
+                height=35,
+                alignment=ft.Alignment.CENTER,
+                bgcolor=colors["card_bg"] if is_selected else colors["surface"],
+                border=ft.Border.all(2, colors["primary"]) if is_selected else ft.Border.all(1, colors["border"]),
+                border_radius=6,
+                on_click=lambda e, ch=c: on_select_char(ch),
+                animate=100,
+            )
+            group.append((btn, c))
+            buttons.append(btn)
+        char_button_groups.append(group)
+        return buttons
+
+    preview_char_buttons = build_character_buttons()
+    editor_char_buttons = build_character_buttons()
+
+    def close_writing_mode(_=None):
+        refresh_preview()
+        try:
+            page.pop_dialog()
+        except Exception:
+            pass
+
+    writing_dialog = ft.AlertDialog(
+        modal=True,
+        scrollable=False,
+        inset_padding=ft.Padding.symmetric(horizontal=8, vertical=8),
+        title=ft.Row(
+            controls=[
+                ft.Icon(ft.Icons.DRAW_ROUNDED, color=colors["primary"]),
+                ft.Text("Modo de escrita · 원고지", size=16, weight=ft.FontWeight.BOLD),
+            ],
+            spacing=6,
+        ),
+        content=ft.Container(
+            width=editor_grid_sz + 16,
+            content=ft.Column(
+                controls=[
+                    ft.Text("Selecione um caractere:", size=11, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                    ft.Row(
+                        controls=editor_char_buttons,
+                        wrap=True,
+                        spacing=5,
+                        run_spacing=5,
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                    editor_char_title,
+                    calligraphy_widget,
+                ],
+                tight=True,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                spacing=5,
+            ),
+        ),
+        actions=[
+            ft.TextButton("Fechar / Voltar", icon=ft.Icons.ARROW_BACK_ROUNDED, on_click=close_writing_mode),
+        ],
+        actions_alignment=ft.MainAxisAlignment.END,
+        on_dismiss=lambda _: refresh_preview(),
+    )
+
+    def open_writing_mode(_=None):
+        try:
+            page.show_dialog(writing_dialog)
+        except Exception:
+            pass
+
+    preview_card = ft.Container(
+        content=ft.Column(
+            controls=[
+                ft.GestureDetector(
+                    content=ft.Container(
+                        content=preview_canvas,
+                        width=preview_grid_sz,
+                        height=preview_grid_sz,
+                        bgcolor="#FAF8F5" if not is_dark else "#1C1917",
+                        border=ft.Border.all(2, "#EF4444" if not is_dark else "#F87171"),
+                        border_radius=Styles.BORDER_RADIUS_MD,
+                        clip_behavior=ft.ClipBehavior.HARD_EDGE,
+                    ),
+                    on_tap=open_writing_mode,
+                    mouse_cursor=ft.MouseCursor.CLICK,
+                ),
+                ft.Text(
+                    "Toque na grade para abrir o modo de escrita",
+                    size=10,
+                    color=colors["text_sec"],
+                    text_align=ft.TextAlign.CENTER,
+                ),
+            ],
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=4,
+        ),
+        alignment=ft.Alignment.CENTER,
+    )
+
+    caligrafia_inner_col = ft.Column(
+        controls=[
+            ft.Container(
+                content=ft.Column(
+                    controls=[
+                        ft.Row(
+                            controls=[
+                                ft.Text("✍️", size=14),
+                                ft.Text("Caligrafia na Grade 원고지", size=12, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                            ],
+                            spacing=6,
+                        ),
+                        ft.Text(
+                            "A prévia não captura arrastos: role a aba normalmente ou toque na grade para escrever em tela ampliada.",
+                            size=10,
+                            color=colors["text_sec"],
+                        ),
+                    ],
+                    spacing=2,
+                ),
+                padding=ft.Padding.symmetric(horizontal=10, vertical=6),
+                bgcolor=colors["surface"],
+                border_radius=Styles.BORDER_RADIUS_MD,
+                border=ft.Border.all(1, colors["border"]),
+            ),
+            ft.Text("Selecione um caractere para treinar:", size=11, weight=ft.FontWeight.BOLD, color=colors["text"]),
+            ft.Row(
+                controls=preview_char_buttons,
+                wrap=True,
+                spacing=5,
+                run_spacing=5,
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
+            preview_char_title,
+            preview_card,
+            ft.Container(height=24),
+        ],
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        spacing=4,
+        scroll=ft.ScrollMode.AUTO,
+        expand=True,
+    )
+
+    caligrafia_col = ft.Container(
+        content=caligrafia_inner_col,
+        padding=ft.Padding.symmetric(horizontal=6, vertical=2),
+        alignment=ft.Alignment.TOP_CENTER,
+        expand=True,
+    )
+
     # ─── Abas (Tabs) ───
     tab_headers = [
         ft.Tab(label="Vogais", icon=ft.Icons.FONT_DOWNLOAD_OUTLINED),
         ft.Tab(label="Consoantes", icon=ft.Icons.SPELLCHECK_ROUNDED),
         ft.Tab(label="받침", icon=ft.Icons.LAYERS_ROUNDED),
         ft.Tab(label="Sílabas", icon=ft.Icons.GRID_VIEW_ROUNDED),
+        ft.Tab(label="Caligrafia", icon=ft.Icons.DRAW_ROUNDED),
     ]
+
+    tab_views = [
+        vowels_col,
+        consonants_col,
+        batchim_section,
+        syllables_col,
+        caligrafia_col,
+    ]
+
+    current_tab_container = ft.Container(
+        content=tab_views[0],
+        expand=True,
+    )
+
+    # Botão de Teste Fixo Inferior
+    quiz_button = ft.Container(
+        content=ft.Button(
+            content="Testar Conhecimentos (Desafio)",
+            icon=ft.Icons.QUIZ_ROUNDED,
+            style=ft.ButtonStyle(
+                color=ft.Colors.WHITE,
+                bgcolor=colors["secondary"],
+                shape=ft.RoundedRectangleBorder(radius=Styles.BORDER_RADIUS_SM),
+                padding=10
+            ),
+            on_click=lambda e: page.router.navigate_to("/quiz", "unit_intro"),
+        ),
+        padding=ft.Padding.symmetric(horizontal=12, vertical=6),
+        bgcolor=colors["surface"],
+        border=ft.Border.only(top=ft.BorderSide(1, colors["border"])),
+        visible=True,
+    )
+
+    def on_tab_change(e):
+        idx = getattr(tabs, "selected_index", 0)
+        if 0 <= idx < len(tab_views):
+            current_tab_container.content = tab_views[idx]
+            quiz_button.visible = (idx != 4)
+            try:
+                page.update()
+            except Exception:
+                pass
 
     tabs = ft.Tabs(
         selected_index=0,
-        animation_duration=200,
         expand=True,
         length=len(tab_headers),
+        on_change=on_tab_change,
         content=ft.Column(
             expand=True,
             controls=[
@@ -608,37 +869,11 @@ def hangul_view(page: ft.Page) -> ft.View:
                     tabs=tab_headers,
                     label_color=colors["primary"],
                     unselected_label_color=colors["text_sec"],
-                    indicator_color=colors["primary"]
+                    indicator_color=colors["primary"],
                 ),
-                ft.TabBarView(
-                    expand=True,
-                    controls=[
-                        vowels_col,
-                        consonants_col,
-                        batchim_section,
-                        syllables_col,
-                    ]
-                )
+                current_tab_container,
             ]
         )
-    )
-
-    # Botão de Teste Fixo Inferior
-    quiz_button = ft.Container(
-        content=ft.ElevatedButton(
-            content="Testar Conhecimentos (Desafio)",
-            icon=ft.Icons.QUIZ_ROUNDED,
-            style=ft.ButtonStyle(
-                color=ft.Colors.WHITE,
-                bgcolor=colors["secondary"],
-                shape=ft.RoundedRectangleBorder(radius=Styles.BORDER_RADIUS_SM),
-                padding=14
-            ),
-            on_click=lambda e: page.router.navigate_to("/quiz", "unit_intro"),
-        ),
-        padding=ft.Padding.symmetric(horizontal=12, vertical=10),
-        bgcolor=colors["surface"],
-        border=ft.Border.only(top=ft.BorderSide(1, colors["border"])),
     )
 
     return ft.View(

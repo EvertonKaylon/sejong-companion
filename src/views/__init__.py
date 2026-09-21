@@ -1,4 +1,4 @@
-"""Telas e registro central das rotas do Sejong Companion."""
+"""Telas e registro central das rotas do Saebom Companion."""
 
 from .hangul_view import hangul_view
 from .home_view import home_view

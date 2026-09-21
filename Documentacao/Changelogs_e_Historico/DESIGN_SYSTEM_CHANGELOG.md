@@ -1,14 +1,23 @@
-# Design System aplicado ao Sejong Companion
+# Design System aplicado ao Saebom Companion (새봄 컴패니언)
 
-O `design-system.zip` é um projeto Next.js + Tailwind v4 + shadcn/ui (web/React).
-O Sejong Companion é um app Python feito com **Flet**. Não dá pra copiar os
-arquivos `.tsx`/`.css` direto — eles não rodam nesse stack. O que foi feito foi
-**portar os tokens de design** (cores, tipografia, radius, sombras) para
-`src/theme.py`, que já era a única fonte de verdade de estilo do app: todo
-componente e view lê `get_theme_colors()` e `Styles`, então a mudança se
-propaga sozinha pelo app inteiro.
+## Rodada 4 — Transição Oficial Saebom Companion (Brand Book v3.1)
 
-## Abordagem final (depois de duas rodadas)
+Em setembro de 2026, com a determinação pedagógica de proibir o nome "Sejong", o design system foi formalmente padronizado com base no **Saebom Companion Branding Book v3.1**:
+
+- **Regra de Ouro:** *"Navy é território. Violet é sistema. Gold é sinal."*
+- **PRIMARY (`#8B4DFF` - Violet):** Assume o papel primário de sistema, navegação, progresso e botões de ação estrutural (substituindo o antigo azul Sejong `#004C97`).
+- **SECONDARY (`#B28AFF` - Lilac):** Acento suave de apoio e companheirismo.
+- **ACCENT (`#FFAB22` - Gold):** Conquistas, medalhas, destaques e CTAs de conversão.
+- **DARK_BG (`#02060F` - Midnight Navy):** 60% do território visual, quietude noturna de foco sem fadiga visual.
+- **LIGHT_BG (`#F7F4EC` - Cream):** Superfície de leitura quente para fundos claros.
+- **SLATE (`#9EA2AE`):** Estrutura e linhas editoriais discretas.
+- **HOVER_SHADOW (`#598B4DFF`):** Brilho de hover com 35% de opacidade sobre o novo Violet oficial.
+- **Tokens Nomeados:** `get_theme_colors()` agora expõe diretamente `navy`, `violet`, `gold`, `lilac`, `cream`, `slate`.
+- **Identidade da Aplicação:** `apply_app_theme(page)` define `page.title = f"Saebom Companion v{__version__}"`.
+
+---
+
+## Histórico Anterior (Rodadas 1 a 3 — Pré-Rebranding)
 
 - **Primária** → azul `#0356C5` ("Azul Real Sejong", token `info` do design
   system) — usada na estrutura do app: cabeçalhos, abas, ícones, avatares,

@@ -1,0 +1,56 @@
+name: Sejong Companion CI & Security Gates
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - 'security/**'
+      - 'feature/**'
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  test-and-security:
+    name: Test & Security Hardening Verification
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest anyio pytest-asyncio
+
+      - name: Syntax & Bytecode Compilation Check
+        run: |
+          python -m compileall src tests
+
+      - name: Secret Scanning (Hardcoded Defaults Check)
+        run: |
+          echo "Scanning codebase for compromised hardcoded fallback secrets..."
+          if grep -rn "sejong2026" src/ docker-compose.yml; then
+            echo "ERROR: Compromised default PIN 'sejong2026' detected in codebase!"
+            exit 1
+          fi
+          echo "Secret check passed: No default admin credentials found."
+
+      - name: Run Test Suite
+        env:
+          SEJONG_ADMIN_PIN: "ci_test_admin_pin_987654"
+        run: |
+          pytest tests/ -v

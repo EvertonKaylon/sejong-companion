@@ -64,7 +64,7 @@ def quiz_view(page: ft.Page) -> ft.View:
                                         no_wrap=False,
                                     ),
                                     ft.Container(height=24),
-                                    ft.ElevatedButton(
+                                    ft.Button(
                                         content="Voltar ao Menu",
                                         icon=ft.Icons.HOME_ROUNDED,
                                         style=ft.ButtonStyle(
@@ -337,7 +337,7 @@ def quiz_view(page: ft.Page) -> ft.View:
                     # Botões de Ação — responsivos com expand
                     ft.Column(
                         controls=[
-                            ft.ElevatedButton(
+                            ft.Button(
                                 content="Voltar ao Menu Principal",
                                 icon=ft.Icons.HOME_ROUNDED,
                                 style=ft.ButtonStyle(

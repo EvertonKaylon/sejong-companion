@@ -1,6 +1,7 @@
 import flet as ft
 from ..theme import get_theme_colors, Styles
 
+
 class HangulCard(ft.Container):
     def __init__(self, char_data, is_dark: bool, on_audio_click=None, size=140):
         self.card_size = size
@@ -9,10 +10,20 @@ class HangulCard(ft.Container):
         self.colors = get_theme_colors(is_dark)
         self.flipped = False
         self.on_audio_click = on_audio_click
-        
+
         # Escalar fontes proporcionalmente ao tamanho do card
         _scale = self.card_size / 140
-        
+
+        # Anel de brilho (glow ring) de fundo para efeito sensorial ao passar o mouse/selecionar
+        self.glow_ring = ft.Container(
+            width=self.card_size,
+            height=self.card_size,
+            border_radius=Styles.BORDER_RADIUS_MD,
+            bgcolor=ft.Colors.with_opacity(0.12, self.colors["primary"]),
+            opacity=0.0,
+            animate_opacity=300,
+        )
+
         # Frente: Caractere Coreano
         self.char_text = ft.Text(
             value=char_data.char,
@@ -21,16 +32,16 @@ class HangulCard(ft.Container):
             color=self.colors["primary"],
             text_align=ft.TextAlign.CENTER,
         )
-        
+
         # Verso: Nome em 한글 + Descrição fonética em português
-        name_text = char_data.name if hasattr(char_data, 'name') else ""
-        
+        name_text = char_data.name if hasattr(char_data, "name") else ""
+
         detail_controls = [
             ft.Text(
                 name_text,
                 size=max(12, int(18 * _scale)),
                 weight=ft.FontWeight.BOLD,
-                color=self.colors["text"]
+                color=self.colors["text"],
             ),
             ft.Text(
                 char_data.pronunciation,
@@ -42,23 +53,47 @@ class HangulCard(ft.Container):
             ),
         ]
 
+        # Silhueta da boca / formato articulatório (kinesiological mouth shape)
+        if hasattr(char_data, "mouth_shape_id") and char_data.mouth_shape_id:
+            mouth_id = char_data.mouth_shape_id
+            mouth_img = ft.Image(
+                src=f"/mouth_shapes/{mouth_id}.svg",
+                width=int(40 * _scale),
+                height=int(40 * _scale),
+                fit=ft.BoxFit.CONTAIN,
+            )
+            mouth_container = ft.Container(
+                content=mouth_img,
+                tooltip=f"Posição da boca: {mouth_id}",
+                alignment=ft.Alignment.CENTER,
+            )
+            detail_controls.append(mouth_container)
+
         # Indicador de tipo (para aspiradas/tensas)
-        if hasattr(char_data, 'type') and char_data.type != "plain":
+        if hasattr(char_data, "type") and char_data.type != "plain":
             type_labels = {
                 "aspirated": "💨 Aspirada",
                 "tense": "💪 Tensa",
             }
             type_label = type_labels.get(char_data.type, "")
             if type_label:
-                detail_controls.insert(0, ft.Container(
-                    content=ft.Text(type_label, size=8, weight=ft.FontWeight.BOLD, color=self.colors["secondary"]),
-                    bgcolor="#19188150",
-                    border_radius=4,
-                    padding=ft.Padding.symmetric(horizontal=6, vertical=2),
-                ))
-        
+                detail_controls.insert(
+                    0,
+                    ft.Container(
+                        content=ft.Text(
+                            type_label,
+                            size=8,
+                            weight=ft.FontWeight.BOLD,
+                            color=self.colors["secondary"],
+                        ),
+                        bgcolor=ft.Colors.with_opacity(0.10, self.colors["correct"]),
+                        border_radius=4,
+                        padding=ft.Padding.symmetric(horizontal=6, vertical=2),
+                    ),
+                )
+
         # Dica mnemônica para vogais
-        if hasattr(char_data, 'mnemonic') and char_data.mnemonic:
+        if hasattr(char_data, "mnemonic") and char_data.mnemonic:
             detail_controls.append(
                 ft.Container(
                     content=ft.Text(
@@ -68,7 +103,7 @@ class HangulCard(ft.Container):
                         text_align=ft.TextAlign.CENTER,
                         italic=True,
                     ),
-                    margin=ft.Margin.only(top=4)
+                    margin=ft.Margin.only(top=4),
                 )
             )
 
@@ -77,12 +112,13 @@ class HangulCard(ft.Container):
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             spacing=4,
-            visible=False
+            visible=False,
         )
 
         super().__init__(
             content=ft.Stack(
                 controls=[
+                    self.glow_ring,
                     ft.Container(
                         content=self.char_text,
                         alignment=ft.Alignment.CENTER,
@@ -91,7 +127,7 @@ class HangulCard(ft.Container):
                         content=self.detail_col,
                         alignment=ft.Alignment.CENTER,
                         padding=8,
-                    )
+                    ),
                 ]
             ),
             width=self.card_size,
@@ -103,14 +139,20 @@ class HangulCard(ft.Container):
             alignment=ft.Alignment.CENTER,
             animate=150,
             on_click=self.toggle_flip,
-            on_hover=self.on_card_hover
+            on_hover=self.on_card_hover,
         )
+
+    def update(self):
+        try:
+            super().update()
+        except Exception:
+            pass
 
     def toggle_flip(self, e):
         self.flipped = not self.flipped
         # Áudio-Visual Gating: Tocar no card ativa o áudio nativo imediatamente
         if self.on_audio_click:
-            sound_query = getattr(self.char_data, 'char', None) or getattr(self.char_data, 'name', '')
+            sound_query = getattr(self.char_data, "char", None) or getattr(self.char_data, "name", "")
             self.on_audio_click(sound_query)
 
         if self.flipped:
@@ -123,17 +165,25 @@ class HangulCard(ft.Container):
             self.detail_col.visible = False
             self.bgcolor = self.colors["card_bg"]
             self.border = ft.Border.all(1, self.colors["border"])
-        self.update()
+        try:
+            self.update()
+        except Exception:
+            pass
 
     def on_card_hover(self, e):
         if e.data == "true":
             self.scale = 1.04
             self.shadow = Styles.HOVER_SHADOW
+            self.glow_ring.opacity = 0.8
             if not self.flipped:
                 self.border = ft.Border.all(1.5, self.colors["primary_light"])
         else:
             self.scale = 1.0
             self.shadow = Styles.CARD_SHADOW
+            self.glow_ring.opacity = 0.0
             if not self.flipped:
                 self.border = ft.Border.all(1, self.colors["border"])
-        self.update()
+        try:
+            self.update()
+        except Exception:
+            pass

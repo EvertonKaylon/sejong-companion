@@ -193,28 +193,98 @@
       "type": "order_words",
       "question": "Ordene: 'Vou ao cinema para assistir a um filme'",
       "explanation": "Lugar (영화관에) + Objeto/Ação (영화를 보러) + Movimento (가요).",
-      "words": ["가요", "영화를 보러", "영화관에"],
-      "correct_order": ["영화관에", "영화를 보러", "가요"]
+      "words": [
+        "가요",
+        "영화를 보러",
+        "영화관에"
+      ],
+      "correct_order": [
+        "영화관에",
+        "영화를 보러",
+        "가요"
+      ]
     },
     {
       "id": "u1b_02_q04",
       "type": "drag_and_drop_sov",
       "question": "Monte a frase: 'Minwoo vai ao parque para andar de bicicleta'",
       "explanation": "Sujeito (민우는) + Local/Propósito (공원에 자전거를 타러) + Verbo (가요).",
-      "words": ["민우는", "공원에", "자전거를 타러", "가요"],
-      "correct_order": ["민우는", "공원에", "자전거를 타러", "가요"],
+      "words": [
+        "민우는",
+        "공원에",
+        "자전거를 타러",
+        "가요"
+      ],
+      "correct_order": [
+        "민우는",
+        "공원에",
+        "자전거를 타러",
+        "가요"
+      ],
       "sov_items": [
-        { "word": "민우는", "role": "SUBJECT", "snap_anchor": "round" },
-        { "word": "공원에", "role": "LOCATION", "snap_anchor": "round" },
-        { "word": "자전거를 타러", "role": "OBJECT", "snap_anchor": "round" },
-        { "word": "가요", "role": "VERB", "snap_anchor": "round" }
+        {
+          "word": "민우는",
+          "role": "SUBJECT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "공원에",
+          "role": "LOCATION",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "자전거를 타러",
+          "role": "OBJECT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "가요",
+          "role": "VERB",
+          "snap_anchor": "round"
+        }
       ],
       "sov_slots": [
-        { "role": "SUBJECT", "label": "주어 (Sujeito)", "accepted_roles": ["SUBJECT"] },
-        { "role": "LOCATION", "label": "장소 (Local)", "accepted_roles": ["LOCATION", "OBJECT"] },
-        { "role": "OBJECT", "label": "목적 (Propósito/Objeto)", "accepted_roles": ["OBJECT", "VERB"] },
-        { "role": "VERB", "label": "동사 (Verbo)", "accepted_roles": ["VERB", "PREDICATE"] }
+        {
+          "role": "SUBJECT",
+          "label": "주어 (Sujeito)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "LOCATION",
+          "label": "장소 (Local)",
+          "accepted_roles": [
+            "LOCATION",
+            "OBJECT"
+          ]
+        },
+        {
+          "role": "OBJECT",
+          "label": "목적 (Propósito/Objeto)",
+          "accepted_roles": [
+            "OBJECT",
+            "VERB"
+          ]
+        },
+        {
+          "role": "VERB",
+          "label": "동사 (Verbo)",
+          "accepted_roles": [
+            "VERB",
+            "PREDICATE"
+          ]
+        }
       ]
+    },
+    {
+      "id": "u1b_02_q05",
+      "type": "calligraphy",
+      "question": "Prática de Escrita do Workbook 1B: Escreva a frase '자전거를 못 타요' (não consigo andar de bicicleta) na grade 원고지:",
+      "target_text": "자전거를 못 타요",
+      "min_iou": 0.4,
+      "show_ghost": true,
+      "explanation": "자전거를 (bicicleta) + 못 (inabilidade) + 타요 (andar/montar)."
     }
   ]
 }

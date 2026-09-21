@@ -49,7 +49,7 @@ def review_view(page: ft.Page) -> ft.View:
                 ft.Text("Revisão concluída!", size=24, weight=ft.FontWeight.BOLD, color=colors["text"]),
                 ft.Text(f"{reviewed} recordações consolidadas · +{progress_service.get_total_xp() - state['starting_xp']} XP hoje", size=14, color=colors["text_sec"], text_align=ft.TextAlign.CENTER),
                 ft.Text(f"📅 {progress_service.get_daily_streak()} dias estudados · ✨ {progress_service.get_total_xp()} XP", size=14, color=colors["accent"]),
-                ft.ElevatedButton(content=ft.Text("Voltar à Home"), icon=ft.Icons.HOME_ROUNDED, on_click=back,
+                ft.Button(content=ft.Text("Voltar à Home"), icon=ft.Icons.HOME_ROUNDED, on_click=back,
                     style=ft.ButtonStyle(color=ft.Colors.WHITE, bgcolor=colors["primary"])),
             ],
             horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=14,
@@ -93,12 +93,12 @@ def review_view(page: ft.Page) -> ft.View:
                 content=ft.Row(
                     controls=[
                         ft.Icon(ft.Icons.AUTO_STORIES_ROUNDED, size=12, color=colors["secondary"]),
-                        ft.Text(f"Sejong 1B · Unidade {u_num:02d}", size=11, weight=ft.FontWeight.BOLD, color=colors["secondary"]),
+                        ft.Text(f"Nível 1B · Unidade {u_num:02d}", size=11, weight=ft.FontWeight.BOLD, color=colors["secondary"]),
                     ],
                     spacing=4,
                 ),
-                bgcolor=f"{colors['secondary']}18",
-                border=ft.Border.all(1, f"{colors['secondary']}44"),
+                bgcolor=ft.Colors.with_opacity(0.10, colors["secondary"]),
+                border=ft.Border.all(1, ft.Colors.with_opacity(0.25, colors["secondary"])),
                 border_radius=Styles.BORDER_RADIUS_SM,
                 padding=ft.Padding.symmetric(horizontal=8, vertical=3),
             )
@@ -108,12 +108,12 @@ def review_view(page: ft.Page) -> ft.View:
                 content=ft.Row(
                     controls=[
                         ft.Icon(ft.Icons.MENU_BOOK_ROUNDED, size=12, color=colors["primary"]),
-                        ft.Text(f"Sejong 1A · Unidade {u_num:02d}", size=11, weight=ft.FontWeight.BOLD, color=colors["primary"]),
+                        ft.Text(f"Nível 1A · Unidade {u_num:02d}", size=11, weight=ft.FontWeight.BOLD, color=colors["primary"]),
                     ],
                     spacing=4,
                 ),
-                bgcolor=f"{colors['primary']}18",
-                border=ft.Border.all(1, f"{colors['primary']}44"),
+                bgcolor=ft.Colors.with_opacity(0.10, colors["primary"]),
+                border=ft.Border.all(1, ft.Colors.with_opacity(0.25, colors["primary"])),
                 border_radius=Styles.BORDER_RADIUS_SM,
                 padding=ft.Padding.symmetric(horizontal=8, vertical=3),
             )
@@ -236,7 +236,7 @@ def review_view(page: ft.Page) -> ft.View:
                 ft.Container(height=4),
                 ft.Row(
                     controls=[
-                        ft.ElevatedButton(
+                        ft.Button(
                             content=ft.Text("Continuar Trilha"),
                             icon=ft.Icons.EXPLORE_ROUNDED,
                             on_click=lambda e: page.router.navigate_to("/home"),

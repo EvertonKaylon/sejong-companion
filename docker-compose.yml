@@ -7,13 +7,13 @@ services:
     restart: always
     environment:
       - PORT=8554
-      - SEJONG_ADMIN_PIN=${SEJONG_ADMIN_PIN:-sejong2026}
+      - SEJONG_ADMIN_PIN=${SEJONG_ADMIN_PIN:?SEJONG_ADMIN_PIN environment variable is required}
       - TYPECAST_API_KEY=${TYPECAST_API_KEY:-}
-    ports:
-      - "8554:8554"
+    expose:
+      - "8554"
     volumes:
       # Volumes persistentes para que os dados dos alunos e áudios NUNCA sejam apagados
-      - ./assets/audio_cache:/app/assets/audio_cache
+      - ./data/cache/audio:/app/data/cache/audio
       - ./data/sessions:/app/data/sessions
       - ./data/telemetry:/app/data/telemetry
       - ./data/reports:/app/data/reports

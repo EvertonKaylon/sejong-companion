@@ -1,0 +1,48 @@
+{
+  "version": "0.3.6-alpha",
+  "release_date": "2026-09-20",
+  "title_pt": "Novidades do Saebom",
+  "title_kr": "새봄 소식",
+  "greeting_pt": "Olá! Confira as novidades preparadas para você e sua professora:",
+  "greeting_kr": "안녕하세요! 새로운 학습 기능을 확인해보세요:",
+  "highlights": [
+    {
+      "tag": "Neurociência",
+      "tag_kr": "뇌과학",
+      "icon": "psychology",
+      "title_pt": "Fábrica de Sílabas e Física Articulatória",
+      "title_kr": "음절 공장 & 조음 물리",
+      "desc_pt": "Formação visual de blocos Hangul e feedback sensorial com tempo de início de voz (VOT).",
+      "desc_kr": "시각적 한글 음절 조합 및 음성개시시간(VOT) 기반 감각 피드백 훈련."
+    },
+    {
+      "tag": "Estágio Espacial",
+      "tag_kr": "공간 훈련",
+      "icon": "explore",
+      "title_pt": "Posições e Vocabulário Visual",
+      "title_kr": "위치 표현 & 시각 어휘",
+      "desc_pt": "Treinamento imersivo de conceitos espaciais (위, 아래, 앞, 뒤, 안, 밖).",
+      "desc_kr": "공간 개념(위, 아래, 앞, 뒤, 안, 밖)을 위한 몰입형 시각 어휘 훈련."
+    },
+    {
+      "tag": "Identidade",
+      "tag_kr": "학습자 식별",
+      "icon": "person",
+      "title_pt": "Fusão Inteligente de Sessões",
+      "title_kr": "지능형 세션 통합",
+      "desc_pt": "Identificação sem distinção de maiúsculas/minúsculas e preservação de progresso.",
+      "desc_kr": "대소문자 구분 없는 학습자 식별 및 안전한 학습 진행도 보존."
+    },
+    {
+      "tag": "Caligrafia",
+      "tag_kr": "원고지 쓰기",
+      "icon": "draw",
+      "title_pt": "Modo Focus e Gabaritos Oficiais",
+      "title_kr": "집중 모드 & 공식 답안",
+      "desc_pt": "Caligrafia guiada em 원고지 com fidelidade aos livros oficiais e avaliação por IoU.",
+      "desc_kr": "공식 교재 기반 원고지 쓰기 및 IoU 정밀 획 분석."
+    }
+  ],
+  "footer_pt": "A tecnologia acompanha a pedagogia. Nunca compete com ela.",
+  "footer_kr": "기술은 교육을 보조하며 결코 앞서지 않습니다."
+}

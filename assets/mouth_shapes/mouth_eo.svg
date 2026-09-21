@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <title>Mouth Shape - EO [ㅓ]</title>
+  <!-- Medium open aperture -->
+  <path d="M 22,46 C 22,30 78,30 78,46 C 78,70 22,70 22,46 Z" fill="#2A1B3D" stroke="#8B4DFF" stroke-width="3"/>
+  <!-- Oral cavity -->
+  <path d="M 30,46 C 30,37 70,37 70,46 C 70,62 30,62 30,46 Z" fill="#150B24"/>
+  <!-- Tongue: Mid back position -->
+  <path d="M 34,54 C 45,49 55,48 66,54 C 64,60 36,60 34,54 Z" fill="#E85D75"/>
+  <!-- Upper Lip -->
+  <path d="M 22,46 C 36,40 50,44 50,44 C 50,44 64,40 78,46" stroke="#B28AFF" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <!-- Lower Lip -->
+  <path d="M 26,51 C 36,68 64,68 74,51" stroke="#B28AFF" stroke-width="4" fill="none" stroke-linecap="round"/>
+</svg>

@@ -184,28 +184,97 @@
       "type": "order_words",
       "question": "Ordene a oração causal: 'Comprei a saia porque ela é barata'",
       "explanation": "Causa (치마가 싸서) + Ação (샀어요).",
-      "words": ["샀어요", "싸서", "치마가"],
-      "correct_order": ["치마가", "싸서", "샀어요"]
+      "words": [
+        "샀어요",
+        "싸서",
+        "치마가"
+      ],
+      "correct_order": [
+        "치마가",
+        "싸서",
+        "샀어요"
+      ]
     },
     {
       "id": "u1b_03_q04",
       "type": "drag_and_drop_sov",
       "question": "Monte a frase: 'Eu vou comprar uma camisa no shopping'",
       "explanation": "Sujeito (저는) + Local (백화점에서) + Objeto (셔츠를) + Verbo no Futuro (살 거예요).",
-      "words": ["저는", "백화점에서", "셔츠를", "살 거예요"],
-      "correct_order": ["저는", "백화점에서", "셔츠를", "살 거예요"],
+      "words": [
+        "저는",
+        "백화점에서",
+        "셔츠를",
+        "살 거예요"
+      ],
+      "correct_order": [
+        "저는",
+        "백화점에서",
+        "셔츠를",
+        "살 거예요"
+      ],
       "sov_items": [
-        { "word": "저는", "role": "SUBJECT", "snap_anchor": "round" },
-        { "word": "백화점에서", "role": "LOCATION", "snap_anchor": "square" },
-        { "word": "셔츠를", "role": "OBJECT", "snap_anchor": "round" },
-        { "word": "살 거예요", "role": "PREDICATE", "snap_anchor": "round" }
+        {
+          "word": "저는",
+          "role": "SUBJECT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "백화점에서",
+          "role": "LOCATION",
+          "snap_anchor": "square"
+        },
+        {
+          "word": "셔츠를",
+          "role": "OBJECT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "살 거예요",
+          "role": "PREDICATE",
+          "snap_anchor": "round"
+        }
       ],
       "sov_slots": [
-        { "role": "SUBJECT", "label": "주어 (Sujeito)", "accepted_roles": ["SUBJECT"] },
-        { "role": "LOCATION", "label": "장소 (Local)", "accepted_roles": ["LOCATION", "OBJECT"] },
-        { "role": "OBJECT", "label": "목적어 (Objeto)", "accepted_roles": ["OBJECT"] },
-        { "role": "PREDICATE", "label": "서술어 (Predicado Futuro)", "accepted_roles": ["PREDICATE", "VERB"] }
+        {
+          "role": "SUBJECT",
+          "label": "주어 (Sujeito)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "LOCATION",
+          "label": "장소 (Local)",
+          "accepted_roles": [
+            "LOCATION",
+            "OBJECT"
+          ]
+        },
+        {
+          "role": "OBJECT",
+          "label": "목적어 (Objeto)",
+          "accepted_roles": [
+            "OBJECT"
+          ]
+        },
+        {
+          "role": "PREDICATE",
+          "label": "서술어 (Predicado Futuro)",
+          "accepted_roles": [
+            "PREDICATE",
+            "VERB"
+          ]
+        }
       ]
+    },
+    {
+      "id": "u1b_03_q05",
+      "type": "calligraphy",
+      "question": "Prática de Escrita do Workbook 1B: Escreva a frase '티셔츠를 입어요' (visto camiseta) na grade 원고지:",
+      "target_text": "티셔츠를 입어요",
+      "min_iou": 0.4,
+      "show_ghost": true,
+      "explanation": "티셔츠를 (camiseta + obj) + 입어요 (vestir roupa de corpo)."
     }
   ]
 }
