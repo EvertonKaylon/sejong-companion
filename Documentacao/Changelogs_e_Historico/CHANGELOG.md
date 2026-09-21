@@ -16,10 +16,36 @@ Pré-Alpha → Alpha → Beta → RC → RTM → GA
 
 | Fase | Versão Alvo | Critérios de Entrada |
 |------|-------------|----------------------|
-| **Alpha** (atual) | `0.3.6-alpha` | Reconciliação Pedagógica & Neurociência, WhatsNewDialog, Brand Book v3.1, Resolução BUG-12, ≥ 300 Testes Automatizados (100% OK) |
+| **Alpha** (atual) | `0.3.7-alpha` | Sistema Integrado de Notificações, Mural da Professora, Badges Dinâmicos, ≥ 450 Testes (100% OK) |
 | **Beta** | `0.6.0-beta` | Sincronização Cloud, Banco de dados persistente, PWA Mobile Audit, modo offline |
 | **RC** | `1.0.0-rc.1` | Feature-complete, testes E2E, zero bugs críticos |
 | **GA** | `1.0.0` | Pronto para distribuição pública |
+
+## [0.3.7-alpha] — 2026-09-21
+
+### Classificação: Alpha (Sistema Integrado de Notificações Nativas Web/PWA e Desktop, Mural de Avisos da Professora, Badges Dinâmicos e Vínculo com WhatsNewDialog)
+> Milestone de Notificações e Comunicação Pedagógica: Implementação unificada do serviço de notificações nativas do sistema operacional (`NotificationService`) via Web Notification API para navegadores/PWA (Windows Action Center, Central de Notificações do Android/macOS) com foco de janela, ícone oficial e fallback in-app garantido (`ft.SnackBar`) no padrão Brand Book v3.1. Criação do serviço de anúncios pedagógicos (`AnnouncementService`) com persistência atômica em `data/announcements.json` e transmissão em tempo real para múltiplos clientes conectados via barramento `page.pubsub`. Integração do "Soft Prompt" amigável na `HomeView` com persistência em `client_storage`, badges dourados dinâmicos no AppBar (`ft.Badge(small_size=8, bgcolor=colors["accent"])`), botão de acesso às Novidades da Versão no AppBar da tela `/admin`, e 3ª aba dedicada no painel pedagógico: **"📢 Mural de Avisos da Professora"** com formulário de envio, botão primário "📢 Notificar Turma", exclusão lógica e histórico ativo. Cobertura completa de testes automatizados elevando a suíte para **451+ testes (100% aprovados, 0 falhas, 0 erros)**.
+
+### Added — Notificações Nativas & Mural Pedagógico
+- **Serviço de Notificações Nativas (`src/notification_service.py`)** — Classe `NotificationService` provendo `request_permission()`, `send_native_notification()` e `show_in_app_banner()`. Suporte à Web Notification API com guards estritos (`page.web`) prevenindo crash em runtime desktop nativo, sanitização JSON de payloads e in-app SnackBar simultâneo.
+- **Serviço de Comunicados & PubSub (`src/announcement_service.py`)** — Classe `AnnouncementService` gerenciando persistência de avisos em `data/announcements.json` (fora de `assets/`), transmissão em tempo real (`page.pubsub.send_all()`), contagem de não lidos com base em `last_read_announcement_id` e marcação coletiva de leitura.
+- **Base de Avisos Inicial (`data/announcements.json`)** — Registro estruturado contendo comunicado inaugural de boas-vindas e incentivo ao estudo diário pela professora.
+- **Soft Prompt de Notificações na Home (`src/views/home_view.py`)** — Card acolhedor solicitando autorização do usuário de forma não intrusiva com opções "Ativar Notificações" e "Agora não", persistindo decisão em `client_storage`.
+- **Badges Visuais Dinâmicos no AppBar (`src/views/home_view.py`)** — Indicador dourado (`ft.Badge(small_size=8, bgcolor=colors["accent"])`) sobre o ícone `AUTO_AWESOME_ROUNDED` na Home ativado quando houver notas de versão novas ou avisos da professora não lidos.
+- **Ouvinte em Tempo Real via PubSub (`src/views/home_view.py`)** — Escuta contínua de eventos `new_announcement` disparando notificações nativas imediatas e acendendo badges em todos os alunos com app aberto.
+- **Aba "Mural de Avisos" no Painel Pedagógico (`src/views/admin_view.py`)** — 3ª aba no Segmented Tab Switcher do Admin (`tab_btn_announcements`) com formulário responsivo (título, mensagem multiline, botão primário "📢 Notificar Turma"), validação de campos, snackbars informativos e cards de avisos ativos com exclusão unitária.
+- **Botão de Novidades no AppBar Admin (`src/views/admin_view.py`)** — Acesso direto ao `WhatsNewDialog` a partir da tela de administração docente com ícone `AUTO_AWESOME_ROUNDED` em cor Gold.
+- **Destaque de Comunicados no WhatsNewDialog (`src/components/whats_new_dialog.py`)** — Exibição prioritária dos avisos ativos da professora em cartões Gold `#FFAB22` no topo do diálogo e marcação automática de leitura ao fechar o modal.
+- **Bateria de Testes Automatizados (`tests/test_notification_and_announcements.py`)** — 10 novos testes cobrindo CRUD de anúncios, validação de campos, segurança desktop vs web, renderização no WhatsNewDialog, soft prompt na Home, badges dourados e abas no Admin.
+
+### Changed — Expansão Curricular & Sincronização
+- **Internacionalização Bilíngue (PT/KO)** — Adicionadas chaves de tradução no dicionário `ADMIN_I18N` para o Mural de Avisos, formulários, botões de ação e tooltips em Português e Coreano.
+- **Release Notes Atualizadas (`data/release_notes.json`)** — Inclusão do card de destaque pedagógico "Mural de Avisos e Notificações do Sistema" no diálogo de boas-vindas.
+
+### Métricas de Qualidade & Testes
+- **Total de Testes Globais:** **451 testes 100% aprovados** (441 anteriores + 10 novos testes de notificações e comunicados, com 21 subtestes parametrizados).
+- **Linhagem de Segurança Preservada:** Auditoria formal `git merge-base --is-ancestor security/hardening-v0.3.2 HEAD` confirmada (código de saída 0).
+- **Taxa de Falhas:** **0 falhas, 0 erros**.
 
 ## [0.3.6-alpha] — 2026-09-20
 
