@@ -41,8 +41,14 @@ Pré-Alpha → Alpha → Beta → RC → RTM → GA
 - **Truncamento e Sanitização de Entrada no Mural Pedagógico (`src/announcement_service.py`)** — Aplicação de limites máximos de comprimento (`MAX_TITLE_LENGTH = 120`, `MAX_CONTENT_LENGTH = 1000`, `MAX_AUTHOR_LENGTH = 50`) e remoção preventiva de caracteres nulos (`\x00`), mitigando ataques de DoS por tamanho de payload, corrupção de JSON e exploração de parser (mitigação OWASP A03, A04 / MITRE T1499).
 - **Suíte de Testes de Segurança de Infraestrutura (`tests/test_infrastructure_security.py`)** — 6 novos testes automatizados cobrindo `.dockerignore`, `Dockerfile` (usuário não-root), `Caddyfile` (cabeçalhos OWASP), `docker-compose.yml` (privilégios e volumes), trilha de auditoria e sanitização de dados.
 
+### Added — Ativação de Mecânicas de Neurociência nas Telas
+- **Montagem da Fábrica de Sílabas e Teclado Numérico (Dialpad) na Tela de Hangul (`src/views/hangul_view.py`)** — Inserção ativa do `SyllableFactory` (com seletores táteis de 초성, 중성 e 종성, selo mecânico prateado de 받침 e reprodução de áudio) e do `NumberTraining` (Dialpad retrô 3x4 com alternância Sino-Coreano/Nativo, buffer e feedback imediato) dentro da aba de Sílabas.
+- **Enriquecimento Tátil da Fábrica de Sílabas (`src/components/syllable_factory.py`)** — Adição de seletores interativos em chips coloridos com feedback visual do item selecionado e reprodução por clique.
+- **Montagem do Diorama Espacial na Lição 03 (`src/views/lesson_view.py`)** — Inserção ativa do `SpatialStage` no topo da aba de gramática da Lição 03 ("제 가방은 책상 옆에 있어요") para treino visual de postposições espaciais coreanas (`위, 아래, 앞, 뒤, 옆`).
+- **Testes Automatizados de Montagem em Views (`tests/test_views_rendering.py`)** — Novos testes validando a montagem funcional e navegação das novas ferramentas nas rotas `/hangul` e `/lesson`.
+
 ### Métricas de Qualidade & Linhagem de Segurança
-- **Total de Testes Globais:** **457 testes 100% aprovados** (436 unitários/integração + 21 subtestes + 5 Playwright E2E).
+- **Total de Testes Globais:** **459 testes 100% aprovados** (438 unitários/integração + 21 subtestes + 5 Playwright E2E).
 - **Linhagem de Segurança Preservada:** `git merge-base --is-ancestor security/hardening-v0.3.2 HEAD` (exit code 0).
 - **Taxa de Falhas:** **0 falhas, 0 erros**.
 
