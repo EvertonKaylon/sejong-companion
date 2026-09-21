@@ -89,3 +89,70 @@ def test_image_asset_paths_are_absolute_for_web():
             )
 
     assert total_images >= 3, f"Esperado ao menos 3 imagens de branding testadas, encontradas {total_images}"
+
+
+def test_hangul_view_contains_syllable_factory_and_dialpad():
+    """Garante que a view de Hangul monta ativamente a Fábrica de Sílabas e o Teclado Numérico (Dialpad)."""
+    from src.components.syllable_factory import SyllableFactory
+    from src.components.number_training import NumberTraining
+
+    page = MockPage(theme_mode=ft.ThemeMode.DARK)
+    router = Router(page)
+    page.router = router
+
+    view = APP_ROUTES["/hangul"](page)
+    found_factory = False
+    found_dialpad = False
+
+    def search_controls(ctrl):
+        nonlocal found_factory, found_dialpad
+        if isinstance(ctrl, SyllableFactory):
+            found_factory = True
+        if isinstance(ctrl, NumberTraining):
+            found_dialpad = True
+
+        if hasattr(ctrl, "controls") and isinstance(ctrl.controls, list):
+            for ch in ctrl.controls:
+                search_controls(ch)
+        elif hasattr(ctrl, "content") and ctrl.content:
+            search_controls(ctrl.content)
+
+        if hasattr(ctrl, "data") and isinstance(ctrl.data, list):
+            for ch in ctrl.data:
+                search_controls(ch)
+
+    for c in view.controls:
+        search_controls(c)
+
+    assert found_factory is True, "SyllableFactory DEVE estar montado na aba de Sílabas em /hangul"
+    assert found_dialpad is True, "NumberTraining (Dialpad) DEVE estar montado na aba de Sílabas em /hangul"
+
+
+def test_lesson_view_unit_03_mounts_spatial_stage():
+    """Garante que a Lição 03 monta ativamente o Diorama Espacial (SpatialStage) na aba de gramática."""
+    from src.components.spatial_stage import SpatialStage
+
+    page = MockPage(theme_mode=ft.ThemeMode.DARK)
+    router = Router(page)
+    page.router = router
+    page.router.current_unit_id = "unit_03"
+
+    view = APP_ROUTES["/lesson"](page)
+    found_spatial = False
+
+    def search_controls(ctrl):
+        nonlocal found_spatial
+        if isinstance(ctrl, SpatialStage):
+            found_spatial = True
+
+        if hasattr(ctrl, "controls") and isinstance(ctrl.controls, list):
+            for ch in ctrl.controls:
+                search_controls(ch)
+        elif hasattr(ctrl, "content") and ctrl.content:
+            search_controls(ctrl.content)
+
+    for c in view.controls:
+        search_controls(c)
+
+    assert found_spatial is True, "SpatialStage DEVE estar montado na gramática da Lição 03"
+

@@ -1,5 +1,5 @@
 import flet as ft
-from ..components import VocabCard, centered_content
+from ..components import VocabCard, centered_content, SpatialStage
 from ..theme import get_theme_colors, Styles, Responsive
 from ..models import PedagogicalEvent
 from ..services import DataService, ProgressService, FullscreenService, TelemetryService
@@ -244,6 +244,15 @@ def lesson_view(page: ft.Page) -> ft.View:
                 shadow=Styles.CARD_SHADOW,
                 margin=ft.Margin.only(bottom=14),
             )
+        )
+
+    if unit_id == "unit_03":
+        grammar_controls.insert(
+            0,
+            ft.Container(
+                content=SpatialStage(page=page, is_dark=is_dark),
+                margin=ft.Margin.only(bottom=14),
+            ),
         )
 
     grammar_col = ft.Column(
