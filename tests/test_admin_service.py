@@ -4,8 +4,9 @@ import json
 from src.services import AdminService, TelemetryService, PedagogicalEvent
 
 def test_admin_authentication_unconfigured(monkeypatch):
-    """Valida que sem SEJONG_ADMIN_PIN configurado, o sistema falha fechado."""
+    """Valida que sem SEJONG_ADMIN_PIN ou SAEBOM_ADMIN_PIN configurado, o sistema falha fechado."""
     monkeypatch.delenv("SEJONG_ADMIN_PIN", raising=False)
+    monkeypatch.delenv("SAEBOM_ADMIN_PIN", raising=False)
     assert AdminService.is_configured() is False
     assert AdminService.authenticate("sejong2026") is False
     assert AdminService.authenticate("any_pin") is False
@@ -15,6 +16,7 @@ def test_admin_authentication_unconfigured(monkeypatch):
 
 def test_admin_authentication_configured(monkeypatch):
     """Valida autenticação com PIN configurado via variável de ambiente."""
+    monkeypatch.delenv("SAEBOM_ADMIN_PIN", raising=False)
     monkeypatch.setenv("SEJONG_ADMIN_PIN", "prof_cccb_99")
     assert AdminService.is_configured() is True
     # PIN correto

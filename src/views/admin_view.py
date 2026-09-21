@@ -57,6 +57,8 @@ ADMIN_I18N = {
         "login_btn": "Entrar no Painel",
         "back_home": "Voltar para o Início",
         "pin_error": "PIN incorreto. Tente novamente.",
+        "pin_unconfigured": "Autenticação desabilitada: SAEBOM_ADMIN_PIN não configurado no .env.",
+        "pin_unconfigured_hint": "Defina SAEBOM_ADMIN_PIN no arquivo .env para liberar o acesso.",
     },
     "ko": {
         "title": "교사용 포털",
@@ -108,6 +110,8 @@ ADMIN_I18N = {
         "login_btn": "대시보드 로그인",
         "back_home": "홈 화면으로 돌아가기",
         "pin_error": "PIN 번호가 일치하지 않습니다. 다시 입력해주세요.",
+        "pin_unconfigured": "관리자 인증이 비활성화되었습니다: .env 파일에 SAEBOM_ADMIN_PIN을 설정해주세요.",
+        "pin_unconfigured_hint": ".env 파일에 SAEBOM_ADMIN_PIN을 설정해주세요.",
     }
 }
 
@@ -138,16 +142,27 @@ def admin_view(page: ft.Page) -> ft.View:
 
     # ─── 1. TELA DE LOGIN / AUTENTICAÇÃO POR PIN ───
     if not page._admin_authenticated:
-        error_text = ft.Text(t["pin_error"], size=12, color=colors["incorrect"], weight=ft.FontWeight.W_500)
+        is_pin_configured = AdminService.is_configured()
+
+        error_text = ft.Text(
+            t["pin_error"] if is_pin_configured else t.get("pin_unconfigured", "Autenticação administrativa desabilitada."),
+            size=12,
+            color=colors["incorrect"],
+            weight=ft.FontWeight.W_500,
+        )
         error_banner = ft.Container(
             content=ft.Row(
                 controls=[
-                    ft.Icon(ft.Icons.ERROR_OUTLINE_ROUNDED, color=colors["incorrect"], size=16),
+                    ft.Icon(
+                        ft.Icons.ERROR_OUTLINE_ROUNDED if is_pin_configured else ft.Icons.WARNING_AMBER_ROUNDED,
+                        color=colors["incorrect"],
+                        size=16,
+                    ),
                     error_text,
                 ],
                 spacing=6,
             ),
-            visible=False,
+            visible=not is_pin_configured,
             margin=ft.Margin.only(top=6, bottom=4),
         )
 
@@ -156,12 +171,13 @@ def admin_view(page: ft.Page) -> ft.View:
             password=True,
             can_reveal_password=True,
             prefix_icon=ft.Icons.KEY_ROUNDED,
-            border_color=colors["border"],
+            border_color=colors["border"] if is_pin_configured else colors["incorrect"],
             focused_border_color=colors["primary"],
             cursor_color=colors["primary"],
             text_size=15,
             autofocus=True,
-            disabled=not AdminService.is_configured(),
+            disabled=False,
+            hint_text=None if is_pin_configured else t.get("pin_unconfigured_hint", "Defina SAEBOM_ADMIN_PIN no .env"),
         )
 
         def handle_login(e):

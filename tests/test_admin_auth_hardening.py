@@ -12,7 +12,7 @@ from src.services import AdminService
 
 @pytest.fixture(autouse=True)
 def reset_admin_state(monkeypatch):
-    """Garante ambiente isolado e limpo para cada teste."""
+    monkeypatch.delenv("SAEBOM_ADMIN_PIN", raising=False)
     monkeypatch.setenv("SEJONG_ADMIN_PIN", "sejong_secure_pin_2026")
     AdminService.reset_rate_limit("test_client")
     AdminService.reset_rate_limit("client_b")
