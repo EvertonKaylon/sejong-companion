@@ -3,7 +3,7 @@ from datetime import datetime
 from .. import __version__
 from ..components import centered_content, WhatsNewDialog
 from ..theme import get_theme_colors, Styles, Responsive
-from ..services import DataService, ProgressService, FullscreenService
+from ..services import DataService, ProgressService, FullscreenService, NotificationService, AnnouncementService
 
 def home_view(page: ft.Page) -> ft.View:
     is_dark = page.theme_mode == ft.ThemeMode.DARK
@@ -28,11 +28,33 @@ def home_view(page: ft.Page) -> ft.View:
         except Exception:
             pass
 
+    unread_announcements = AnnouncementService.get_unread_count(page)
+    last_seen_rel = None
+    try:
+        if hasattr(page, "client_storage") and page.client_storage:
+            last_seen_rel = page.client_storage.get("last_seen_release")
+    except Exception:
+        pass
+    has_unread_news = (last_seen_rel != __version__) or (unread_announcements > 0)
+
+    whats_new_btn = ft.IconButton(
+        icon=ft.Icons.AUTO_AWESOME_ROUNDED,
+        icon_color=colors["accent"],
+        badge=ft.Badge(small_size=8, bgcolor=colors["accent"]) if has_unread_news else None,
+        on_click=lambda e: open_whats_new(),
+        tooltip="Novidades do Saebom (새봄 소식)",
+    )
+
     def open_whats_new(is_auto: bool = False):
         def on_dialog_dismiss():
             try:
                 if hasattr(page, "client_storage") and page.client_storage:
                     page.client_storage.set("last_seen_release", __version__)
+            except Exception:
+                pass
+            try:
+                whats_new_btn.badge = None
+                page.update()
             except Exception:
                 pass
 
@@ -50,6 +72,27 @@ def home_view(page: ft.Page) -> ft.View:
         except Exception:
             pass
         return dialog
+
+    # Ouvinte de mensagens em tempo real via PubSub
+    def on_pubsub_announcement(topic, message):
+        if isinstance(message, dict) and message.get("type") == "new_announcement":
+            ann_data = message.get("data", {})
+            NotificationService.send_native_notification(
+                page=page,
+                title=f"📢 {ann_data.get('author', 'Professora')}: {ann_data.get('title', 'Novo Comunicado')}",
+                body=ann_data.get("content", ""),
+            )
+            try:
+                whats_new_btn.badge = ft.Badge(small_size=8, bgcolor=colors["accent"])
+                page.update()
+            except Exception:
+                pass
+
+    if hasattr(page, "pubsub") and page.pubsub:
+        try:
+            page.pubsub.subscribe(on_pubsub_announcement)
+        except Exception:
+            pass
 
     # Auto-display trigger: Novidades do Saebom (새봄 소식)
     try:
@@ -88,12 +131,7 @@ def home_view(page: ft.Page) -> ft.View:
         bgcolor=colors["surface"],
         elevation=0,
         actions=[
-            ft.IconButton(
-                icon=ft.Icons.AUTO_AWESOME_ROUNDED,
-                icon_color=colors["accent"],
-                on_click=lambda e: open_whats_new(),
-                tooltip="Novidades do Saebom (새봄 소식)",
-            ),
+            whats_new_btn,
             ft.IconButton(
                 icon=ft.Icons.ADMIN_PANEL_SETTINGS_ROUNDED,
                 icon_color=colors["secondary"],
@@ -183,6 +221,92 @@ def home_view(page: ft.Page) -> ft.View:
             vertical_alignment=ft.CrossAxisAlignment.START,
         ),
         margin=ft.Margin.only(bottom=12)
+    )
+
+    # ─── SOFT PROMPT DE NOTIFICAÇÕES NATIVAS ───
+    notif_prompt_dismissed = False
+    try:
+        if hasattr(page, "client_storage") and page.client_storage:
+            notif_prompt_dismissed = bool(page.client_storage.get("notif_prompt_dismissed"))
+    except Exception:
+        pass
+
+    def dismiss_notif_card(e=None):
+        try:
+            if hasattr(page, "client_storage") and page.client_storage:
+                page.client_storage.set("notif_prompt_dismissed", True)
+        except Exception:
+            pass
+        notif_soft_card.visible = False
+        try:
+            page.update()
+        except Exception:
+            pass
+
+    def accept_notif_card(e=None):
+        NotificationService.request_permission(page)
+        dismiss_notif_card()
+        NotificationService.show_in_app_banner(
+            page=page,
+            title="Avisos Ativados! 🔔",
+            message="Você receberá comunicados da professora e novidades diretamente no dispositivo.",
+        )
+
+    notif_soft_card = ft.Container(
+        content=ft.Row(
+            controls=[
+                ft.Container(
+                    content=ft.Icon(ft.Icons.NOTIFICATIONS_ACTIVE_ROUNDED, color=colors["accent"], size=22),
+                    padding=8,
+                    bgcolor=ft.Colors.with_opacity(0.12, colors["accent"]),
+                    border_radius=Styles.BORDER_RADIUS_SM,
+                    alignment=ft.Alignment.CENTER,
+                ),
+                ft.Column(
+                    controls=[
+                        ft.Text(
+                            "Avisos da Professora e Novidades",
+                            size=13,
+                            weight=ft.FontWeight.BOLD,
+                            color=colors["text"],
+                        ),
+                        ft.Text(
+                            "Deseja receber avisos da professora e novidades de aula diretamente no seu dispositivo?",
+                            size=11,
+                            color=colors["text_sec"],
+                        ),
+                        ft.Row(
+                            controls=[
+                                ft.Button(
+                                    content=ft.Text("Ativar Notificações", size=11, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE),
+                                    style=ft.ButtonStyle(
+                                        bgcolor=colors["primary"],
+                                        shape=ft.RoundedRectangleBorder(radius=Styles.BORDER_RADIUS_SM),
+                                        padding=ft.Padding.symmetric(horizontal=12, vertical=6),
+                                    ),
+                                    on_click=accept_notif_card,
+                                ),
+                                ft.TextButton(
+                                    content=ft.Text("Agora não", size=11, color=colors["text_sec"]),
+                                    on_click=dismiss_notif_card,
+                                ),
+                            ],
+                            spacing=8,
+                        ),
+                    ],
+                    spacing=4,
+                    expand=True,
+                ),
+            ],
+            spacing=12,
+            vertical_alignment=ft.CrossAxisAlignment.START,
+        ),
+        bgcolor=colors["surface"],
+        border=ft.Border.all(1, ft.Colors.with_opacity(0.3, colors["accent"])),
+        border_radius=Styles.BORDER_RADIUS_MD,
+        padding=12,
+        margin=ft.Margin.only(bottom=12),
+        visible=not notif_prompt_dismissed,
     )
 
     # ─── NEURO-TIP DINÂMICO (Cronobiologia) ───
@@ -646,6 +770,7 @@ def home_view(page: ft.Page) -> ft.View:
                 ft.Column(
                     controls=[
                         welcome_text,
+                        notif_soft_card,
                         neuro_tip_card,
                         progress_summary,
                         review_card,

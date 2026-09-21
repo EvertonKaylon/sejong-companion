@@ -1703,3 +1703,8 @@ class AdminService:
 
         return "\n".join(lines)
 
+
+# Expor serviços de notificação e comunicados pedagógicos
+from .notification_service import NotificationService
+from .announcement_service import AnnouncementService
+

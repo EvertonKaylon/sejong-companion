@@ -1,0 +1,11 @@
+[
+  {
+    "id": "ann_init_01",
+    "title": "Bem-vindos ao Saebom Companion!",
+    "content": "Queridos alunos, usem o companion para fixar o vocabulário e a caligrafia das aulas. 10 minutos diários de estudo com foco fazem toda a diferença para o aprendizado real!",
+    "author": "Professora",
+    "created_at": "2026-09-21T12:00:00",
+    "active": true,
+    "badge_color": "#FFAB22"
+  }
+]

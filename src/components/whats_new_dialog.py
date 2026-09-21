@@ -13,6 +13,7 @@ import os
 from typing import Any, Callable, Dict, Optional
 import flet as ft
 from ..theme import Colors, Styles
+from ..announcement_service import AnnouncementService
 
 ICON_MAP: Dict[str, str] = {
     "psychology": ft.Icons.PSYCHOLOGY_ROUNDED,
@@ -269,12 +270,64 @@ class WhatsNewDialog(ft.AlertDialog):
             alignment=ft.Alignment.CENTER,
         )
 
+        announcements = AnnouncementService.get_announcements(active_only=True)
+        announcement_cards = []
+        if announcements:
+            for ann in announcements[:3]:
+                ann_card = ft.Container(
+                    content=ft.Column(
+                        controls=[
+                            ft.Row(
+                                controls=[
+                                    ft.Container(
+                                        content=ft.Icon(ft.Icons.CAMPAIGN_ROUNDED, color=Colors.GOLD, size=18),
+                                        padding=4,
+                                        bgcolor=ft.Colors.with_opacity(0.15, Colors.GOLD),
+                                        border_radius=Styles.BORDER_RADIUS_SM,
+                                    ),
+                                    ft.Text(
+                                        f"📢 Recado da {ann.get('author', 'Professora')}",
+                                        size=12,
+                                        weight=ft.FontWeight.BOLD,
+                                        color=Colors.GOLD,
+                                        font_family="Pretendard",
+                                    ),
+                                ],
+                                spacing=6,
+                                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                            ),
+                            ft.Text(
+                                ann.get("title", ""),
+                                size=13,
+                                weight=ft.FontWeight.BOLD,
+                                color=Colors.CREAM,
+                                font_family="Pretendard",
+                            ),
+                            ft.Text(
+                                ann.get("content", ""),
+                                size=11,
+                                color=Colors.CREAM,
+                                font_family="Pretendard",
+                            ),
+                        ],
+                        spacing=4,
+                    ),
+                    padding=ft.Padding.all(10),
+                    bgcolor=ft.Colors.with_opacity(0.12, Colors.GOLD),
+                    border=ft.Border.all(1, ft.Colors.with_opacity(0.3, Colors.GOLD)),
+                    border_radius=Styles.BORDER_RADIUS_MD,
+                )
+                announcement_cards.append(ann_card)
+
+        content_controls = []
+        if announcement_cards:
+            content_controls.extend(announcement_cards)
+        content_controls.append(greeting_card)
+        content_controls.extend(highlight_cards)
+        content_controls.append(footer_note)
+
         content_column = ft.Column(
-            controls=[
-                greeting_card,
-                *highlight_cards,
-                footer_note,
-            ],
+            controls=content_controls,
             spacing=8,
             scroll=ft.ScrollMode.AUTO,
             tight=True,
@@ -340,7 +393,11 @@ class WhatsNewDialog(ft.AlertDialog):
         self._notify_dismiss()
 
     def _notify_dismiss(self):
-        """Executa com segurança o callback de fechamento."""
+        """Executa com segurança o callback de fechamento e marca avisos como lidos."""
+        try:
+            AnnouncementService.mark_all_as_read(self._page)
+        except Exception:
+            pass
         if self._on_dismiss_callback:
             try:
                 self._on_dismiss_callback()

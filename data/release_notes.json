@@ -41,6 +41,15 @@
       "title_kr": "집중 모드 & 공식 답안",
       "desc_pt": "Caligrafia guiada em 원고지 com fidelidade aos livros oficiais e avaliação por IoU.",
       "desc_kr": "공식 교재 기반 원고지 쓰기 및 IoU 정밀 획 분석."
+    },
+    {
+      "tag": "Comunicação",
+      "tag_kr": "알림 & 공지",
+      "icon": "auto_awesome",
+      "title_pt": "Mural de Avisos e Notificações do Sistema",
+      "title_kr": "교수 공지사항 & 시스템 알림",
+      "desc_pt": "Receba comunicados em tempo real da professora e novidades de aula diretamente no seu dispositivo.",
+      "desc_kr": "선생님의 공지사항과 새봄 소식을 기기 알림으로 실시간 확인."
     }
   ],
   "footer_pt": "A tecnologia acompanha a pedagogia. Nunca compete com ela.",
