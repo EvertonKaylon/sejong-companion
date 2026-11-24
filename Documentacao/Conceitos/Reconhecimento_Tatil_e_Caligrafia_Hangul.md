@@ -1,9 +1,9 @@
 # ✍️ Reconhecimento Tátil e Caligrafia Hangul (원고지)
 
 **Status:** VIGENTE / ARQUITETURA IMPLEMENTADA  
-**Data de Criação:** 2026-08-28  
-**Componentes Relacionados:** `CalligraphyWidget` (`src/components/calligraphy_widget.py`), `jamo_utils` (`src/jamo_utils.py`), `assets/stroke_order/jamo_strokes.json`  
-**Documentos Vinculados:** [[Motor_Adaptativo_e_Learning_Engine]] | [[Neuropedagogia_e_Gamificacao]] | [[didactic_neuroscience_korean_ptbr]] | [[CHANGELOG]]
+**Data de Atualização:** 2026-11-24  
+**Componentes Relacionados:** `CalligraphyWidget` (`src/components/calligraphy_widget.py`), `WongojiMultiCellWidget` (`src/components/wongoji_multi_cell_widget.py`), `jamo_utils` (`src/jamo_utils.py`), `assets/stroke_order/jamo_strokes.json`  
+**Documentos Vinculados:** [[Motor_Adaptativo_e_Learning_Engine]] | [[Neuropedagogia_e_Gamificacao]] | [[Tipografia_Bilingue_e_CJK]] | [[bug_10_disputa_gesture_arena_e_calibracao_iou_caligrafia]] | [[CHANGELOG]]
 
 ---
 
@@ -13,12 +13,12 @@ Diferente de sistemas alfabéticos lineares (como o alfabeto latino) ou logográ
 
 Cada bloco silábico visível é estruturado deterministicamente a partir de subunidades fonéticas (**자모 — Jamo**):
 
-```
+```text
 ┌────────────────────────────────────────────────────────┐
 │             ANATOMIA DO BLOCO SILÁBICO HANGUL          │
 ├────────────────────────────┬───────────────────────────┤
-│ 1. 초성 (Choseong)        │ Consoante Inicial (19)    │
-│ 2. 중성 (Jungseong)       │ Vogal Medial (21)         │
+│ 1. 초성 (Choseong)         │ Consoante Inicial (19)    │
+│ 2. 중성 (Jungseong)        │ Vogal Medial (21)         │
 │ 3. 종성 (Jongseong/Batchim)│ Consoante Final (27 + ∅)  │
 └────────────────────────────┴───────────────────────────┘
 Total combinatório: 19 × 21 × 28 = 11.172 sílabas (Unicode U+AC00 a U+D7A3)
@@ -43,7 +43,7 @@ Dependendo da orientação da vogal (vertical, horizontal ou composta) e da pres
 
 **원고지 (原稿紙)** é o papel de manuscrito tradicional coreano composto por células quadradas perfeitas (proporção 1:1), onde cada caractere, espaço ou pontuação ocupa exatamente uma célula.
 
-```
+```text
 ┌───────────────┬───────────────┐
 │       │       │       │       │
 │ - - - ┼ - - - │ - - - ┼ - - - │  ← Linhas guia internas (Cruz Central)
@@ -55,72 +55,40 @@ Dependendo da orientação da vogal (vertical, horizontal ou composta) e da pres
 └───────────────┴───────────────┘
 ```
 
-Na implementação digital do Sejong Companion:
+Na implementação digital do **Saebom Companion (새봄 컴패니언)** (paleta **Brand Book v3.1** — Midnight Navy `#02060F`, Cream `#F7F4EC`, Slate `#9EA2AE`, tinta primária em Violet `#8B4DFF` e destaques em Gold `#FFAB22`):
 1. **Camada de Fundo (Grid Layer)**: Renderiza as bordas da célula e as linhas pontilhadas da cruz central para orientar a proporção dos quadrantes.
-2. **Camada de Modelo (Ghost Layer)**: Projeta o silabograma esperado com opacidade reduzida e indica com um círculo âmbar o ponto de partida do traço ativo.
-3. **Camada de Interação (Canvas + GestureDetector)**: Captura as coordenadas do toque do estudante com interpolação contínua a ~60fps.
+2. **Camada de Modelo (Ghost Layer)**: Projeta o silabograma guia na fonte oficial **Kyobo Handwriting 2025** (`KyoboHandwriting2025lyb.otf`) com escala `0.68` idêntica à matriz de avaliação.
+3. **Camada de Interação e Diagnóstico (`Z-Index` Superior)**: Captura coordenadas via `GestureDetector`, projeta a tinta do usuário e renderiza o overlay de diagnóstico no topo dos traços.
 
 ---
 
-## 3. Neuropedagogia: Memória Motora e Feedback Tátil
+## 3. Neuropedagogia: Memória Motora e Progressão Pedagógica
 
 Pesquisas em neurociência cognitiva da escrita (Sweller, Ullman) demonstram que o aprendizado de novos alfabetos é potencializado pela formação de **traços de memória procedurais e proprioceptivos** (*motor memory*).
 
-* **Ordem de Traços (획순 - Stroke Order)**: Não é uma convenção meramente estética, mas o algoritmo neuromotor que garante a fluidez, proporção e legibilidade do Hangul (regras fundamentais: *de cima para baixo* e *da esquerda para a direita*).
-* **Progressão Pedagógica em 3 Estágios**:
-  1. *Fase 1: Tracing Guiado (따라쓰기)* — O modelo fantasma fica visível, com o ponto de início em destaque.
-  2. *Fase 2: Prática com Dicas* — O aluno pode ocultar o modelo com o botão de visibilidade e consultar apenas quando tiver dúvida.
-  3. *Fase 3: Escrita Livre* — Grade limpa onde o motor valida a escrita de memória.
+* **Ordem de Traços (획순 - Stroke Order)**: Catálogo de 51 jamo (19 consoantes, 21 vogais, 11 compostos) em `assets/stroke_order/jamo_strokes.json` seguindo regras canônicas (*de cima para baixo* e *da esquerda para a direita*).
+* **Progressão Pedagógica**:
+  1. *Tracing Guiado (따라쓰기)* — Modelo fantasma visível na grade com fonte manuscrita **Kyobo Handwriting 2025**.
+  2. *Prática com Dicas Ocultáveis* — O aluno pode ocultar o guia e consultar o diagnóstico visual pós-escrita.
+  3. *Escrita Livre em Palavras e Frases (`WongojiMultiCellWidget`)* — Fita de visão geral + célula de foco ativo de `210×210px`, respeitando a regra de espaçamento coreano (*띄어쓰기* com células `␣` excluídas do cálculo IoU) e acionamento exclusivo da avaliação pelo botão **"✅ Terminei"** nos 23 exercícios caligráficos dos Workbooks 1A e 1B.
 
 ---
 
-## 4. Arquitetura de Validação: Path Matching vs. OCR
+## 4. Evolução: Do Path Matching ao Wongoji Lab (Visão Tipográfica & IoU Tolerante)
 
-> [!IMPORTANT]
-> Para o ensino de escrita em tempo real, **OCR estático (redes neurais baseadas em imagem final) é inadequado**, pois avalia apenas a forma resultante, ignorando se o aluno escreveu na ordem ou direção erradas.
+Nas primeiras iterações (`v0.3.3-alpha`), o componente utilizou validação direcional de traços por *Path Matching* (destacando traços aceitos na cor primária vigente — hoje **Violet `#8B4DFF`**, após a descontinuação histórica do antigo azul `#004C97`).
 
-O Sejong Companion utiliza um **Motor de Similaridade de Traços por Path Matching Direcional**:
+A partir de `v0.3.4`–`v0.3.5-alpha`, o **Wongoji Lab** evoluiu para avaliação visual morfológica de escrita livre de alta fidelidade:
 
-```
-                         PIPELINE DE VALIDAÇÃO DE TRAÇOS
-                         
-  Entrada do Aluno              Dados de Referência (JSON)
-  [(x₀,y₀), (x₁,y₁)...]         [(rx₀,ry₀), (rx₁,ry₁)...]
-          │                                │
-          ▼                                ▼
-  ┌────────────────────────────────────────────────────────┐
-  │ 1. Proximidade dos Extremos (Start & End Points)       │
-  │    • dist_start ≤ tolerance                            │
-  │    • dist_end ≤ tolerance                              │
-  ├────────────────────────────────────────────────────────┤
-  │ 2. Coerência Direcional (Similaridade de Cosseno)      │
-  │    • cos(θ) > -0.2 (rejeita traços no sentido oposto)  │
-  ├────────────────────────────────────────────────────────┤
-  │ 3. Distância Média Ponto-Segmento (Trajetória)         │
-  │    • Projeção ortogonal euclidiana na polilinha        │
-  ├────────────────────────────────────────────────────────┤
-  │ 4. Score Ponderado & Feedback                          │
-  │    • Score = 1.0 - (erro_combinado / tolerância)       │
-  │    • Se válido: trava traço em azul (#004C97)          │
-  │    • Se inválido: vibra/destaca modelo para correção   │
-  └────────────────────────────────────────────────────────┘
-```
-
----
-
-## 5. Wongoji Lab: Escrita Livre, Visão Tipográfica & IoU Tolerante
-
-Com a evolução para a versão `0.3.5-alpha`, introduziu-se o **Wongoji Lab (Laboratório de Escrita Livre)**, ampliando o paradigma puramente sequencial para avaliação visual morfológica de alta fidelidade:
-
-```
+```text
                       PIPELINE DE VISÃO TIPOGRÁFICA (WONGOJI LAB)
 
-   Letra Alvo (ex: "가")                      Traços Livres do Usuário
+   Letra Alvo (ex: "새", "봄", "가")           Traços Livres do Usuário
           │                                              │
           ▼                                              ▼
    ┌─────────────────────────────┐                ┌─────────────────────────────┐
    │ Rasterização Kyobo 2025     │                │ Rasterização de Traços      │
-   │ (Matriz 48×48 binária)      │                │ (Espessura Proporcional)    │
+   │ (Matriz 48×48, escala 0.68) │                │ (Espessura Proporcional)    │
    └──────────────┬──────────────┘                └──────────────┬──────────────┘
                   │                                              │
                   ▼                                              ▼
@@ -142,18 +110,19 @@ Com a evolução para a versão `0.3.5-alpha`, introduziu-se o **Wongoji Lab (La
                   └──────────────────────────────────────────────┘
 ```
 
-### Isolamento da Gesture Arena (Modo de Foco Modal)
-Para evitar que gestos verticais do pincel concorram com o scroll da página no Flutter (BUG-10), a grade na aba principal opera como **prévia passiva**, e o desenho interativo ocorre dentro de um modal ampliado (`ft.AlertDialog`) sem ancestrais roláveis.
+### Isolamento da Gesture Arena (Focus Mode Modal — `BUG-10`)
+Para evitar que gestos verticais do pincel concorram com o scroll da página no Flutter (`BUG-10`), a grade na aba Caligrafia opera como **prévia passiva**, e o desenho interativo ocorre dentro de um modal ampliado (`ft.AlertDialog`) sem ancestrais roláveis (nunca alterando `Column.scroll = None` dinamicamente durante gestos). Enquanto a UI global utiliza **Pretendard**, toda a caligrafia e avaliação utilizam **Kyobo Handwriting 2025**.
 
 ---
 
-## 6. Estrutura de Código e Componentes
+## 5. Estrutura de Código e Componentes
 
 | Arquivo | Responsabilidade |
 | :--- | :--- |
-| [`src/jamo_utils.py`](file:///c:/Users/Pichau/Documents/sejong_companion/src/jamo_utils.py) | Decomposição aritmética Unicode KS X 1001, classificação geométrica de blocos, carregamento do catálogo de 획순 e projeção dos traços nas caixas da célula. |
-| [`src/components/calligraphy_widget.py`](file:///c:/Users/Pichau/Documents/sejong_companion/src/components/calligraphy_widget.py) | Componente visual `CalligraphyWidget` com grade 원고지, ghost layer vetorial Kyobo, motor IoU tolerante, telemetria viva e overlay diagnóstico. |
-| [`assets/fonts/KyoboHandwriting2025lyb.otf`](file:///c:/Users/Pichau/Documents/sejong_companion/assets/fonts/KyoboHandwriting2025lyb.otf) | Fonte oficial de caligrafia coreana usada como modelo de referência para desenho e avaliação no laboratório. |
-| [`tests/test_jamo_utils.py`](file:///c:/Users/Pichau/Documents/sejong_companion/tests/test_jamo_utils.py) | Testes de decomposição, composição, catálogo de stroke order (51 jamo) e projeção espacial na célula. |
-| [`tests/test_calligraphy_widget.py`](file:///c:/Users/Pichau/Documents/sejong_companion/tests/test_calligraphy_widget.py) | Testes automatizados cobrindo IoU tolerante, overlay diagnóstico, tipografia e ciclo de vida do widget (140 testes no projeto). |
-
+| [`src/jamo_utils.py`](../../src/jamo_utils.py) | Decomposição aritmética Unicode KS X 1001, classificação geométrica de blocos e carregamento do catálogo de 획순 (51 jamo). |
+| [`src/components/calligraphy_widget.py`](../../src/components/calligraphy_widget.py) | `CalligraphyWidget`: grade 원고지, ghost layer vetorial Kyobo 2025 (escala `0.68`), motor IoU tolerante `48×48`, telemetria viva e overlay diagnóstico no topo da tinta. |
+| [`src/components/wongoji_multi_cell_widget.py`](../../src/components/wongoji_multi_cell_widget.py) | `WongojiMultiCellWidget`: fita de visão geral + célula ativa `210×210px` para palavras/frases no Quiz Engine com *띄어쓰기* (`␣`) e submissão via `"✅ Terminei"`. |
+| [`assets/fonts/KyoboHandwriting2025lyb.otf`](../../assets/fonts/KyoboHandwriting2025lyb.otf) | Fonte oficial de caligrafia coreana usada como modelo de referência e rasterização no Wongoji Lab. |
+| [`tests/test_jamo_utils.py`](../../tests/test_jamo_utils.py) | 24 testes de decomposição, composição, catálogo de stroke order (51 jamo) e projeção espacial na célula. |
+| [`tests/test_calligraphy_widget.py`](../../tests/test_calligraphy_widget.py) | 18 testes cobrindo IoU tolerante, overlay diagnóstico, tipografia Kyobo e ciclo de vida do widget. |
+| [`tests/test_quiz_calligraphy.py`](../../tests/test_quiz_calligraphy.py) | 13 testes cobrindo contrato fail-closed de `QuizQuestion`, multi-célula e fluxo de submissão no quiz. |

@@ -4,7 +4,7 @@
 **Classificação:** Oficial / Confidencial  
 **Documentos Relacionados:** [[Design_System_e_Tokens_Semanticos]] | [[Tipografia_Bilingue_e_CJK]] | [[Plano_UIUX_Flet_Sejong_Companion]]  
 **Fonte Primária:** `Saebom_Companion_Branding_Book_v3.1_mesclado.pdf`  
-**Assets do Repositório:** [`assets/branding/`](file:///c:/Users/Pichau/Documents/sejong_companion/assets/branding/)
+**Assets do Repositório:** [`assets/branding/`](../../assets/branding/)
 
 ---
 
@@ -115,7 +115,7 @@ A assinatura da marca é composta por três elementos hierárquicos rígidos:
 - ❌ **NÃO EFEITAR:** Não aplicar efeitos 3D, relevo (*bevel*), sombras drop-shadow exageradas ou *glow* neon.
 - ❌ **NÃO RECOLORIR:** Não alterar as cores oficiais por gradientes arbitrários ou cores fora da paleta (ex: rosa, verde, vermelho).
 - ❌ **NÃO DECORAR:** É expressamente proibido inserir flores de cerejeira (🌸), bandeiras ou ilustrações folclóricas encostadas ou dentro do logotipo.
-- ❌ **NÃO RECRIAR:** Não redigitar a logo com fontes genéricas do sistema; utilizar exclusivamente os assets oficiais vetorizados de [`assets/branding/`](file:///c:/Users/Pichau/Documents/sejong_companion/assets/branding/).
+- ❌ **NÃO RECRIAR:** Não redigitar a logo com fontes genéricas do sistema; utilizar exclusivamente os assets oficiais vetorizados de [`assets/branding/`](../../assets/branding/).
 
 ---
 
@@ -212,22 +212,28 @@ Antes de integrar novas telas ou materiais no projeto, a equipe deve validar:
 
 ## 8. 📦 Catálogo de Assets Gráficos Gerados
 
-Todos os assets oficiais foram produzidos de forma determinística pelo script [`scripts/generate_branding_assets.py`](file:///c:/Users/Pichau/Documents/sejong_companion/scripts/generate_branding_assets.py) e estão disponíveis em [`assets/branding/`](file:///c:/Users/Pichau/Documents/sejong_companion/assets/branding/):
+Todos os **21 assets oficiais** foram produzidos de forma determinística pelo script [`scripts/generate_branding_assets.py`](../../scripts/generate_branding_assets.py) e estão disponíveis em [`assets/branding/`](../../assets/branding/):
 
 | Arquivo | Formato | Dimensões | Aplicação Primária |
 | :--- | :--- | :--- | :--- |
-| [`saebom_logo_dark.svg`](file:///c:/Users/Pichau/Documents/sejong_companion/assets/branding/saebom_logo_dark.svg) | SVG Vetorial | 800×500 | Assinatura principal vertical para fundos escuros (App & Web) |
-| [`saebom_logo_dark.png`](file:///c:/Users/Pichau/Documents/sejong_companion/assets/branding/saebom_logo_dark.png) | PNG Transparente | 1000×600 | Aplicação em containers e views do Flet |
-| [`saebom_logo_dark_solid.png`](file:///c:/Users/Pichau/Documents/sejong_companion/assets/branding/saebom_logo_dark_solid.png) | PNG Sólido | 1000×600 | Fundo Midnight Navy nativo com margem de segurança |
-| [`saebom_logo_light.svg`](file:///c:/Users/Pichau/Documents/sejong_companion/assets/branding/saebom_logo_light.svg) | SVG Vetorial | 800×500 | Assinatura negativa para fundos claros |
-| [`saebom_logo_light.png`](file:///c:/Users/Pichau/Documents/sejong_companion/assets/branding/saebom_logo_light.png) | PNG Transparente | 1000×600 | Relatórios em PDF e visualização light mode |
-| [`saebom_logo_horizontal_dark.png`](file:///c:/Users/Pichau/Documents/sejong_companion/assets/branding/saebom_logo_horizontal_dark.png) | PNG Transparente | 900×220 | Assinatura horizontal para AppBars e barras de status |
-| [`saebom_logo_horizontal_dark_solid.png`](file:///c:/Users/Pichau/Documents/sejong_companion/assets/branding/saebom_logo_horizontal_dark_solid.png) | PNG Sólido | 900×220 | Assinatura horizontal com fundo Midnight Navy |
-| [`symbol_expansion_rings.png`](file:///c:/Users/Pichau/Documents/sejong_companion/assets/branding/symbol_expansion_rings.png) | PNG Transparente | 512×512 | Símbolo de anéis concêntricos abertos em alta resolução |
-| [`symbol_expansion_rings.svg`](file:///c:/Users/Pichau/Documents/sejong_companion/assets/branding/symbol_expansion_rings.svg) | SVG Vetorial | 400×400 | Símbolo de anéis para animações de carregamento e banners |
-| [`app_icon_512.png`](file:///c:/Users/Pichau/Documents/sejong_companion/assets/branding/app_icon_512.png) | PNG HD | 512×512 | Ícone oficial de alta densidade para PWA, Android e Splash |
-| [`app_icon_192.png`](file:///c:/Users/Pichau/Documents/sejong_companion/assets/branding/app_icon_192.png) | PNG HD | 192×192 | Ícone para home screen mobile |
-| [`favicon_32.png`](file:///c:/Users/Pichau/Documents/sejong_companion/assets/branding/favicon_32.png) | PNG | 32×32 | Favicon web para navegadores desktop |
-| [`favicon_16.png`](file:///c:/Users/Pichau/Documents/sejong_companion/assets/branding/favicon_16.png) | PNG | 16×16 | Favicon web miniatura |
-| [`favicon.ico`](file:///c:/Users/Pichau/Documents/sejong_companion/assets/branding/favicon.ico) | ICO Multi-size | 16/32/48/64/128/256 | Arquivo ICO oficial para o servidor Web / Caddy |
-| [`splash_banner.png`](file:///c:/Users/Pichau/Documents/sejong_companion/assets/branding/splash_banner.png) | PNG Full HD | 1080×1920 | Splash Banner vertical completo para telas de inicialização |
+| [`saebom_logo_dark.svg`](../../assets/branding/saebom_logo_dark.svg) | SVG Vetorial | 800×500 | Assinatura principal vertical para fundos escuros (App & Web) |
+| [`saebom_logo_dark.png`](../../assets/branding/saebom_logo_dark.png) | PNG Transparente | 1000×600 | Aplicação em containers e views do Flet (tema escuro) |
+| [`saebom_logo_dark_solid.png`](../../assets/branding/saebom_logo_dark_solid.png) | PNG Sólido | 1000×600 | Fundo Midnight Navy nativo com margem de segurança |
+| [`saebom_logo_light.svg`](../../assets/branding/saebom_logo_light.svg) | SVG Vetorial | 800×500 | Assinatura negativa vertical para fundos claros |
+| [`saebom_logo_light.png`](../../assets/branding/saebom_logo_light.png) | PNG Transparente | 1000×600 | Relatórios e visualização light mode (fundo transparente) |
+| [`saebom_logo_light_solid.png`](../../assets/branding/saebom_logo_light_solid.png) | PNG Sólido | 1000×600 | Assinatura vertical negativa com fundo Cream (`#F7F4EC`) sólido |
+| [`saebom_logo_horizontal_dark.svg`](../../assets/branding/saebom_logo_horizontal_dark.svg) | SVG Vetorial | 720×160 | Assinatura horizontal vetorial para cabeçalhos e telas escuras |
+| [`saebom_logo_horizontal_dark.png`](../../assets/branding/saebom_logo_horizontal_dark.png) | PNG Transparente | 900×220 | Assinatura horizontal para AppBars e barras de status (dark) |
+| [`saebom_logo_horizontal_dark_solid.png`](../../assets/branding/saebom_logo_horizontal_dark_solid.png) | PNG Sólido | 900×220 | Assinatura horizontal com fundo Midnight Navy sólido |
+| [`saebom_logo_horizontal_light.svg`](../../assets/branding/saebom_logo_horizontal_light.svg) | SVG Vetorial | 720×160 | Assinatura horizontal negativa vetorial para fundos claros |
+| [`saebom_logo_horizontal_light.png`](../../assets/branding/saebom_logo_horizontal_light.png) | PNG Transparente | 900×220 | Assinatura horizontal negativa para cabeçalhos e documentos claros |
+| [`saebom_logo_horizontal_light_solid.png`](../../assets/branding/saebom_logo_horizontal_light_solid.png) | PNG Sólido | 900×220 | Assinatura horizontal negativa com fundo Cream (`#F7F4EC`) sólido |
+| [`symbol_expansion_rings.svg`](../../assets/branding/symbol_expansion_rings.svg) | SVG Vetorial | 400×400 | Símbolo de anéis para animações de carregamento e banners |
+| [`symbol_expansion_rings.png`](../../assets/branding/symbol_expansion_rings.png) | PNG Transparente | 512×512 | Símbolo de anéis concêntricos abertos em alta resolução |
+| [`app_icon.svg`](../../assets/branding/app_icon.svg) | SVG Vetorial | 512×512 | Ícone vetorial oficial com squircle degradê Violet e monograma `새` |
+| [`app_icon_512.png`](../../assets/branding/app_icon_512.png) | PNG HD | 512×512 | Ícone oficial de alta densidade para PWA, Android e Splash |
+| [`app_icon_192.png`](../../assets/branding/app_icon_192.png) | PNG HD | 192×192 | Ícone para home screen mobile e AppBar |
+| [`favicon_32.png`](../../assets/branding/favicon_32.png) | PNG | 32×32 | Favicon web para navegadores desktop |
+| [`favicon_16.png`](../../assets/branding/favicon_16.png) | PNG | 16×16 | Favicon web miniatura |
+| [`favicon.ico`](../../assets/branding/favicon.ico) | ICO Multi-size | 16/32/48/64/128/256 | Arquivo ICO oficial para o servidor Web / Caddy |
+| [`splash_banner.png`](../../assets/branding/splash_banner.png) | PNG Full HD | 1080×1920 | Splash Banner vertical completo para telas de inicialização |

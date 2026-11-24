@@ -54,6 +54,19 @@ seção "Rodada 2").
 
 ## Tipografia — decisão deliberada
 
+### Rodada 4 (Brand Book v3.1) — Tipografia 100% Local Vigente (`Pretendard` + `Kyobo Handwriting 2025`)
+
+Na **Rodada 4 (Brand Book v3.1)**, o aplicativo adotou definitivamente fontes **100% locais em `assets/fonts/`**, eliminando URLs externas do Google Fonts (`Noto Sans KR` e `Inter`, que o Flutter Web ignorava via CSS e que conflitam com políticas estritas de CSP):
+
+- **Pretendard (`Pretendard-Regular.otf`, `Pretendard-Bold.otf`):** Fonte primária global registrada em `apply_app_theme` (`page.theme` e `page.dark_theme` com `font_family="Pretendard"`), cobrindo integralmente Latim (Português) e Hangul CJK (`U+AC00`–`U+D7A3`) para prevenção absoluta de glifos *tofu* (`□□□□`).
+- **Kyobo Handwriting 2025 (`KyoboHandwriting2025lyb.otf`):** Fonte manuscrita oficial coreana registrada como `"Kyobo Handwriting"`, aplicada exclusivamente aos guias vetoriais e à rasterização de referência (escala `0.68`) nos exercícios caligráficos do Wongoji Lab.
+- **Seollip-che (`establish_retrosans.ttf`):** Fonte retrô local mantida apenas como recurso tipográfico auxiliar registrado em `assets/fonts/`.
+
+### Histórico das Rodadas 1–3 (Pré-Brand Book v3.1)
+
+> [!NOTE]
+> A explicação abaixo preserva o raciocínio histórico das Rodadas 1–3 (antes do rebranding para Saebom Companion e da remoção definitiva das URLs externas do Google Fonts na Rodada 4).
+
 O design system pareia **Inter** (texto latino) com **Noto Sans KR**
 (coreano). Registrei a fonte **Inter** em `page.fonts`, mas **não** troquei a
 fonte padrão do app para ela. Motivo: o Flet roda sobre Flutter, que — ao

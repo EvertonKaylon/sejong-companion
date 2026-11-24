@@ -20,7 +20,7 @@ O cálculo de parâmetros dinâmicos de estado sem limitação de teto (`w_ampa`
 
 ## 3. Solução Aplicada
 
-1. **Centralização de Tokens Únicos**: Definição da classe `Tokens` e `Styles` em [src/theme.py](file:///c:/Users/Pichau/Documents/sejong_companion/src/theme.py) para reaproveitamento de `BORDER_RADIUS`, `CARD_SHADOW` e durações de animação.
+1. **Centralização de Tokens Únicos**: Definição da classe `Tokens` e `Styles` em [src/theme.py](../../src/theme.py) para reaproveitamento de `BORDER_RADIUS`, `CARD_SHADOW` e durações de animação.
 2. **Encapsulamento por Horário**: Substituição dos cálculos contínuos por verificação determinística de faixas de horário da máquina (cronobiologia matinal, vespertina, noturna e madrugada).
 
 ### Código Antes (Variável Sem Teto / Acoplada):

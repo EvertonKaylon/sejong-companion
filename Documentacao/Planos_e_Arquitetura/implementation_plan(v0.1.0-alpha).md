@@ -3,7 +3,7 @@
 Este documento detalha o plano de implementação original da versão **`0.1.0-alpha`** do aplicativo **Sejong Companion**. Esta versão serviu como protótipo interativo para validar a experiência de uso, o design system e a viabilidade técnica de navegação e componentes no framework **Flet**.
 
 > [!NOTE]
-> Este documento é um registro histórico. O que era informalmente chamado de "Beta 0.1" corresponde, pela nomenclatura [SemVer](https://semver.org/lang/pt-BR/) adotada no projeto, à versão **`0.1.0-alpha`** — fase Alpha (software funcional mas incompleto, testado internamente). Consulte o [CHANGELOG.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Changelogs_e_Historico/CHANGELOG.md) para o histórico completo de versões.
+> Este documento é um registro histórico. O que era informalmente chamado de "Beta 0.1" corresponde, pela nomenclatura [SemVer](https://semver.org/lang/pt-BR/) adotada no projeto, à versão **`0.1.0-alpha`** — fase Alpha (software funcional mas incompleto, testado internamente). Consulte o [CHANGELOG.md](../Changelogs_e_Historico/CHANGELOG.md) para o histórico completo de versões.
 
 ## User Review Required
 
@@ -65,34 +65,34 @@ sejong_companion/
 
 ### [Ambiente & Dependências]
 
-#### [NEW] [requirements.txt](file:///c:/Users/Pichau/Documents/sejong_companion/requirements.txt)
+#### [NEW] [requirements.txt](../../requirements.txt)
 - Declaração dos pacotes: `flet==0.85.3`, `pydantic>=2.0.0`, `requests>=2.34.2`, `flet-audio==0.85.3`.
 
 ---
 
 ### [Dados e Modelos]
 
-#### [NEW] [curriculum.json](file:///c:/Users/Pichau/Documents/sejong_companion/data/curriculum.json)
+#### [NEW] [curriculum.json](../../data/curriculum.json)
 - Lista de 4 unidades do curso com títulos, descrições e status de bloqueio.
 
-#### [NEW] [unit_intro.json](file:///c:/Users/Pichau/Documents/sejong_companion/data/units/unit_intro.json)
+#### [NEW] [unit_intro.json](../../data/units/unit_intro.json)
 - Dados estruturados sobre vogais, consoantes (planas, aspiradas, tensas), sílabas, guia de 받침 e quiz — sem romanização.
 
-#### [NEW] [unit_01.json](file:///c:/Users/Pichau/Documents/sejong_companion/data/units/unit_01.json)
+#### [NEW] [unit_01.json](../../data/units/unit_01.json)
 - Vocabulário com categorias e neuro-tips, gramática com dicas para lusófonos, notas culturais e quiz (multiple_choice + order_words).
 
-#### [NEW] [models.py](file:///c:/Users/Pichau/Documents/sejong_companion/src/models.py)
+#### [NEW] [models.py](../../src/models.py)
 - 15 classes Pydantic para validação e tipagem dos dados (curriculum, hangul, vocab, grammar, quiz).
 
 ---
 
 ### [Lógica de Negócio e Serviços]
 
-#### [NEW] [services.py](file:///c:/Users/Pichau/Documents/sejong_companion/src/services.py)
+#### [NEW] [services.py](../../src/services.py)
 - `DataService`: Carregador de dados dos JSONs via Pydantic.
 - `ProgressService`: Gerenciador de progresso em memória com desbloqueio progressivo.
 
-#### [NEW] [audio_service.py](file:///c:/Users/Pichau/Documents/sejong_companion/src/audio_service.py)
+#### [NEW] [audio_service.py](../../src/audio_service.py)
 - TTS offline-first com Typecast.ai (primário) + Google TTS (fallback).
 - Cache atômico em disco, reprodução via flet-audio (web) ou winsound (desktop).
 - Autoplay unlock para navegadores, validação de arquivo, timeout com tratativa graceful.
@@ -101,47 +101,47 @@ sejong_companion/
 
 ### [Design System & Interface]
 
-#### [NEW] [theme.py](file:///c:/Users/Pichau/Documents/sejong_companion/src/theme.py)
+#### [NEW] [theme.py](../../src/theme.py)
 - Escalas de cor portadas de design system Next.js/shadcn/ui (50→950).
 - Primária: Azul Real Sejong (`#0356C5`), Secundária: Vibrant Violet (`#7C4DFF`), Accent: Dourado (`#F5A623`).
 - Sombras, border radius, tipografia (Noto Sans KR + Inter). Tema claro/escuro.
 
-#### [NEW] [router.py](file:///c:/Users/Pichau/Documents/sejong_companion/src/router.py)
+#### [NEW] [router.py](../../src/router.py)
 - SPA router com registro de rotas, estado de unidade, fallback e tratativa de erros em `update()`/`go()`/`view_pop()`.
 
 ---
 
 ### [Componentes de UI Reutilizáveis]
 
-#### [NEW] [hangul_card.py](file:///c:/Users/Pichau/Documents/sejong_companion/src/components/hangul_card.py)
+#### [NEW] [hangul_card.py](../../src/components/hangul_card.py)
 - Card com animação de flip (frente: caractere / verso: detalhes fonéticos + mnemônica). Hover com escala e brilho. Áudio TTS ao virar.
 
-#### [NEW] [vocab_card.py](file:///c:/Users/Pichau/Documents/sejong_companion/src/components/vocab_card.py)
+#### [NEW] [vocab_card.py](../../src/components/vocab_card.py)
 - Card de vocabulário com badge de categoria, exemplos contextuais, neuro-tips e botão de áudio TTS.
 
-#### [NEW] [quiz_widget.py](file:///c:/Users/Pichau/Documents/sejong_companion/src/components/quiz_widget.py)
+#### [NEW] [quiz_widget.py](../../src/components/quiz_widget.py)
 - Quiz unificado: multiple_choice (A/B/C/D com feedback visual) + order_words (chips interativos para treino SOV). Explicação pedagógica após resposta.
 
 ---
 
 ### [Telas (Views)]
 
-#### [NEW] [splash_view.py](file:///c:/Users/Pichau/Documents/sejong_companion/src/views/splash_view.py)
+#### [NEW] [splash_view.py](../../src/views/splash_view.py)
 - Animação de entrada com logotipo 세종. Redirect assíncrono seguro com try-except.
 
-#### [NEW] [home_view.py](file:///c:/Users/Pichau/Documents/sejong_companion/src/views/home_view.py)
+#### [NEW] [home_view.py](../../src/views/home_view.py)
 - Dashboard com grade curricular, anel de progresso, painel de cronobiologia adaptativo e toggle de tema instantâneo.
 
-#### [NEW] [hangul_view.py](file:///c:/Users/Pichau/Documents/sejong_companion/src/views/hangul_view.py)
+#### [NEW] [hangul_view.py](../../src/views/hangul_view.py)
 - 4 abas: Vogais, Consoantes (planas + aspiradas + tensas), 받침 (guia + alerta "i fantasma"), Sílabas. Banners anti-romanização e escrita manual.
 
-#### [NEW] [lesson_view.py](file:///c:/Users/Pichau/Documents/sejong_companion/src/views/lesson_view.py)
+#### [NEW] [lesson_view.py](../../src/views/lesson_view.py)
 - Abas de Vocabulário, Gramática e Cultura. Dicas para lusófonos (🇧🇷).
 
-#### [NEW] [quiz_view.py](file:///c:/Users/Pichau/Documents/sejong_companion/src/views/quiz_view.py)
+#### [NEW] [quiz_view.py](../../src/views/quiz_view.py)
 - Motor de quiz com barra de progresso, tela de resultados (anel de %, placar, mensagens motivacionais) e botão "Refazer Desafio".
 
-#### [NEW] [main.py](file:///c:/Users/Pichau/Documents/sejong_companion/main.py)
+#### [NEW] [main.py](../../main.py)
 - Entry point que inicializa o app Flet, carrega fontes, registra rotas, inicializa AudioService e imprime a versão no terminal.
 
 ---

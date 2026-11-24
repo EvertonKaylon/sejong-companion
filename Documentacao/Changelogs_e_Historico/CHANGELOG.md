@@ -7,19 +7,53 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 
 ## Ciclo de Vida do Projeto
 
-```
+```text
 Pré-Alpha → Alpha → Beta → RC → RTM → GA
                ▲
           ESTAMOS AQUI
-          v0.3.8-alpha
+          v0.3.9-alpha
 ```
 
 | Fase | Versão Alvo | Critérios de Entrada |
 |------|-------------|----------------------|
-| **Alpha** (atual) | `0.3.8-alpha` | Hardening OWASP Top 10 & MITRE ATT&CK, Trilha de Auditoria, 459 Testes + 21 subtestes (100% OK) |
+| **Alpha** (atual) | `0.3.9-alpha` | Fechamento BUG-13 (Caddy CSP/HSTS, Named Volumes UID 10001), P0/P1 Estabilização, CI Playwright & 473 Testes + 21 subtestes (100% OK) |
 | **Beta** | `0.6.0-beta` | Sincronização Cloud, Banco de dados persistente, PWA Mobile Audit, modo offline |
 | **RC** | `1.0.0-rc.1` | Feature-complete, testes E2E, zero bugs críticos |
 | **GA** | `1.0.0` | Pronto para distribuição pública |
+
+## [0.3.9-alpha] — 2026-11-24
+
+### Classificação: Alpha (Fechamento de Segurança de Produção, Estabilização P0/P1, CI Playwright & Saneamento Documental)
+> Milestone de Fechamento e Endurecimento de Release: Integração da branch `origin/main` (`9dafd2f` — `README.md`) sobre `security/mitre-owasp-hardening` na branch `fix/v0.3.9-hardening-and-cleanup`, resolução integral das 5 lacunas residuais de produção catalogadas no [`BUG-13`](../Bugs_Criticos/bug_13_hardening_owasp_mitre_container_caddy_auditoria.md), conclusão funcional de componentes interativos e serviços de áudio/identidade (P0/P1), ampliação do pipeline CI com job dedicado de Playwright Chromium (`e2e-playwright`), alinhamento unificado de versão para `0.3.9-alpha` e saneamento completo de branding e portabilidade de links na documentação oficial.
+
+### Security & Infrastructure — Fechamento Integral do `BUG-13`
+- **Separação HTTP/HTTPS e CSP Completa no Proxy (`Caddyfile:3-43`)** — Bloco `:80` isolado com `redir https://saebomcompanion.duckdns.org{uri} permanent` (sem emitir HSTS em HTTP plano, conformidade RFC 6797 §7.2); bloco HTTPS `saebomcompanion.duckdns.org` com HSTS exclusivo em TLS e `Content-Security-Policy` compatível com Flutter Web CanvasKit/Skwasm (`'wasm-unsafe-eval'`, `https://www.gstatic.com` em `script-src` e `connect-src`, `worker-src 'self' blob:`, `media-src 'self' data: blob:`).
+- **Named Volumes Docker e Seed para `saebomuser` (`Dockerfile:33-38`, `docker-compose.yml:12-49`)** — Substituição dos bind mounts de host por named volumes (`saebom_audio_cache`, `saebom_sessions`, `saebom_telemetry`, `saebom_reports`, `saebom_announcements`) compatíveis com `UID/GID 10001`, cópia condicional de seed `announcements.json` no build, variável `SAEBOM_ANNOUNCEMENTS_PATH=/app/data/announcements/announcements.json` e restauração da checagem obrigatória fail-closed `SAEBOM_ADMIN_PIN=${SAEBOM_ADMIN_PIN:?SAEBOM_ADMIN_PIN environment variable is required}`.
+- **Endurecimento de `.dockerignore` e Script OCI (`scripts/setup_oci_server.sh`)** — Inclusão de `Documentacao/`, `tests/`, `.agents/`, `audit_report.md` e `docs/` em `.dockerignore:53-58`; rebranding do script OCI para Saebom Companion (`REPO_DIR="$HOME/saebom-companion"`), remoção da abertura da porta `8554` no `iptables`, validação prévia obrigatória de `SAEBOM_ADMIN_PIN` no `.env` e URLs HTTPS.
+- **Isolamento de `client_key` e Filtros Zero-PII no Admin (`src/views/admin_view.py:149-171`, `src/services.py:1622-1645`)** — Implementação de `_resolve_admin_client_key(page)` (`ip_` > `sess_` > `std_` > `anon_`) eliminando o balde global compartilhado `"admin_client"` em deep links `/admin`, e filtragem de `event_type != "security_audit"` em `AdminService.get_global_kpis()` e `get_pedagogical_diagnostics()`.
+- **CI Ampliado com Playwright Chromium (`.github/workflows/ci.yml:1-85`)** — Workflow renomeado para `Saebom Companion CI & Security Gates`, secret scan ampliado (`src/ main.py scripts/ docker-compose.yml Caddyfile`), `SAEBOM_ADMIN_PIN` unificado nos dois jobs e novo job `e2e-playwright` (`chromium` via Playwright) após `test-and-security` (Python `3.11`/`3.12`).
+
+### Fixed — Correções P0 & P1 na Aplicação
+- **Eliminação de Vazamento Legado na Aba de Caligrafia (`src/views/hangul_view.py:630`)** — Substituição de `"세"` e `"종"` por `"새"` e `"봄"` nos botões rápidos (`sample_chars`), e conexão de `NumberTraining.on_complete` à reprodução de áudio (`L589`).
+- **Transição Atômica no Rebuild do Admin (`src/views/admin_view.py:194-198`)** — `rebuild_view()` agora constrói `new_view = admin_view(page)` antes de executar `page.views.clear()` e `page.views.append(new_view)`.
+- **Fontes 100% Locais (`src/theme.py:280-300`)** — Remoção das URLs externas do Google Fonts (`Noto Sans KR` e `Inter`), mantendo exclusivamente fontes locais em `assets/fonts/` (`Pretendard`, `Kyobo Handwriting 2025`, `Seollip-che`).
+- **Conclusão Funcional de `SpatialStage` (`src/components/spatial_stage.py:105-245`, `src/views/lesson_view.py:250-264`)** — Inclusão de `self.object_container` dentro do `ft.Stack` em `_build_stage_canvas()`, movimentação animada via `POSITION_COORDS` em `select_position()`, botão `self.next_btn` (`Próximo Desafio →`) acionando `next_challenge()` com reset visual, e reprodução de `prompt_kr` via `on_challenge_completed` na `unit_03`.
+- **Conclusão Funcional de `NumberTraining` (`src/components/number_training.py:24-48,176-282`)** — Adição de `"0": "영"` em `NATIVE_MAP`, suporte completo a numerais nativos compostos `10`–`99` em `_update_display()`, ação do botão `OK` no modo livre atualizando `feedback_text` e invocando `on_complete`, e atualização visual ativa em `set_system()`.
+- **Resolução Web Dual no `AudioService` (`src/audio_service.py:27-35,98-123,292-332`)** — Adição de `get_bundled_assets_audio_dir()`, checagem combinada entre `data/cache/audio/` e `assets/audio_cache/`, e envio direto de `bytes` ao `flet_audio.Audio.src` quando o áudio existir apenas em `cache_dir` (`data/cache/audio/`), mantendo `assets/` estritamente *read-only*.
+- **Persistência Unificada & Timeouts Assíncronos (`src/services.py:600-611`, `src/announcement_service.py:15-75`, `src/views/onboarding_view.py:75-78`, `src/views/home_view.py:173-174`)** — Remoção da definição duplicada de `ProgressService.set_student_name`, unificando canonicalização PascalCase e sincronização `saebom_student_name`/`sejong_student_name`; `AnnouncementService` com suporte a `SAEBOM_ANNOUNCEMENTS_PATH`, `threading.RLock()` e escrita atômica via temporário + `os.replace()` (fallback apenas em `errno.EBUSY`); e `asyncio.wait_for(..., timeout=0.8)` em `SharedPreferences.set()`.
+
+### Changed & Docs — Bump `0.3.9-alpha`, `README.md` & Saneamento Documental P2
+- **Bump Unificado para `0.3.9-alpha`** — Atualização síncrona em `src/__init__.py`, `src/components/whats_new_dialog.py`, `data/release_notes.json` (`release_date: "2026-11-24"`), `GEMINI.md` e `DESIGN.md`.
+- **Integração e Rebranding de `README.md`** — Incorporado de `origin/main` (`9dafd2f`) e atualizado para **Saebom Companion (새봄 컴패니언) (`v0.3.9-alpha`)**, preservando o disclaimer pedagógico oficial (*Sejong Coreano 1A e 1B* / KSIF).
+- **Atualização Integral de Documentação & Portabilidade de Links (`Documentacao/`)** — Rebranding e atualização de [`ROADMAP_MESTRE_COMPANION.md`](../Planos_e_Arquitetura/ROADMAP_MESTRE_COMPANION.md) (corrigindo numeração duplicada da Fase 4), [`estrategia_hospedagem_oci_always_free_vs_render.md`](../Planos_e_Arquitetura/estrategia_hospedagem_oci_always_free_vs_render.md), [`MANUAL_DE_IDENTIDADE_SAEBOM.md`](../Design_e_Branding/MANUAL_DE_IDENTIDADE_SAEBOM.md) (todos os 21 assets reais de `assets/branding/`), [`DESIGN_SYSTEM_CHANGELOG.md`](DESIGN_SYSTEM_CHANGELOG.md) (tipografia local da Rodada 4), todos os 10 documentos em [`Documentacao/Conceitos/`](../Conceitos/INDICE_CONCEITOS.md), arquivamento histórico de `audit_report.md` em [`audit_report_historico.md`](audit_report_historico.md) e conversão determinística de todos os links `file:///` para caminhos relativos POSIX portáteis.
+
+### Métricas de Qualidade & Linhagem de Segurança
+- **Total de Testes Globais:** **473 testes aprovados + 21 subtestes em `43.74s`** (incluindo todos os 5 cenários Playwright E2E no Chromium com `test_p4_admin_security_barrier`).
+- **Bateria Dedicada de Segurança (`GEMINI.md`):** **25 testes aprovados em `1.15s`** (`test_admin_auth_hardening.py`, `test_student_identity_security.py`, `test_telemetry_privacy_and_rotation.py`, `test_infrastructure_security.py`).
+- **Compileall & Secret Scan:** `compileall` exit code `0`; busca por `"sejong2026"` em `src/`, `main.py`, `scripts/`, `docker-compose.yml` e `Caddyfile` com **0 ocorrências**.
+- **Validação de Links (`Documentacao/**/*.md`):** `FILE_URI_COUNT=0`, `BROKEN_LINKS=0`, `BACKSLASHES_IN_LINKS=0`, `ORPHAN_WIKILINKS=0`, `LINE_REF_ERRORS=0`.
+- **Linhagem de Segurança Preservada:** `git merge-base --is-ancestor security/hardening-v0.3.2 HEAD` (exit code `0`).
+- **Taxa de Falhas:** **0 falhas, 0 erros, 0 skipped, 0 warnings**.
 
 ## [0.3.8-alpha] — 2026-09-21
 

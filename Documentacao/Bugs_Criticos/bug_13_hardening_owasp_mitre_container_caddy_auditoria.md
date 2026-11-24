@@ -3,11 +3,12 @@
 | Metadado | Detalhe |
 | :--- | :--- |
 | **ID do Bug** | `BUG-13` |
+| **Status** | ✅ **RESOLVIDO (`v0.3.9-alpha` — 2026-11-24)** |
 | **Severidade** | 🔴 **Crítica (Segurança de Infraestrutura, Proxy & Auditoria)** |
-| **Componentes Afetados** | `.dockerignore`, `Dockerfile`, `docker-compose.yml`, `Caddyfile`, `AdminService` (`src/services.py`), `AnnouncementService` (`src/announcement_service.py`), `admin_view.py` (`src/views/admin_view.py`), `main.py`, `src/theme.py` |
-| **Data de Registro / Commit Base** | 2026-09-21 (`d6289d5`) / Auditoria v0.3.8 (2026-11-23) |
-| **Branch** | `security/mitre-owasp-hardening` |
-| **Suíte de Testes** | `tests/test_infrastructure_security.py` (6/6 PASS); bateria de segurança (`19 passed in 1.31s`) + `test_p4_admin_security_barrier` (`1 passed`) |
+| **Componentes Afetados** | `.dockerignore`, `Dockerfile`, `docker-compose.yml`, `Caddyfile`, `scripts/setup_oci_server.sh`, `AdminService` (`src/services.py`), `AnnouncementService` (`src/announcement_service.py`), `admin_view.py` (`src/views/admin_view.py`), `src/theme.py` |
+| **Data de Registro / Resolução** | 2026-09-21 (`d6289d5`) / Auditoria `v0.3.8` (2026-11-23) / **Resolvido `v0.3.9-alpha` (2026-11-24)** |
+| **Branches** | `security/mitre-owasp-hardening` → `fix/v0.3.9-hardening-and-cleanup` |
+| **Suíte de Testes** | Bateria de segurança: **25 passed in `1.15s`** (`test_infrastructure_security.py`, `test_admin_auth_hardening.py`, `test_student_identity_security.py`, `test_telemetry_privacy_and_rotation.py`); suíte global: **473 passed, 21 subtests passed in `43.74s`** (incluindo `5/5` Playwright E2E) |
 
 ---
 
@@ -291,23 +292,29 @@ def test_announcement_service_enforces_length_limits_and_null_byte_sanitization(
 
 ---
 
-## 4. Lacunas e Regressões Residuais Abertas (Auditoria v0.3.8)
+## 4. Resolução das 5 Lacunas Residuais na `v0.3.9-alpha`
 
-A auditoria de infraestrutura e código identificou **5 lacunas concretas** que permaneceram abertas após `d6289d5` e ainda precisam de correção antes do deploy em produção atrás do Caddy:
+A auditoria inicial de `v0.3.8-alpha` havia identificado **5 lacunas concretas** que permaneceram abertas após `d6289d5`. Todas as **5 lacunas foram integralmente resolvidas** na branch `fix/v0.3.9-hardening-and-cleanup` (`v0.3.9-alpha`, 2026-11-24) e verificadas pela suíte automatizada completa:
 
-1. **CSP do `Caddyfile:33` bloqueia o boot do Flet/Flutter Web (CanvasKit / Skwasm):**
-   * `main.py:124` não passa `no_cdn=True`; em runtime, `flet_web` injeta `flet.noCdn=false` e `flutter_bootstrap.js` carrega `canvaskit.js` e `canvaskit.wasm` de `https://www.gstatic.com/flutter-canvaskit/...`, além de criar worker `blob:` (`URL.createObjectURL(new Blob(...))`) no `skwasm`.
-   * O cabeçalho `Content-Security-Policy` de `Caddyfile:33` **omite `https://www.gstatic.com`** em `script-src` e `connect-src`, **omite `worker-src 'self' blob:`** (herdando `default-src 'self'`), **omite `'wasm-unsafe-eval'`** e bloqueia fallback externo `https://fonts.gstatic.com` em `font-src 'self' data:` (enquanto `src/theme.py:287-288` ainda aponta para `fonts.googleapis.com`). Em produção real atrás do Caddy, o CanvasKit tende a falhar no boot.
-2. **Bloco único `:80, :443` emitindo HSTS em HTTP plano (`Caddyfile:3,30`):**
-   * `Caddyfile:3` agrupa `saebomcompanion.duckdns.org, :80, :443` no mesmo bloco, enviando `Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"` em respostas HTTP `:80` (violação da RFC 6797 §7.2), desabilitando o redirecionamento automático HTTP → HTTPS para o domínio DuckDNS e expondo `:443` sem política de certificado para acesso direto por IP.
-3. **Conflito de permissões `USER saebomuser` (`Dockerfile:29-37`, UID `10001`) × Bind Mounts (`docker-compose.yml:18-22`):**
-   * Embora `Dockerfile:33-34` execute `chown -R saebomuser:saebom /app` na imagem, os bind mounts em `docker-compose.yml:18-22` montam diretórios locais (`./data/cache/audio`, `./data/sessions`, `./data/telemetry`, `./data/reports`, que o Docker cria como `root:root 0755` após `git clone`) e o arquivo rastreado `./data/announcements.json` (pertencente ao UID do host, modo `0644`). Em host Linux/OCI, o processo com UID `10001` receberá `PermissionError` ao gravar sessões, auditoria/telemetria, relatórios, cache de áudio e comunicados (e `scripts/setup_oci_server.sh:22` também ainda abre a porta `8554` no `iptables` e não prepara permissões para `10001:10001`).
-4. **Poluição de KPIs pedagógicos e colisão global de `client_key` na trilha `security_audit` (`src/services.py:1403-1464,1627-1635`; `src/views/admin_view.py:215`):**
-   * `AdminService.login()` registra eventos `security_audit` via `TelemetryService.record(session_id=f"audit_{client_key}", ...)`, porém `AdminService.get_global_kpis()` (`src/services.py:1627,1635`) lê `TelemetryService.get_events()` sem filtrar `event_type != "security_audit"`, contaminando `total_telemetry_events`.
-   * `src/views/admin_view.py:215` define `client_key = getattr(page, "_sejong_student_id", None) or "admin_client"`: acessos diretos via deep link `/admin` (sem onboarding prévio) compartilham o único balde `"admin_client"`, permitindo DoS de lockout global na conta da professora após 5 tentativas falhas de qualquer visitante.
-5. **Relaxamento de startup fail-closed no Compose & escrita não-atômica em `AnnouncementService`:**
-   * `docker-compose.yml:12` alterou `${SEJONG_ADMIN_PIN:?...}` para `SAEBOM_ADMIN_PIN=${SAEBOM_ADMIN_PIN:-}` (permite que o container suba sem PIN definido, embora `AdminService.login()` siga fail-closed).
-   * `src/announcement_service.py:40-48` documenta persistência atômica na docstring, mas usa `open(path, "w")` direto (e uma substituição por `os.replace()` falharia com `EBUSY` sobre bind mount de arquivo único `./data/announcements.json`).
+1. ✅ **RESOLVIDO (`v0.3.9-alpha`) — CSP do `Caddyfile` (`L38`) & Fontes 100% Locais (`src/theme.py:280-300`):**
+   * *Diagnóstico `v0.3.8`:* `Caddyfile:33` omitia `https://www.gstatic.com` (em `script-src`/`connect-src`), `worker-src 'self' blob:` e `'wasm-unsafe-eval'` necessários ao boot do CanvasKit/Skwasm sem `no_cdn=True`, e `src/theme.py:287-288` ainda referenciava CSS externo de Google Fonts (`Noto Sans KR`/`Inter`).
+   * *Resolução Aplicada:* `Caddyfile:38` agora define `script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' https://www.gstatic.com https://unpkg.com`, `media-src 'self' data: blob:`, `worker-src 'self' blob:` e `connect-src 'self' ws: wss: https://www.gstatic.com`. Em paralelo, `src/theme.py:283-289` removeu todas as URLs externas do Google Fonts, mantendo apenas fontes locais em `assets/fonts/` (`Pretendard`, `Kyobo Handwriting 2025`, `Seollip-che`). Validado em `tests/test_infrastructure_security.py` e `tests/test_theme.py`.
+
+2. ✅ **RESOLVIDO (`v0.3.9-alpha`) — Separação HTTP `:80` (Redirect) vs HTTPS (`Caddyfile:3-43`):**
+   * *Diagnóstico `v0.3.8`:* Bloco único `saebomcompanion.duckdns.org, :80, :443` emitia HSTS em HTTP plano (`:80`, violando RFC 6797 §7.2) e impedia redirect automático HTTP → HTTPS.
+   * *Resolução Aplicada:* Bloco `:80` (`Caddyfile:3-5`) isolado exclusivamente com `redir https://saebomcompanion.duckdns.org{uri} permanent` (sem `Strict-Transport-Security`), enquanto o bloco HTTPS `saebomcompanion.duckdns.org` (`Caddyfile:8-43`) concentra o `reverse_proxy app:8554`, compressão e todos os cabeçalhos defensivos OWASP (incluindo HSTS apenas em TLS). Validado em `tests/test_infrastructure_security.py`.
+
+3. ✅ **RESOLVIDO (`v0.3.9-alpha`) — Compatibilidade `USER saebomuser` (`UID 10001`) × Volumes & OCI (`Dockerfile:33-38`, `docker-compose.yml:18-49`, `scripts/setup_oci_server.sh:18-65`):**
+   * *Diagnóstico `v0.3.8`:* Bind mounts diretos de host (`./data/*` e `./data/announcements.json`) causavam risco de `PermissionError` e `EBUSY` para o `saebomuser` (`10001:10001`), além de `scripts/setup_oci_server.sh` ainda abrir a porta `8554` no `iptables`.
+   * *Resolução Aplicada:* `docker-compose.yml:18-23,42-49` substituiu os bind mounts por **named volumes Docker** (`saebom_audio_cache`, `saebom_sessions`, `saebom_telemetry`, `saebom_reports`, `saebom_announcements`), `Dockerfile:33-35` cria `/app/data/announcements` e copia `/app/data/announcements.json` como seed antes do `chown -R saebomuser:saebom /app`, e `scripts/setup_oci_server.sh` removeu a regra `--dport 8554 -j ACCEPT`, passou a validar `.env` (`SAEBOM_ADMIN_PIN`) antes do `docker compose up` e atualizou URLs para HTTPS. Validado em `tests/test_infrastructure_security.py`.
+
+4. ✅ **RESOLVIDO (`v0.3.9-alpha`) — Isolamento de `client_key` e Exclusão de `security_audit` nos KPIs (`src/views/admin_view.py:149-171,242`; `src/services.py:1622-1645`):**
+   * *Diagnóstico `v0.3.8`:* `AdminService.get_global_kpis()` incluía eventos `security_audit` no total pedagógico e `admin_view.py` recorria ao fallback compartilhado `"admin_client"` em deep links `/admin`, permitindo DoS de lockout global.
+   * *Resolução Aplicada:* Criado o helper `_resolve_admin_client_key(page)` (`src/views/admin_view.py:149-171`, usado em `L242`) priorizando `client_ip` (`ip_`), `session_id` (`sess_`), `_saebom_student_id`/`_sejong_student_id` (`std_`) e gerando chave única em `page._admin_client_key` (`anon_...`), além da correção atômica de `rebuild_view()` (`L194-198`). Em `src/services.py:1622-1645`, `AdminService.get_global_kpis()` e `get_pedagogical_diagnostics()` filtram `e.event_type != "security_audit"`. Validado em `tests/test_admin_auth_hardening.py` e `tests/test_admin_service.py`.
+
+5. ✅ **RESOLVIDO (`v0.3.9-alpha`) — Startup Fail-Closed no Compose & Escrita Atômica em `AnnouncementService` (`docker-compose.yml:12-13`; `src/announcement_service.py:15-75`):**
+   * *Diagnóstico `v0.3.8`:* `docker-compose.yml:12` havia relaxado para `${SAEBOM_ADMIN_PIN:-}` e `AnnouncementService._save_announcements()` executava `open(path, "w")` direto sem lock nem arquivo temporário.
+   * *Resolução Aplicada:* `docker-compose.yml:12-13` restaurou `SAEBOM_ADMIN_PIN=${SAEBOM_ADMIN_PIN:?SAEBOM_ADMIN_PIN environment variable is required}` e definiu `SAEBOM_ANNOUNCEMENTS_PATH=/app/data/announcements/announcements.json`. Em `src/announcement_service.py:15-75`, `_get_data_path()` respeita `SAEBOM_ANNOUNCEMENTS_PATH`, `_LOCK = threading.RLock()` serializa leituras/escritas e `_save_announcements()` escreve em arquivo temporário `.tmp.<hex>` com `os.replace()` (fallback in-place restrito a `errno.EBUSY`). Validado em `tests/test_infrastructure_security.py`.
 
 ---
 
