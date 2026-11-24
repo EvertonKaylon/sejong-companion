@@ -337,7 +337,8 @@ flowchart LR
     A1["v0.3.0-alpha<br/>Currículo 1A + SRS"] --> A2["v0.3.1-alpha<br/>Currículo 1B Completo"]
     A2 --> A3["v0.3.2-alpha<br/>Piloto CCCB (OCI)"]
     A3 --> A4["v0.3.6-alpha<br/>Rebranding Saebom"]
-    A4 --> B1["v0.4.0-alpha<br/>The Learning Engine"]
+    A4 --> A5["v0.3.9-alpha<br/>Hardening & Estabilização"]
+    A5 --> B1["v0.4.0-alpha<br/>The Learning Engine"]
     B1 --> B2["v0.6.0-beta<br/>Cloud Multi-device"]
     B2 --> B3["v0.8.0-beta<br/>Teacher Companion"]
     B3 --> R1["v1.0.0-GA<br/>Lançamento Oficial"]
@@ -349,15 +350,17 @@ flowchart LR
    * 11 unidades do Sejong 1A em JSON, modelo de meia-vida temporal e telemetria anônima.
 2. **v0.3.1-alpha (Expansão 1B — Concluído):**
    * 12 unidades do Sejong 1B com exercícios do Workbook e cadeia contínua de desbloqueio.
-3. **v0.3.2-alpha (Estabilização & Piloto CCCB — Ativo):**
+3. **v0.3.2-alpha (Estabilização & Piloto CCCB — Concluído):**
    * Deploy 24/7 na Oracle Cloud com Caddy HTTPS, persistência SharedPreferences e auditoria com turmas reais.
 4. **v0.3.6-alpha (Rebranding & Manual v3.1 — Concluído):**
-   * Transição completa para **Saebom Companion**, Brand Book v3.1, paleta 60/20/12/8 e pretérito Sejong banido.
-5. **v0.4.0-alpha (The Learning Engine — Meta Imediata):**
+   * Transição completa para **Saebom Companion**, Brand Book v3.1, paleta 60/20/12/8 e termo legado banido da UI.
+5. **v0.3.9-alpha (Hardening OWASP/MITRE, Fontes Locais & Estabilização — Ativo):**
+   * Blindagem Caddy/Docker/CI (Playwright + Chromium), isolamento de `client_key` e KPIs no `/admin`, fontes 100% locais (`Pretendard` + `Kyobo Handwriting 2025`), áudio via bytes em cache mutável e conclusão interativa de `SpatialStage` e `NumberTraining`.
+6. **v0.4.0-alpha (The Learning Engine — Próxima Meta):**
    * Implementação do pacote `src/engine/` com IA Simbólica / Cognitiva Local, grafo de dependência curricular atômico e predição de lacunas sinápticas.
-6. **v0.6.0-beta (Nuvem Multi-device):**
+7. **v0.6.0-beta (Nuvem Multi-device):**
    * Sincronização multi-plataforma transparente (PostgreSQL) mantendo capacidades offline-first.
-7. **v0.8.0-beta (Teacher Companion):**
+8. **v0.8.0-beta (Teacher Companion):**
    * Portal exclusivo da docente do CCCB com telemetria agregada, mapa de calor de retenção da turma e agendamento de tarefas semanais.
-8. **v1.0.0-GA (Produção Oficial):**
+9. **v1.0.0-GA (Produção Oficial):**
    * Aplicativo polido para Web, Android, iOS e Desktop com suporte offline integral.

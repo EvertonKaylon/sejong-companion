@@ -7,19 +7,87 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 
 ## Ciclo de Vida do Projeto
 
-```
+```text
 Pré-Alpha → Alpha → Beta → RC → RTM → GA
                ▲
           ESTAMOS AQUI
-          v0.3.6-alpha
+          v0.3.9-alpha
 ```
 
 | Fase | Versão Alvo | Critérios de Entrada |
 |------|-------------|----------------------|
-| **Alpha** (atual) | `0.3.7-alpha` | Sistema Integrado de Notificações, Mural da Professora, Badges Dinâmicos, ≥ 450 Testes (100% OK) |
+| **Alpha** (atual) | `0.3.9-alpha` | Fechamento BUG-13 (Caddy CSP/HSTS, Named Volumes UID 10001), P0/P1 Estabilização, CI Playwright & 473 Testes + 21 subtestes (100% OK) |
 | **Beta** | `0.6.0-beta` | Sincronização Cloud, Banco de dados persistente, PWA Mobile Audit, modo offline |
 | **RC** | `1.0.0-rc.1` | Feature-complete, testes E2E, zero bugs críticos |
 | **GA** | `1.0.0` | Pronto para distribuição pública |
+
+## [0.3.9-alpha] — 2026-11-24
+
+### Classificação: Alpha (Fechamento de Segurança de Produção, Estabilização P0/P1, CI Playwright & Saneamento Documental)
+> Milestone de Fechamento e Endurecimento de Release: Integração da branch `origin/main` (`9dafd2f` — `README.md`) sobre `security/mitre-owasp-hardening` na branch `fix/v0.3.9-hardening-and-cleanup`, resolução integral das 5 lacunas residuais de produção catalogadas no [`BUG-13`](../Bugs_Criticos/bug_13_hardening_owasp_mitre_container_caddy_auditoria.md), conclusão funcional de componentes interativos e serviços de áudio/identidade (P0/P1), ampliação do pipeline CI com job dedicado de Playwright Chromium (`e2e-playwright`), alinhamento unificado de versão para `0.3.9-alpha` e saneamento completo de branding e portabilidade de links na documentação oficial.
+
+### Security & Infrastructure — Fechamento Integral do `BUG-13`
+- **Separação HTTP/HTTPS e CSP Completa no Proxy (`Caddyfile:3-43`)** — Bloco `:80` isolado com `redir https://saebomcompanion.duckdns.org{uri} permanent` (sem emitir HSTS em HTTP plano, conformidade RFC 6797 §7.2); bloco HTTPS `saebomcompanion.duckdns.org` com HSTS exclusivo em TLS e `Content-Security-Policy` compatível com Flutter Web CanvasKit/Skwasm (`'wasm-unsafe-eval'`, `https://www.gstatic.com` em `script-src` e `connect-src`, `worker-src 'self' blob:`, `media-src 'self' data: blob:`).
+- **Named Volumes Docker e Seed para `saebomuser` (`Dockerfile:33-38`, `docker-compose.yml:12-49`)** — Substituição dos bind mounts de host por named volumes (`saebom_audio_cache`, `saebom_sessions`, `saebom_telemetry`, `saebom_reports`, `saebom_announcements`) compatíveis com `UID/GID 10001`, cópia condicional de seed `announcements.json` no build, variável `SAEBOM_ANNOUNCEMENTS_PATH=/app/data/announcements/announcements.json` e restauração da checagem obrigatória fail-closed `SAEBOM_ADMIN_PIN=${SAEBOM_ADMIN_PIN:?SAEBOM_ADMIN_PIN environment variable is required}`.
+- **Endurecimento de `.dockerignore` e Script OCI (`scripts/setup_oci_server.sh`)** — Inclusão de `Documentacao/`, `tests/`, `.agents/`, `audit_report.md` e `docs/` em `.dockerignore:53-58`; rebranding do script OCI para Saebom Companion (`REPO_DIR="$HOME/saebom-companion"`), remoção da abertura da porta `8554` no `iptables`, validação prévia obrigatória de `SAEBOM_ADMIN_PIN` no `.env` e URLs HTTPS.
+- **Isolamento de `client_key` e Filtros Zero-PII no Admin (`src/views/admin_view.py:149-171`, `src/services.py:1622-1645`)** — Implementação de `_resolve_admin_client_key(page)` (`ip_` > `sess_` > `std_` > `anon_`) eliminando o balde global compartilhado `"admin_client"` em deep links `/admin`, e filtragem de `event_type != "security_audit"` em `AdminService.get_global_kpis()` e `get_pedagogical_diagnostics()`.
+- **CI Ampliado com Playwright Chromium (`.github/workflows/ci.yml:1-85`)** — Workflow renomeado para `Saebom Companion CI & Security Gates`, secret scan ampliado (`src/ main.py scripts/ docker-compose.yml Caddyfile`), `SAEBOM_ADMIN_PIN` unificado nos dois jobs e novo job `e2e-playwright` (`chromium` via Playwright) após `test-and-security` (Python `3.11`/`3.12`).
+
+### Fixed — Correções P0 & P1 na Aplicação
+- **Eliminação de Vazamento Legado na Aba de Caligrafia (`src/views/hangul_view.py:630`)** — Substituição de `"세"` e `"종"` por `"새"` e `"봄"` nos botões rápidos (`sample_chars`), e conexão de `NumberTraining.on_complete` à reprodução de áudio (`L589`).
+- **Transição Atômica no Rebuild do Admin (`src/views/admin_view.py:194-198`)** — `rebuild_view()` agora constrói `new_view = admin_view(page)` antes de executar `page.views.clear()` e `page.views.append(new_view)`.
+- **Fontes 100% Locais (`src/theme.py:280-300`)** — Remoção das URLs externas do Google Fonts (`Noto Sans KR` e `Inter`), mantendo exclusivamente fontes locais em `assets/fonts/` (`Pretendard`, `Kyobo Handwriting 2025`, `Seollip-che`).
+- **Conclusão Funcional de `SpatialStage` (`src/components/spatial_stage.py:105-245`, `src/views/lesson_view.py:250-264`)** — Inclusão de `self.object_container` dentro do `ft.Stack` em `_build_stage_canvas()`, movimentação animada via `POSITION_COORDS` em `select_position()`, botão `self.next_btn` (`Próximo Desafio →`) acionando `next_challenge()` com reset visual, e reprodução de `prompt_kr` via `on_challenge_completed` na `unit_03`.
+- **Conclusão Funcional de `NumberTraining` (`src/components/number_training.py:24-48,176-282`)** — Adição de `"0": "영"` em `NATIVE_MAP`, suporte completo a numerais nativos compostos `10`–`99` em `_update_display()`, ação do botão `OK` no modo livre atualizando `feedback_text` e invocando `on_complete`, e atualização visual ativa em `set_system()`.
+- **Resolução Web Dual no `AudioService` (`src/audio_service.py:27-35,98-123,292-332`)** — Adição de `get_bundled_assets_audio_dir()`, checagem combinada entre `data/cache/audio/` e `assets/audio_cache/`, e envio direto de `bytes` ao `flet_audio.Audio.src` quando o áudio existir apenas em `cache_dir` (`data/cache/audio/`), mantendo `assets/` estritamente *read-only*.
+- **Persistência Unificada & Timeouts Assíncronos (`src/services.py:600-611`, `src/announcement_service.py:15-75`, `src/views/onboarding_view.py:75-78`, `src/views/home_view.py:173-174`)** — Remoção da definição duplicada de `ProgressService.set_student_name`, unificando canonicalização PascalCase e sincronização `saebom_student_name`/`sejong_student_name`; `AnnouncementService` com suporte a `SAEBOM_ANNOUNCEMENTS_PATH`, `threading.RLock()` e escrita atômica via temporário + `os.replace()` (fallback apenas em `errno.EBUSY`); e `asyncio.wait_for(..., timeout=0.8)` em `SharedPreferences.set()`.
+
+### Changed & Docs — Bump `0.3.9-alpha`, `README.md` & Saneamento Documental P2
+- **Bump Unificado para `0.3.9-alpha`** — Atualização síncrona em `src/__init__.py`, `src/components/whats_new_dialog.py`, `data/release_notes.json` (`release_date: "2026-11-24"`), `GEMINI.md` e `DESIGN.md`.
+- **Integração e Rebranding de `README.md`** — Incorporado de `origin/main` (`9dafd2f`) e atualizado para **Saebom Companion (새봄 컴패니언) (`v0.3.9-alpha`)**, preservando o disclaimer pedagógico oficial (*Sejong Coreano 1A e 1B* / KSIF).
+- **Atualização Integral de Documentação & Portabilidade de Links (`Documentacao/`)** — Rebranding e atualização de [`ROADMAP_MESTRE_COMPANION.md`](../Planos_e_Arquitetura/ROADMAP_MESTRE_COMPANION.md) (corrigindo numeração duplicada da Fase 4), [`estrategia_hospedagem_oci_always_free_vs_render.md`](../Planos_e_Arquitetura/estrategia_hospedagem_oci_always_free_vs_render.md), [`MANUAL_DE_IDENTIDADE_SAEBOM.md`](../Design_e_Branding/MANUAL_DE_IDENTIDADE_SAEBOM.md) (todos os 21 assets reais de `assets/branding/`), [`DESIGN_SYSTEM_CHANGELOG.md`](DESIGN_SYSTEM_CHANGELOG.md) (tipografia local da Rodada 4), todos os 10 documentos em [`Documentacao/Conceitos/`](../Conceitos/INDICE_CONCEITOS.md), arquivamento histórico de `audit_report.md` em [`audit_report_historico.md`](audit_report_historico.md) e conversão determinística de todos os links `file:///` para caminhos relativos POSIX portáteis.
+
+### Métricas de Qualidade & Linhagem de Segurança
+- **Total de Testes Globais:** **473 testes aprovados + 21 subtestes em `43.74s`** (incluindo todos os 5 cenários Playwright E2E no Chromium com `test_p4_admin_security_barrier`).
+- **Bateria Dedicada de Segurança (`GEMINI.md`):** **25 testes aprovados em `1.15s`** (`test_admin_auth_hardening.py`, `test_student_identity_security.py`, `test_telemetry_privacy_and_rotation.py`, `test_infrastructure_security.py`).
+- **Compileall & Secret Scan:** `compileall` exit code `0`; busca por `"sejong2026"` em `src/`, `main.py`, `scripts/`, `docker-compose.yml` e `Caddyfile` com **0 ocorrências**.
+- **Validação de Links (`Documentacao/**/*.md`):** `FILE_URI_COUNT=0`, `BROKEN_LINKS=0`, `BACKSLASHES_IN_LINKS=0`, `ORPHAN_WIKILINKS=0`, `LINE_REF_ERRORS=0`.
+- **Linhagem de Segurança Preservada:** `git merge-base --is-ancestor security/hardening-v0.3.2 HEAD` (exit code `0`).
+- **Taxa de Falhas:** **0 falhas, 0 erros, 0 skipped, 0 warnings**.
+
+## [0.3.8-alpha] — 2026-09-21
+
+### Classificação: Alpha (Hardening Global de Infraestrutura e Aplicação — OWASP Top 10 & MITRE ATT&CK Enterprise)
+> Milestone de Segurança e Conformidade Estrutural: Implementação de defesas em profundidade contra riscos do OWASP Top 10 (2021/2025) e táticas da Matriz MITRE ATT&CK Enterprise (TA0001 Reconnaissance, TA0004 Privilege Escalation, TA0005 Defense Evasion, TA0006 Credential Access, TA0009 Collection, TA0011 Command and Control). Hardening de containers eliminando execução como root (`Dockerfile` com usuário não-privilegiado `saebomuser` UID 10001 e `security_opt: [no-new-privileges:true]`), blindagem contra vazamento de credenciais e dados em build de imagens (`.dockerignore`), isolamento de proxy reverso (`Caddyfile`) com cabeçalhos de segurança defensivos (CSP inicial para Flet Web com `font-src 'self' data:;` e `https://unpkg.com` — com lacunas residuais de runtime em CanvasKit/Skwasm e `:80` documentadas em `BUG-13` —, HSTS, X-Frame-Options DENY, X-Content-Type-Options nosniff, supressão de Server banner), trilha estruturada de auditoria de autenticação com Zero PII (`AdminService.login` com logs de telemetria de segurança em falhas e lockouts), e sanitização defensiva de entrada no mural pedagógico (`AnnouncementService` com limites estritos de caracteres e expurgo de bytes nulos). Bateria de testes automatizados de segurança de infraestrutura integrada à suíte contínua.
+
+### Security — Hardening OWASP Top 10 & MITRE ATT&CK
+- **Blindagem de Build de Containers (`.dockerignore`)** — Prevenção de vazamento acidental de segredos locais (`.env*`), dados de sessões (`data/sessions/`), relatórios (`data/reports/`), telemetria (`data/telemetry/`), caches e arquivos PDF de referência durante a construção de imagens Docker (mitigação MITRE T1552.001 / OWASP A01 & A05).
+- **Execução Não-Privilegiada no Dockerfile (`Dockerfile`)** — Criação de usuário de sistema e grupo dedicados (`saebomuser:saebom`, UID/GID 10001), concessão de permissões mínimas em `/app/data` e instrução `USER saebomuser`, impedindo fuga de container com privilégios de superusuário (mitigação MITRE T1611 / OWASP A05).
+- **Proteção no Orquestrador (`docker-compose.yml`)** — Adição de `security_opt: [no-new-privileges:true]` para os serviços de aplicação e proxy Caddy, padronização estrita de variáveis de ambiente (`SAEBOM_ADMIN_PIN`) e volume persistente para `announcements.json`.
+- **Cabeçalhos de Segurança Estritos no Proxy Reverso (`Caddyfile`)** — Inclusão de bloco de cabeçalhos de segurança OWASP:
+  - `Content-Security-Policy`: Defesa contra XSS (OWASP A03 / MITRE T1059.007) configurada com `font-src 'self' data:;` (sem Google Fonts externas), WebSockets (`ws:` / `wss:`) e `script-src` com `https://unpkg.com`.
+  - `X-Frame-Options: DENY`: Prevenção contra Clickjacking e iframing não autorizado (OWASP A05).
+  - `X-Content-Type-Options: nosniff`: Prevenção de MIME-sniffing malicioso.
+  - `Strict-Transport-Security`: Enforcing de HTTPS com max-age de 1 ano.
+  - `Permissions-Policy`: Desativação de APIs sensíveis de hardware (câmera, microfone, geolocalização).
+  - `-Server`: Ocultação do cabeçalho de identificação de versão do proxy (mitigação MITRE T1592 / OWASP A05).
+- **Trilha de Auditoria Estruturada com Zero PII (`src/services.py`)** — `AdminService.login()` instrumentado para gerar eventos de telemetria de segurança (`security_audit`) em eventos de falha de autenticação (`login_failed`), bloqueio temporário (`lockout_tier1`) e bloqueio prolongado (`lockout_tier2`), isolados por `client_key` em sessões de auditoria, garantindo que nenhum segredo/PIN seja registrado em log (mitigação OWASP A09 / MITRE T1070).
+- **Truncamento e Sanitização de Entrada no Mural Pedagógico (`src/announcement_service.py`)** — Aplicação de limites máximos de comprimento (`MAX_TITLE_LENGTH = 120`, `MAX_CONTENT_LENGTH = 1000`, `MAX_AUTHOR_LENGTH = 50`) e remoção preventiva de caracteres nulos (`\x00`), mitigando ataques de DoS por tamanho de payload, corrupção de JSON e exploração de parser (mitigação OWASP A03, A04 / MITRE T1499).
+- **Suíte de Testes de Segurança de Infraestrutura (`tests/test_infrastructure_security.py`)** — 6 novos testes automatizados cobrindo `.dockerignore`, `Dockerfile` (usuário não-root), `Caddyfile` (cabeçalhos OWASP), `docker-compose.yml` (privilégios e volumes), trilha de auditoria e sanitização de dados.
+- **Registro e Lacunas Residuais Abertas ([`BUG-13`](../Bugs_Criticos/bug_13_hardening_owasp_mitre_container_caddy_auditoria.md))** — Documentadas 5 pendências de runtime após `d6289d5`: (1) CSP em `Caddyfile:33` ainda omite `https://www.gstatic.com`, `worker-src 'self' blob:` e `'wasm-unsafe-eval'` necessários ao boot do CanvasKit/Skwasm sem `no_cdn=True` (além de `font-src 'self' data:` bloquear fallback `fonts.gstatic.com` e `src/theme.py:287-288` referenciar `fonts.googleapis.com`); (2) bloco único `:80, :443` emite HSTS em HTTP `:80` e desabilita redirect HTTP→HTTPS; (3) conflito entre `USER saebomuser` (UID `10001`) e bind mounts de host (`./data/*` e `./data/announcements.json`); (4) `client_key` global `"admin_client"` em deep links `/admin` e soma de eventos `security_audit` em `AdminService.get_global_kpis()`; (5) relaxamento para `${SAEBOM_ADMIN_PIN:-}` no `docker-compose.yml` e escrita direta `open("w")` em `AnnouncementService._save_announcements()`.
+
+### Added — Ativação de Mecânicas de Neurociência nas Telas
+- **Montagem da Fábrica de Sílabas e Teclado Numérico (Dialpad) na Tela de Hangul (`src/views/hangul_view.py`)** — Inserção ativa do `SyllableFactory` (com seletores táteis de 초성, 중성 e 종성, selo mecânico prateado de 받침 e reprodução de áudio) e do `NumberTraining` (Dialpad retrô 3x4 com alternância Sino-Coreano/Nativo, buffer e feedback imediato) dentro da aba de Sílabas.
+- **Enriquecimento Tátil da Fábrica de Sílabas (`src/components/syllable_factory.py`)** — Adição de seletores interativos em chips coloridos com feedback visual do item selecionado e reprodução por clique.
+- **Montagem do Diorama Espacial na Lição 03 (`src/views/lesson_view.py`)** — Inserção ativa do `SpatialStage` no topo da aba de gramática da Lição 03 ("제 가방은 책상 옆에 있어요") para treino visual de postposições espaciais coreanas (`위, 아래, 앞, 뒤, 옆`).
+- **Testes Automatizados de Montagem em Views (`tests/test_views_rendering.py`)** — Novos testes validando a montagem funcional e navegação das novas ferramentas nas rotas `/hangul` e `/lesson`.
+
+### Métricas de Qualidade & Linhagem de Segurança
+- **Total de Testes Globais:** **459 testes aprovados + 21 subtestes** (454 unitários/integração + 5 Playwright E2E; executados em `34.76s`).
+- **Bateria Dedicada de Segurança:** **19 testes aprovados** (`1.31s`) + `test_p4_admin_security_barrier` aprovado (`26.01s`).
+- **Linhagem de Segurança Preservada:** `git merge-base --is-ancestor security/hardening-v0.3.2 HEAD` (exit code 0).
+- **Taxa de Falhas:** **0 falhas, 0 erros, 0 skipped, 0 warnings**.
+- **Nota de Versão em Código:** `src/__init__.py` (`__version__`) e `data/release_notes.json` ainda permanecem em `0.3.6-alpha` aguardando bump formal de release.
 
 ## [0.3.7-alpha] — 2026-09-21
 
@@ -42,12 +110,15 @@ Pré-Alpha → Alpha → Beta → RC → RTM → GA
 - **Internacionalização Bilíngue (PT/KO)** — Adicionadas chaves de tradução no dicionário `ADMIN_I18N` para o Mural de Avisos, formulários, botões de ação e tooltips em Português e Coreano.
 - **Release Notes Atualizadas (`data/release_notes.json`)** — Inclusão do card de destaque pedagógico "Mural de Avisos e Notificações do Sistema" no diálogo de boas-vindas.
 
+### Fixed — Autenticação & Isolamento de Testes
+- **Desbloqueio do Campo de PIN e Aviso de Configuração no Admin (`c7aa16e`, `src/views/admin_view.py`)** — Removido `disabled=not AdminService.is_configured()` de `pin_input` (`disabled=False`), mantendo o banner de erro visível com ícone `WARNING_AMBER_ROUNDED` e mensagens bilíngues `pin_unconfigured` / `pin_unconfigured_hint` em `ADMIN_I18N` (PT/KO) quando `SAEBOM_ADMIN_PIN` não está definido; isolamento explícito de `SAEBOM_ADMIN_PIN` nos fixtures de `tests/test_admin_auth_hardening.py` e `tests/test_admin_service.py`.
+
 ### Métricas de Qualidade & Testes
-- **Total de Testes Globais:** **451 testes 100% aprovados** (441 anteriores + 10 novos testes de notificações e comunicados, com 21 subtestes parametrizados).
+- **Total de Testes Globais:** **451 testes 100% aprovados** (441 anteriores + 10 novos testes de notificações e comunicados, além de 21 subtestes de unittest).
 - **Linhagem de Segurança Preservada:** Auditoria formal `git merge-base --is-ancestor security/hardening-v0.3.2 HEAD` confirmada (código de saída 0).
 - **Taxa de Falhas:** **0 falhas, 0 erros**.
 
-## [0.3.6-alpha] — 2026-09-20
+## [0.3.6-alpha] — 2026-09-20 (Consolidação: Neurociência, WhatsNewDialog & BUG-12)
 
 ### Classificação: Alpha (Consolidação Arquitetural, Reconciliação de Neurociência, WhatsNewDialog e Estabilização de Produção)
 > Milestone de Unificação e Estabilização Final: Reconciliação completa da branch `feature/neuroscience-gap-closure` sobre a linha estável `feature/branding`, integrando 6 novos módulos neuropedagógicos, 11 assets vetoriais de física articulatória e relações espaciais com prefixo `/` absoluto para compatibilidade CanvasKit (BUG-11), implementação do componente pedagógico "Novidades do Saebom" (`WhatsNewDialog`) com persistência inteligente via `client_storage` e dados bilíngues em `data/release_notes.json`. Eliminação definitiva de deadlocks no Windows NT em testes Playwright (`BUG-12`) via descritores `subprocess.DEVNULL`, expurgo de concatenações hex alpha no `WongojiMultiCellWidget` (`BUG-03`), updates defensivos contra descarte de views no `home_view.py` e em componentes visuais, substituição integral de `ft.ElevatedButton` por `ft.Button` e eliminação de cores legadas. Consolidação da suíte de testes globais alcançando a marca histórica de **300+ testes automatizados (100% aprovados, 0 falhas, 0 erros)**.
@@ -86,16 +157,16 @@ Pré-Alpha → Alpha → Beta → RC → RTM → GA
 - **Tempo de Execução da Suíte Playwright E2E:** Reduzido para **~26 segundos** no Windows nativo sem deadlocks.
 - **Taxa de Falhas:** **0 falhas, 0 erros, 0 vazamentos de integridade**.
 
-## [0.3.6-alpha] — 2026-09-09
+## [0.3.6-alpha] — 2026-09-09 (Marco Inicial: Rebranding Saebom Companion & Estabilização Web BUG-11)
 
 ### Classificação: Alpha (Rebranding Saebom Companion, Pacote de Branding Oficial & Manual de Identidade Visual)
-> Milestone de Rebranding Institucional e Padronização de Marca: Transição do projeto para **Saebom Companion (새봄 컴패니언)** por diretriz pedagógica estrita da professora (descontinuação do nome "Sejong" para preservar separação institucional e foco como companion de estudo). Implementação do pipeline determinístico de geração de assets gráficos em `scripts/generate_branding_assets.py` com supersampling Pillow e tipografia Pretendard, produzindo 20 arquivos oficiais em `assets/branding/` (logotipos verticais e horizontais em modos dark e light, anéis concêntricos de expansão, app icons 512/192, favicons web e splash banner 1080×1920). Elaboração do Manual de Identidade Visual oficial (`Documentacao/Design_e_Branding/MANUAL_DE_IDENTIDADE_SAEBOM.md`) baseado no Branding Book v3.1, detalhando o sistema cromático 60/20/12/8 (Midnight Navy, Cream/Slate, Violet, Gold, Lilac), arquitetura de marca de 4 camadas, regras de uso correto/proibições e checklist de governança. Expansão da suíte de testes para **234 testes automatizados (100% OK, incluindo Playwright E2E Chromium)**.
+> Milestone de Rebranding Institucional e Padronização de Marca: Transição do projeto para **Saebom Companion (새봄 컴패니언)** por diretriz pedagógica estrita da professora (descontinuação do nome "Sejong" para preservar separação institucional e foco como companion de estudo). Implementação do pipeline determinístico de geração de assets gráficos em `scripts/generate_branding_assets.py` com supersampling Pillow e tipografia Pretendard, produzindo 21 arquivos oficiais em `assets/branding/` (logotipos verticais e horizontais em modos dark e light, anéis concêntricos de expansão, app icons SVG/512/192, favicons web e splash banner 1080×1920). Elaboração do Manual de Identidade Visual oficial (`Documentacao/Design_e_Branding/MANUAL_DE_IDENTIDADE_SAEBOM.md`) baseado no Branding Book v3.1, detalhando o sistema cromático 60/20/12/8 (Midnight Navy, Cream/Slate, Violet, Gold, Lilac), arquitetura de marca de 4 camadas, regras de uso correto/proibições e checklist de governança. Expansão da suíte de testes para **234 testes automatizados (100% OK, incluindo Playwright E2E Chromium)**.
 
 ### Added — Sistema de Marca & Assets Gráficos
 - **Gerador de Assets de Marca (`scripts/generate_branding_assets.py`)** — Script determinístico para renderização de logotipos vetoriais SVG e imagens rasterizadas de alta fidelidade com supersampling 2x/3x e renderização CJK precisa.
-- **20 Assets Oficiais de Marca (`assets/branding/`)** — Logotipo vertical Dark e Light (SVG, PNG transparente e sólido), assinatura horizontal para AppBar (SVG e PNG), símbolo oficial de Anéis Concêntricos de Expansão (SVG e PNG 512px), Ícones de aplicativo squircle (SVG, 512px, 192px), Favicons web (32px, 16px e multi-resolução `favicon.ico`) e Splash Banner mobile Full HD vertical (1080×1920).
+- **21 Assets Oficiais de Marca (`assets/branding/`)** — Logotipo vertical Dark e Light (SVG, PNG transparente e sólido), assinatura horizontal para AppBar (SVG, PNG transparente e sólido), símbolo oficial de Anéis Concêntricos de Expansão (SVG e PNG 512px), Ícones de aplicativo squircle (`app_icon.svg`, 512px, 192px), Favicons web (32px, 16px e multi-resolução `favicon.ico`) e Splash Banner mobile Full HD vertical (1080×1920).
 - **Manual de Identidade Visual Saebom Companion (`Documentacao/Design_e_Branding/MANUAL_DE_IDENTIDADE_SAEBOM.md`)** — Documentação mestre completa em 8 seções transcrevendo e estruturando o Branding Book v3.1 oficial para o Obsidian.
-- **Suíte de Testes de Branding & Tema (`tests/test_branding_assets.py` & `tests/test_theme.py`)** — 31 novos testes automatizados cobrindo integridade física dos 20 assets, conformidade vetorial de SVG, regras estritas de proibição de nomes legados no título da janela, e aderência estrita aos tokens da paleta 60/20/12/8 do Brand Book v3.1.
+- **Suíte de Testes de Branding & Tema (`tests/test_branding_assets.py` & `tests/test_theme.py`)** — 31 novos testes automatizados (25 em `test_branding_assets.py` + 6 em `test_theme.py`) cobrindo integridade física dos 21 assets, conformidade vetorial de SVG, regras estritas de proibição de nomes legados no título da janela, e aderência estrita aos tokens da paleta 60/20/12/8 do Brand Book v3.1.
 - **Suíte E2E de Cobertura Total (`tests/test_e2e_full_coverage.py`)** — 16 testes ponta a ponta cobrindo os 5 pilares fundamentais (Infraestrutura, Segurança, Arquitetura Web, Rebranding e Caligrafia Curricular).
 - **Suíte E2E com Playwright Chromium em Navegador Real (`tests/test_playwright_e2e.py`)** — 5 testes automatizados em headless browser Chromium com CanvasKit real, cobrindo startup em processo isolado (`FLET_FORCE_WEB_SERVER="true"`), handshake WebSocket bidirecional, auditoria de luminância contra tela preta (100% de pixels renderizados), ausência de vazamento de segredos no DOM, e despacho de gestos touch no canvas Wongoji, elevando a suíte global para **234 testes automatizados (100% OK)**.
 

@@ -1,3 +1,6 @@
+> [!NOTE]
+> **Registro Histórico Arquivado (Pré-Hardening / Pré-Rebranding):** Este documento preserva a auditoria técnica original executada na fase inicial pré-hardening (anteriormente mantida em `audit_report.md` na raiz do repositório) para fins de rastreabilidade histórica. Diversos achados críticos aqui listados já foram resolvidos ou mitigados entre `v0.3.2-security` e **`v0.3.9-alpha`**. Para o estado atual do projeto, consulte [`CHANGELOG.md`](CHANGELOG.md), [`relatorio_estado_atual_v0.3.8.md`](relatorio_estado_atual_v0.3.8.md) e [`BUG-13`](../Bugs_Criticos/bug_13_hardening_owasp_mitre_container_caddy_auditoria.md).
+
 # 🔍 Auditoria Profunda — Sejong Companion
 
 > Análise exaustiva de bugs, implementações falsas/mockadas, funcionalidades quebradas, anti-patterns e falhas de segurança.
@@ -9,7 +12,7 @@
 ---
 
 ### 1. Router Quebrado — `view_pop()` nunca funciona
-**Arquivo:** [`router.py`](file:///c:/Users/Pichau/Documents/sejong_companion/src/router.py#L17-L48)
+**Arquivo:** [`router.py`](../../src/router.py#L17-L48)
 
 O `route_change` (L19) **sempre limpa todas as views** com `self.page.views.clear()` e depois adiciona apenas 1 view. Consequência direta: `self.page.views` **sempre** terá tamanho 1. A condição `if len(self.page.views) > 1` em `view_pop` (L43) **nunca será verdadeira**.
 
@@ -30,7 +33,7 @@ def view_pop(self, e):
 ---
 
 ### 2. `silent.wav` não existe — Áudio Web **completamente quebrado**
-**Arquivo:** [`audio_service.py`](file:///c:/Users/Pichau/Documents/sejong_companion/src/audio_service.py#L56-L61)
+**Arquivo:** [`audio_service.py`](../../src/audio_service.py#L56-L61)
 
 O `AudioService.__init__` cria um player Flet com `src="silent.wav"` e `autoplay=True` para "destravar" o autoplay do Chrome/Edge. **Porém o arquivo `silent.wav` não existe no projeto** (`assets/` não contém nenhum `silent*`).
 
@@ -39,7 +42,7 @@ O `AudioService.__init__` cria um player Flet com `src="silent.wav"` e `autoplay
 ---
 
 ### 3. Fontes Google Fonts via CSS — Flet ignora silenciosamente
-**Arquivo:** [`theme.py`](file:///c:/Users/Pichau/Documents/sejong_companion/src/theme.py#L263-L264)
+**Arquivo:** [`theme.py`](../../src/theme.py#L263-L264)
 
 ```python
 "Noto Sans KR": "https://fonts.googleapis.com/css2?family=Noto+Sans+KR...",
@@ -53,7 +56,7 @@ O `page.fonts` do Flet (baseado em Flutter) **exige URLs diretas para arquivos `
 ---
 
 ### 4. Bug matemático no SRS — `half_life` vai a zero/negativo em erros consecutivos
-**Arquivo:** [`models.py`](file:///c:/Users/Pichau/Documents/sejong_companion/src/models.py#L231-L234)
+**Arquivo:** [`models.py`](../../src/models.py#L231-L234)
 
 ```python
 def update_performance(self, is_correct: bool, response_time_ms=2000):
@@ -73,7 +76,7 @@ Após poucos erros consecutivos, `half_life` fica tão próximo de zero (~0.01) 
 ---
 
 ### 5. Memory Leak no servidor — Sessões NUNCA são liberadas da RAM
-**Arquivo:** [`services.py`](file:///c:/Users/Pichau/Documents/sejong_companion/src/services.py#L223)
+**Arquivo:** [`services.py`](../../src/services.py#L223)
 
 ```python
 class ProgressService:
@@ -85,7 +88,7 @@ O dicionário `_sessions` é um atributo de **classe** (compartilhado entre toda
 ---
 
 ### 6. Race Condition em escritas de arquivo concorrentes
-**Arquivo:** [`services.py`](file:///c:/Users/Pichau/Documents/sejong_companion/src/services.py#L328-L332)
+**Arquivo:** [`services.py`](../../src/services.py#L328-L332)
 
 ```python
 def _save_to_disk(cls, session_id, data):
@@ -106,7 +109,7 @@ O `TelemetryService.record()` (L726-728) tem o mesmo problema: `open("a")` sem l
 ---
 
 ### 7. Animação de áudio falsa — Mudança de cor invisível
-**Arquivo:** [`vocab_card.py`](file:///c:/Users/Pichau/Documents/sejong_companion/src/components/vocab_card.py#L192-L213)
+**Arquivo:** [`vocab_card.py`](../../src/components/vocab_card.py#L192-L213)
 
 ```python
 def play_audio_animation(self, e):
@@ -123,7 +126,7 @@ def play_audio_animation(self, e):
 ---
 
 ### 8. Windows Desktop sem fallback de áudio — App fica **mudo**
-**Arquivo:** [`audio_service.py`](file:///c:/Users/Pichau/Documents/sejong_companion/src/audio_service.py#L195-L196)
+**Arquivo:** [`audio_service.py`](../../src/audio_service.py#L195-L196)
 
 ```python
 if audio is None and not self._use_native_windows_player:
@@ -140,7 +143,7 @@ O app parece funcional mas é **completamente mudo** quando Typecast não está 
 ---
 
 ### 9. Normalização incompleta no Sentence Builder — Respostas corretas rejeitadas
-**Arquivo:** [`sentence_builder_widget.py`](file:///c:/Users/Pichau/Documents/sejong_companion/src/components/sentence_builder_widget.py#L101)
+**Arquivo:** [`sentence_builder_widget.py`](../../src/components/sentence_builder_widget.py#L101)
 
 ```python
 normalize = lambda value: " ".join((value or "").strip().replace(".", "").split())
@@ -151,7 +154,7 @@ Só remove `.` (ponto final). Não remove `?`, `,`, `!`, que são comuns em fras
 ---
 
 ### 10. `except TypeError` engolindo erros reais no Quiz
-**Arquivo:** [`quiz_widget.py`](file:///c:/Users/Pichau/Documents/sejong_companion/src/components/quiz_widget.py#L468-L472)
+**Arquivo:** [`quiz_widget.py`](../../src/components/quiz_widget.py#L468-L472)
 
 ```python
 try:
@@ -165,7 +168,7 @@ Se `on_answer` tiver a assinatura correta (2 args) mas **dentro da execução** 
 ---
 
 ### 11. SRS duplicado e inconsistente — Dois motores competindo
-**Arquivo:** [`services.py`](file:///c:/Users/Pichau/Documents/sejong_companion/src/services.py#L449-L454) vs [`services.py`](file:///c:/Users/Pichau/Documents/sejong_companion/src/services.py#L502-L517)
+**Arquivo:** [`services.py`](../../src/services.py#L449-L454) vs [`services.py`](../../src/services.py#L502-L517)
 
 Existem **dois sistemas SRS rodando em paralelo**:
 
@@ -179,7 +182,7 @@ Os dois operam sobre o mesmo modelo `MemoryNode` mas com fórmulas **completamen
 ---
 
 ### 12. Docker: `TYPECAST_API_KEY` não propagada → Deploy sem áudio
-**Arquivo:** [`docker-compose.yml`](file:///c:/Users/Pichau/Documents/sejong_companion/docker-compose.yml#L11-L12)
+**Arquivo:** [`docker-compose.yml`](../../docker-compose.yml#L11-L12)
 
 ```yaml
 # Opcional: Descomente e insira sua chave Typecast para síntese ao vivo na nuvem
@@ -195,7 +198,7 @@ A chave da API está **comentada** no docker-compose. Um deploy padrão não ter
 ---
 
 ### 13. Autenticação Admin — PIN hardcoded e exposto na UI
-**Arquivos:** [`services.py` L959](file:///c:/Users/Pichau/Documents/sejong_companion/src/services.py#L959) + [`admin_view.py`](file:///c:/Users/Pichau/Documents/sejong_companion/src/views/admin_view.py)
+**Arquivos:** [`services.py` L959](../../src/services.py#L959) + [`admin_view.py`](../../src/views/admin_view.py)
 
 ```python
 DEFAULT_PIN: str = "sejong2026"
@@ -209,14 +212,14 @@ DEFAULT_PIN: str = "sejong2026"
 ---
 
 ### 14. `toggle_theme` destrói o histórico de navegação
-**Arquivo:** [`home_view.py`](file:///c:/Users/Pichau/Documents/sejong_companion/src/views/home_view.py#L22)
+**Arquivo:** [`home_view.py`](../../src/views/home_view.py#L22)
 
 O toggle de tema faz `page.views.clear()` seguido de rebuild. Isso **apaga todo o histórico de navegação** da sessão. Se o aluno mudar o tema durante um quiz, perde o contexto inteiro.
 
 ---
 
 ### 15. `AdminService` parser de IDs com offset errado
-**Arquivo:** [`services.py` L1008-L1009](file:///c:/Users/Pichau/Documents/sejong_companion/src/services.py#L1008-L1009)
+**Arquivo:** [`services.py` L1008-L1009](../../src/services.py#L1008-L1009)
 
 ```python
 if filename.startswith("student_") and filename.endswith(".json"):
@@ -232,23 +235,23 @@ O arquivo se chama `student_{uuid}.json`, mas o `_get_session_id` gera IDs como 
 
 | Local | Impacto |
 |---|---|
-| [`services.py` L18-20](file:///c:/Users/Pichau/Documents/sejong_companion/src/services.py#L18-L20) | `DataService` engole erros de JSON, retorna `[]` |
-| [`splash_view.py` L110-152](file:///c:/Users/Pichau/Documents/sejong_companion/src/views/splash_view.py) | 5 blocos `except: pass` — splash pode travar silenciosamente |
-| [`router.py` L36-39, L47-48, L55-56](file:///c:/Users/Pichau/Documents/sejong_companion/src/router.py) | 3 blocos `except: pass` — erros de navegação somem |
+| [`services.py` L18-20](../../src/services.py#L18-L20) | `DataService` engole erros de JSON, retorna `[]` |
+| [`splash_view.py` L110-152](../../src/views/splash_view.py) | 5 blocos `except: pass` — splash pode travar silenciosamente |
+| [`router.py` L36-39, L47-48, L55-56](../../src/router.py) | 3 blocos `except: pass` — erros de navegação somem |
 
 O padrão `except Exception: pass` é usado **sistematicamente** em todo o projeto. Erros críticos (JSON corrompido, falha de I/O, referência a propriedade inexistente) são engolidos sem log.
 
 ---
 
 ### 17. `import random` dentro de método
-**Arquivo:** [`quiz_widget.py` L164](file:///c:/Users/Pichau/Documents/sejong_companion/src/components/quiz_widget.py#L164)
+**Arquivo:** [`quiz_widget.py` L164](../../src/components/quiz_widget.py#L164)
 
 Import dentro de `_build_order_words()`. Má prática que dificulta análise estática e potencialmente causa latência na primeira chamada.
 
 ---
 
 ### 18. Monkey-patching de serviços no `page`
-**Arquivos:** [`main.py` L75-76, L83](file:///c:/Users/Pichau/Documents/sejong_companion/main.py#L75-L83)
+**Arquivos:** [`main.py` L75-76, L83](../../main.py#L75-L83)
 
 ```python
 page.router = router
@@ -264,14 +267,14 @@ Serviços globais são injetados como atributos dinâmicos no objeto `page`. Iss
 ---
 
 ### 19. Hardcoding de dados curriculares nas views
-**Arquivo:** [`hangul_view.py` L404-415](file:///c:/Users/Pichau/Documents/sejong_companion/src/views/hangul_view.py#L404-L415)
+**Arquivo:** [`hangul_view.py` L404-L415](../../src/views/hangul_view.py#L404-L415)
 
 Os numerais coreanos (Sino-Coreanos vs Nativos) estão **chumbados no código** da view ao invés de serem providos pelo `DataService`. Qualquer alteração curricular exige mudança no código Python.
 
 ---
 
 ### 20. State management via rebuild total
-**Arquivos:** [`flashcards_view.py`](file:///c:/Users/Pichau/Documents/sejong_companion/src/views/flashcards_view.py), [`review_view.py`](file:///c:/Users/Pichau/Documents/sejong_companion/src/views/review_view.py), [`quiz_view.py`](file:///c:/Users/Pichau/Documents/sejong_companion/src/views/quiz_view.py)
+**Arquivos:** [`flashcards_view.py`](../../src/views/flashcards_view.py), [`review_view.py`](../../src/views/review_view.py), [`quiz_view.py`](../../src/views/quiz_view.py)
 
 Todas as views usam dicionários mutáveis + closures + rebuild total do container a cada interação. Nenhuma view usa o padrão reativo do Flet (atualizar propriedades individuais dos controles). Isso causa flickering, perda de scroll position, e performance degradada.
 
@@ -287,13 +290,13 @@ Todas as views usam dicionários mutáveis + closures + rebuild total do contain
 - Blocos silábicos do Hangul sem `aria-label` adequado
 
 ### 22. `python-dotenv` no `requirements.txt` mas carregamento manual no `main.py`
-O [`main.py`](file:///c:/Users/Pichau/Documents/sejong_companion/main.py#L6-L20) implementa seu próprio parser de `.env` (L6-20) "sem adicionar dependência de dotenv", mas `python-dotenv>=1.0.0` está em [`requirements.txt`](file:///c:/Users/Pichau/Documents/sejong_companion/requirements.txt#L6). Redundância e inconsistência.
+O [`main.py`](../../main.py#L6-L20) implementa seu próprio parser de `.env` (L6-20) "sem adicionar dependência de dotenv", mas `python-dotenv>=1.0.0` está em [`requirements.txt`](../../requirements.txt#L6). Redundância e inconsistência.
 
 ### 23. `gTTS` no `requirements.txt` mas nunca usado
-[`requirements.txt` L5](file:///c:/Users/Pichau/Documents/sejong_companion/requirements.txt#L5) lista `gTTS>=2.5.0`, mas o `audio_service.py` usa `requests` direto para Google Translate TTS (`_get_google_audio`), nunca importando `gTTS`.
+[`requirements.txt` L5](../../requirements.txt#L5) lista `gTTS>=2.5.0`, mas o `audio_service.py` usa `requests` direto para Google Translate TTS (`_get_google_audio`), nunca importando `gTTS`.
 
 ### 24. Filtragem de livros por prefixo hardcoded
-[`home_view.py` L219-226](file:///c:/Users/Pichau/Documents/sejong_companion/src/views/home_view.py): Usa `.startswith("unit_1b_")` para distinguir livro 1A de 1B em vez de metadados (`unit.book`).
+[`home_view.py` L219-226](../../src/views/home_view.py): Usa `.startswith("unit_1b_")` para distinguir livro 1A de 1B em vez de metadados (`unit.book`).
 
 ---
 

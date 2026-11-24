@@ -22,6 +22,7 @@ SINO_MAP = {
 }
 
 NATIVE_MAP = {
+    "0": "영",
     "1": "하나",
     "2": "둘",
     "3": "셋",
@@ -32,6 +33,18 @@ NATIVE_MAP = {
     "8": "여덟",
     "9": "아홉",
     "10": "열",
+}
+
+NATIVE_TENS_MAP = {
+    10: "열",
+    20: "스물",
+    30: "서른",
+    40: "마흔",
+    50: "쉰",
+    60: "예순",
+    70: "일흔",
+    80: "여든",
+    90: "아흔",
 }
 
 
@@ -168,6 +181,18 @@ class NumberTraining(ft.Container):
         elif key == "OK":
             if self.current_challenge_target:
                 self.check_challenge(self.current_challenge_target)
+            elif self.buffer:
+                self.feedback_text.value = f"🔊 {self.translation_text.value}"
+                self.feedback_text.color = self.colors["primary"]
+                if self.on_complete:
+                    try:
+                        self.on_complete(self.translation_text.value)
+                    except Exception:
+                        pass
+                try:
+                    self.update()
+                except Exception:
+                    pass
             return
 
         if len(self.buffer) < 8:
@@ -183,6 +208,18 @@ class NumberTraining(ft.Container):
     def set_system(self, system: str):
         """Altera o sistema de contagem ativo (sino ou native)."""
         self.system = system
+        if len(self.system_selector.controls) >= 2:
+            sino_btn, native_btn = self.system_selector.controls[0], self.system_selector.controls[1]
+            sino_active = self.system == "sino"
+            native_active = self.system == "native"
+            sino_btn.style = ft.ButtonStyle(
+                bgcolor=self.colors["primary"] if sino_active else self.colors["surface"],
+                color=ft.Colors.WHITE if sino_active else self.colors["text_sec"],
+            )
+            native_btn.style = ft.ButtonStyle(
+                bgcolor=self.colors["primary"] if native_active else self.colors["surface"],
+                color=ft.Colors.WHITE if native_active else self.colors["text_sec"],
+            )
         self._update_display()
 
     def switch_system(self, system: str):
@@ -222,14 +259,22 @@ class NumberTraining(ft.Container):
         else:
             self.display_text.value = " ".join(self.buffer)
             # Tradução para Hangul
-            hangul_parts = []
             if self.system == "sino":
-                for digit in self.buffer:
-                    hangul_parts.append(SINO_MAP.get(digit, ""))
+                hangul_parts = [SINO_MAP.get(digit, "") for digit in self.buffer]
+                self.translation_text.value = " ".join(hangul_parts)
             else:
-                for digit in self.buffer:
-                    hangul_parts.append(NATIVE_MAP.get(digit, digit))
-            self.translation_text.value = " ".join(hangul_parts)
+                if len(self.buffer) == 1:
+                    self.translation_text.value = NATIVE_MAP.get(self.buffer, self.buffer)
+                elif len(self.buffer) == 2 and not self.buffer.startswith("0") and self.buffer.isdigit():
+                    num = int(self.buffer)
+                    tens = (num // 10) * 10
+                    ones = num % 10
+                    tens_word = NATIVE_TENS_MAP.get(tens, "")
+                    ones_word = NATIVE_MAP.get(str(ones), "") if ones > 0 else ""
+                    self.translation_text.value = f"{tens_word}{ones_word}"
+                else:
+                    hangul_parts = [NATIVE_MAP.get(digit, digit) for digit in self.buffer]
+                    self.translation_text.value = " ".join(hangul_parts)
 
         try:
             self.update()

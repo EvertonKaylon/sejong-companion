@@ -597,11 +597,18 @@ class ProgressService:
         raw = self._store.get("student_name", "Estudante Saebom")
         return canonicalize_student_name(raw)
 
-    def set_student_name(self, name: str):
-        """Define e canonicaliza o nome do aluno."""
+    def set_student_name(self, name: str) -> str:
+        """Define, canonicaliza e persiste o nome do aluno no perfil e client_storage."""
         canonical = canonicalize_student_name(name)
         self._store["student_name"] = canonical
         ProgressService._save_to_disk(self._session_id, self._store)
+        try:
+            if hasattr(self.page, "client_storage") and self.page.client_storage:
+                self.page.client_storage.set("saebom_student_name", canonical)
+                self.page.client_storage.set("sejong_student_name", canonical)
+        except Exception:
+            pass
+        return canonical
 
     @staticmethod
     def generate_recovery_code() -> str:
@@ -712,18 +719,6 @@ class ProgressService:
         resolved_id = target_data.get("student_id") or os.path.basename(target_file)[:-5]
         resolved_name = target_data.get("student_name", "Aluno Saebom")
         return True, resolved_id, resolved_name, "Perfil e progresso restaurados com sucesso!"
-
-    def set_student_name(self, name: str) -> str:
-        """Atualiza o nome do aluno no perfil e sincroniza."""
-        clean_name = name.strip() or "Estudante Saebom"
-        self._store["student_name"] = clean_name
-        ProgressService._save_to_disk(self._session_id, self._store)
-        try:
-            if hasattr(self.page, "client_storage") and self.page.client_storage:
-                self.page.client_storage.set("sejong_student_name", clean_name)
-        except Exception:
-            pass
-        return clean_name
 
     def export_backup(self) -> str:
         """Exporta o progresso completo e nós de memória em formato JSON string."""
@@ -1397,11 +1392,50 @@ class AdminService:
             cls._failed_attempts[client_key] = attempts
 
             count = len(attempts)
+
+            # Registro de auditoria estruturado (OWASP A09:2021 / MITRE ATT&CK T1070 & T1110)
+            try:
+                TelemetryService.record(
+                    session_id=f"audit_{client_key}",
+                    event=PedagogicalEvent(
+                        event_type="security_audit",
+                        unit_id="admin_auth_barrier",
+                        item_id="login_failed",
+                        payload={"client_key": client_key, "action": "failed_attempt", "count": count},
+                    ),
+                )
+            except Exception:
+                pass
+
             if count >= cls.MAX_ATTEMPTS_TIER_2:
                 cls._lockouts[client_key] = now + cls.LOCKOUT_DURATION_TIER_2
+                try:
+                    TelemetryService.record(
+                        session_id=f"audit_{client_key}",
+                        event=PedagogicalEvent(
+                            event_type="security_audit",
+                            unit_id="admin_auth_barrier",
+                            item_id="lockout_tier2",
+                            payload={"client_key": client_key, "action": "lockout_tier2", "duration": cls.LOCKOUT_DURATION_TIER_2},
+                        ),
+                    )
+                except Exception:
+                    pass
                 return False, None, f"Acesso administrativo bloqueado por {int(cls.LOCKOUT_DURATION_TIER_2 // 60)} minutos."
             elif count >= cls.MAX_ATTEMPTS_TIER_1:
                 cls._lockouts[client_key] = now + cls.LOCKOUT_DURATION_TIER_1
+                try:
+                    TelemetryService.record(
+                        session_id=f"audit_{client_key}",
+                        event=PedagogicalEvent(
+                            event_type="security_audit",
+                            unit_id="admin_auth_barrier",
+                            item_id="lockout_tier1",
+                            payload={"client_key": client_key, "action": "lockout_tier1", "duration": cls.LOCKOUT_DURATION_TIER_1},
+                        ),
+                    )
+                except Exception:
+                    pass
                 return False, None, f"Muitas tentativas incorretas. Bloqueio temporário de {int(cls.LOCKOUT_DURATION_TIER_1)}s."
 
             remaining_tries = cls.MAX_ATTEMPTS_TIER_1 - count
@@ -1411,6 +1445,18 @@ class AdminService:
         cls.reset_rate_limit(client_key)
         token = secrets.token_urlsafe(32)
         cls._active_tokens[token] = now + cls.SESSION_DURATION_SECONDS
+        try:
+            TelemetryService.record(
+                session_id=f"audit_{client_key}",
+                event=PedagogicalEvent(
+                    event_type="security_audit",
+                    unit_id="admin_auth_barrier",
+                    item_id="login_success",
+                    payload={"client_key": client_key, "action": "authenticated"},
+                ),
+            )
+        except Exception:
+            pass
         return True, token, "Autenticado com sucesso."
 
     @classmethod
@@ -1573,7 +1619,10 @@ class AdminService:
         avg_retention = (total_retention / len(students_with_memory)) if students_with_memory else 0.0
         total_nodes = sum(s["memory_nodes_count"] for s in students)
 
-        telemetry_events = TelemetryService.get_events()
+        telemetry_events = [
+            e for e in TelemetryService.get_events()
+            if e.event_type != "security_audit"
+        ]
         telemetry_analysis = PedagogicalAnalyzer.analyze(telemetry_events)
 
         return {
@@ -1589,7 +1638,10 @@ class AdminService:
     @classmethod
     def get_pedagogical_diagnostics(cls) -> Dict[str, Any]:
         """Retorna a análise diagnóstica consolidada de telemetria pedagógica."""
-        events = TelemetryService.get_events()
+        events = [
+            e for e in TelemetryService.get_events()
+            if e.event_type != "security_audit"
+        ]
         return PedagogicalAnalyzer.analyze(events)
 
     @classmethod

@@ -1,11 +1,20 @@
 {
-  "version": "0.3.6-alpha",
-  "release_date": "2026-09-20",
+  "version": "0.3.9-alpha",
+  "release_date": "2026-11-24",
   "title_pt": "Novidades do Saebom",
   "title_kr": "새봄 소식",
   "greeting_pt": "Olá! Confira as novidades preparadas para você e sua professora:",
   "greeting_kr": "안녕하세요! 새로운 학습 기능을 확인해보세요:",
   "highlights": [
+    {
+      "tag": "Segurança & Estabilização",
+      "tag_kr": "보안 & 안정화",
+      "icon": "security",
+      "title_pt": "Blindagem Web, Áudio Offline e Tipografia Local",
+      "title_kr": "웹 보안 강화, 오프라인 오디오 & 로컬 폰트",
+      "desc_pt": "Carregamento 100% local de Pretendard/Kyobo, reprodução resiliente de áudio em cache e proteção reforçada das sessões.",
+      "desc_kr": "100% 로컬 Pretendard/교보 손글씨 폰트 적용, 안정적인 오디오 캐시 재생 및 세션 보안 강화."
+    },
     {
       "tag": "Neurociência",
       "tag_kr": "뇌과학",

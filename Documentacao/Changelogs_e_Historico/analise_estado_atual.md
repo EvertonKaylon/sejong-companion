@@ -1,3 +1,6 @@
+> [!NOTE]
+> **Registro Histórico (`v0.2.0-alpha`, 2026-08-11):** Este documento é mantido intacto para fins de rastreabilidade histórica. Para o diagnóstico atualizado da base de código, segurança, testes e currículo, consulte [`relatorio_estado_atual_v0.3.8.md`](relatorio_estado_atual_v0.3.8.md).
+
 # 🔍 Análise do Estado Atual — Sejong Companion v0.2.0-alpha
 
 **Data:** 2026-08-11 | **Versão:** `0.2.0-alpha` | **Comparação com:** análise de 03/08 (v0.1.0-alpha)

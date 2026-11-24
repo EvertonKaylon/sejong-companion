@@ -155,3 +155,39 @@ def test_admin_service_deduplication(tmp_path):
     consolidated = matching[0]
     assert consolidated["total_xp"] == 120
     assert consolidated["streak"] == 4
+
+
+def test_progress_service_set_student_name_canonicalizes_and_persists(tmp_path):
+    """Valida que ProgressService.set_student_name canonicaliza, persiste em disco e sincroniza."""
+    class MockClientStorage:
+        def __init__(self):
+            self.store = {}
+        def get(self, key):
+            return self.store.get(key)
+        def set(self, key, value):
+            self.store[key] = value
+
+    class MockPage:
+        def __init__(self):
+            self.client_storage = MockClientStorage()
+            self.session = None
+
+    ProgressService._sessions.clear()
+    ProgressService.set_file_path_override(str(tmp_path / "student_case.json"))
+    try:
+        page = MockPage()
+        ps = ProgressService(page)
+        result = ps.set_student_name("  everton kaylon ")
+
+        assert result == "Everton Kaylon"
+        assert ps.get_student_name() == "Everton Kaylon"
+        assert page.client_storage.get("saebom_student_name") == "Everton Kaylon"
+        assert page.client_storage.get("sejong_student_name") == "Everton Kaylon"
+
+        # Recarregar do disco para garantir persistência canônica
+        ProgressService._sessions.clear()
+        ps2 = ProgressService(page)
+        assert ps2.get_student_name() == "Everton Kaylon"
+    finally:
+        ProgressService._sessions.clear()
+        ProgressService.set_file_path_override(None)

@@ -1,3 +1,4 @@
+import asyncio
 import flet as ft
 import uuid
 from ..components import centered_content
@@ -56,21 +57,25 @@ def onboarding_view(page: ft.Page) -> ft.View:
     )
 
     async def save_and_proceed(student_id: str, student_name: str):
+        page._saebom_student_id = student_id
         page._sejong_student_id = student_id
-        page._sejong_student_name = student_name
-        
+
         # Persistir no servidor via ProgressService e garantir credencial de recuperação
         ps = ProgressService(page)
-        ps.set_student_name(student_name)
+        canonical_name = ps.set_student_name(student_name)
+        page._saebom_student_name = canonical_name
+        page._sejong_student_name = canonical_name
         ps.get_or_create_recovery_code()
 
-        # Persistir no SharedPreferences (localStorage do navegador)
+        # Persistir no SharedPreferences (localStorage do navegador) com timeout estrito
         try:
             sp = ft.SharedPreferences()
             if hasattr(page, "services") and sp not in page.services:
                 page.services.append(sp)
-            await sp.set("sejong_student_id", student_id)
-            await sp.set("sejong_student_name", student_name)
+            await asyncio.wait_for(sp.set("saebom_student_id", student_id), timeout=0.8)
+            await asyncio.wait_for(sp.set("saebom_student_name", canonical_name), timeout=0.8)
+            await asyncio.wait_for(sp.set("sejong_student_id", student_id), timeout=0.8)
+            await asyncio.wait_for(sp.set("sejong_student_name", canonical_name), timeout=0.8)
         except Exception as e:
             print(f"[Onboarding] Erro ao gravar SharedPreferences: {e}")
 

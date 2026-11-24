@@ -2,7 +2,7 @@
 
 **Conceito Relacionado:** [[Arquitetura_Flet_e_Flutter_Engine]] | [[Neuropedagogia_e_Gamificacao]] | [[SDD_Spec_Driven_Development]]  
 **Documentos Vinculados:** [[didactic_neuroscience_korean_ptbr]] | [[Plano_UIUX_Flet_Sejong_Companion]]  
-**Bugs Catalogados:** [[bug_01_flet_audio_corridas_e_page_services]]  
+**Bugs Catalogados:** [[bug_01_flet_audio_corridas_e_page_services]] | [[bug_08_politica_autoplay_navegador_e_silent_wav]] | [[bug_09_vulnerabilidades_seguranca_e_hardening_autenticacao]]  
 
 ---
 
@@ -10,93 +10,74 @@
 
 O aprendizado da percepção auditiva no idioma coreano (*듣기*) é extremamente sensível a nuances fonéticas (como a tripartição oclusiva de consoantes simples, aspiradas e tensas).
 
-Para garantir áudio cristalino com entonação humana natural, o **Sejong Companion (세종학당 컴패니언)** utiliza vozes TTS geradas via **Typecast.ai**, gravadas e sintetizadas especificamente para o vocabulário das lições do *Sejong Korean 1A*.
+Para garantir áudio cristalino com entonação humana natural, o **Saebom Companion (새봄 컴패니언)** utiliza vozes TTS geradas via **Typecast.ai** (`model="ssfm-v30"`), sintetizadas para o vocabulário e frases das lições baseadas nos livros didáticos oficiais *Sejong Korean 1A e 1B* (com fallback para Google Translate TTS quando aplicável em runtime Web).
 
 ---
 
-## 2. ⚡ A Arquitetura do Serviço Singleton (`AudioService`)
+## 2. ⚡ Arquitetura do Serviço Singleton (`AudioService`) & Isolamento `assets/` vs. `data/`
 
-Em aplicações Flet 0.85+, gerenciar instâncias de áudio diretamente em views temporárias gera vazamentos de memória e exceções de corrida (*race conditions*) caso o usuário mude de tela enquanto o áudio está tocando.
+Em aplicações Flet 0.85+, instanciar players de áudio dentro de views temporárias causa vazamentos e exceções `Control not found` ao trocar de tela. Além disso, navegadores modernos bloqueiam `play()` disparado de forma assíncrona sem gesto síncrono direto (`BUG-08`), e ambientes containerizados exigem que `assets/` seja estritamente **read-only** (`BUG-09`).
 
-Para resolver esse problema, o projeto implementa o padrão **Singleton Service** encapsulado em [src/audio_service.py](file:///c:/Users/Pichau/Documents/sejong_companion/src/audio_service.py).
+Por isso, o projeto encapsula todo o ciclo de áudio no serviço global [`src/audio_service.py`](../../src/audio_service.py):
 
+```text
+ ┌─────────────────────────────────────────────────────────────────────────┐
+ │                      SESSÃO GLOBAL DA PÁGINA (`page`)                   │
+ │                        `page.audio_service`                             │
+ └────────────────────────────────────┬────────────────────────────────────┘
+                                      │
+          ┌───────────────────────────┴───────────────────────────┐
+          │                                                       │
+┌─────────▼──────────────────────────┐     ┌──────────────────────▼──────────────────────┐
+│    Destravamento Autoplay (Web)    │     │     Armazenamento & Resolução de Áudio      │
+│  `fa.Audio(src="silent.wav",       │     │ 1. Bundle estático (Read-Only):             │
+│   autoplay=True, volume=0.0)`      │     │    `assets/audio_cache/{md5}.{ext}`         │
+│  Mesmo player reusado na sessão    │     │ 2. Cache dinâmico (Mutável em Runtime):     │
+└────────────────────────────────────┘     │    `data/cache/audio/{md5}.{ext}`           │
+                                           │    (gravado via `.part` + `os.replace`)     │
+                                           └─────────────────────────────────────────────┘
 ```
- ┌──────────────────────────────────────────────────────────────────┐
- │                     SESSÃO DA PÁGINA (page)                      │
- └────────────────────────────────┬─────────────────────────────────┘
-                                  │
-                                  │ Instanciação Única no Launch
-                                  ▼
- ┌──────────────────────────────────────────────────────────────────┐
- │                    `page.audio_service`                          │
- │                (Instância de `AudioService`)                     │
- └────────────────────────────────┬─────────────────────────────────┘
-                                  │
-          ┌───────────────────────┴───────────────────────┐
-          │                                               │
-┌─────────▼───────────────────────┐             ┌─────────▼───────────────────────┐
-│     `page.overlay.append()`     │             │       `current_audio.pause()`   │
-│ (Controle retido na sessão raiz)│             │ (Cancela áudio ativo anterior)  │
-└─────────────────────────────────┘             └─────────────────────────────────┘
-```
+
+### Regras Arquiteturais Vigentes
+1. **Player Singleton Permanente:** Criado uma única vez no startup (`main.py` → `page.audio_service`) usando `flet_audio.Audio`. Em navegadores Web/PWA, o player é inicializado com `src="silent.wav"` (`assets/silent.wav`, `volume=0.0`, `autoplay=True`) e nunca é destruído durante mudanças de rota.
+2. **Isolamento `assets/` (Read-Only) vs. `data/cache/audio/` (Mutável):**
+   - `assets/audio_cache/` contém apenas o pacote pré-aquecido empacotado no repositório/imagem Docker (`.mp3` para Web e `.wav` para Desktop Windows nativo). Nenhuma escrita em runtime ocorre em `assets/`.
+   - `AudioService.get_cache_dir()` direciona toda gravação em runtime para **`data/cache/audio/`** (sobrescrevível via `SAEBOM_AUDIO_CACHE_DIR`, com fallback legado para `SEJONG_AUDIO_CACHE_DIR` ou `FLET_APP_STORAGE_CACHE`).
+3. **Resolução Dual em Reprodução Web:** Arquivos presentes no bundle estático são reproduzidos via caminho relativo de asset (`audio_cache/{filename}`), enquanto novos áudios sintetizados em `data/cache/audio/` podem ser servidos diretamente como `bytes` ao `flet_audio.Audio.src`, garantindo funcionamento sem violar o caráter read-only de `assets/`.
+4. **Chave de Cache Versionada & Gravação Atômica:** O nome do arquivo usa `md5("typecast-{fmt}-v2\0{text}")` e gravação atômica via arquivo temporário `.part` + `os.replace()`.
 
 ---
 
-## 3. 🛠️ Código Completo do Serviço (`src/audio_service.py`)
+## 3. 🛠️ Fluxo de Execução Assíncrona (`src/audio_service.py`)
 
 ```python
-# src/audio_service.py — Serviço de Áudio Robustecido
+# Resumo do pipeline em src/audio_service.py
+async def _play_korean_async_inner(self, text: str):
+    filename = self._cache_filename(text)
+    local_file_path = os.path.join(self.cache_dir, filename)                  # data/cache/audio/
+    bundled_path = os.path.join(self.get_bundled_assets_audio_dir(), filename) # assets/audio_cache/
 
-import flet as ft
-import os
+    # Só sintetiza para data/cache/audio/ se ausente em ambos os repositórios
+    if not (os.path.exists(local_file_path) or os.path.exists(bundled_path)):
+        fetched = await asyncio.to_thread(self._synthesize_to_cache, text, local_file_path)
+        if not fetched:
+            self._show_audio_error(text)
+            return
 
-class AudioService:
-    def __init__(self, page: ft.Page):
-        self.page = page
-        self.current_audio: ft.Audio = None
-
-    def play_tts(self, audio_path: str):
-        """
-        Reproduz um arquivo de áudio de forma segura, pausando qualquer
-        reprodução anterior e garantindo que o controle permaneça vivo no overlay.
-        """
-        # 1. Cancelar reprodução ativa anterior
-        if self.current_audio:
-            try:
-                self.current_audio.pause()
-            except Exception:
-                pass
-
-        # 2. Verificar existência do arquivo local em assets/audio
-        full_path = os.path.join(os.path.dirname(__file__), "..", audio_path)
-        if not os.path.exists(full_path):
-            print(f"[AudioService] Aviso: Arquivo de áudio não encontrado: {audio_path}")
-
-        # 3. Instanciar e anexar ao overlay da página
-        self.current_audio = ft.Audio(
-            src=audio_path,
-            autoplay=True,
-            on_state_changed=self._on_state_changed
-        )
-        
-        # Garante vínculo com a sessão raiz sem duplicação
-        if self.current_audio not in self.page.overlay:
-            self.page.overlay.append(self.current_audio)
-            
-        self.page.update()
-
-    def _on_state_changed(self, e):
-        # Evento nativo disparado ao concluir a reprodução
-        pass
+    if self._use_native_windows_player:
+        target = local_file_path if os.path.exists(local_file_path) else bundled_path
+        await self._play_native_file(target)  # winsound WAV
+    else:
+        await self._play_file(f"audio_cache/{filename}")  # asset ou bytes de cache_dir
 ```
 
 ---
 
-## 4. 🚨 Análise do Bug Resolvido ([[bug_01_flet_audio_corridas_e_page_services]])
+## 4. 🚨 Bugs Críticos Relacionados
 
-- **Sintoma**: Ao clicar rapidamente entre exercícios ou ao sair da view do quiz enquanto um áudio estava sendo baixado/tocado, o app travava com a mensagem `AssertionError: Control not found`.
-- **Causa Raiz**: O player `ft.Audio` era instanciado dentro da view local (`quiz_view.py`). Ao trocar de rota, a view era descartada pelo Garbage Collector enquanto a thread do Flutter continuava tentando ler o player destruído.
-- **Solução Nativa**: O registro no `page.overlay` garantiu que o controle pertença à janela mãe do Flet, sobrevivendo a trocas de rotas sem exceções.
+- **[[bug_01_flet_audio_corridas_e_page_services]]**: Migração do player por view para o serviço singleton global, eliminando `AssertionError: Control not found`.
+- **[[bug_08_politica_autoplay_navegador_e_silent_wav]]**: Inclusão de `assets/silent.wav` e reutilização da mesma instância `fa.Audio` para destravar reprodução assíncrona no Chrome/Edge/Mobile PWA.
+- **[[bug_09_vulnerabilidades_seguranca_e_hardening_autenticacao]]**: Transferência do cache mutável em runtime de `assets/audio_cache/` para `data/cache/audio/`, mantendo `assets/` 100% read-only.
 
 ---
 
@@ -105,3 +86,4 @@ class AudioService:
 - ⚡ Arquitetura Flet Engine: [[Arquitetura_Flet_e_Flutter_Engine]]
 - 🧠 Estudo Didático Neuropedagógico: [[didactic_neuroscience_korean_ptbr]]
 - 🚨 Bug do Serviço de Áudio: [[bug_01_flet_audio_corridas_e_page_services]]
+- 🚨 Autoplay Web & silent.wav: [[bug_08_politica_autoplay_navegador_e_silent_wav]]

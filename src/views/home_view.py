@@ -1,3 +1,4 @@
+import asyncio
 import flet as ft
 from datetime import datetime
 from .. import __version__
@@ -161,12 +162,16 @@ def home_view(page: ft.Page) -> ft.View:
         def save_name(ev):
             val = (name_edit_input.value or "").strip()
             if val:
-                progress_service.set_student_name(val)
-                page._sejong_student_name = val
+                canonical_name = progress_service.set_student_name(val)
+                page._saebom_student_name = canonical_name
+                page._sejong_student_name = canonical_name
                 async def _save_sp():
                     try:
                         sp = ft.SharedPreferences()
-                        await sp.set("sejong_student_name", val)
+                        if hasattr(page, "services") and sp not in page.services:
+                            page.services.append(sp)
+                        await asyncio.wait_for(sp.set("saebom_student_name", canonical_name), timeout=0.8)
+                        await asyncio.wait_for(sp.set("sejong_student_name", canonical_name), timeout=0.8)
                     except Exception:
                         pass
                 page.run_task(_save_sp)

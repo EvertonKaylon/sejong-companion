@@ -25,7 +25,7 @@ O Flet gerencia o servidor HTTP embutido e automaticamente invoca a abertura do 
 
 ## 3. Solução Aplicada
 
-Definimos formalmente o IP de bind como `"127.0.0.1"` por padrão no [main.py](file:///c:/Users/Pichau/Documents/sejong_companion/main.py), com documentação clara no código para testes em rede local/mobile.
+Definimos formalmente o IP de bind como `"127.0.0.1"` por padrão no [main.py](../../main.py), com documentação clara no código para testes em rede local/mobile.
 
 ### Código Antes (Falhava no Windows):
 ```python

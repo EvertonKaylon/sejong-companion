@@ -1,6 +1,13 @@
 import flet as ft
 import flet.canvas as cv
-from ..components import HangulCard, centered_content, build_oclusive_lab, CalligraphyWidget
+from ..components import (
+    HangulCard,
+    centered_content,
+    build_oclusive_lab,
+    CalligraphyWidget,
+    SyllableFactory,
+    NumberTraining,
+)
 from ..theme import get_theme_colors, Styles, Responsive
 from ..services import DataService
 
@@ -571,10 +578,25 @@ def hangul_view(page: ft.Page) -> ft.View:
             )
         )
 
+    syllable_factory_widget = SyllableFactory(
+        is_dark=is_dark,
+        on_syllable_change=lambda syl: page.audio_service.play_korean(syl) if hasattr(page, "audio_service") and page.audio_service else None,
+    )
+
+    number_training_widget = NumberTraining(
+        is_dark=is_dark,
+        system="sino",
+        on_complete=lambda text: page.audio_service.play_korean(text) if hasattr(page, "audio_service") and page.audio_service else None,
+    )
+
     syllables_col = ft.Container(
         content=ft.Column(
             controls=[
+                syllable_factory_widget,
+                ft.Divider(height=1, color=colors["border"]),
                 ganada_section,
+                ft.Divider(height=1, color=colors["border"]),
+                number_training_widget,
                 numbers_section,
                 original_syllables_header,
                 *syllable_cards,
@@ -605,7 +627,7 @@ def hangul_view(page: ft.Page) -> ft.View:
         on_completed=on_calligraphy_completed,
     )
 
-    sample_chars = ["가", "나", "다", "한", "글", "세", "종", "ㄱ", "ㄴ", "ㄷ", "ㅏ", "ㅓ", "ㅗ"]
+    sample_chars = ["가", "나", "다", "한", "글", "새", "봄", "ㄱ", "ㄴ", "ㄷ", "ㅏ", "ㅓ", "ㅗ"]
 
     preview_char_title = ft.Text(
         f"Praticando: {calligraphy_widget.target_char}",
@@ -862,6 +884,7 @@ def hangul_view(page: ft.Page) -> ft.View:
         expand=True,
         length=len(tab_headers),
         on_change=on_tab_change,
+        data=tab_views,
         content=ft.Column(
             expand=True,
             controls=[

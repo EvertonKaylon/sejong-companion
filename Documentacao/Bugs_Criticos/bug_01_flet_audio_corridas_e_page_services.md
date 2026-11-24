@@ -23,7 +23,7 @@ O Flet 0.85+ exige que controles de serviço não-visuais (como `flet_audio.Audi
 
 ## 3. Solução Aplicada
 
-Foi criado um **Serviço Global de Áudio Singleton** ([audio_service.py](file:///c:/Users/Pichau/Documents/sejong_companion/src/audio_service.py)) injetado diretamente no objeto `page.audio_service` durante a inicialização no [main.py](file:///c:/Users/Pichau/Documents/sejong_companion/main.py).
+Foi criado um **Serviço Global de Áudio Singleton** ([audio_service.py](../../src/audio_service.py)) injetado diretamente no objeto `page.audio_service` durante a inicialização no [main.py](../../main.py).
 
 ### Código Antes (Incorreto / Descentralizado):
 ```python

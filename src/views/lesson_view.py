@@ -1,5 +1,5 @@
 import flet as ft
-from ..components import VocabCard, centered_content
+from ..components import VocabCard, centered_content, SpatialStage
 from ..theme import get_theme_colors, Styles, Responsive
 from ..models import PedagogicalEvent
 from ..services import DataService, ProgressService, FullscreenService, TelemetryService
@@ -244,6 +244,30 @@ def lesson_view(page: ft.Page) -> ft.View:
                 shadow=Styles.CARD_SHADOW,
                 margin=ft.Margin.only(bottom=14),
             )
+        )
+
+    if unit_id == "unit_03":
+        def _on_spatial_challenge_completed(challenge_id: str):
+            if hasattr(page, "audio_service") and page.audio_service:
+                challenge = next(
+                    (c for c in spatial_stage.challenges if c.get("id") == challenge_id),
+                    None,
+                )
+                prompt_kr = challenge["prompt_kr"] if challenge else spatial_stage.current_challenge.get("prompt_kr", "")
+                if prompt_kr:
+                    page.audio_service.play_korean(prompt_kr)
+
+        spatial_stage = SpatialStage(
+            page=page,
+            is_dark=is_dark,
+            on_challenge_completed=_on_spatial_challenge_completed,
+        )
+        grammar_controls.insert(
+            0,
+            ft.Container(
+                content=spatial_stage,
+                margin=ft.Margin.only(bottom=14),
+            ),
         )
 
     grammar_col = ft.Column(

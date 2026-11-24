@@ -12,6 +12,7 @@ import json
 import os
 from typing import Any, Callable, Dict, Optional
 import flet as ft
+from .. import __version__
 from ..theme import Colors, Styles
 from ..announcement_service import AnnouncementService
 
@@ -21,14 +22,15 @@ ICON_MAP: Dict[str, str] = {
     "person": ft.Icons.PERSON_ROUNDED,
     "draw": ft.Icons.DRAW_ROUNDED,
     "auto_awesome": ft.Icons.AUTO_AWESOME_ROUNDED,
+    "security": ft.Icons.SECURITY_ROUNDED,
 }
 
 
 def _get_fallback_data(error_msg: str = "") -> Dict[str, Any]:
     """Retorna dados de fallback pedagógicos caso o release_notes.json não possa ser carregado."""
     return {
-        "version": "0.3.6-alpha",
-        "release_date": "2026-09-20",
+        "version": __version__,
+        "release_date": "2026-11-24",
         "title_pt": "Novidades do Saebom",
         "title_kr": "새봄 소식",
         "greeting_pt": "Olá! Confira as novidades preparadas para você e sua professora:",
@@ -118,7 +120,7 @@ class WhatsNewDialog(ft.AlertDialog):
 
         title_pt = self.release_data.get("title_pt", "Novidades do Saebom")
         title_kr = self.release_data.get("title_kr", "새봄 소식")
-        version = self.release_data.get("version", "0.3.6-alpha")
+        version = self.release_data.get("version", __version__)
         greeting_pt = self.release_data.get("greeting_pt", "")
         greeting_kr = self.release_data.get("greeting_kr", "")
         highlights = self.release_data.get("highlights", [])
