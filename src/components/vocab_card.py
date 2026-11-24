@@ -7,7 +7,7 @@ class VocabCard(ft.Container):
         self.colors = get_theme_colors(is_dark)
         self.on_audio_click = on_audio_click
         
-        # Elementos de Texto — SEM romanização (metodologia Sejong)
+        # Elementos de Texto — SEM romanização (metodologia Saebom)
         word_txt = ft.Text(
             value=vocab_item.word,
             size=22,
@@ -44,13 +44,21 @@ class VocabCard(ft.Container):
             tooltip="Ouvir pronúncia"
         )
 
-        # Cabeçalho: Palavra em 한글 (expansível) + Botão de Áudio no topo direito
+        # Camada sensorial de brilho na palavra (word_glow)
+        self.word_glow = ft.Container(
+            content=word_txt,
+            bgcolor=ft.Colors.with_opacity(0.15, self.colors["primary"]),
+            border_radius=Styles.BORDER_RADIUS_SM,
+            padding=ft.Padding.symmetric(horizontal=6, vertical=2),
+            opacity=0.0,
+            animate_opacity=250,
+            expand=True,
+        )
+
+        # Cabeçalho: Palavra em 한글 (com word_glow) + Botão de Áudio no topo direito
         header_row = ft.Row(
             controls=[
-                ft.Container(
-                    content=word_txt,
-                    expand=True,
-                ),
+                self.word_glow,
                 self.audio_icon
             ],
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
@@ -97,9 +105,9 @@ class VocabCard(ft.Container):
                         spacing=8,
                     ),
                     padding=ft.Padding.symmetric(horizontal=10, vertical=8),
-                    bgcolor="#14F5A623",
+                    bgcolor=ft.Colors.with_opacity(0.12, self.colors["accent"]),
                     border_radius=Styles.BORDER_RADIUS_SM,
-                    border=ft.Border.all(1, "#33F5A623"),
+                    border=ft.Border.all(1, ft.Colors.with_opacity(0.20, self.colors["accent"])),
                     margin=ft.Margin.only(top=4)
                 )
             )
@@ -189,28 +197,47 @@ class VocabCard(ft.Container):
             on_hover=self.on_vocab_hover
         )
 
-    def play_audio_animation(self, e):
-        # Simular efeito visual de clique no áudio
+    def update(self):
+        try:
+            super().update()
+        except Exception:
+            pass
+
+    def play_audio_animation(self, e=None):
+        # Simular efeito visual de clique no áudio e pulso de brilho na palavra
         self.audio_icon.icon_color = self.colors["secondary"]
-        self.audio_icon.update()
-        
+        self.word_glow.opacity = 0.85
+        try:
+            self.update()
+        except Exception:
+            pass
+
         # Se houver callback registrado (ex: para reproduzir áudio via TTS)
         if self.on_audio_click:
-            self.on_audio_click(self.vocab_item.word)
-        else:
-            # Feedback visual — mostra a palavra em 한글 (sem romanização!)
-            snack = ft.SnackBar(
-                content=ft.Text(f"🔊 {self.vocab_item.word}"),
-                action="OK",
-                duration=1500,
-                open=True,
-            )
-            self.page.overlay.append(snack)
-            self.page.update()
-            
-        # Resetar a cor do ícone
+            try:
+                self.on_audio_click(self.vocab_item.word)
+            except Exception:
+                pass
+        elif hasattr(self, "page") and self.page:
+            try:
+                snack = ft.SnackBar(
+                    content=ft.Text(f"🔊 {self.vocab_item.word}"),
+                    action="OK",
+                    duration=1500,
+                    open=True,
+                )
+                self.page.overlay.append(snack)
+                self.page.update()
+            except Exception:
+                pass
+
+        # Resetar a cor do ícone e o brilho
         self.audio_icon.icon_color = self.colors["primary"]
-        self.audio_icon.update()
+        self.word_glow.opacity = 0.0
+        try:
+            self.update()
+        except Exception:
+            pass
 
     def on_vocab_hover(self, e):
         if e.data == "true":
@@ -219,4 +246,7 @@ class VocabCard(ft.Container):
         else:
             self.shadow = Styles.CARD_SHADOW
             self.border = ft.Border.all(1, self.colors["border"])
-        self.update()
+        try:
+            self.update()
+        except Exception:
+            pass

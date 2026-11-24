@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <title>Mouth Shape - U [ㅜ]</title>
+  <!-- Small tight circular/oval opening -->
+  <ellipse cx="50" cy="50" rx="22" ry="24" fill="#2A1B3D" stroke="#8B4DFF" stroke-width="3"/>
+  <!-- Oral cavity: small tight opening -->
+  <ellipse cx="50" cy="50" rx="11" ry="13" fill="#150B24"/>
+  <!-- Tongue: High back -->
+  <ellipse cx="50" cy="54" rx="9" ry="5" fill="#E85D75"/>
+  <!-- Concentric pucker ring -->
+  <ellipse cx="50" cy="50" rx="17" ry="19" stroke="#B28AFF" stroke-width="4" fill="none"/>
+</svg>

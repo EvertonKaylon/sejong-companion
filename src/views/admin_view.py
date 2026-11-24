@@ -1,9 +1,10 @@
 import os
+import uuid
 from datetime import datetime
 import flet as ft
-from ..components import centered_content
+from ..components import centered_content, WhatsNewDialog
 from ..theme import get_theme_colors, Styles, Responsive
-from ..services import AdminService, DataService
+from ..services import AdminService, DataService, AnnouncementService
 
 # Dicionário de Internacionalização para o Portal do Professor (Português / 한국어)
 ADMIN_I18N = {
@@ -49,14 +50,31 @@ ADMIN_I18N = {
         "export_tooltip": "Exportar Relatório Markdown",
         "lang_toggle_btn": "🇰🇷 한국어로 보기",
         "lang_toggle_tooltip": "Alternar para Coreano / 한국어로 전환",
+        "tab_announcements": "Mural de Avisos",
+        "ann_section_title": "Mural de Avisos da Professora",
+        "ann_section_sub": "Publique comunicados que notificam os alunos instantaneamente na Home e no sistema.",
+        "ann_title_label": "Título do Comunicado",
+        "ann_title_hint": "Ex: Preparação para a aula de amanhã...",
+        "ann_content_label": "Mensagem para a Turma",
+        "ann_content_hint": "Ex: Pratiquem a caligrafia da Unidade 3 no 원고지!",
+        "ann_post_btn": "Notificar Turma",
+        "ann_success_snack": "🎉 Comunicado publicado e notificação enviada para a turma!",
+        "ann_empty_field": "Por favor, preencha o título e o conteúdo da mensagem.",
+        "ann_history_title": "📢 Comunicados Ativos da Turma",
+        "ann_no_history": "Nenhum comunicado ativo no momento.",
+        "ann_delete_tooltip": "Remover Aviso",
+        "ann_deleted_snack": "Aviso removido com sucesso.",
+        "whats_new_tooltip": "Novidades do Saebom (새봄 소식)",
         # Login
         "login_title": "Portal Pedagógico",
         "login_sub": "Área Administrativa · 관리자",
-        "login_desc": "Acesso restrito ao corpo docente do Sejong Hakdang e administradores para análise de evidência pedagógica.",
+        "login_desc": "Acesso restrito ao corpo docente e administradores para análise de evidência pedagógica.",
         "pin_label": "PIN de Acesso",
         "login_btn": "Entrar no Painel",
         "back_home": "Voltar para o Início",
         "pin_error": "PIN incorreto. Tente novamente.",
+        "pin_unconfigured": "Autenticação desabilitada: SAEBOM_ADMIN_PIN não configurado no .env.",
+        "pin_unconfigured_hint": "Defina SAEBOM_ADMIN_PIN no arquivo .env para liberar o acesso.",
     },
     "ko": {
         "title": "교사용 포털",
@@ -64,7 +82,7 @@ ADMIN_I18N = {
         "students_kpi": "학습자 수",
         "students_sub": "등록된 학생 프로필",
         "progress_kpi": "평균 진도율",
-        "progress_sub": "세종한국어 1A + 1B",
+        "progress_sub": "한국어 1A + 1B",
         "retention_kpi": "SRS 기억 유지율",
         "cards_suffix": "개 카드",
         "quizzes_kpi": "완료된 퀴즈",
@@ -100,25 +118,70 @@ ADMIN_I18N = {
         "export_tooltip": "마크다운 보고서 내보내기",
         "lang_toggle_btn": "🇧🇷 Ver em Português",
         "lang_toggle_tooltip": "Alternar para Português / 포르투갈어로 전환",
+        "tab_announcements": "공지사항",
+        "ann_section_title": "교수 공지사항 게시판",
+        "ann_section_sub": "학생들에게 즉시 전달되는 공지사항을 작성하고 시스템 알림을 발송합니다.",
+        "ann_title_label": "공지 제목",
+        "ann_title_hint": "예: 내일 수업 준비 안내...",
+        "ann_content_label": "학급 전달 메시지",
+        "ann_content_hint": "예: 3과 원고지 쓰기 연습을 꼭 복습해주세요!",
+        "ann_post_btn": "전체 공지 발송",
+        "ann_success_snack": "🎉 공지사항이 등록되었으며 학생들에게 알림이 전송되었습니다!",
+        "ann_empty_field": "공지 제목과 내용을 모두 입력해주세요.",
+        "ann_history_title": "📢 현재 게시 중인 학급 공지",
+        "ann_no_history": "현재 활성화된 공지사항이 없습니다.",
+        "ann_delete_tooltip": "공지 삭제",
+        "ann_deleted_snack": "공지사항이 성공적으로 삭제되었습니다.",
+        "whats_new_tooltip": "새봄 소식 (새봄 소식)",
         # Login
-        "login_title": "세종학당 교수 포털",
+        "login_title": "새봄 교수 포털",
         "login_sub": "관리자 및 교수진 전용 · 관리자",
-        "login_desc": "세종학당 교수진 및 관리자 전용 교육 성과 분석 포털입니다.",
+        "login_desc": "새봄 컴패니언 교수진 및 관리자 전용 교육 성과 분석 포털입니다.",
         "pin_label": "접속 PIN 번호",
         "login_btn": "대시보드 로그인",
         "back_home": "홈 화면으로 돌아가기",
         "pin_error": "PIN 번호가 일치하지 않습니다. 다시 입력해주세요.",
+        "pin_unconfigured": "관리자 인증이 비활성화되었습니다: .env 파일에 SAEBOM_ADMIN_PIN을 설정해주세요.",
+        "pin_unconfigured_hint": ".env 파일에 SAEBOM_ADMIN_PIN을 설정해주세요.",
     }
 }
+
+def _resolve_admin_client_key(page) -> str:
+    """Resolve uma chave de cliente única por sessão para rate-limiting do /admin."""
+    if page is not None:
+        client_ip = getattr(page, "client_ip", None)
+        if isinstance(client_ip, (str, int)) and str(client_ip).strip():
+            return f"ip_{str(client_ip).strip()}"
+
+        session_id = getattr(page, "session_id", None)
+        if isinstance(session_id, (str, int)) and str(session_id).strip():
+            return f"sess_{str(session_id).strip()}"
+
+        student_id = getattr(page, "_saebom_student_id", None) or getattr(page, "_sejong_student_id", None)
+        if isinstance(student_id, str) and student_id.strip():
+            return f"std_{student_id.strip()}"
+
+        cached_key = getattr(page, "_admin_client_key", None)
+        if isinstance(cached_key, str) and cached_key.strip():
+            return cached_key
+
+    anon_key = f"anon_{uuid.uuid4().hex[:12]}"
+    if page is not None:
+        page._admin_client_key = anon_key
+    return anon_key
+
 
 def admin_view(page: ft.Page) -> ft.View:
     is_dark = page.theme_mode == ft.ThemeMode.DARK
     colors = get_theme_colors(is_dark)
     w = page.width or 400
 
-    # Estado de autenticação e idioma da sessão
-    if not hasattr(page, "_admin_authenticated"):
+    # Estado de autenticação e validação de expiração de sessão
+    session_token = getattr(page, "_admin_session_token", None)
+    if not AdminService.validate_session(session_token):
         page._admin_authenticated = False
+        page._admin_session_token = None
+
     if not hasattr(page, "_admin_lang"):
         page._admin_lang = "pt"
 
@@ -129,41 +192,61 @@ def admin_view(page: ft.Page) -> ft.View:
         rebuild_view()
 
     def rebuild_view():
+        new_view = admin_view(page)
         page.views.clear()
-        page.views.append(admin_view(page))
+        page.views.append(new_view)
         page.update()
 
     # ─── 1. TELA DE LOGIN / AUTENTICAÇÃO POR PIN ───
     if not page._admin_authenticated:
+        is_pin_configured = AdminService.is_configured()
+
+        error_text = ft.Text(
+            t["pin_error"] if is_pin_configured else t.get("pin_unconfigured", "Autenticação administrativa desabilitada."),
+            size=12,
+            color=colors["incorrect"],
+            weight=ft.FontWeight.W_500,
+        )
+        error_banner = ft.Container(
+            content=ft.Row(
+                controls=[
+                    ft.Icon(
+                        ft.Icons.ERROR_OUTLINE_ROUNDED if is_pin_configured else ft.Icons.WARNING_AMBER_ROUNDED,
+                        color=colors["incorrect"],
+                        size=16,
+                    ),
+                    error_text,
+                ],
+                spacing=6,
+            ),
+            visible=not is_pin_configured,
+            margin=ft.Margin.only(top=6, bottom=4),
+        )
+
         pin_input = ft.TextField(
             label=t["pin_label"],
             password=True,
             can_reveal_password=True,
             prefix_icon=ft.Icons.KEY_ROUNDED,
-            border_color=colors["border"],
+            border_color=colors["border"] if is_pin_configured else colors["incorrect"],
             focused_border_color=colors["primary"],
             cursor_color=colors["primary"],
             text_size=15,
             autofocus=True,
-        )
-        error_banner = ft.Container(
-            content=ft.Row(
-                controls=[
-                    ft.Icon(ft.Icons.ERROR_OUTLINE_ROUNDED, color=colors["incorrect"], size=16),
-                    ft.Text(t["pin_error"], size=12, color=colors["incorrect"], weight=ft.FontWeight.W_500),
-                ],
-                spacing=6,
-            ),
-            visible=False,
-            margin=ft.Margin.only(top=6, bottom=4),
+            disabled=False,
+            hint_text=None if is_pin_configured else t.get("pin_unconfigured_hint", "Defina SAEBOM_ADMIN_PIN no .env"),
         )
 
         def handle_login(e):
             entered_pin = pin_input.value or ""
-            if AdminService.authenticate(entered_pin):
+            client_key = _resolve_admin_client_key(page)
+            success, token, msg = AdminService.login(entered_pin, client_key=client_key)
+            if success:
                 page._admin_authenticated = True
+                page._admin_session_token = token
                 rebuild_view()
             else:
+                error_text.value = msg
                 error_banner.visible = True
                 pin_input.border_color = colors["incorrect"]
                 page.update()
@@ -189,7 +272,7 @@ def admin_view(page: ft.Page) -> ft.View:
                         width=72,
                         height=72,
                         alignment=ft.Alignment.CENTER,
-                        bgcolor=f"{colors['primary']}18",
+                        bgcolor=ft.Colors.with_opacity(0.10, colors["primary"]),
                         shape=ft.BoxShape.CIRCLE,
                     ),
                     ft.Container(height=8),
@@ -205,7 +288,7 @@ def admin_view(page: ft.Page) -> ft.View:
                     pin_input,
                     error_banner,
                     ft.Container(height=10),
-                    ft.ElevatedButton(
+                    ft.Button(
                         content=ft.Row(
                             controls=[
                                 ft.Icon(ft.Icons.LOGIN_ROUNDED, size=18),
@@ -265,7 +348,10 @@ def admin_view(page: ft.Page) -> ft.View:
     all_students = AdminService.get_all_students_summary()
 
     def handle_logout(e):
+        token = getattr(page, "_admin_session_token", None)
+        AdminService.revoke_session(token)
         page._admin_authenticated = False
+        page._admin_session_token = None
         rebuild_view()
 
     def handle_refresh(e):
@@ -296,6 +382,18 @@ def admin_view(page: ft.Page) -> ft.View:
         page.overlay.append(snack)
         page.update()
 
+    def open_whats_new():
+        dialog = WhatsNewDialog(page=page)
+        try:
+            page.show_dialog(dialog)
+        except Exception:
+            try:
+                page.dialog = dialog
+                dialog.open = True
+                page.update()
+            except Exception:
+                pass
+
     app_bar = ft.AppBar(
         leading=ft.IconButton(
             icon=ft.Icons.ARROW_BACK_ROUNDED,
@@ -307,6 +405,13 @@ def admin_view(page: ft.Page) -> ft.View:
         bgcolor=colors["surface"],
         elevation=0,
         actions=[
+            # Botão de Novidades da Versão
+            ft.IconButton(
+                icon=ft.Icons.AUTO_AWESOME_ROUNDED,
+                icon_color=colors["accent"],
+                on_click=lambda e: open_whats_new(),
+                tooltip=t["whats_new_tooltip"],
+            ),
             # Botão de Tradução Instantânea (PT / KO)
             ft.Container(
                 content=ft.TextButton(
@@ -356,7 +461,7 @@ def admin_view(page: ft.Page) -> ft.View:
                                 width=32,
                                 height=32,
                                 alignment=ft.Alignment.CENTER,
-                                bgcolor=f"{color_hex}15",
+                                bgcolor=ft.Colors.with_opacity(0.08, color_hex),
                                 border_radius=Styles.BORDER_RADIUS_SM,
                             ),
                             ft.Text(title, size=12, weight=ft.FontWeight.W_600, color=colors["text_sec"]),
@@ -672,17 +777,219 @@ def admin_view(page: ft.Page) -> ft.View:
         spacing=4,
     )
 
+    # ─── TAB 3: MURAL DE AVISOS DA PROFESSORA & NOTIFICAÇÕES ───
+    ann_title_field = ft.TextField(
+        label=t["ann_title_label"],
+        hint_text=t["ann_title_hint"],
+        border_color=colors["border"],
+        focused_border_color=colors["primary"],
+        text_size=13,
+        content_padding=ft.Padding.symmetric(horizontal=12, vertical=10),
+    )
+    ann_content_field = ft.TextField(
+        label=t["ann_content_label"],
+        hint_text=t["ann_content_hint"],
+        multiline=True,
+        min_lines=3,
+        max_lines=5,
+        border_color=colors["border"],
+        focused_border_color=colors["primary"],
+        text_size=13,
+        content_padding=ft.Padding.symmetric(horizontal=12, vertical=10),
+    )
+
+    announcements_list_column = ft.Column(spacing=8)
+
+    def render_announcements_list():
+        announcements_list_column.controls.clear()
+        active_list = AnnouncementService.get_announcements(active_only=True)
+        if not active_list:
+            announcements_list_column.controls.append(
+                ft.Container(
+                    content=ft.Text(t["ann_no_history"], size=12, color=colors["text_sec"]),
+                    padding=16,
+                    alignment=ft.Alignment.CENTER,
+                )
+            )
+            return
+
+        for ann in active_list:
+            ann_id = ann.get("id", "")
+            title_text = ann.get("title", "")
+            content_text = ann.get("content", "")
+            author_text = ann.get("author", "Professora")
+            created_at_raw = ann.get("created_at", "")
+            try:
+                dt = datetime.fromisoformat(created_at_raw)
+                dt_str = dt.strftime("%d/%m/%Y %H:%M")
+            except Exception:
+                dt_str = created_at_raw[:16] if created_at_raw else ""
+
+            def make_delete_handler(target_id: str):
+                def _handler(ev):
+                    AnnouncementService.delete_announcement(target_id)
+                    render_announcements_list()
+                    refresh_tab_buttons()
+                    snack = ft.SnackBar(
+                        content=ft.Text(t["ann_deleted_snack"]),
+                        bgcolor=colors["warning"],
+                        open=True,
+                    )
+                    page.overlay.append(snack)
+                    page.update()
+                return _handler
+
+            card = ft.Container(
+                content=ft.Column(
+                    controls=[
+                        ft.Row(
+                            controls=[
+                                ft.Container(
+                                    content=ft.Icon(ft.Icons.CAMPAIGN_ROUNDED, color=colors["accent"], size=18),
+                                    padding=4,
+                                    bgcolor=ft.Colors.with_opacity(0.15, colors["accent"]),
+                                    border_radius=Styles.BORDER_RADIUS_SM,
+                                ),
+                                ft.Column(
+                                    controls=[
+                                        ft.Text(f"📢 {author_text}", size=12, weight=ft.FontWeight.BOLD, color=colors["accent"]),
+                                        ft.Text(dt_str, size=10, color=colors["text_sec"]) if dt_str else ft.Container(),
+                                    ],
+                                    spacing=1,
+                                    expand=True,
+                                ),
+                                ft.IconButton(
+                                    icon=ft.Icons.DELETE_OUTLINE_ROUNDED,
+                                    icon_color=colors["incorrect"],
+                                    icon_size=18,
+                                    tooltip=t["ann_delete_tooltip"],
+                                    on_click=make_delete_handler(ann_id),
+                                ),
+                            ],
+                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                            spacing=8,
+                        ),
+                        ft.Text(title_text, size=13, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                        ft.Text(content_text, size=12, color=colors["text_sec"]),
+                    ],
+                    spacing=6,
+                ),
+                bgcolor=colors["surface"],
+                border=ft.Border.all(1, ft.Colors.with_opacity(0.25, colors["accent"])),
+                border_radius=Styles.BORDER_RADIUS_MD,
+                padding=12,
+            )
+            announcements_list_column.controls.append(card)
+
+    def handle_post_announcement(e):
+        val_title = (ann_title_field.value or "").strip()
+        val_content = (ann_content_field.value or "").strip()
+        if not val_title or not val_content:
+            snack = ft.SnackBar(
+                content=ft.Text(t["ann_empty_field"]),
+                bgcolor=colors["incorrect"],
+                open=True,
+            )
+            page.overlay.append(snack)
+            page.update()
+            return
+
+        posted = AnnouncementService.post_announcement(
+            title=val_title,
+            content=val_content,
+            author="Professora",
+            page=page,
+        )
+        if posted:
+            ann_title_field.value = ""
+            ann_content_field.value = ""
+            render_announcements_list()
+            refresh_tab_buttons()
+            snack = ft.SnackBar(
+                content=ft.Text(t["ann_success_snack"]),
+                bgcolor=colors["correct"],
+                open=True,
+            )
+            page.overlay.append(snack)
+            page.update()
+
+    render_announcements_list()
+
+    ann_compose_card = ft.Container(
+        content=ft.Column(
+            controls=[
+                ft.Row(
+                    controls=[
+                        ft.Icon(ft.Icons.EDIT_NOTE_ROUNDED, color=colors["primary"], size=20),
+                        ft.Text(t["ann_section_title"], size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),
+                    ],
+                    spacing=6,
+                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                ),
+                ft.Text(t["ann_section_sub"], size=11, color=colors["text_sec"]),
+                ft.Container(height=4),
+                ann_title_field,
+                ann_content_field,
+                ft.Container(height=4),
+                ft.Row(
+                    controls=[
+                        ft.Button(
+                            content=ft.Row(
+                                controls=[
+                                    ft.Icon(ft.Icons.CAMPAIGN_ROUNDED, size=16, color=ft.Colors.WHITE),
+                                    ft.Text(t["ann_post_btn"], weight=ft.FontWeight.BOLD, size=13, color=ft.Colors.WHITE),
+                                ],
+                                spacing=6,
+                                tight=True,
+                            ),
+                            style=ft.ButtonStyle(
+                                bgcolor=colors["primary"],
+                                shape=ft.RoundedRectangleBorder(radius=Styles.BORDER_RADIUS_SM),
+                                padding=ft.Padding.symmetric(horizontal=16, vertical=10),
+                            ),
+                            on_click=handle_post_announcement,
+                        ),
+                    ],
+                    alignment=ft.MainAxisAlignment.END,
+                ),
+            ],
+            spacing=8,
+        ),
+        bgcolor=colors["surface"],
+        border=ft.Border.all(1, colors["border"]),
+        border_radius=Styles.BORDER_RADIUS_MD,
+        padding=14,
+    )
+
+    tab_announcements_content = ft.Column(
+        controls=[
+            ft.Container(height=6),
+            ann_compose_card,
+            ft.Container(height=12),
+            ft.Text(t["ann_history_title"], size=14, weight=ft.FontWeight.BOLD, color=colors["text"]),
+            ft.Container(height=4),
+            announcements_list_column,
+        ],
+        spacing=4,
+    )
+
     # ─── SEGMENTED TAB SWITCHER (100% RESPONSIVO / SEM COLLAPSE) ───
     active_tab = [0]
     tab_container = ft.Container(content=tab_diagnostics_content)
 
     tab_btn_diag = ft.Container(expand=True)
     tab_btn_roster = ft.Container(expand=True)
-    tabs_switcher_row = ft.Row(controls=[tab_btn_diag, tab_btn_roster], spacing=8)
+    tab_btn_announcements = ft.Container(expand=True)
+    tabs_switcher_row = ft.Row(controls=[tab_btn_diag, tab_btn_roster, tab_btn_announcements], spacing=6)
 
     def set_tab(index: int):
         active_tab[0] = index
-        tab_container.content = tab_diagnostics_content if index == 0 else tab_students_content
+        if index == 0:
+            tab_container.content = tab_diagnostics_content
+        elif index == 1:
+            tab_container.content = tab_students_content
+        else:
+            tab_container.content = tab_announcements_content
         refresh_tab_buttons()
         page.update()
 
@@ -690,34 +997,51 @@ def admin_view(page: ft.Page) -> ft.View:
         is_diag = active_tab[0] == 0
         tab_btn_diag.content = ft.Row(
             controls=[
-                ft.Icon(ft.Icons.INSIGHTS_ROUNDED, size=15, color=ft.Colors.WHITE if is_diag else colors["text_sec"]),
-                ft.Text(t["tab_diag"], size=12, weight=ft.FontWeight.BOLD if is_diag else ft.FontWeight.W_500, color=ft.Colors.WHITE if is_diag else colors["text_sec"]),
+                ft.Icon(ft.Icons.INSIGHTS_ROUNDED, size=14, color=ft.Colors.WHITE if is_diag else colors["text_sec"]),
+                ft.Text(t["tab_diag"], size=11, weight=ft.FontWeight.BOLD if is_diag else ft.FontWeight.W_500, color=ft.Colors.WHITE if is_diag else colors["text_sec"]),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
-            spacing=6,
+            spacing=4,
         )
         tab_btn_diag.bgcolor = colors["primary"] if is_diag else colors["surface"]
         tab_btn_diag.border = ft.Border.all(1, colors["primary"] if is_diag else colors["border"])
         tab_btn_diag.border_radius = Styles.BORDER_RADIUS_SM
-        tab_btn_diag.padding = ft.Padding.symmetric(vertical=10, horizontal=6)
+        tab_btn_diag.padding = ft.Padding.symmetric(vertical=8, horizontal=4)
         tab_btn_diag.alignment = ft.Alignment.CENTER
         tab_btn_diag.on_click = lambda e: set_tab(0)
 
         is_roster = active_tab[0] == 1
         tab_btn_roster.content = ft.Row(
             controls=[
-                ft.Icon(ft.Icons.PEOPLE_ROUNDED, size=15, color=ft.Colors.WHITE if is_roster else colors["text_sec"]),
-                ft.Text(f"{t['tab_roster']} ({len(all_students)})", size=12, weight=ft.FontWeight.BOLD if is_roster else ft.FontWeight.W_500, color=ft.Colors.WHITE if is_roster else colors["text_sec"]),
+                ft.Icon(ft.Icons.PEOPLE_ROUNDED, size=14, color=ft.Colors.WHITE if is_roster else colors["text_sec"]),
+                ft.Text(f"{t['tab_roster']} ({len(all_students)})", size=11, weight=ft.FontWeight.BOLD if is_roster else ft.FontWeight.W_500, color=ft.Colors.WHITE if is_roster else colors["text_sec"]),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
-            spacing=6,
+            spacing=4,
         )
         tab_btn_roster.bgcolor = colors["primary"] if is_roster else colors["surface"]
         tab_btn_roster.border = ft.Border.all(1, colors["primary"] if is_roster else colors["border"])
         tab_btn_roster.border_radius = Styles.BORDER_RADIUS_SM
-        tab_btn_roster.padding = ft.Padding.symmetric(vertical=10, horizontal=6)
+        tab_btn_roster.padding = ft.Padding.symmetric(vertical=8, horizontal=4)
         tab_btn_roster.alignment = ft.Alignment.CENTER
         tab_btn_roster.on_click = lambda e: set_tab(1)
+
+        is_ann = active_tab[0] == 2
+        active_ann_count = len(AnnouncementService.get_announcements(active_only=True))
+        tab_btn_announcements.content = ft.Row(
+            controls=[
+                ft.Icon(ft.Icons.CAMPAIGN_ROUNDED, size=14, color=ft.Colors.WHITE if is_ann else colors["accent"]),
+                ft.Text(f"{t['tab_announcements']} ({active_ann_count})", size=11, weight=ft.FontWeight.BOLD if is_ann else ft.FontWeight.W_500, color=ft.Colors.WHITE if is_ann else colors["text_sec"]),
+            ],
+            alignment=ft.MainAxisAlignment.CENTER,
+            spacing=4,
+        )
+        tab_btn_announcements.bgcolor = colors["primary"] if is_ann else colors["surface"]
+        tab_btn_announcements.border = ft.Border.all(1, colors["primary"] if is_ann else colors["border"])
+        tab_btn_announcements.border_radius = Styles.BORDER_RADIUS_SM
+        tab_btn_announcements.padding = ft.Padding.symmetric(vertical=8, horizontal=4)
+        tab_btn_announcements.alignment = ft.Alignment.CENTER
+        tab_btn_announcements.on_click = lambda e: set_tab(2)
 
     refresh_tab_buttons()
 

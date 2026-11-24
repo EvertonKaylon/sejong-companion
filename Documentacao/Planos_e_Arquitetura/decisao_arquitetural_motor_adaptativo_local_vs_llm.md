@@ -12,7 +12,7 @@
 
 Com a evolução da branch `develop` (marco `0.3.0-alpha`), o **Sejong Companion** deixou de ser um visualizador estático de lições e começou a transicionar para um **sistema adaptativo de aprendizagem**.
 
-A introdução de nós de memória temporal ([`MemoryNode`](file:///c:/Users/Pichau/Documents/sejong_companion/src/models.py#L195-L245)), sessões de recuperação ativa ([`ReviewSessionState`](file:///c:/Users/Pichau/Documents/sejong_companion/src/models.py#L267-L274)), papéis sintáticos estritos para SOV ([`SovSlotDefinition`](file:///c:/Users/Pichau/Documents/sejong_companion/src/models.py#L83-L138)) e dados curriculares estruturados (Unidades 00 a 10) levantou uma questão de design arquitetural de alto nível:
+A introdução de nós de memória temporal ([`MemoryNode`](../../src/models.py#L195-L245)), sessões de recuperação ativa ([`ReviewSessionState`](../../src/models.py#L267-L274)), papéis sintáticos estritos para SOV ([`SovSlotDefinition`](../../src/models.py#L83-L138)) e dados curriculares estruturados (Unidades 00 a 10) levantou uma questão de design arquitetural de alto nível:
 
 > **Pergunta Decisória:** O Sejong Companion deve integrar modelos de linguagem de grande porte (LLMs / IA Generativa via API em nuvem) para gerar feedbacks dinâmicos e conversações, ou deve construir um **motor adaptativo local, determinístico e simbólico (Learning Engine)** operando inteiramente no dispositivo do usuário?
 

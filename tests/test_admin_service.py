@@ -3,26 +3,38 @@ import os
 import json
 from src.services import AdminService, TelemetryService, PedagogicalEvent
 
-def test_admin_authentication_default():
-    """Valida autenticação com o PIN padrão de homologação."""
+def test_admin_authentication_unconfigured(monkeypatch):
+    """Valida que sem SEJONG_ADMIN_PIN ou SAEBOM_ADMIN_PIN configurado, o sistema falha fechado."""
+    monkeypatch.delenv("SEJONG_ADMIN_PIN", raising=False)
+    monkeypatch.delenv("SAEBOM_ADMIN_PIN", raising=False)
+    assert AdminService.is_configured() is False
+    assert AdminService.authenticate("sejong2026") is False
+    assert AdminService.authenticate("any_pin") is False
+    assert AdminService.authenticate("") is False
+    assert AdminService.authenticate(None) is False
+
+
+def test_admin_authentication_configured(monkeypatch):
+    """Valida autenticação com PIN configurado via variável de ambiente."""
+    monkeypatch.delenv("SAEBOM_ADMIN_PIN", raising=False)
+    monkeypatch.setenv("SEJONG_ADMIN_PIN", "prof_cccb_99")
+    assert AdminService.is_configured() is True
     # PIN correto
-    assert AdminService.authenticate("sejong2026") is True
-    # PIN com espaços
-    assert AdminService.authenticate(" sejong2026 ") is True
+    assert AdminService.authenticate("prof_cccb_99") is True
+    # PIN com espaços ao redor
+    assert AdminService.authenticate(" prof_cccb_99 ") is True
     # PIN incorreto
     assert AdminService.authenticate("wrong_pin") is False
+    # Antigo PIN padrão não deve funcionar
+    assert AdminService.authenticate("sejong2026") is False
     # PIN vazio ou None
     assert AdminService.authenticate("") is False
     assert AdminService.authenticate(None) is False
 
-def test_admin_authentication_custom_env(monkeypatch):
-    """Valida autenticação com PIN customizado via variável de ambiente."""
-    monkeypatch.setenv("SEJONG_ADMIN_PIN", "prof_cccb_99")
-    assert AdminService.authenticate("prof_cccb_99") is True
-    assert AdminService.authenticate("sejong2026") is False
-
 def test_admin_get_all_students_summary(tmp_path):
     """Valida a leitura e compilação de múltiplos perfis de alunos simulados."""
+    from datetime import datetime
+    now_str = datetime.now().isoformat()
     # 1. Criar perfil Aluno 1: Kayzer (Avançado)
     student_1 = {
         "student_id": "kayzer_01",
@@ -36,8 +48,8 @@ def test_admin_get_all_students_summary(tmp_path):
         "progress_unit_02": 1.0,
         "progress_unit_1b_01": 1.0,
         "memory_nodes": {
-            "u01:v0": {"half_life_days": 10.0, "last_reviewed_at": "2026-08-20T10:00:00"},
-            "u01:v1": {"half_life_days": 5.0, "last_reviewed_at": "2026-08-20T10:00:00"}
+            "u01:v0": {"half_life_days": 10.0, "last_reviewed_at": now_str},
+            "u01:v1": {"half_life_days": 5.0, "last_reviewed_at": now_str}
         }
     }
     with open(tmp_path / "student_kayzer_01.json", "w", encoding="utf-8") as f:
@@ -88,6 +100,8 @@ def test_admin_get_all_students_summary(tmp_path):
 
 def test_admin_global_kpis(tmp_path):
     """Valida o cálculo de KPIs globais da turma."""
+    from datetime import datetime
+    now_str = datetime.now().isoformat()
     student_1 = {
         "student_id": "s1",
         "student_name": "Aluno 1",
@@ -97,7 +111,7 @@ def test_admin_global_kpis(tmp_path):
         "progress_unit_intro": 1.0,
         "progress_unit_01": 1.0,
         "memory_nodes": {
-            "v1": {"half_life_days": 10.0, "last_reviewed_at": "2026-08-20T10:00:00"}
+            "v1": {"half_life_days": 10.0, "last_reviewed_at": now_str}
         }
     }
     with open(tmp_path / "student_s1.json", "w", encoding="utf-8") as f:
@@ -131,3 +145,49 @@ def test_admin_export_report_markdown(tmp_path):
     assert "`s1`" in md
     assert "Indicadores Globais" in md
     assert "Roster de Alunos" in md
+
+
+def test_admin_kpis_and_diagnostics_ignore_security_audit_events(tmp_path, monkeypatch):
+    """Valida que eventos security_audit não inflam KPIs nem diagnósticos pedagógicos."""
+    monkeypatch.setattr(TelemetryService, "_get_telemetry_dir", lambda: str(tmp_path))
+
+    # Registrar eventos de auditoria de segurança
+    for idx in range(4):
+        TelemetryService.record(
+            session_id="audit_ip_1",
+            event=PedagogicalEvent(
+                event_type="security_audit",
+                unit_id="admin_auth_barrier",
+                item_id=f"login_failed_{idx}",
+                payload={"action": "failed_attempt"},
+            ),
+        )
+
+    # Registrar 2 eventos pedagógicos reais
+    TelemetryService.record(
+        session_id="student_ped_1",
+        event=PedagogicalEvent(
+            event_type="quiz_completed",
+            unit_id="unit_01",
+            item_id="quiz_u01",
+            payload={"score": 1.0},
+        ),
+    )
+    TelemetryService.record(
+        session_id="student_ped_1",
+        event=PedagogicalEvent(
+            event_type="review_completed",
+            unit_id="unit_01",
+            item_id="rev_u01",
+            payload={},
+        ),
+    )
+
+    kpis = AdminService.get_global_kpis(sessions_dir=str(tmp_path))
+    diagnostics = AdminService.get_pedagogical_diagnostics()
+
+    assert kpis["total_telemetry_events"] == 2
+    assert kpis["total_quizzes_completed"] == 1
+    assert kpis["total_reviews_completed"] == 1
+    assert diagnostics["total_events"] == 2
+    assert all(u["unit_id"] != "admin_auth_barrier" for u in diagnostics["drop_off_units"])

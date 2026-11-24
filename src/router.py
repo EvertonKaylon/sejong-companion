@@ -14,9 +14,10 @@ class Router:
     def register_route(self, route_name: str, view_builder: Callable[[ft.Page], ft.View]):
         self.routes[route_name] = view_builder
 
-    def route_change(self, e: ft.RouteChangeEvent):
-        route = e.route or "/splash"
-        base_route = route.split("?")[0]
+    def render_route(self, route: str):
+        base_route = (route or "/splash").split("?")[0]
+        if base_route in ("", "/"):
+            base_route = "/splash"
         
         # Gerenciar histórico
         if not self._history or self._history[-1] != base_route:
@@ -25,19 +26,58 @@ class Router:
             else:
                 self._history.append(base_route)
 
-        self.page.views.clear()
-        
-        if base_route in self.routes:
-            view = self.routes[base_route](self.page)
+        target_builder = self.routes.get(base_route) or self.routes.get("/splash") or self.routes.get("/home")
+        view = None
+        if target_builder:
+            try:
+                view = target_builder(self.page)
+            except Exception as ex:
+                print(f"[Router] Erro ao construir view '{base_route}': {ex}")
+                fallback_builder = self.routes.get("/home") or self.routes.get("/splash")
+                if fallback_builder and fallback_builder != target_builder:
+                    try:
+                        view = fallback_builder(self.page)
+                    except Exception:
+                        pass
+
+        if view is not None:
+            self.page.views.clear()
             self.page.views.append(view)
-        else:
-            if "/splash" in self.routes:
-                self.page.views.append(self.routes["/splash"](self.page))
-            elif "/home" in self.routes:
-                self.page.views.append(self.routes["/home"](self.page))
-        
+        elif not self.page.views:
+            # Fallback defensivo para garantir que views nunca fique vazia (prevenção de tela preta)
+            self.page.views.append(
+                ft.View(
+                    route=base_route,
+                    controls=[
+                        ft.Container(
+                            content=ft.Column(
+                                controls=[
+                                    ft.ProgressRing(width=32, height=32),
+                                    ft.Text("Carregando...", size=14, color="#9EA2AE"),
+                                ],
+                                alignment=ft.MainAxisAlignment.CENTER,
+                                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                            ),
+                            alignment=ft.Alignment.CENTER,
+                            expand=True,
+                        )
+                    ],
+                    bgcolor="#02060F",
+                )
+            )
+
         try:
             self.page.update()
+        except Exception:
+            pass
+
+    def route_change(self, e = None):
+        route = getattr(e, "route", None) or getattr(self.page, "route", None) or "/splash"
+        self.render_route(route)
+
+    def _go_to(self, route_name: str):
+        try:
+            self.page.go(route_name)
         except Exception:
             pass
 
@@ -46,19 +86,15 @@ class Router:
             if len(self._history) > 1:
                 self._history.pop()
                 prev_route = self._history[-1]
-                self.page.go(prev_route)
+                self._go_to(prev_route)
             else:
-                self.page.go("/home")
+                self._go_to("/home")
         except Exception:
-            try:
-                self.page.go("/home")
-            except Exception:
-                pass
+            self._go_to("/home")
 
     def navigate_to(self, route_name: str, unit_id: str = None):
         if unit_id:
             self.current_unit_id = unit_id
-        try:
-            self.page.go(route_name)
-        except Exception:
-            pass
+        self._go_to(route_name)
+        if not self.page.views or self.page.views[-1].route != route_name:
+            self.render_route(route_name)

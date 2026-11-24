@@ -29,6 +29,12 @@ class FlashcardWidget(ft.Container):
             content=self._build_content(),
         )
 
+    def update(self):
+        try:
+            super().update()
+        except Exception:
+            pass
+
     def _badge(self, label: str, color: str) -> ft.Container:
         return ft.Container(
             content=ft.Text(label, size=10, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE),
@@ -64,7 +70,7 @@ class FlashcardWidget(ft.Container):
                             tooltip="Ouvir pronúncia",
                             on_click=lambda e: self.on_audio_click(self.card.korean) if self.on_audio_click else None,
                         ),
-                        ft.ElevatedButton(
+                        ft.Button(
                             content=ft.Text("Revelar resposta"),
                             icon=ft.Icons.VISIBILITY_ROUNDED,
                             on_click=self._toggle_reveal,
@@ -84,7 +90,7 @@ class FlashcardWidget(ft.Container):
             if self.card.lusophone_tip:
                 controls.append(ft.Container(
                     content=ft.Text(f"💡 {self.card.lusophone_tip}", size=12, color=self.colors["accent"]),
-                    bgcolor="#14F5A623",
+                    bgcolor=ft.Colors.with_opacity(0.12, self.colors["accent"]),
                     border_radius=Styles.BORDER_RADIUS_SM,
                     padding=10,
                     margin=ft.Margin.only(top=8),
@@ -118,4 +124,7 @@ class FlashcardWidget(ft.Container):
     def _toggle_reveal(self, _event):
         self.revealed = not self.revealed
         self.content = self._build_content()
-        self.update()
+        try:
+            self.update()
+        except Exception:
+            pass

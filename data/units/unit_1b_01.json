@@ -211,26 +211,82 @@
       "type": "order_words",
       "question": "Ordene as palavras: 'Eu gosto de bulgogi'",
       "explanation": "Estrutura SOV: Sujeito (저는) + Objeto (불고기를) + Verbo (좋아해요).",
-      "words": ["불고기를", "좋아해요", "저는"],
-      "correct_order": ["저는", "불고기를", "좋아해요"]
+      "words": [
+        "불고기를",
+        "좋아해요",
+        "저는"
+      ],
+      "correct_order": [
+        "저는",
+        "불고기를",
+        "좋아해요"
+      ]
     },
     {
       "id": "u1b_01_q04",
       "type": "drag_and_drop_sov",
       "question": "Monte a frase com os papéis sintáticos: 'A Anna não consegue comer kimchi'",
       "explanation": "Sujeito (안나는) + Objeto (김치를) + Negação/Verbo (못 먹어요).",
-      "words": ["안나는", "김치를", "못 먹어요"],
-      "correct_order": ["안나는", "김치를", "못 먹어요"],
+      "words": [
+        "안나는",
+        "김치를",
+        "못 먹어요"
+      ],
+      "correct_order": [
+        "안나는",
+        "김치를",
+        "못 먹어요"
+      ],
       "sov_items": [
-        { "word": "안나는", "role": "SUBJECT", "snap_anchor": "round" },
-        { "word": "김치를", "role": "OBJECT", "snap_anchor": "round" },
-        { "word": "못 먹어요", "role": "PREDICATE", "snap_anchor": "square" }
+        {
+          "word": "안나는",
+          "role": "SUBJECT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "김치를",
+          "role": "OBJECT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "못 먹어요",
+          "role": "PREDICATE",
+          "snap_anchor": "square"
+        }
       ],
       "sov_slots": [
-        { "role": "SUBJECT", "label": "주어 (Sujeito)", "accepted_roles": ["SUBJECT"] },
-        { "role": "OBJECT", "label": "목적어 (Objeto)", "accepted_roles": ["OBJECT"] },
-        { "role": "PREDICATE", "label": "서술어 (Predicado)", "accepted_roles": ["PREDICATE", "VERB"] }
+        {
+          "role": "SUBJECT",
+          "label": "주어 (Sujeito)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "OBJECT",
+          "label": "목적어 (Objeto)",
+          "accepted_roles": [
+            "OBJECT"
+          ]
+        },
+        {
+          "role": "PREDICATE",
+          "label": "서술어 (Predicado)",
+          "accepted_roles": [
+            "PREDICATE",
+            "VERB"
+          ]
+        }
       ]
+    },
+    {
+      "id": "u1b_01_q05",
+      "type": "calligraphy",
+      "question": "Prática de Escrita do Workbook 1B: Escreva a frase '불고기를 자주 먹어요' (como bulgogi frequentemente) na grade 원고지:",
+      "target_text": "불고기를 자주 먹어요",
+      "min_iou": 0.4,
+      "show_ghost": true,
+      "explanation": "불고기를 (bulgogi + obj) + 자주 (frequentemente) + 먹어요 (comer)."
     }
   ]
 }

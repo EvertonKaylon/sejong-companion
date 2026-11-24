@@ -1,10 +1,100 @@
 import json
 import os
+import hmac
+import time
+import secrets
+import hashlib
 from collections import defaultdict
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 from datetime import datetime, date
+import re
+import unicodedata
 import flet as ft
 from .models import FlashcardItem, Unit, UnitIntroData, UnitOneData, UnitData, MemoryNode, PedagogicalEvent
+
+
+def _capitalize_token(token: str) -> str:
+    """Capitaliza tokens respeitando hífens e apóstrofos (ex: D'Angelo, Ana-Paula)."""
+    m = re.match(r"^(\W*)(.*?)(\W*)$", token)
+    if not m:
+        return token
+    prefix, core, suffix = m.groups()
+    if not core:
+        return token
+    if "-" in core:
+        parts = core.split("-")
+        core_formatted = "-".join(_capitalize_token(p) for p in parts)
+    elif "'" in core:
+        parts = core.split("'")
+        core_formatted = "'".join(_capitalize_token(p) for p in parts)
+    else:
+        core_formatted = core.capitalize()
+    return f"{prefix}{core_formatted}{suffix}"
+
+
+def canonicalize_student_name(raw_name: str) -> str:
+    """Formata o nome em PascalCase / Title Case, preservando Hangul e pontuações."""
+    if not raw_name:
+        return "Estudante Saebom"
+    cleaned = unicodedata.normalize("NFKC", str(raw_name).strip())
+    cleaned = re.sub(r"\s+", " ", cleaned)
+    if not cleaned or cleaned.lower() in ("estudante saebom", "estudante sejong"):
+        return "Estudante Saebom"
+
+    words = cleaned.split(" ")
+    return " ".join(_capitalize_token(w) for w in words if w)
+
+
+def normalize_name_key(name: str) -> str:
+    """Gera chave canônica NFKC em minúsculas para busca case-insensitive."""
+    if not name:
+        return ""
+    norm = unicodedata.normalize("NFKC", str(name).strip())
+    norm = re.sub(r"\s+", " ", norm)
+    return norm.casefold()
+
+
+def merge_session_data(primary: dict, secondary: dict) -> dict:
+    """Funde atomicamente duas sessões de um mesmo aluno:
+    - União de study_dates
+    - Max de daily_streak e total_xp
+    - União de unidades desbloqueadas e maior progresso por unidade
+    - Preservação e fusão de memory_nodes (SRS)
+    """
+    merged = dict(primary)
+
+    # 1. Datas de estudo
+    dates_p = set(primary.get("study_dates") or [])
+    dates_s = set(secondary.get("study_dates") or [])
+    merged["study_dates"] = sorted(list(dates_p | dates_s))
+
+    # 2. XP e Streak
+    merged["total_xp"] = max(primary.get("total_xp", 0), secondary.get("total_xp", 0))
+    merged["streak"] = max(primary.get("streak", 0), secondary.get("streak", 0))
+
+    # 3. Unidades e progresso
+    for k, v in secondary.items():
+        if k.startswith("progress_"):
+            merged[k] = max(float(primary.get(k, 0.0)), float(v))
+        elif k.startswith("unlocked_"):
+            merged[k] = primary.get(k, False) or v
+
+    # 4. Memory Nodes (SRS)
+    nodes_p = dict(primary.get("memory_nodes") or {})
+    nodes_s = dict(secondary.get("memory_nodes") or {})
+    for node_id, s_data in nodes_s.items():
+        if node_id not in nodes_p:
+            nodes_p[node_id] = s_data
+        else:
+            p_data = nodes_p[node_id]
+            p_hl = float(p_data.get("half_life", 5.0))
+            s_hl = float(s_data.get("half_life", 5.0))
+            if s_hl > p_hl:
+                nodes_p[node_id] = s_data
+    merged["memory_nodes"] = nodes_p
+
+    return merged
+
 
 class DataService:
     @staticmethod
@@ -206,6 +296,51 @@ class DataService:
                 deduped.append(clean)
         return deduped
 
+
+class StudentIdentity:
+    """Gerencia a identidade pública do aluno de forma segura e padronizada."""
+
+    @staticmethod
+    def get_student_id(page) -> Optional[str]:
+        """Obtém o student_id persistente a partir da página ou client_storage."""
+        if page is None:
+            return None
+
+        # 1. Se cacheado na sessão em memória
+        if hasattr(page, "_sejong_student_id") and page._sejong_student_id:
+            return str(page._sejong_student_id).strip()
+        if hasattr(page, "_saebom_student_id") and page._saebom_student_id:
+            return str(page._saebom_student_id).strip()
+
+        # 2. Se salvo no client_storage
+        try:
+            if hasattr(page, "client_storage") and page.client_storage:
+                sid = page.client_storage.get("saebom_student_id") or page.client_storage.get("sejong_student_id")
+                if sid and str(sid).strip():
+                    clean_id = str(sid).strip()
+                    page._sejong_student_id = clean_id
+                    return clean_id
+        except Exception:
+            pass
+
+        return None
+
+    @staticmethod
+    def set_student_id(page, student_id: str) -> None:
+        """Armazena o student_id no objeto page e no client_storage."""
+        if not page or not student_id:
+            return
+        clean_id = str(student_id).strip()
+        page._sejong_student_id = clean_id
+        page._saebom_student_id = clean_id
+        try:
+            if hasattr(page, "client_storage") and page.client_storage:
+                page.client_storage.set("saebom_student_id", clean_id)
+                page.client_storage.set("sejong_student_id", clean_id)
+        except Exception:
+            pass
+
+
 class ProgressService:
     """Motor de Gestão do Aluno, Progresso e Retenção Adaptativa por Meia-Vida.
     
@@ -257,6 +392,8 @@ class ProgressService:
             return "__default__"
 
         # 1. Se já cacheado no objeto page da sessão ativa
+        if hasattr(page, "_saebom_student_id") and page._saebom_student_id:
+            return str(page._saebom_student_id).strip()
         if hasattr(page, "_sejong_student_id") and page._sejong_student_id:
             return str(page._sejong_student_id).strip()
         if hasattr(page, "_sejong_session_id") and page._sejong_session_id:
@@ -266,12 +403,13 @@ class ProgressService:
         student_id = None
         try:
             if hasattr(page, "client_storage") and page.client_storage:
-                student_id = page.client_storage.get("sejong_student_id")
+                student_id = page.client_storage.get("saebom_student_id") or page.client_storage.get("sejong_student_id")
         except Exception:
             student_id = None
 
         if student_id and isinstance(student_id, str) and student_id.strip():
             safe_id = student_id.strip()
+            page._saebom_student_id = safe_id
             page._sejong_student_id = safe_id
             page._sejong_session_id = safe_id
             return safe_id
@@ -279,8 +417,9 @@ class ProgressService:
         # 3. Se salvo na sessão do Flet (page.session)
         try:
             if hasattr(page, "session") and page.session:
-                sess_id = page.session.get("sejong_student_id")
+                sess_id = page.session.get("saebom_student_id") or page.session.get("sejong_student_id")
                 if sess_id and str(sess_id).strip():
+                    page._saebom_student_id = str(sess_id).strip()
                     page._sejong_student_id = str(sess_id).strip()
                     return page._sejong_student_id
         except Exception:
@@ -291,30 +430,48 @@ class ProgressService:
         new_id = f"student_{uuid.uuid4().hex[:12]}"
         try:
             if hasattr(page, "client_storage") and page.client_storage:
+                page.client_storage.set("saebom_student_id", new_id)
                 page.client_storage.set("sejong_student_id", new_id)
         except Exception:
             pass
 
+        page._saebom_student_id = new_id
         page._sejong_student_id = new_id
         page._sejong_session_id = new_id
         try:
             if hasattr(page, "session") and page.session:
+                page.session.set("saebom_student_id", new_id)
                 page.session.set("sejong_student_id", new_id)
         except Exception:
             pass
         return new_id
 
     @classmethod
-    def _get_storage_path(cls, session_id: str) -> str:
-        if cls._file_path_override:
-            return cls._file_path_override
-        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        safe_id = "".join(c for c in session_id if c.isalnum() or c in ("-", "_")) or "default"
-        return os.path.join(base_dir, "data", "sessions", f"{safe_id}.json")
+    def set_file_path_override(cls, path: Optional[str]) -> None:
+        """Define ou limpa um caminho de arquivo customizado para testes."""
+        cls._file_path_override = path
+        cls._sessions.clear()
 
     @classmethod
-    def _load_from_disk(cls, session_id: str) -> dict:
-        path = cls._get_storage_path(session_id)
+    def _get_storage_dir(cls, sessions_dir: Optional[str] = None) -> str:
+        if sessions_dir:
+            return sessions_dir
+        if cls._file_path_override:
+            return os.path.dirname(cls._file_path_override)
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        return os.path.join(base_dir, "data", "sessions")
+
+    @classmethod
+    def _get_storage_path(cls, session_id: str, sessions_dir: Optional[str] = None) -> str:
+        if cls._file_path_override and not sessions_dir:
+            return cls._file_path_override
+        safe_id = "".join(c for c in session_id if c.isalnum() or c in ("-", "_")) or "default"
+        directory = cls._get_storage_dir(sessions_dir)
+        return os.path.join(directory, f"{safe_id}.json")
+
+    @classmethod
+    def _load_from_disk(cls, session_id: str, sessions_dir: Optional[str] = None) -> dict:
+        path = cls._get_storage_path(session_id, sessions_dir=sessions_dir)
         if os.path.exists(path):
             try:
                 with open(path, "r", encoding="utf-8") as f:
@@ -333,8 +490,8 @@ class ProgressService:
         return {}
 
     @classmethod
-    def _save_to_disk(cls, session_id: str, data: dict) -> None:
-        path = cls._get_storage_path(session_id)
+    def _save_to_disk(cls, session_id: str, data: dict, sessions_dir: Optional[str] = None) -> None:
+        path = cls._get_storage_path(session_id, sessions_dir=sessions_dir)
         os.makedirs(os.path.dirname(path), exist_ok=True)
         import uuid
         tmp_path = f"{path}.tmp.{uuid.uuid4().hex[:8]}"
@@ -349,6 +506,75 @@ class ProgressService:
                     os.remove(tmp_path)
                 except Exception:
                     pass
+
+    @classmethod
+    def resolve_or_create_student(
+        cls,
+        name: str,
+        client_storage: Optional[Any] = None,
+        sessions_dir: Optional[str] = None,
+    ) -> Tuple[str, dict]:
+        """Busca ou cria perfil do aluno por nome com busca case-insensitive e fusão automática."""
+        canonical_name = canonicalize_student_name(name)
+        target_key = normalize_name_key(canonical_name)
+        directory = cls._get_storage_dir(sessions_dir)
+        os.makedirs(directory, exist_ok=True)
+
+        matching_files: List[Tuple[str, dict]] = []
+        for filename in os.listdir(directory):
+            if not filename.endswith(".json"):
+                continue
+            file_path = os.path.join(directory, filename)
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                if isinstance(data, dict):
+                    s_name = data.get("student_name", "")
+                    if normalize_name_key(s_name) == target_key:
+                        s_id = data.get("student_id") or filename[:-5]
+                        matching_files.append((s_id, data))
+            except Exception:
+                continue
+
+        if matching_files:
+            primary_id, primary_data = matching_files[0]
+            for other_id, other_data in matching_files[1:]:
+                primary_data = merge_session_data(primary_data, other_data)
+            primary_data["student_name"] = canonical_name
+            primary_data["student_id"] = primary_id
+            cls._sessions[primary_id] = primary_data
+            cls._save_to_disk(primary_id, primary_data, sessions_dir=sessions_dir)
+            if client_storage and hasattr(client_storage, "set"):
+                try:
+                    client_storage.set("saebom_student_id", primary_id)
+                    client_storage.set("student_name", canonical_name)
+                except Exception:
+                    pass
+            return primary_id, primary_data
+        else:
+            student_id = f"student_{secrets.token_hex(6)}"
+            now_iso = datetime.now().isoformat()
+            new_data = {
+                "student_id": student_id,
+                "student_name": canonical_name,
+                "streak": 0,
+                "total_xp": 0,
+                "created_at": now_iso,
+                "last_study_date": None,
+                "unlocked_unit_intro": True,
+                "progress_unit_intro": 0.0,
+                "study_dates": [],
+                "memory_nodes": {},
+            }
+            cls._sessions[student_id] = new_data
+            cls._save_to_disk(student_id, new_data, sessions_dir=sessions_dir)
+            if client_storage and hasattr(client_storage, "set"):
+                try:
+                    client_storage.set("saebom_student_id", student_id)
+                    client_storage.set("student_name", canonical_name)
+                except Exception:
+                    pass
+            return student_id, new_data
 
     def __init__(self, page=None):
         self.page = page
@@ -368,19 +594,131 @@ class ProgressService:
 
     def get_student_name(self) -> str:
         """Retorna o nome personalizado do aluno ou o padrão."""
-        return str(self._store.get("student_name", "Estudante Sejong"))
+        raw = self._store.get("student_name", "Estudante Saebom")
+        return canonicalize_student_name(raw)
 
     def set_student_name(self, name: str) -> str:
-        """Atualiza o nome do aluno no perfil e sincroniza."""
-        clean_name = name.strip() or "Estudante Sejong"
-        self._store["student_name"] = clean_name
+        """Define, canonicaliza e persiste o nome do aluno no perfil e client_storage."""
+        canonical = canonicalize_student_name(name)
+        self._store["student_name"] = canonical
         ProgressService._save_to_disk(self._session_id, self._store)
         try:
             if hasattr(self.page, "client_storage") and self.page.client_storage:
-                self.page.client_storage.set("sejong_student_name", clean_name)
+                self.page.client_storage.set("saebom_student_name", canonical)
+                self.page.client_storage.set("sejong_student_name", canonical)
         except Exception:
             pass
-        return clean_name
+        return canonical
+
+    @staticmethod
+    def generate_recovery_code() -> str:
+        """Gera um código de recuperação seguro e legível no formato XXXX-XXXX-XXXX."""
+        charset = "23456789ABCDEFGHJKMNPQRSTUVWXYZ"
+        p1 = "".join(secrets.choice(charset) for _ in range(4))
+        p2 = "".join(secrets.choice(charset) for _ in range(4))
+        p3 = "".join(secrets.choice(charset) for _ in range(4))
+        return f"{p1}-{p2}-{p3}"
+
+    @classmethod
+    def _hash_recovery_code(cls, salt: str, code: str) -> str:
+        """Calcula o hash SHA-256 seguro do código de recuperação normalizado."""
+        clean_code = str(code).strip().upper().replace(" ", "").replace("-", "")
+        data = (salt + clean_code).encode("utf-8")
+        return hashlib.sha256(data).hexdigest()
+
+    def get_or_create_recovery_code(self) -> str:
+        """Gera e registra uma credencial de recuperação caso o perfil ainda não possua."""
+        salt = self._store.get("recovery_salt")
+        hashed = self._store.get("recovery_hash")
+        if salt and hashed:
+            return ""
+        code = self.generate_recovery_code()
+        salt = secrets.token_hex(16)
+        hashed = self._hash_recovery_code(salt, code)
+        self._store["recovery_salt"] = salt
+        self._store["recovery_hash"] = hashed
+        ProgressService._save_to_disk(self._session_id, self._store)
+        return code
+
+    def has_recovery_code(self) -> bool:
+        """Indica se o perfil já possui credencial de recuperação registrada no servidor."""
+        return bool(self._store.get("recovery_salt") and self._store.get("recovery_hash"))
+
+    @classmethod
+    def verify_and_restore_student(
+        cls,
+        student_id_or_name: str,
+        recovery_code: str,
+        sessions_dir: Optional[str] = None
+    ) -> Tuple[bool, Optional[str], Optional[str], str]:
+        """Verifica a credencial de recuperação antes de permitir a restauração de um perfil.
+        
+        Retorna:
+            (sucesso: bool, student_id: Optional[str], student_name: Optional[str], mensagem: str)
+        """
+        if not student_id_or_name or not str(student_id_or_name).strip():
+            return False, None, None, "Identificador ou nome do aluno não informado."
+        if not recovery_code or not str(recovery_code).strip():
+            return False, None, None, "Chave de recuperação não informada."
+
+        target_id = str(student_id_or_name).strip()
+        target_code = str(recovery_code).strip()
+
+        base_dir = sessions_dir or os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "sessions")
+        if not os.path.exists(base_dir):
+            return False, None, None, "Nenhum diretório de sessões localizado no servidor."
+
+        target_file = None
+        target_data = None
+
+        # 1. Tentar localizar arquivo direto pelo ID
+        safe_id = "".join(c for c in target_id if c.isalnum() or c in ("-", "_"))
+        direct_path = os.path.join(base_dir, f"{safe_id}.json")
+        if os.path.exists(direct_path):
+            try:
+                with open(direct_path, "r", encoding="utf-8") as f:
+                    d = json.load(f)
+                    if isinstance(d, dict):
+                        target_file = direct_path
+                        target_data = d
+            except Exception:
+                pass
+
+        # 2. Se não achou pelo ID, buscar por student_id gravado no json ou student_name
+        if not target_data:
+            for fname in os.listdir(base_dir):
+                if not fname.endswith(".json"):
+                    continue
+                fpath = os.path.join(base_dir, fname)
+                try:
+                    with open(fpath, "r", encoding="utf-8") as f:
+                        d = json.load(f)
+                    if isinstance(d, dict):
+                        s_id = d.get("student_id") or fname[:-5]
+                        s_name = d.get("student_name", "")
+                        if s_id.lower() == target_id.lower() or (s_name and s_name.strip().lower() == target_id.lower()):
+                            target_file = fpath
+                            target_data = d
+                            break
+                except Exception:
+                    pass
+
+        if not target_data:
+            return False, None, None, "Perfil de aluno não localizado no servidor."
+
+        salt = target_data.get("recovery_salt")
+        expected_hash = target_data.get("recovery_hash")
+
+        if not salt or not expected_hash:
+            return False, None, None, "Este perfil não possui chave de recuperação configurada. Contate o suporte docente."
+
+        computed_hash = cls._hash_recovery_code(salt, target_code)
+        if not hmac.compare_digest(computed_hash, expected_hash):
+            return False, None, None, "Chave de recuperação incorreta para este perfil."
+
+        resolved_id = target_data.get("student_id") or os.path.basename(target_file)[:-5]
+        resolved_name = target_data.get("student_name", "Aluno Saebom")
+        return True, resolved_id, resolved_name, "Perfil e progresso restaurados com sucesso!"
 
     def export_backup(self) -> str:
         """Exporta o progresso completo e nós de memória em formato JSON string."""
@@ -731,13 +1069,34 @@ class TelemetryService:
         safe_id = "".join(c for c in session_id if c.isalnum() or c in ("-", "_")) or "default"
         return os.path.join(cls._get_telemetry_dir(), f"events_{safe_id}.jsonl")
 
+    MAX_EVENTS_PER_FILE: int = 5000
+
+    @classmethod
+    def _rotate_if_needed(cls, path: str) -> None:
+        """Mantém os eventos da sessão limitados a MAX_EVENTS_PER_FILE para evitar uso excessivo de disco."""
+        if not os.path.exists(path):
+            return
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                lines = f.readlines()
+            if len(lines) > cls.MAX_EVENTS_PER_FILE:
+                kept = lines[-cls.MAX_EVENTS_PER_FILE:]
+                tmp_path = f"{path}.tmp.{secrets.token_hex(4)}"
+                with open(tmp_path, "w", encoding="utf-8") as f:
+                    f.writelines(kept)
+                os.replace(tmp_path, path)
+        except Exception:
+            pass
+
     @classmethod
     def record(cls, session_id: str, event: PedagogicalEvent) -> bool:
-        """Grava um evento pedagógico no arquivo JSONL da sessão em modo append."""
+        """Grava um evento pedagógico no arquivo JSONL da sessão com rotação automática."""
         try:
             path = cls._get_log_path(session_id)
+            os.makedirs(os.path.dirname(path), exist_ok=True)
             with open(path, "a", encoding="utf-8") as f:
                 f.write(event.model_dump_json() + "\n")
+            cls._rotate_if_needed(path)
             return True
         except Exception as e:
             print(f"[TelemetryService] Erro ao gravar evento: {e}")
@@ -968,15 +1327,162 @@ class AdminService:
     e geração de relatórios pedagógicos executivos.
     """
 
-    DEFAULT_PIN: str = "sejong2026"
+    _failed_attempts: Dict[str, List[float]] = {}
+    _lockouts: Dict[str, float] = {}
+    _active_tokens: Dict[str, float] = {}
+
+    MAX_ATTEMPTS_TIER_1: int = 5
+    LOCKOUT_DURATION_TIER_1: float = 30.0
+    MAX_ATTEMPTS_TIER_2: int = 10
+    LOCKOUT_DURATION_TIER_2: float = 300.0
+    SESSION_DURATION_SECONDS: float = 3600.0
 
     @classmethod
-    def authenticate(cls, pin: str) -> bool:
-        """Verifica se o PIN fornecido corresponde ao PIN configurado ou ao padrão."""
-        if not pin:
+    def get_configured_pin(cls) -> Optional[str]:
+        """Retorna o PIN configurado via variável de ambiente SAEBOM_ADMIN_PIN ou SEJONG_ADMIN_PIN."""
+        pin = os.environ.get("SAEBOM_ADMIN_PIN") or os.environ.get("SEJONG_ADMIN_PIN")
+        if pin:
+            pin = pin.strip()
+        return pin if pin else None
+
+    @classmethod
+    def is_configured(cls) -> bool:
+        """Indica se a autenticação administrativa está configurada no ambiente."""
+        return cls.get_configured_pin() is not None
+
+    @classmethod
+    def reset_rate_limit(cls, client_key: str = "default") -> None:
+        """Limpa o histórico de tentativas e lockouts de um cliente."""
+        cls._failed_attempts.pop(client_key, None)
+        cls._lockouts.pop(client_key, None)
+
+    @classmethod
+    def get_lockout_remaining(cls, client_key: str = "default") -> float:
+        """Retorna os segundos restantes de lockout (ou 0.0 se não bloqueado)."""
+        lockout_until = cls._lockouts.get(client_key, 0.0)
+        now = time.time()
+        if lockout_until > now:
+            return lockout_until - now
+        cls._lockouts.pop(client_key, None)
+        return 0.0
+
+    @classmethod
+    def login(cls, pin: str, client_key: str = "default") -> Tuple[bool, Optional[str], str]:
+        """Autentica o PIN com proteção contra timing attack, brute force e rate limit.
+        Retorna (sucesso, token_de_sessao, mensagem)."""
+        remaining = cls.get_lockout_remaining(client_key)
+        if remaining > 0:
+            return False, None, f"Muitas tentativas. Bloqueio ativo por mais {int(remaining) + 1}s."
+
+        if not pin or not str(pin).strip():
+            return False, None, "PIN de acesso não informado."
+
+        expected = cls.get_configured_pin()
+        if not expected:
+            return False, None, "Autenticação administrativa desabilitada (SAEBOM_ADMIN_PIN não configurado)."
+
+        entered_clean = str(pin).strip()
+        is_valid = hmac.compare_digest(entered_clean, expected)
+        now = time.time()
+
+        if not is_valid:
+            attempts = cls._failed_attempts.setdefault(client_key, [])
+            attempts = [t for t in attempts if (now - t) < 3600.0]
+            attempts.append(now)
+            cls._failed_attempts[client_key] = attempts
+
+            count = len(attempts)
+
+            # Registro de auditoria estruturado (OWASP A09:2021 / MITRE ATT&CK T1070 & T1110)
+            try:
+                TelemetryService.record(
+                    session_id=f"audit_{client_key}",
+                    event=PedagogicalEvent(
+                        event_type="security_audit",
+                        unit_id="admin_auth_barrier",
+                        item_id="login_failed",
+                        payload={"client_key": client_key, "action": "failed_attempt", "count": count},
+                    ),
+                )
+            except Exception:
+                pass
+
+            if count >= cls.MAX_ATTEMPTS_TIER_2:
+                cls._lockouts[client_key] = now + cls.LOCKOUT_DURATION_TIER_2
+                try:
+                    TelemetryService.record(
+                        session_id=f"audit_{client_key}",
+                        event=PedagogicalEvent(
+                            event_type="security_audit",
+                            unit_id="admin_auth_barrier",
+                            item_id="lockout_tier2",
+                            payload={"client_key": client_key, "action": "lockout_tier2", "duration": cls.LOCKOUT_DURATION_TIER_2},
+                        ),
+                    )
+                except Exception:
+                    pass
+                return False, None, f"Acesso administrativo bloqueado por {int(cls.LOCKOUT_DURATION_TIER_2 // 60)} minutos."
+            elif count >= cls.MAX_ATTEMPTS_TIER_1:
+                cls._lockouts[client_key] = now + cls.LOCKOUT_DURATION_TIER_1
+                try:
+                    TelemetryService.record(
+                        session_id=f"audit_{client_key}",
+                        event=PedagogicalEvent(
+                            event_type="security_audit",
+                            unit_id="admin_auth_barrier",
+                            item_id="lockout_tier1",
+                            payload={"client_key": client_key, "action": "lockout_tier1", "duration": cls.LOCKOUT_DURATION_TIER_1},
+                        ),
+                    )
+                except Exception:
+                    pass
+                return False, None, f"Muitas tentativas incorretas. Bloqueio temporário de {int(cls.LOCKOUT_DURATION_TIER_1)}s."
+
+            remaining_tries = cls.MAX_ATTEMPTS_TIER_1 - count
+            return False, None, f"PIN incorreto. {remaining_tries} tentativa(s) restante(s) antes do bloqueio."
+
+        # Autenticação bem-sucedida: limpar rate limit e gerar token de sessão efêmero
+        cls.reset_rate_limit(client_key)
+        token = secrets.token_urlsafe(32)
+        cls._active_tokens[token] = now + cls.SESSION_DURATION_SECONDS
+        try:
+            TelemetryService.record(
+                session_id=f"audit_{client_key}",
+                event=PedagogicalEvent(
+                    event_type="security_audit",
+                    unit_id="admin_auth_barrier",
+                    item_id="login_success",
+                    payload={"client_key": client_key, "action": "authenticated"},
+                ),
+            )
+        except Exception:
+            pass
+        return True, token, "Autenticado com sucesso."
+
+    @classmethod
+    def authenticate(cls, pin: str, client_key: str = "default") -> bool:
+        """Método de autenticação simplificado (booleano) mantendo rate limiting e timing safety."""
+        success, _, _ = cls.login(pin, client_key=client_key)
+        return success
+
+    @classmethod
+    def validate_session(cls, token: Optional[str]) -> bool:
+        """Valida se o token de sessão administrativa existe e não expirou."""
+        if not token:
             return False
-        expected = os.environ.get("SEJONG_ADMIN_PIN", cls.DEFAULT_PIN).strip()
-        return pin.strip() == expected
+        expires_at = cls._active_tokens.get(token)
+        if not expires_at:
+            return False
+        if time.time() > expires_at:
+            cls._active_tokens.pop(token, None)
+            return False
+        return True
+
+    @classmethod
+    def revoke_session(cls, token: Optional[str]) -> None:
+        """Revoga uma sessão administrativa ativa (logout)."""
+        if token:
+            cls._active_tokens.pop(token, None)
 
     @classmethod
     def _get_sessions_dir(cls, custom_dir: Optional[str] = None) -> str:
@@ -997,8 +1503,9 @@ class AdminService:
         curriculum = DataService.get_curriculum()
         total_units_count = len(curriculum) if curriculum else 23
 
-        # Listar todos os arquivos .json na pasta de sessões
-        for filename in os.listdir(directory):
+        # Listar e consolidar arquivos .json na pasta de sessões agrupando por chave normalizada
+        grouped_by_key: Dict[str, dict] = {}
+        for filename in sorted(os.listdir(directory)):
             if not filename.endswith(".json"):
                 continue
 
@@ -1013,13 +1520,21 @@ class AdminService:
             if not isinstance(data, dict):
                 continue
 
-            # Extrair student_id
-            s_id = data.get("student_id")
-            if not s_id:
-                # Extrair do nome do arquivo: student_{id}.json ou {uuid}.json
-                s_id = filename[:-5]
+            s_id = data.get("student_id") or filename[:-5]
+            data["student_id"] = s_id
+            s_name = data.get("student_name") or "Estudante Saebom"
+            key = normalize_name_key(s_name)
+            if not key:
+                key = s_id
 
-            s_name = data.get("student_name") or "Estudante Sejong"
+            if key in grouped_by_key:
+                grouped_by_key[key] = merge_session_data(grouped_by_key[key], data)
+            else:
+                grouped_by_key[key] = data
+
+        for data in grouped_by_key.values():
+            s_id = data.get("student_id") or "unknown"
+            s_name = canonicalize_student_name(data.get("student_name"))
             streak = data.get("streak", 0)
             total_xp = data.get("total_xp", 0)
             last_date = data.get("last_study_date") or data.get("updated_at") or "—"
@@ -1104,7 +1619,10 @@ class AdminService:
         avg_retention = (total_retention / len(students_with_memory)) if students_with_memory else 0.0
         total_nodes = sum(s["memory_nodes_count"] for s in students)
 
-        telemetry_events = TelemetryService.get_events()
+        telemetry_events = [
+            e for e in TelemetryService.get_events()
+            if e.event_type != "security_audit"
+        ]
         telemetry_analysis = PedagogicalAnalyzer.analyze(telemetry_events)
 
         return {
@@ -1120,7 +1638,10 @@ class AdminService:
     @classmethod
     def get_pedagogical_diagnostics(cls) -> Dict[str, Any]:
         """Retorna a análise diagnóstica consolidada de telemetria pedagógica."""
-        events = TelemetryService.get_events()
+        events = [
+            e for e in TelemetryService.get_events()
+            if e.event_type != "security_audit"
+        ]
         return PedagogicalAnalyzer.analyze(events)
 
     @classmethod
@@ -1133,8 +1654,8 @@ class AdminService:
         now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         lines = [
-            "# 🏛️ Relatório Executivo & Diagnóstico Pedagógico — Sejong Companion",
-            f"*Gerado em: {now_str} | Corpo Docente CCCB / Sejong Hakdang*",
+            "# 🏛️ Relatório Executivo & Diagnóstico Pedagógico — Saebom Companion",
+            f"*Gerado em: {now_str} | Corpo Docente / Saebom Companion*",
             "",
             "---",
             "",
@@ -1233,4 +1754,9 @@ class AdminService:
             lines.append("*Nenhum perfil de aluno localizado em data/sessions/.*")
 
         return "\n".join(lines)
+
+
+# Expor serviços de notificação e comunicados pedagógicos
+from .notification_service import NotificationService
+from .announcement_service import AnnouncementService
 

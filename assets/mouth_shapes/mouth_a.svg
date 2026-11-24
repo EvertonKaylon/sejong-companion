@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <title>Mouth Shape - A [ㅏ]</title>
+  <!-- Face/Mouth outline: Wide open, low tongue -->
+  <path d="M 20,45 C 20,25 80,25 80,45 C 80,75 20,75 20,45 Z" fill="#2A1B3D" stroke="#8B4DFF" stroke-width="3"/>
+  <!-- Oral cavity -->
+  <path d="M 28,45 C 28,35 72,35 72,45 C 72,68 28,68 28,45 Z" fill="#150B24"/>
+  <!-- Tongue: Low resting position -->
+  <path d="M 32,58 C 42,52 58,52 68,58 C 65,65 35,65 32,58 Z" fill="#E85D75"/>
+  <!-- Upper Lip -->
+  <path d="M 20,45 C 35,38 50,42 50,42 C 50,42 65,38 80,45" stroke="#B28AFF" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <!-- Lower Lip -->
+  <path d="M 24,52 C 35,76 65,76 76,52" stroke="#B28AFF" stroke-width="4" fill="none" stroke-linecap="round"/>
+</svg>

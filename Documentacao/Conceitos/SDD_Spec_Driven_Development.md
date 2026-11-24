@@ -1,24 +1,24 @@
 # SDD — Spec-Driven Development (Desenvolvimento Guiado por Especificações)
 
 **Conceito Relacionado:** [[Design_System_e_Tokens_Semanticos]] | [[Arquitetura_Flet_e_Flutter_Engine]] | [[Desenvolvimento_Multiplataforma_Python]]  
-**Documentos Vinculados:** [[Plano_UIUX_Flet_Sejong_Companion]] | [[implementation_plan]] | [[DESIGN_SYSTEM_CHANGELOG]]  
+**Documentos Vinculados:** [[MANUAL_DE_IDENTIDADE_SAEBOM]] | [[DESIGN_SYSTEM_CHANGELOG]] | [[Plano_UIUX_Flet_Sejong_Companion]] | [[implementation_plan]]  
 **Bugs Catalogados:** [[bug_05_w_ampa_simulador_neuromorfico_e_performance]] | [[bug_03_inversao_hex_alpha_aarrggbb_flet_flutter]]  
 
 ---
 
 ## 1. 💡 Fundamentação Teórica do Spec-Driven Development
 
-O **Spec-Driven Development (SDD)** é uma disciplina de engenharia de software na qual o desenvolvimento de componentes, lógica de negócios e contratos visuais é derivado estritamente de um conjunto de **especificações formais declarativas** (*Single Source of Truth - SSOT*).
+O **Spec-Driven Development (SDD)** é uma disciplina de engenharia de software na qual componentes, regras de negócio e contratos visuais derivam estritamente de **especificações formais declarativas** (*Single Source of Truth - SSOT*).
 
-No ecossistema do **Sejong Companion (세종학당 컴패니언)**, o SDD foi adotado para solucionar um dos maiores problemas de projetos de interface rica: o **estilo ad-hoc** (uso de cores arbitrárias, raios de borda desconexos e constantes mágicas espalhadas pelo código).
+No ecossistema do **Saebom Companion (새봄 컴패니언)**, o SDD elimina a estilização *ad-hoc* (cores arbitrárias, constantes mágicas espalhadas, recriação de sombras em loops e desvios entre documentação e código), conectando diretamente o **Brand Book v3.1** (`MANUAL_DE_IDENTIDADE_SAEBOM.md` e `DESIGN.md`) à implementação em Python/Flet e aos contratos Pydantic em `src/models.py`.
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │              ESPECIFICAÇÃO DE MARCA E DESIGN                │
-│       (Brand Book Next.js + Tailwind v4 + shadcn/ui)       │
+│         (Brand Book v3.1 · Hierarquia 60/20/12/8)           │
 └──────────────────────────────┬──────────────────────────────┘
                                │
-                               │ Portabilidade Tokenizada (1:1)
+                               │ Contrato Unificado (SSOT)
                                ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                 FONTE ÚNICA DE VERDADE (SSOT)               │
@@ -27,89 +27,93 @@ No ecossistema do **Sejong Companion (세종학당 컴패니언)**, o SDD foi ad
                │                              │
                ▼                              ▼
 ┌──────────────────────────────┐  ┌───────────────────────────┐
-│     Componentes de UI        │  │   Máquinas de Estado      │
-│  (quiz_card, audio_button)   │  │   (quiz_view, home_view)  │
+│     Componentes de UI        │  │   Views & Quiz Engine     │
+│  (HangulCard, QuizWidget)    │  │  (src/views/*, models.py) │
 └──────────────────────────────┘  └───────────────────────────┘
 ```
 
 ---
 
-## 2. 🧱 Os Três Pilares do SDD no Sejong Companion
+## 2. 🧱 Os Três Pilares do SDD no Saebom Companion
 
 ### Pilar A: Tokenização Rigorosa (Zero Magic Values)
-Nenhum arquivo de visualização (`src/views/*.py`) ou componente (`src/components/*.py`) tem permissão para definir cores HEX brutas (ex: `"#0356C5"` ou `ft.Colors.PURPLE_500`) ou espaçamentos arbitrários. Tudo deve ser consumido através da camada de abstração de tokens:
+Nenhum arquivo de visualização (`src/views/*.py`) ou componente (`src/components/*.py`) deve inventar cores HEX soltas (muito menos tokens legados descontinuados como `"#004C97"` ou `"#0356C5"`) nem instanciar `ft.BoxShadow` repetidamente dentro de loops (`BUG-05`). Toda estilização consome a camada de tokens em `src/theme.py`:
 
 ```python
-# ❌ VIOLAÇÃO DO SDD (Estilo Ad-hoc, Frágil e Difícil de Manter)
+# ❌ VIOLAÇÃO DO SDD (Estilo Ad-hoc e cor legada descontinuada)
 card = ft.Container(
     bgcolor="#FFFFFF",
     border_radius=15,
     padding=20,
-    border=ft.Border.all(1, "#E7E7E9")
+    border=ft.Border.all(1, "#004C97"),
 )
 
-# ✅ CONFORMIDADE COM SDD (Consumo de Tokens Únicos)
+# ✅ CONFORMIDADE COM SDD (Consumo de Tokens Únicos Brand Book v3.1)
 card = ft.Container(
     bgcolor=colors["card_bg"],
     border_radius=Styles.BORDER_RADIUS_MD,
-    padding=Tokens.SPACE_MD,
-    border=ft.Border.all(1, colors["border"])
+    padding=16,
+    border=ft.Border.all(1, colors["border"]),
+    shadow=Styles.CARD_SHADOW,
 )
 ```
 
-### Pilar B: Mapeamento Semântico de Papéis (Role-Based Design)
-As cores não representam apenas pigmentos; representam **intenções da interface**:
-- `Colors.PRIMARY`: Estrutura institucional do Instituto Sejong (Azul Real `#0356C5`).
-- `Colors.SECONDARY`: Elementos interativos de destaque e áudio TTS (Violeta `#7C3AED`).
-- `Colors.ACCENT`: Dicas mnemônicas e cultura (Dourado `#F5A623`).
-- `Colors.INCORRECT`: Feedback estrito de erro no quiz (Carmesim `#C50337`).
+### Pilar B: Mapeamento Semântico de Papéis (Brand Book v3.1 — 60/20/12/8)
+As cores representam **intenções funcionais e hierarquia cognitiva** definidas no Brand Book v3.1:
+- `Colors.NAVY` / `Colors.DARK_BG` (`#02060F`): **Território (60%)** — fundo escuro silencioso para estudo sem fadiga ocular.
+- `Colors.CREAM` / `Colors.LIGHT_BG` (`#F7F4EC`) e `Colors.SLATE` (`#9EA2AE`): **Superfície Clara & Estrutura (20%)** — leitura quente, bordas sutis e textos secundários.
+- `Colors.PRIMARY` / `Colors.VIOLET` (`#8B4DFF`): **Sistema (12%)** — navegação, progresso, estados ativos e botões estruturais.
+- `Colors.SECONDARY` / `Colors.LILAC` (`#B28AFF`): **Apoio** — companheirismo e destaques complementares.
+- `Colors.ACCENT` / `Colors.GOLD` (`#FFAB22`): **Sinal (8%)** — conquistas, notificações, avisos docentes e CTAs primários.
+- `Colors.CORRECT` (`#188150`) & `Colors.INCORRECT` (`#C50337`): Feedback estrito de acerto (WCAG AA 4.89:1) e erro.
 
-### Pilar C: Portabilidade Cross-Framework (Next.js ↔ Flet)
-Como o projeto possui um livro de marca desenvolvido em **Next.js + Tailwind v4 + shadcn/ui**, as variáveis CSS de `app/globals.css` foram traduzidas em tabelas numéricas de equivalência no Python:
+> [!NOTE]
+> **Nota Histórica de Descontinuação (Rodadas 1–3):** Os valores da fase inicial pré-rebranding (`#0356C5`, `#004C97`, `#268EF6`, `#F5A623`, além da paridade CSS Next.js da etapa exploratória) foram descontinuados na Rodada 4 (Brand Book v3.1) e preservados apenas para registro histórico em `DESIGN_SYSTEM_CHANGELOG.md`.
 
-| Variável CSS (Next.js) | Token Python (`src/theme.py`) | Valor Hexadecimal |
+### Pilar C: Contratos Fail-Closed em Dados (`QuizQuestion`) e Tokens Estruturais
+Além do sistema visual em `src/theme.py`, o SDD estende-se à camada de domínio em `src/models.py`: todo tipo de exercício (`multiple_choice`, `order_words`, `drag_and_drop_sov`, `calligraphy`) possui validadores `@model_validator(mode="after")` com postura **fail-closed**, rejeitando metadados ausentes antes de chegarem à UI.
+
+| Papel no Brand Book v3.1 | Token Python (`src/theme.py`) | Valor Hexadecimal |
 | :--- | :--- | :--- |
-| `--primary` | `Colors.PRIMARY` / `INFO_500` | `#0356C5` |
-| `--secondary` | `Colors.SECONDARY` / `PRIMARY_500` | `#7C3AED` |
-| `--accent` | `Colors.ACCENT` | `#F5A623` |
-| `--destructive` | `Colors.INCORRECT` / `DESTRUCTIVE_500` | `#C50337` |
-| `--bg-dark` | `Colors.DARK_BG` / `NEUTRAL_950` | `#02060E` |
+| Território Noturno (60%) | `Colors.NAVY` / `Colors.DARK_BG` | `#02060F` |
+| Superfície Clara (10%) | `Colors.CREAM` / `Colors.LIGHT_BG` | `#F7F4EC` |
+| Estrutura / Legenda (10%) | `Colors.SLATE` | `#9EA2AE` |
+| Sistema / Primária (12%) | `Colors.PRIMARY` (`Colors.VIOLET`) | `#8B4DFF` |
+| Apoio / Secundária | `Colors.SECONDARY` (`Colors.LILAC`) | `#B28AFF` |
+| Sinal / Acento (8%) | `Colors.ACCENT` (`Colors.GOLD`) | `#FFAB22` |
+| Sucesso / Erro | `Colors.CORRECT` / `Colors.INCORRECT` | `#188150` / `#C50337` |
 
 ---
 
 ## 3. 🔬 Impacto do SDD na Resolução de Bugs
 
-### Estudo de Caso 1: Estouro de Memória no Simulador Neuromórfico
-- **Causa**: O descumprimento do SDD no módulo de cronobiologia/simulador provocou a reinstanciação direta de objetos `ft.BoxShadow(blur_radius=10, ...)` em cada chamada de `update()`.
-- **Resolução via SDD**: A especificação formal congelou a constante estática `Styles.CARD_SHADOW` e `Styles.HOVER_SHADOW`. A alocação foi reduzida a zero alocações secundárias por frame, estabilizando o uso de RAM no Intel Core i7-3770.
+### Estudo de Caso 1: Alocação de Memória em Renderização
+- **Causa**: A reinstanciação direta de objetos `ft.BoxShadow(...)` dentro de loops/renders elevava a pressão de alocação de memória.
+- **Resolução via SDD**: Uso obrigatório das constantes estáticas `Styles.CARD_SHADOW`, `Styles.SHADOW_SM`, `Styles.SHADOW_LG` e `Styles.HOVER_SHADOW` (`#598B4DFF`) centralizadas em `src/theme.py`.
 - **Relatório Completo**: Veja [[bug_05_w_ampa_simulador_neuromorfico_e_performance]].
 
-### Estudo de Caso 2: Inversão de Cores no Quiz
-- **Causa**: O uso de concatenação de strings fora da especificação do parser do Flutter Engine (`f"{Colors.CORRECT}15"`) fez o motor ler a opacidade no início (`#AARRGGBB`), trocando os canais vermelho e verde.
-- **Resolução via SDD**: O contrato de cores foi corrigido especificando os tokens de transparência `#2619BD56` (Verde 15%) e `#26C50337` (Carmesim 15%).
+### Estudo de Caso 2: Inversão de Cores no Quiz (`#AARRGGBB`)
+- **Causa**: Concatenação de sufixo alfa ao final de strings hex (`f"{Colors.CORRECT}15"`) fazia o Flutter Engine interpretar os dois primeiros dígitos como canal Alpha (`#AARRGGBB`), invertendo vermelho e verde.
+- **Resolução via SDD**: Uso estrito de `ft.Colors.with_opacity(opacity, color)` em componentes dinâmicos e formato `#AARRGGBB` (`#26188150`, `#26C50337`) em constantes estáticas.
 - **Relatório Completo**: Veja [[bug_03_inversao_hex_alpha_aarrggbb_flet_flutter]].
 
 ---
 
-## 4. 📐 Modelo de Implementação da Camada de Tokens
+## 4. 📐 Modelo de Implementação da Camada de Tokens (`src/theme.py`)
 
 ```python
-# src/theme.py — Estrutura de Arquitetura de Tokens SDD
+# src/theme.py — Estrutura Real de Tokens SDD (Resumo)
 
 import flet as ft
 
+
 class Tokens:
-    # Espaçamentos em escala modular de 8pt
     SPACE_XS = 4
     SPACE_SM = 8
     SPACE_MD = 16
     SPACE_LG = 24
     SPACE_XL = 32
 
-    # Durações Padrão de Animação (ms)
-    DUR_FAST = 150
-    DUR_BASE = 250
-    DUR_SLOW = 400
 
 class Styles:
     BORDER_RADIUS_SM = 9
@@ -121,16 +125,29 @@ class Styles:
         ft.BoxShadow(
             spread_radius=-2,
             blur_radius=10,
-            color="rgba(26, 26, 26, 0.08)",
+            color="#141A1A1A",
             offset=ft.Offset(0, 4),
-        )
+        ),
+        ft.BoxShadow(
+            spread_radius=-2,
+            blur_radius=4,
+            color="#0A1A1A1A",
+            offset=ft.Offset(0, 2),
+        ),
     ]
+
+    HOVER_SHADOW = ft.BoxShadow(
+        spread_radius=-4,
+        blur_radius=20,
+        color="#598B4DFF",
+        offset=ft.Offset(0, 8),
+    )
 ```
 
 ---
 
 ## 📌 Links de Navegação Obsidian
 - 🧠 Central Mestre de Conceitos: [[INDICE_CONCEITOS]]
+- 🏷️ Manual de Identidade Saebom: [[MANUAL_DE_IDENTIDADE_SAEBOM]]
 - 🎨 Design System e Tokens: [[Design_System_e_Tokens_Semanticos]]
 - ⚙️ Arquitetura Flet Engine: [[Arquitetura_Flet_e_Flutter_Engine]]
-- 📋 Plano de UI/UX: [[Plano_UIUX_Flet_Sejong_Companion]]

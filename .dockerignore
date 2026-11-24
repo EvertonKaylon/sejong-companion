@@ -1,0 +1,58 @@
+# .dockerignore — Saebom Companion
+# Prevenção de vazamento de segredos, dados mutáveis e artefatos de build na imagem Docker
+# (OWASP A05: Security Misconfiguration / MITRE ATT&CK T1552.001 & T1005)
+
+# Segredos e Variáveis de Ambiente Locais
+.env
+*.env
+.env.*
+
+# Controle de Versão
+.git
+.github
+
+# Ambientes Virtuais e Dependências Locais
+.venv
+venv
+ENV
+env
+
+# Caches do Python e Ferramental de Testes
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+.coverage
+htmlcov
+
+# IDEs e Editores
+.vscode
+.idea
+*.swp
+*.swo
+
+# Dados Mutáveis em Runtime e Privacidade do Aluno (Zero Data Leak)
+data/sessions/
+data/telemetry/
+data/reports/
+data/cache/
+*.jsonl
+*.tmp
+*.tmp.*
+*.bak
+*.corrupt.*
+
+# Documentos Volumosos e Artefatos Locais
+*.pdf
+WhatsApp*
+scratch/
+tests/screenshots/
+gabarito*
+
+# Documentação, Testes e Agentes (excluídos da imagem de runtime)
+Documentacao/
+tests/
+.agents/
+audit_report.md
+docs/

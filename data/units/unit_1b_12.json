@@ -166,28 +166,97 @@
       "type": "order_words",
       "question": "Ordene: 'Vou dar flores de presente para a Jini'",
       "explanation": "Destinatário (지니 씨에게) + Objeto (꽃을) + Verbo no Futuro (선물할 거예요).",
-      "words": ["선물할 거예요", "꽃을", "지니 씨에게"],
-      "correct_order": ["지니 씨에게", "꽃을", "선물할 거예요"]
+      "words": [
+        "선물할 거예요",
+        "꽃을",
+        "지니 씨에게"
+      ],
+      "correct_order": [
+        "지니 씨에게",
+        "꽃을",
+        "선물할 거예요"
+      ]
     },
     {
       "id": "u1b_12_q04",
       "type": "drag_and_drop_sov",
       "question": "Monte a frase: 'Eu dei um cartão para o meu amigo'",
       "explanation": "Sujeito (저는) + Destinatário (친구에게) + Objeto (카드를) + Verbo (줬어요).",
-      "words": ["저는", "친구에게", "카드를", "줬어요"],
-      "correct_order": ["저는", "친구에게", "카드를", "줬어요"],
+      "words": [
+        "저는",
+        "친구에게",
+        "카드를",
+        "줬어요"
+      ],
+      "correct_order": [
+        "저는",
+        "친구에게",
+        "카드를",
+        "줬어요"
+      ],
       "sov_items": [
-        { "word": "저는", "role": "SUBJECT", "snap_anchor": "round" },
-        { "word": "친구에게", "role": "OBJECT", "snap_anchor": "round" },
-        { "word": "카드를", "role": "OBJECT", "snap_anchor": "round" },
-        { "word": "줬어요", "role": "VERB", "snap_anchor": "round" }
+        {
+          "word": "저는",
+          "role": "SUBJECT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "친구에게",
+          "role": "OBJECT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "카드를",
+          "role": "OBJECT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "줬어요",
+          "role": "VERB",
+          "snap_anchor": "round"
+        }
       ],
       "sov_slots": [
-        { "role": "SUBJECT", "label": "주어 (Sujeito)", "accepted_roles": ["SUBJECT"] },
-        { "role": "OBJECT", "label": "받는 사람 (Destinatário)", "accepted_roles": ["OBJECT", "LOCATION"] },
-        { "role": "OBJECT", "label": "목적어 (Objeto)", "accepted_roles": ["OBJECT"] },
-        { "role": "VERB", "label": "동사 (Verbo)", "accepted_roles": ["VERB", "PREDICATE"] }
+        {
+          "role": "SUBJECT",
+          "label": "주어 (Sujeito)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "OBJECT",
+          "label": "받는 사람 (Destinatário)",
+          "accepted_roles": [
+            "OBJECT",
+            "LOCATION"
+          ]
+        },
+        {
+          "role": "OBJECT",
+          "label": "목적어 (Objeto)",
+          "accepted_roles": [
+            "OBJECT"
+          ]
+        },
+        {
+          "role": "VERB",
+          "label": "동사 (Verbo)",
+          "accepted_roles": [
+            "VERB",
+            "PREDICATE"
+          ]
+        }
       ]
+    },
+    {
+      "id": "u1b_12_q05",
+      "type": "calligraphy",
+      "question": "Prática de Escrita do Workbook 1B: Escreva a frase '한국 생활이 재미있어요' (a vida na Coreia é divertida) na grade 원고지:",
+      "target_text": "한국 생활이 재미있어요",
+      "min_iou": 0.4,
+      "show_ghost": true,
+      "explanation": "한국 생활이 (a vida na Coreia) + 재미있어요 (é divertida)."
     }
   ]
 }

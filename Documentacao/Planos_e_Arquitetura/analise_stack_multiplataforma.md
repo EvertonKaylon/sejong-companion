@@ -111,4 +111,4 @@ decision-matrix
 ```
 
 ---
-> **Elaborado com base nos documentos:** [viabilidade_sejong_companion.md](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/viabilidade_sejong_companion.md), [viabilidade_app_coreano.md](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/viabilidade_app_coreano.md) e [implementation_plan.md](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/implementation_plan.md).
+> **Elaborado com base nos documentos:** [viabilidade_sejong_companion.md](../Viabilidade_e_Pesquisa/viabilidade_sejong_companion.md), [viabilidade_app_coreano.md](../Viabilidade_e_Pesquisa/viabilidade_app_coreano.md) e [implementation_plan.md](implementation_plan.md).

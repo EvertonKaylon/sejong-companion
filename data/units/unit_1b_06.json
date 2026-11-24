@@ -184,28 +184,97 @@
       "type": "order_words",
       "question": "Ordene: 'Leva 20 minutos de metrô daqui até a escola'",
       "explanation": "Trajeto (여기에서 학교까지) + Meio (지하철로) + Duração (20분 걸려요).",
-      "words": ["20분 걸려요", "여기에서 학교까지", "지하철로"],
-      "correct_order": ["여기에서 학교까지", "지하철로", "20분 걸려요"]
+      "words": [
+        "20분 걸려요",
+        "여기에서 학교까지",
+        "지하철로"
+      ],
+      "correct_order": [
+        "여기에서 학교까지",
+        "지하철로",
+        "20분 걸려요"
+      ]
     },
     {
       "id": "u1b_06_q04",
       "type": "drag_and_drop_sov",
       "question": "Monte a frase: 'Eu pego o ônibus no ponto'",
       "explanation": "Sujeito (저는) + Local (정류장에서) + Objeto (버스를) + Verbo (타요).",
-      "words": ["저는", "정류장에서", "버스를", "타요"],
-      "correct_order": ["저는", "정류장에서", "버스를", "타요"],
+      "words": [
+        "저는",
+        "정류장에서",
+        "버스를",
+        "타요"
+      ],
+      "correct_order": [
+        "저는",
+        "정류장에서",
+        "버스를",
+        "타요"
+      ],
       "sov_items": [
-        { "word": "저는", "role": "SUBJECT", "snap_anchor": "round" },
-        { "word": "정류장에서", "role": "LOCATION", "snap_anchor": "square" },
-        { "word": "버스를", "role": "OBJECT", "snap_anchor": "round" },
-        { "word": "타요", "role": "VERB", "snap_anchor": "round" }
+        {
+          "word": "저는",
+          "role": "SUBJECT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "정류장에서",
+          "role": "LOCATION",
+          "snap_anchor": "square"
+        },
+        {
+          "word": "버스를",
+          "role": "OBJECT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "타요",
+          "role": "VERB",
+          "snap_anchor": "round"
+        }
       ],
       "sov_slots": [
-        { "role": "SUBJECT", "label": "주어 (Sujeito)", "accepted_roles": ["SUBJECT"] },
-        { "role": "LOCATION", "label": "장소 (Local)", "accepted_roles": ["LOCATION", "OBJECT"] },
-        { "role": "OBJECT", "label": "목적어 (Objeto)", "accepted_roles": ["OBJECT"] },
-        { "role": "VERB", "label": "동사 (Verbo)", "accepted_roles": ["VERB", "PREDICATE"] }
+        {
+          "role": "SUBJECT",
+          "label": "주어 (Sujeito)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "LOCATION",
+          "label": "장소 (Local)",
+          "accepted_roles": [
+            "LOCATION",
+            "OBJECT"
+          ]
+        },
+        {
+          "role": "OBJECT",
+          "label": "목적어 (Objeto)",
+          "accepted_roles": [
+            "OBJECT"
+          ]
+        },
+        {
+          "role": "VERB",
+          "label": "동사 (Verbo)",
+          "accepted_roles": [
+            "VERB",
+            "PREDICATE"
+          ]
+        }
       ]
+    },
+    {
+      "id": "u1b_06_q05",
+      "type": "calligraphy",
+      "question": "Prática de Escrita do Workbook 1B: Escreva a frase '지하철을 타고 가요' (vou de metrô) na grade 원고지:",
+      "target_text": "지하철을 타고 가요",
+      "min_iou": 0.4,
+      "show_ghost": true,
+      "explanation": "지하철을 (metrô) + 타고 가요 (ir usando transporte)."
     }
   ]
 }

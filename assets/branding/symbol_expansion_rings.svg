@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <g transform="translate(200, 200)">
+    <!-- Anel 4 (Externo - Violet) -->
+    <path d="M 0 -130 A 130 130 0 1 1 -112.5 65" fill="none" stroke="#8B4DFF" stroke-width="14" stroke-linecap="round"/>
+    <!-- Anel 3 (Médio-Externo - Lilac) -->
+    <path d="M 0 -95 A 95 95 0 1 1 -82.2 47.5" fill="none" stroke="#B28AFF" stroke-width="14" stroke-linecap="round"/>
+    <!-- Anel 2 (Médio-Interno - Gold) -->
+    <path d="M 0 -60 A 60 60 0 1 1 -51.9 30" fill="none" stroke="#FFAB22" stroke-width="14" stroke-linecap="round"/>
+    <!-- Núcleo (Ponto de Broto / Semente) -->
+    <circle cx="0" cy="0" r="18" fill="#FFAB22"/>
+  </g>
+</svg>

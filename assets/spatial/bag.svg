@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <title>Bag (가방)</title>
+  <!-- Handle -->
+  <path d="M 40,25 C 40,15 60,15 60,25" fill="none" stroke="#FFAB22" stroke-width="4" stroke-linecap="round"/>
+  <!-- Bag Body -->
+  <rect x="25" y="25" width="50" height="58" rx="10" fill="#8B4DFF" stroke="#F7F4EC" stroke-width="2"/>
+  <!-- Front Pocket -->
+  <rect x="32" y="48" width="36" height="28" rx="6" fill="#6A2BD9" stroke="#FFAB22" stroke-width="1.5"/>
+  <!-- Straps / Details -->
+  <line x1="38" y1="28" x2="38" y2="45" stroke="#FFAB22" stroke-width="2"/>
+  <line x1="62" y1="28" x2="62" y2="45" stroke="#FFAB22" stroke-width="2"/>
+  <!-- Zipper Pull -->
+  <circle cx="50" cy="53" r="2.5" fill="#FFAB22"/>
+</svg>

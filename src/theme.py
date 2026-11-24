@@ -66,13 +66,12 @@ class Colors:
     DESTRUCTIVE_900 = "#550118"
     DESTRUCTIVE_950 = "#32010E"
 
-    # Info — Sejong Royal Blue
+    # Info — Royal Blue
     INFO_50 = "#EBF3FF"
     INFO_100 = "#CDE2FE"
     INFO_200 = "#96C2FD"
     INFO_300 = "#4F99FC"
     INFO_400 = "#0066CC"
-    INFO_500 = "#004C97"
     INFO_600 = "#003B75"
     INFO_700 = "#003366"
     INFO_800 = "#00254B"
@@ -106,35 +105,46 @@ class Colors:
     WARNING_950 = "#4A2902"
 
     # ============================================================
-    # CORES SEMÂNTICAS — Sejong Companion (Rodada 3 Reconciliada)
-    #   - PRIMARY: Azul Real Sejong oficial (#004C97) do site da Fundação.
-    #   - SECONDARY: Roxo Vibrante do design system (#7C4DFF).
-    #   - ACCENT: Dourado Sejong (#F5A623).
-    #   - CORRECT: Verde acessível com contraste 4.89:1 (#188150).
-    #   - DARK_BG: Midnight Blue (#02060E).
+    # DESIGN SYSTEM SAEBOM COMPANION — PALETA OFICIAL (BRANDING BOOK v3.1)
+    #   - NAVY (60% - Território): #02060F (Quietude noturna de foco)
+    #   - CREAM / SLATE (20% - Leitura/Estrutura): #F7F4EC / #9EA2AE
+    #   - VIOLET (12% - Sistema/Navegação): #8B4DFF (PRIMARY)
+    #   - GOLD (8% - Sinal/Atenção/Conquista): #FFAB22 (ACCENT)
+    #   - LILAC (Apoio/Companheirismo): #B28AFF (SECONDARY)
     # ============================================================
-    PRIMARY = "#004C97"           # Azul Real Sejong Oficial (세종학당재단)
-    PRIMARY_LIGHT = "#0066CC"
-    PRIMARY_DARK = "#003366"
 
-    SECONDARY = "#7C4DFF"        # Roxo Vibrante do design system
-    SECONDARY_LIGHT = "#9E77FF"
+    # Cores Mestras Saebom
+    NAVY = "#02060F"              # Midnight Navy — Território (60%)
+    VIOLET = "#8B4DFF"            # Violet — Sistema (12%)
+    GOLD = "#FFAB22"              # Gold — Sinal (8%)
+    LILAC = "#B28AFF"             # Lilac — Apoio
+    CREAM = "#F7F4EC"             # Cream — Leitura / Light BG (10%)
+    SLATE = "#9EA2AE"             # Slate — Estrutura e Linhas (10%)
 
-    ACCENT = "#F5A623"           # Dourado Sejong
+    # Papéis Semânticos Oficiais
+    PRIMARY = VIOLET              # #8B4DFF — Sistema, navegação, progresso e botões
+    PRIMARY_LIGHT = "#A875FF"
+    PRIMARY_DARK = "#5A1FFF"
 
-    # Paleta Tema Claro
-    LIGHT_BG = "#FAF9F6"         # Warm Off-White
+    SECONDARY = LILAC             # #B28AFF — Companheirismo e elementos complementares
+    SECONDARY_LIGHT = "#C7A6FF"
+    SECONDARY_DARK = "#7C4DFF"
+
+    ACCENT = GOLD                 # #FFAB22 — Conquistas, sinais de atenção, medalhas e CTAs nobres
+
+    # Paleta Tema Claro (Cream & Slate)
+    LIGHT_BG = CREAM              # #F7F4EC
     LIGHT_SURFACE = "#FFFFFF"
-    LIGHT_TEXT_PRIMARY = NEUTRAL_900
-    LIGHT_TEXT_SECONDARY = NEUTRAL_500
-    LIGHT_BORDER = "#E2E8F0"
+    LIGHT_TEXT_PRIMARY = NAVY     # #02060F
+    LIGHT_TEXT_SECONDARY = SLATE  # #9EA2AE
+    LIGHT_BORDER = "#E7E7E9"
     LIGHT_CARD_BG = "#FFFFFF"
 
-    # Paleta Tema Escuro (Midnight Blue)
-    DARK_BG = "#02060E"
+    # Paleta Tema Escuro (Midnight Navy)
+    DARK_BG = NAVY                # #02060F
     DARK_SURFACE = "#091122"
     DARK_TEXT_PRIMARY = NEUTRAL_50
-    DARK_TEXT_SECONDARY = NEUTRAL_400
+    DARK_TEXT_SECONDARY = SLATE   # #9EA2AE
     DARK_BORDER = "#1E293B"
     DARK_CARD_BG = "#0B172E"
 
@@ -142,8 +152,8 @@ class Colors:
     CORRECT = "#188150"          # Verde acessível (4.89:1)
     INCORRECT = DESTRUCTIVE_500  # Carmesim (#C50337)
     NEUTRAL = NEUTRAL_500
-    INFO = PRIMARY
-    WARNING = WARNING_500
+    INFO = VIOLET
+    WARNING = GOLD
 
     # Cores Semânticas de Papel Sintático (Sintaxe SOV)
     ROLE_SUBJECT = "#3B82F6"     # Sujeito (Azul)
@@ -163,7 +173,15 @@ class Colors:
     OCLUSIVE_ASPIRATED = "#38BDF8"   # Aspirada (ㅅ, ㅊ, ㅋ): Expansão Azul Ar
     OCLUSIVE_TENSE = "#EF4444"       # Tensa (ㅃ, ㄸ, ㄲ): Vermelho Tensão Glotal
 
+    # Conectores Metálicos (Fase 2 Interativa)
+    CONNECTOR_VOWEL = "#B87333"      # Cobre Metálico
+    CONNECTOR_BATCHIM = "#C0C0C0"    # Prata Metálica
+
 class Styles:
+    # Conectores Metálicos
+    CONNECTOR_VOWEL = Colors.CONNECTOR_VOWEL
+    CONNECTOR_BATCHIM = Colors.CONNECTOR_BATCHIM
+
     # Bordas — escala do design system
     BORDER_RADIUS_SM = 9
     BORDER_RADIUS_MD = 12
@@ -207,11 +225,11 @@ class Styles:
         ),
     ]
 
-    # Brilho azul (shadow-primary) — #59004C97 (35% opacidade de #004C97)
+    # Brilho violeta (shadow-primary) — #598B4DFF (35% opacidade de Violet #8B4DFF)
     HOVER_SHADOW = ft.BoxShadow(
         spread_radius=-4,
         blur_radius=20,
-        color="#59004C97",
+        color="#598B4DFF",
         offset=ft.Offset(0, 8),
     )
 
@@ -232,6 +250,14 @@ def get_theme_colors(is_dark: bool):
         "incorrect": Colors.INCORRECT,
         "info": Colors.INFO,
         "warning": Colors.WARNING,
+        # Tokens Nomeados do Brand Book Saebom
+        "navy": Colors.NAVY,
+        "violet": Colors.VIOLET,
+        "gold": Colors.GOLD,
+        "lilac": Colors.LILAC,
+        "cream": Colors.CREAM,
+        "slate": Colors.SLATE,
+        # Cores Semânticas de Papel Sintático (Sintaxe SOV)
         "role_subject": Colors.ROLE_SUBJECT,
         "role_object": Colors.ROLE_OBJECT,
         "role_verb": Colors.ROLE_VERB,
@@ -246,22 +272,18 @@ def get_theme_colors(is_dark: bool):
         "oclusive_lax": Colors.OCLUSIVE_LAX,
         "oclusive_aspirated": Colors.OCLUSIVE_ASPIRATED,
         "oclusive_tense": Colors.OCLUSIVE_TENSE,
+        # Conectores Metálicos
+        "connector_vowel": Colors.CONNECTOR_VOWEL,
+        "connector_batchim": Colors.CONNECTOR_BATCHIM,
     }
 
 def apply_app_theme(page: ft.Page):
     from src import __version__
-    page.title = f"Sejong Companion v{__version__}"
+    page.title = f"Saebom Companion v{__version__}"
     page.fonts = {
         "Pretendard": "fonts/Pretendard-Regular.otf",
-        "Pretendard-Regular": "fonts/Pretendard-Regular.otf",
-        "Pretendard-Medium": "fonts/Pretendard-Medium.otf",
-        "Pretendard-SemiBold": "fonts/Pretendard-SemiBold.otf",
         "Pretendard-Bold": "fonts/Pretendard-Bold.otf",
-        "Pretendard-ExtraBold": "fonts/Pretendard-ExtraBold.otf",
-        "Pretendard-Black": "fonts/Pretendard-Black.otf",
-        "PretendardVariable": "fonts/PretendardVariable.ttf",
-        "Noto Sans KR": "https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap",
-        "Inter": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
+        "Kyobo Handwriting": "fonts/KyoboHandwriting2025lyb.otf",
         "Seollip-che": "fonts/establish_retrosans.ttf",
         "establish Retrosans": "fonts/establish_retrosans.ttf",
     }

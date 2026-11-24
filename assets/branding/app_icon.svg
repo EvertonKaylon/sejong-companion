@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="iconBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8B4DFF"/>
+      <stop offset="100%" stop-color="#5A1FFF"/>
+    </linearGradient>
+    <style>
+      @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+      .iconGlyph { font-family: 'Pretendard', 'NanumSquare', sans-serif; font-weight: 800; font-size: 260px; fill: #FFFFFF; text-anchor: middle; dominant-baseline: central; }
+    </style>
+  </defs>
+  <!-- Squircle com raio suave 24% -->
+  <rect x="0" y="0" width="512" height="512" rx="120" ry="120" fill="url(#iconBg)"/>
+  <!-- Glifo Monograma 새 -->
+  <text x="256" y="256" class="iconGlyph">새</text>
+</svg>

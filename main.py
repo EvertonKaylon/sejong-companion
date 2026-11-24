@@ -37,12 +37,10 @@ load_local_env()
 #     dois pontos -- a única perda é acesso via celular/rede local (troque
 #     pra "0.0.0.0" manualmente aqui se precisar testar no celular).
 _IS_CLOUD_DEPLOY = "PORT" in os.environ
-_HOST = "0.0.0.0" if _IS_CLOUD_DEPLOY else "127.0.0.1"
+_DEFAULT_HOST = "0.0.0.0" if _IS_CLOUD_DEPLOY else "127.0.0.1"
+_HOST = os.environ.get("FLET_SERVER_IP", _DEFAULT_HOST)
 
-# FLET_SERVER_IP sobrescreve o host= passado pra ft.app() internamente (ver
-# flet/app.py:run_async, "env_host = os.getenv('FLET_SERVER_IP')") -- os
-# dois precisam ficar sincronizados, ou um valor divergente aqui reabre o
-# ERR_ADDRESS_INVALID mesmo com o host= "certo" na chamada de ft.app().
+# Sincronizar FLET_SERVER_IP com o host selecionado
 os.environ["FLET_SERVER_IP"] = _HOST
 
 import flet as ft
@@ -90,14 +88,17 @@ def main(page: ft.Page):
     from src.audio_service import AudioService
     page.audio_service = AudioService(page)
 
-    # Iniciar navegando para a tela de abertura
-    router.navigate_to("/splash")
+    # Iniciar navegando para a rota solicitada na URL ou para a tela de abertura
+    initial_route = getattr(page, "route", None) or "/splash"
+    if initial_route in ("", "/"):
+        initial_route = "/splash"
+    router.navigate_to(initial_route)
 
 if __name__ == "__main__":
-    print(f"Sejong Companion v{__version__}")
+    print(f"Saebom Companion v{__version__}")
     port = int(os.environ.get("PORT", 8554))
 
-    parser = argparse.ArgumentParser(description="Sejong Companion")
+    parser = argparse.ArgumentParser(description="Saebom Companion")
     parser.add_argument(
         "--browser",
         action="store_true",

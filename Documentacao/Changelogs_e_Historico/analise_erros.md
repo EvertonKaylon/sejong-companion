@@ -23,7 +23,7 @@ Análise completa do projeto. Flet instalado: **v0.85.3**. Todos os arquivos `.p
 > [!CAUTION]
 > `ft.app()` foi deprecado na v0.80.0 e substituído por `ft.run()`. A chamada funciona por enquanto (wrapper de compatibilidade), mas emite um warning e pode ser removida a qualquer momento.
 
-**Arquivo:** [main.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/main.py#L36)
+**Arquivo:** [main.py](../../main.py#L36)
 ```python
 # ❌ Atual (deprecado)
 ft.app(target=main, view=ft.AppView.WEB_BROWSER, host="0.0.0.0", port=8554)
@@ -41,7 +41,7 @@ ft.run(main, view=ft.AppView.WEB_BROWSER, host="0.0.0.0", port=8554)
 
 **Arquivos afetados:**
 
-#### [home_view.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/views/home_view.py#L111-L116) (linhas 111-116)
+#### [home_view.py](../../src/views/home_view.py#L111-L116) (linhas 111-116)
 ```python
 # ❌ Atual — AttributeError
 page.snack_bar = ft.SnackBar(
@@ -60,7 +60,7 @@ snack = ft.SnackBar(
 page.show_dialog(snack)
 ```
 
-#### [vocab_card.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/components/vocab_card.py#L107-L113) (linhas 107-113)
+#### [vocab_card.py](../../src/components/vocab_card.py#L107-L113) (linhas 107-113)
 ```python
 # ❌ Mesma API inexistente
 page.snack_bar = ft.SnackBar(...)
@@ -75,7 +75,7 @@ page.update()
 > [!CAUTION]
 > Esse ícone não existe no Flet 0.85. Causa `AttributeError` ao abrir a view de lição, impedindo completamente a renderização da tela.
 
-**Arquivo:** [lesson_view.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/views/lesson_view.py#L88) (linha 88)
+**Arquivo:** [lesson_view.py](../../src/views/lesson_view.py#L88) (linha 88)
 ```python
 # ❌ Não existe
 icon=ft.Icons.DICTIONARY_ROUNDED
@@ -93,7 +93,7 @@ icon=ft.Icons.ABC_ROUNDED            # Letras
 
 ### A1 — Checagem `page.theme_mode is None` nunca é `True`
 
-**Arquivo:** [main.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/main.py#L12-L13) (linhas 12-13)
+**Arquivo:** [main.py](../../main.py#L12-L13) (linhas 12-13)
 
 No Flet 0.85, `page.theme_mode` tem valor padrão `ThemeMode.SYSTEM`, nunca `None`. O bloco condicional **nunca executa**, e o tema fica como `SYSTEM` ao invés do `LIGHT` pretendido.
 
@@ -110,7 +110,7 @@ page.theme_mode = ft.ThemeMode.LIGHT
 
 ### A2 — Typo no JSON: "안na" ao invés de "안나"
 
-**Arquivo:** [unit_01.json](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/data/units/unit_01.json#L9) (linha 9)
+**Arquivo:** [unit_01.json](../../data/units/unit_01.json#L9) (linha 9)
 
 O campo `example_kr` do vocabulário "안녕하세요" contém texto em script latino ("na") misturado com Hangul:
 
@@ -126,7 +126,7 @@ O campo `example_kr` do vocabulário "안녕하세요" contém texto em script l
 
 ### A3 — Lógica de progresso inconsistente (escala 0-1 vs 0-100)
 
-**Arquivo:** [services.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/services.py#L62) (linha 62)
+**Arquivo:** [services.py](../../src/services.py#L62) (linha 62)
 
 O código verifica `progress >= 1.0 or progress >= 100.0`, mas todo o resto do sistema usa escala **0.0 a 1.0**. A condição `>= 100.0` nunca será verdadeira com a escala atual, e se alguém passasse 100 acidentalmente, `>= 1.0` já capturaria. A condição `or` é redundante.
 
@@ -142,7 +142,7 @@ if progress >= 1.0:
 
 ### A4 — `import time` no handler de evento sem uso real
 
-**Arquivo:** [vocab_card.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/components/vocab_card.py#L116) (linha 116)
+**Arquivo:** [vocab_card.py](../../src/components/vocab_card.py#L116) (linha 116)
 
 `import time` aparece no meio do método `play_audio_animation` mas **nunca é usado** (não há `time.sleep()`). O import é código morto. Além disso, se fosse usado com `time.sleep()`, bloquearia a thread principal do Flet.
 
@@ -160,7 +160,7 @@ import time  # Nunca usado
 
 ### M1 — `handle_unit_click` definida dentro do loop sem closure adequada
 
-**Arquivo:** [home_view.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/views/home_view.py#L109) (linhas 106-122)
+**Arquivo:** [home_view.py](../../src/views/home_view.py#L109) (linhas 106-122)
 
 A função `handle_unit_click` é redefinida a cada iteração do loop `for unit in curriculum`. Embora `create_click_handler` crie uma closure corretamente para `u_id` e `unlocked`, a função `handle_unit_click` em si é redefinida desnecessariamente em cada iteração (mesmo padrão, diferentes referências).
 
@@ -184,7 +184,7 @@ def create_click_handler(u_id=unit.id, unlocked=is_unlocked):
 
 ### M2 — Atributo dinâmico `page.router` não tipado
 
-**Arquivo:** [main.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/main.py#L22) (linha 22)
+**Arquivo:** [main.py](../../main.py#L22) (linha 22)
 
 ```python
 page.router = router  # Monkey-patching sem type safety
@@ -201,7 +201,7 @@ Funciona em runtime, mas:
 
 ### M3 — `ProgressService._store` é um class-level mutable default
 
-**Arquivo:** [services.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/services.py#L49) (linha 49)
+**Arquivo:** [services.py](../../src/services.py#L49) (linha 49)
 
 ```python
 class ProgressService:
@@ -214,7 +214,7 @@ Isso é intencional (singleton pattern), mas é uma armadilha conhecida em Pytho
 
 ### M4 — `callable` em minúsculo no type hint
 
-**Arquivo:** [quiz_widget.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/components/quiz_widget.py#L5) (linha 5)
+**Arquivo:** [quiz_widget.py](../../src/components/quiz_widget.py#L5) (linha 5)
 
 ```python
 # ❌ Atual — builtin function, não type hint
@@ -246,7 +246,7 @@ No Python 3.3+, isso funciona via "namespace packages" implícitos, por isso os 
 
 ### B2 — `SnackBar.duration` recebe int mas espera milissegundos
 
-**Arquivo:** [vocab_card.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/components/vocab_card.py#L110)
+**Arquivo:** [vocab_card.py](../../src/components/vocab_card.py#L110)
 
 ```python
 duration=1500  # Funciona, mas considerar verificar a unidade (ms vs segundos)
@@ -260,7 +260,7 @@ O valor `1500` funciona corretamente (são milissegundos), mas como o `SnackBar`
 
 Todas as views acessam `page.router.navigate_to(...)` e `page.router.current_unit_id` sem nenhuma verificação de que `page.router` existe. Se alguma view for renderizada antes de `main()` configurar o router, haverá `AttributeError`.
 
-**Arquivos afetados:** Todas as views ([splash_view.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/views/splash_view.py#L51), [home_view.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/views/home_view.py#L15), [hangul_view.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/views/hangul_view.py#L27), [lesson_view.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/views/lesson_view.py#L10), [quiz_view.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/views/quiz_view.py#L11))
+**Arquivos afetados:** Todas as views ([splash_view.py](../../src/views/splash_view.py#L51), [home_view.py](../../src/views/home_view.py#L15), [hangul_view.py](../../src/views/hangul_view.py#L27), [lesson_view.py](../../src/views/lesson_view.py#L10), [quiz_view.py](../../src/views/quiz_view.py#L11))
 
 ---
 

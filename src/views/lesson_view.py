@@ -1,5 +1,5 @@
 import flet as ft
-from ..components import VocabCard, centered_content
+from ..components import VocabCard, centered_content, SpatialStage
 from ..theme import get_theme_colors, Styles, Responsive
 from ..models import PedagogicalEvent
 from ..services import DataService, ProgressService, FullscreenService, TelemetryService
@@ -57,14 +57,14 @@ def lesson_view(page: ft.Page) -> ft.View:
                                     ),
                                     ft.Container(height=8),
                                     ft.Text(
-                                        "Esta lição está sendo preparada com muito carinho pela equipe Sejong Companion.\n\nEm breve, novos conteúdos estarão disponíveis!",
+                                        "Esta lição está sendo preparada com muito carinho pela equipe Saebom Companion.\n\nEm breve, novos conteúdos estarão disponíveis!",
                                         size=14,
                                         color=colors["text_sec"],
                                         text_align=ft.TextAlign.CENTER,
                                         no_wrap=False,
                                     ),
                                     ft.Container(height=24),
-                                    ft.ElevatedButton(
+                                    ft.Button(
                                         content="Voltar ao Menu",
                                         icon=ft.Icons.HOME_ROUNDED,
                                         style=ft.ButtonStyle(
@@ -220,9 +220,9 @@ def lesson_view(page: ft.Page) -> ft.View:
                     vertical_alignment=ft.CrossAxisAlignment.START,
                 ),
                 padding=10,
-                bgcolor="#14F5A623",
+                bgcolor=ft.Colors.with_opacity(0.12, colors["accent"]),
                 border_radius=Styles.BORDER_RADIUS_SM,
-                border=ft.Border.all(1, "#33F5A623"),
+                border=ft.Border.all(1, ft.Colors.with_opacity(0.20, colors["accent"])),
                 margin=ft.Margin.only(top=8, bottom=2),
             )
 
@@ -244,6 +244,30 @@ def lesson_view(page: ft.Page) -> ft.View:
                 shadow=Styles.CARD_SHADOW,
                 margin=ft.Margin.only(bottom=14),
             )
+        )
+
+    if unit_id == "unit_03":
+        def _on_spatial_challenge_completed(challenge_id: str):
+            if hasattr(page, "audio_service") and page.audio_service:
+                challenge = next(
+                    (c for c in spatial_stage.challenges if c.get("id") == challenge_id),
+                    None,
+                )
+                prompt_kr = challenge["prompt_kr"] if challenge else spatial_stage.current_challenge.get("prompt_kr", "")
+                if prompt_kr:
+                    page.audio_service.play_korean(prompt_kr)
+
+        spatial_stage = SpatialStage(
+            page=page,
+            is_dark=is_dark,
+            on_challenge_completed=_on_spatial_challenge_completed,
+        )
+        grammar_controls.insert(
+            0,
+            ft.Container(
+                content=spatial_stage,
+                margin=ft.Margin.only(bottom=14),
+            ),
         )
 
     grammar_col = ft.Column(
@@ -344,7 +368,7 @@ def lesson_view(page: ft.Page) -> ft.View:
 
     # Botão de Exercícios
     exercise_button = ft.Container(
-        content=ft.ElevatedButton(
+        content=ft.Button(
             content="Praticar com Exercícios (Quiz)",
             icon=ft.Icons.PLAY_ARROW_ROUNDED,
             style=ft.ButtonStyle(

@@ -184,26 +184,84 @@
       "type": "order_words",
       "question": "Ordene: 'Onde fica a farmácia?'",
       "explanation": "Sujeito (약국이) + Pergunta de Localização (어디에 있어요?).",
-      "words": ["있어요?", "어디에", "약국이"],
-      "correct_order": ["약국이", "어디에", "있어요?"]
+      "words": [
+        "있어요?",
+        "어디에",
+        "약국이"
+      ],
+      "correct_order": [
+        "약국이",
+        "어디에",
+        "있어요?"
+      ]
     },
     {
       "id": "u1b_05_q04",
       "type": "drag_and_drop_sov",
       "question": "Monte a frase: 'Vá em linha reta para a frente'",
       "explanation": "Modificador (똑바로) + Direção (앞으로) + Verbo (가세요).",
-      "words": ["똑바로", "앞으로", "가세요"],
-      "correct_order": ["똑바로", "앞으로", "가세요"],
+      "words": [
+        "똑바로",
+        "앞으로",
+        "가세요"
+      ],
+      "correct_order": [
+        "똑바로",
+        "앞으로",
+        "가세요"
+      ],
       "sov_items": [
-        { "word": "똑바로", "role": "LOCATION", "snap_anchor": "round" },
-        { "word": "앞으로", "role": "LOCATION", "snap_anchor": "square" },
-        { "word": "가세요", "role": "PREDICATE", "snap_anchor": "round" }
+        {
+          "word": "똑바로",
+          "role": "LOCATION",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "앞으로",
+          "role": "LOCATION",
+          "snap_anchor": "square"
+        },
+        {
+          "word": "가세요",
+          "role": "PREDICATE",
+          "snap_anchor": "round"
+        }
       ],
       "sov_slots": [
-        { "role": "LOCATION", "label": "방향 1 (Modo)", "accepted_roles": ["LOCATION", "OBJECT"] },
-        { "role": "LOCATION", "label": "방향 2 (Sentido)", "accepted_roles": ["LOCATION", "OBJECT"] },
-        { "role": "PREDICATE", "label": "서술어 (Comando)", "accepted_roles": ["PREDICATE", "VERB"] }
+        {
+          "role": "LOCATION",
+          "label": "방향 1 (Modo)",
+          "accepted_roles": [
+            "LOCATION",
+            "OBJECT"
+          ]
+        },
+        {
+          "role": "LOCATION",
+          "label": "방향 2 (Sentido)",
+          "accepted_roles": [
+            "LOCATION",
+            "OBJECT"
+          ]
+        },
+        {
+          "role": "PREDICATE",
+          "label": "서술어 (Comando)",
+          "accepted_roles": [
+            "PREDICATE",
+            "VERB"
+          ]
+        }
       ]
+    },
+    {
+      "id": "u1b_05_q05",
+      "type": "calligraphy",
+      "question": "Prática de Escrita do Workbook 1B: Escreva a frase '여행을 가고 싶어서' (porque quero viajar) na grade 원고지:",
+      "target_text": "여행을 가고 싶어서",
+      "min_iou": 0.4,
+      "show_ghost": true,
+      "explanation": "여행을 (viagem) + 가고 싶어서 (porque quero ir)."
     }
   ]
 }

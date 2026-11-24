@@ -10,7 +10,7 @@ Implementamos com sucesso a versão **0.1.0-alpha** do **Sejong Companion**, int
 Identificamos e corrigimos a causa raiz do loop de reinício e do erro de controle desconhecido:
 - **O Problema:** O controle `Audio` do pacote `flet-audio` é um componente **não-visual (serviço)**. Ao tentarmos instanciar e adicionar este controle dentro de `active_view.controls` (que é a árvore de layout visual da tela), o Flutter Engine do Flet Desktop tentava renderizá-lo como um widget visual na tela. Como ele não possui interface física, isso gerava um crash de desserialização e um erro de `Unknown control: Audio` que fechava a sessão e forçava o app desktop a reiniciar infinitamente.
 - **A Solução:**
-  1. Refatoramos o [audio_service.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/audio_service.py) para criar um player único e persistente no início do ciclo de vida da aplicação.
+  1. Refatoramos o [audio_service.py](../../src/audio_service.py) para criar um player único e persistente no início do ciclo de vida da aplicação.
   2. Adicionamos o player à lista **`page.overlay`** (exclusiva para componentes não-visuais e persistentes no Flet) em vez de `view.controls`.
   3. No método de reprodução `_play_file`, agora simplesmente atualizamos a fonte do player (`self.player.src = src_path`) e executamos `await self.player.play()`.
   4. Isso corrige o erro de "Multiple parents" e "Unknown control" em definitivo tanto no Desktop quanto na Web!
@@ -20,13 +20,13 @@ Identificamos e corrigimos a causa raiz do loop de reinício e do erro de contro
 ### 2. 🔌 Configuração de IP Multidispositivo (0.0.0.0 vs 127.0.0.1)
 Corrigimos o erro `ERR_ADDRESS_INVALID` que acontecia na inicialização do aplicativo ao tentar abrir o endereço `http://0.0.0.0:8554` no navegador padrão:
 - O IP `0.0.0.0` indica que o servidor deve escutar todas as conexões da rede, mas o navegador local do Windows não consegue direcionar tráfego para ele como destino final.
-- **Solução:** No [main.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/main.py), definimos o parâmetro `host="127.0.0.1"` dentro de `ft.run` (para que o navegador abra em `http://127.0.0.1:8554` localmente) e injetamos a variável de ambiente `FLET_SERVER_IP = "0.0.0.0"` no topo do código. Dessa forma, o servidor Flet continua escutando em todas as interfaces de rede, permitindo o acesso externo via celular (ex: `http://192.168.15.140:8554`), sem quebrar a inicialização no computador local.
+- **Solução:** No [main.py](../../main.py), definimos o parâmetro `host="127.0.0.1"` dentro de `ft.run` (para que o navegador abra em `http://127.0.0.1:8554` localmente) e injetamos a variável de ambiente `FLET_SERVER_IP = "0.0.0.0"` no topo do código. Dessa forma, o servidor Flet continua escutando em todas as interfaces de rede, permitindo o acesso externo via celular (ex: `http://192.168.15.140:8554`), sem quebrar a inicialização no computador local.
 
 ---
 
 ### 3. 🐛 Correção de Ciclo de Vida do Quiz (`Control must be added first`)
 Corrigimos o erro `RuntimeError: Container(479) Control must be added to the page first` que impedia a visualização do Quiz:
-- Esse bug acontecia porque o método `render_current_question()` de [quiz_view.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/views/quiz_view.py) chamava o método `main_content.update()` na inicialização da tela, antes de o `main_content` ser efetivamente montado e retornado pela função `ft.View`.
+- Esse bug acontecia porque o método `render_current_question()` de [quiz_view.py](../../src/views/quiz_view.py) chamava o método `main_content.update()` na inicialização da tela, antes de o `main_content` ser efetivamente montado e retornado pela função `ft.View`.
 - **Solução:** Adicionamos uma validação condicional simples: `if main_content.page: main_content.update()`. Isso evita a tentativa precoce de atualização da árvore de componentes, permitindo que a view inicialize estaticamente no primeiro render sem quebras.
 
 ---
@@ -34,26 +34,26 @@ Corrigimos o erro `RuntimeError: Container(479) Control must be added to the pag
 ### 4. 🐛 Correção do Bug de Abas (Tab `label`)
 Corrigimos o erro de inicialização das abas (`TypeError: Tab.__init__() got an unexpected keyword argument 'text'`) que ocorria ao transitar para as lições e retornar:
 - No Flet, a propriedade que define o texto de cabeçalho do controle `ft.Tab` chama-se **`label`** e não `text`.
-- Atualizamos todas as definições de abas em [lesson_view.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/views/lesson_view.py) e [hangul_view.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/views/hangul_view.py) para utilizar `label="..."`, estabilizando a navegação por rotas do roteador.
+- Atualizamos todas as definições de abas em [lesson_view.py](../../src/views/lesson_view.py) e [hangul_view.py](../../src/views/hangul_view.py) para utilizar `label="..."`, estabilizando a navegação por rotas do roteador.
 
 ---
 
 ### 5. 🐛 Correção do Bug de Botões (Button `content`)
 Corrigimos o erro de inicialização dos botões (`TypeError: Button.__init__() got an unexpected keyword argument 'text'`) que ocorria ao carregar botões com rótulos de texto:
 - No Flet v0.85.3, a propriedade que define o texto de botões como `ft.ElevatedButton`, `ft.OutlinedButton` e `ft.TextButton` é chamada de **`content`** (ou aceita um controle visual no lugar do texto), em vez de `text`.
-- Atualizamos todas as declarações de botões no projeto em [quiz_widget.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/components/quiz_widget.py), [lesson_view.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/views/lesson_view.py), [hangul_view.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/views/hangul_view.py) e [quiz_view.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/views/quiz_view.py) para utilizar `content="..."`, eliminando por completo o erro na interface.
+- Atualizamos todas as declarações de botões no projeto em [quiz_widget.py](../../src/components/quiz_widget.py), [lesson_view.py](../../src/views/lesson_view.py), [hangul_view.py](../../src/views/hangul_view.py) e [quiz_view.py](../../src/views/quiz_view.py) para utilizar `content="..."`, eliminando por completo o erro na interface.
 
 ---
 
 ### 6. 🚫 Erradicação Completa da Romanização
 A romanização foi inteiramente eliminada do core do projeto (modelos, dados e telas), forçando o estudante a processar as informações diretamente em coreano:
-- **Exclusão nos Modelos:** Limpeza das propriedades de romanização em [models.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/models.py).
+- **Exclusão nos Modelos:** Limpeza das propriedades de romanização em [models.py](../../src/models.py).
 - **Sem muletas na interface:** Foco absoluto no 한글 original acompanhado por explicações fonéticas textuais e sonoras em português.
 
 ---
 
 ### 7. 🧠 Enriquecimento Neuro-Pedagógico do Hangul
-Aprimoramos e organizamos o aprendizado de alfabetização em [hangul_view.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/views/hangul_view.py):
+Aprimoramos e organizamos o aprendizado de alfabetização em [hangul_view.py](../../src/views/hangul_view.py):
 - **Aviso Científico Anti-Romanização:** Raciocínio científico contra o uso de letras ocidentais para representar o coreano.
 - **Dica de Escrita Manual:** Explicação sobre ativação de áreas corticais ao desenhar os traços de próprio punho.
 - **Aba Exclusiva de 받침 (Batchim):** Guia com regras de neutralização articulatória e o **Alerta do "i" Fantasma** (epêntese vocálica típica de falantes de português).
@@ -61,13 +61,13 @@ Aprimoramos e organizamos o aprendizado de alfabetização em [hangul_view.py](f
 ---
 
 ### 8. 💼 Expansão de Profissões e Ordem SOV
-- **Mais Profissões:** Incluídos mais de 15 termos do campo profissional (engenharias, RH, marketing, psicologia, meio ambiente e jornalismo) em [unit_01.json](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/data/units/unit_01.json).
-- **Exercícios `order_words`:** Novo widget interativo no quiz ([quiz_widget.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/components/quiz_widget.py)) para organizar blocos de palavras e treinar a fixação da estrutura oracional SOV (Sujeito-Objeto-Verbo).
+- **Mais Profissões:** Incluídos mais de 15 termos do campo profissional (engenharias, RH, marketing, psicologia, meio ambiente e jornalismo) em [unit_01.json](../../data/units/unit_01.json).
+- **Exercícios `order_words`:** Novo widget interativo no quiz ([quiz_widget.py](../../src/components/quiz_widget.py)) para organizar blocos de palavras e treinar a fixação da estrutura oracional SOV (Sujeito-Objeto-Verbo).
 
 ---
 
 ### ☀️ Cronobiologia e Neuro-Tips
-Adicionado painel adaptativo à hora local em [home_view.py](file:///c:/Users/Pichau/Documents/app%20sejong%20companion/src/views/home_view.py) fornecendo conselhos circadianos específicos para maximizar o rendimento cognitivo do estudante.
+Adicionado painel adaptativo à hora local em [home_view.py](../../src/views/home_view.py) fornecendo conselhos circadianos específicos para maximizar o rendimento cognitivo do estudante.
 
 ---
 

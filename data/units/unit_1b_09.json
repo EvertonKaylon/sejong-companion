@@ -175,26 +175,83 @@
       "type": "order_words",
       "question": "Ordene: 'Tenho que ir ao hospital amanhã'",
       "explanation": "Tempo (내일) + Destino (병원에) + Obrigação (가야 돼요).",
-      "words": ["가야 돼요", "내일", "병원에"],
-      "correct_order": ["내일", "병원에", "가야 돼요"]
+      "words": [
+        "가야 돼요",
+        "내일",
+        "병원에"
+      ],
+      "correct_order": [
+        "내일",
+        "병원에",
+        "가야 돼요"
+      ]
     },
     {
       "id": "u1b_09_q04",
       "type": "drag_and_drop_sov",
       "question": "Monte a frase: 'Eu tenho que descansar bem em casa'",
       "explanation": "Sujeito (저는) + Local (집에서) + Modo/Verbo de Obrigação (푹 쉬어야 돼요).",
-      "words": ["저는", "집에서", "푹 쉬어야 돼요"],
-      "correct_order": ["저는", "집에서", "푹 쉬어야 돼요"],
+      "words": [
+        "저는",
+        "집에서",
+        "푹 쉬어야 돼요"
+      ],
+      "correct_order": [
+        "저는",
+        "집에서",
+        "푹 쉬어야 돼요"
+      ],
       "sov_items": [
-        { "word": "저는", "role": "SUBJECT", "snap_anchor": "round" },
-        { "word": "집에서", "role": "LOCATION", "snap_anchor": "square" },
-        { "word": "푹 쉬어야 돼요", "role": "PREDICATE", "snap_anchor": "round" }
+        {
+          "word": "저는",
+          "role": "SUBJECT",
+          "snap_anchor": "round"
+        },
+        {
+          "word": "집에서",
+          "role": "LOCATION",
+          "snap_anchor": "square"
+        },
+        {
+          "word": "푹 쉬어야 돼요",
+          "role": "PREDICATE",
+          "snap_anchor": "round"
+        }
       ],
       "sov_slots": [
-        { "role": "SUBJECT", "label": "주어 (Sujeito)", "accepted_roles": ["SUBJECT"] },
-        { "role": "LOCATION", "label": "장소 (Local)", "accepted_roles": ["LOCATION", "OBJECT"] },
-        { "role": "PREDICATE", "label": "서술어 (Obrigação)", "accepted_roles": ["PREDICATE", "VERB"] }
+        {
+          "role": "SUBJECT",
+          "label": "주어 (Sujeito)",
+          "accepted_roles": [
+            "SUBJECT"
+          ]
+        },
+        {
+          "role": "LOCATION",
+          "label": "장소 (Local)",
+          "accepted_roles": [
+            "LOCATION",
+            "OBJECT"
+          ]
+        },
+        {
+          "role": "PREDICATE",
+          "label": "서술어 (Obrigação)",
+          "accepted_roles": [
+            "PREDICATE",
+            "VERB"
+          ]
+        }
       ]
+    },
+    {
+      "id": "u1b_09_q05",
+      "type": "calligraphy",
+      "question": "Prática de Escrita do Workbook 1B: Escreva a frase '약을 먹고 쉬세요' (tome remédio e descanse) na grade 원고지:",
+      "target_text": "약을 먹고 쉬세요",
+      "min_iou": 0.4,
+      "show_ghost": true,
+      "explanation": "약을 먹고 (tome remédio e...) + 쉬세요 (descanse no imperativo polido)."
     }
   ]
 }

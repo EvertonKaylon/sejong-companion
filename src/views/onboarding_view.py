@@ -1,3 +1,4 @@
+import asyncio
 import flet as ft
 import uuid
 from ..components import centered_content
@@ -28,9 +29,24 @@ def onboarding_view(page: ft.Page) -> ft.View:
     )
 
     code_input = ft.TextField(
-        label="Código do Aluno (ID)",
-        hint_text="Ex: student_a1b2c3d4e5f6",
+        label="Identificador do Aluno (Student ID)",
+        hint_text="Ex: student_a1b2c3d4e5f6 ou Nome",
+        prefix_icon=ft.Icons.BADGE_ROUNDED,
+        bgcolor=colors["surface"],
+        color=colors["text"],
+        border_color=colors["border"],
+        focused_border_color=colors["secondary"],
+        border_radius=Styles.BORDER_RADIUS_SM,
+        text_size=13,
+        visible=False,
+    )
+
+    recovery_input = ft.TextField(
+        label="Chave Secreta de Recuperação",
+        hint_text="Ex: 9K7X-2PQM-7V4N",
         prefix_icon=ft.Icons.KEY_ROUNDED,
+        password=True,
+        can_reveal_password=True,
         bgcolor=colors["surface"],
         color=colors["text"],
         border_color=colors["border"],
@@ -41,20 +57,25 @@ def onboarding_view(page: ft.Page) -> ft.View:
     )
 
     async def save_and_proceed(student_id: str, student_name: str):
+        page._saebom_student_id = student_id
         page._sejong_student_id = student_id
-        page._sejong_student_name = student_name
-        
-        # Persistir no servidor via ProgressService
-        ps = ProgressService(page)
-        ps.set_student_name(student_name)
 
-        # Persistir no SharedPreferences (localStorage do navegador)
+        # Persistir no servidor via ProgressService e garantir credencial de recuperação
+        ps = ProgressService(page)
+        canonical_name = ps.set_student_name(student_name)
+        page._saebom_student_name = canonical_name
+        page._sejong_student_name = canonical_name
+        ps.get_or_create_recovery_code()
+
+        # Persistir no SharedPreferences (localStorage do navegador) com timeout estrito
         try:
             sp = ft.SharedPreferences()
             if hasattr(page, "services") and sp not in page.services:
                 page.services.append(sp)
-            await sp.set("sejong_student_id", student_id)
-            await sp.set("sejong_student_name", student_name)
+            await asyncio.wait_for(sp.set("saebom_student_id", student_id), timeout=0.8)
+            await asyncio.wait_for(sp.set("saebom_student_name", canonical_name), timeout=0.8)
+            await asyncio.wait_for(sp.set("sejong_student_id", student_id), timeout=0.8)
+            await asyncio.wait_for(sp.set("sejong_student_name", canonical_name), timeout=0.8)
         except Exception as e:
             print(f"[Onboarding] Erro ao gravar SharedPreferences: {e}")
 
@@ -81,34 +102,42 @@ def onboarding_view(page: ft.Page) -> ft.View:
         page.run_task(_run)
 
     def handle_restore_submit(e):
-        code = (code_input.value or "").strip()
-        if not code or not code.startswith("student_"):
-            error_text.value = "Código inválido. Deve começar com 'student_'."
+        ident = (code_input.value or "").strip()
+        rec_key = (recovery_input.value or "").strip()
+
+        if not ident:
+            error_text.value = "Por favor, informe seu Student ID ou Nome cadastrado."
+            error_text.visible = True
+            page.update()
+            return
+
+        if not rec_key:
+            error_text.value = "Por favor, informe a Chave Secreta de Recuperação do seu perfil."
+            error_text.visible = True
+            page.update()
+            return
+
+        success, s_id, s_name, msg = ProgressService.verify_and_restore_student(ident, rec_key)
+        if not success:
+            error_text.value = msg
             error_text.visible = True
             page.update()
             return
 
         error_text.visible = False
-        
-        # Tentar carregar dados do aluno existente
-        page._sejong_student_id = code
-        ps = ProgressService(page)
-        existing_name = ps.get_student_name()
-        if existing_name == "Estudante Sejong" or not existing_name:
-            existing_name = "Aluno Sejong"
-
         async def _run():
-            await save_and_proceed(code, existing_name)
+            await save_and_proceed(s_id, s_name)
 
         page.run_task(_run)
 
     def toggle_restore_mode(e):
         show_restore[0] = not show_restore[0]
         code_input.visible = show_restore[0]
+        recovery_input.visible = show_restore[0]
         restore_btn.visible = show_restore[0]
         name_input.visible = not show_restore[0]
         start_btn.visible = not show_restore[0]
-        toggle_link.content.value = "← Voltar para criar novo perfil" if show_restore[0] else "Já tem um código de aluno? Restaurar progresso"
+        toggle_link.content.value = "← Voltar para criar novo perfil" if show_restore[0] else "Já tem uma chave de recuperação? Restaurar perfil"
         error_text.visible = False
         page.update()
 
@@ -155,14 +184,38 @@ def onboarding_view(page: ft.Page) -> ft.View:
     card_content = ft.Container(
         content=ft.Column(
             controls=[
-                # Brasão e Título Institucional
+                # Brasão e Título Institucional Oficial Saebom Companion
                 ft.Container(
                     content=ft.Column(
                         controls=[
-                            ft.Text("세종학당", size=28, font_family="Seollip-che", weight=ft.FontWeight.W_900, color=colors["primary"]),
-                            ft.Text("SEJONG COMPANION", size=11, font_family="Pretendard", weight=ft.FontWeight.BOLD, color=colors["secondary"]),
-                            ft.Container(height=6),
-                            ft.Text("Centro Cultural Coreano no Brasil", size=12, color=colors["text_sec"], weight=ft.FontWeight.W_500),
+                            ft.Container(
+                                content=ft.Image(
+                                    src="/branding/app_icon_192.png",
+                                    width=54,
+                                    height=54,
+                                    border_radius=12,
+                                    fit=ft.BoxFit.CONTAIN,
+                                ),
+                                alignment=ft.Alignment.CENTER,
+                                margin=ft.Margin.only(bottom=6),
+                            ),
+                            ft.Row(
+                                controls=[
+                                    ft.Text("새봄", size=26, font_family="Pretendard", weight=ft.FontWeight.W_900, color=colors["text"]),
+                                    ft.Container(
+                                        content=ft.Text("COMPANION", size=10, weight=ft.FontWeight.BOLD, color=colors["accent"]),
+                                        padding=ft.Padding.symmetric(horizontal=6, vertical=2),
+                                        bgcolor=ft.Colors.with_opacity(0.12, colors["primary"]),
+                                        border=ft.Border.all(1, ft.Colors.with_opacity(0.25, colors["primary"])),
+                                        border_radius=4,
+                                    ),
+                                ],
+                                alignment=ft.MainAxisAlignment.CENTER,
+                                spacing=8,
+                            ),
+                            ft.Text("SAEBOM COMPANION", size=10, font_family="Pretendard", weight=ft.FontWeight.BOLD, color=colors["secondary"]),
+                            ft.Container(height=4),
+                            ft.Text("Companion Institucional de Aprendizagem de Coreano", size=11, color=colors["text_sec"], weight=ft.FontWeight.W_500),
                         ],
                         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                         spacing=2,
@@ -179,7 +232,7 @@ def onboarding_view(page: ft.Page) -> ft.View:
                     color=colors["text"],
                 ),
                 ft.Text(
-                    "Informe seu nome e sobrenome para que seus professores acompanhem sua frequência e evolução no Sejong Hakdang:",
+                    "Informe seu nome e sobrenome para que seus professores acompanhem sua frequência e evolução nos estudos:",
                     size=12,
                     color=colors["text_sec"],
                     style=ft.TextStyle(height=1.4),
@@ -187,6 +240,7 @@ def onboarding_view(page: ft.Page) -> ft.View:
                 ft.Container(height=14),
                 name_input,
                 code_input,
+                recovery_input,
                 error_text,
                 ft.Container(height=14),
                 start_btn,
