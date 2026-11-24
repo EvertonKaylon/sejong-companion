@@ -597,11 +597,18 @@ class ProgressService:
         raw = self._store.get("student_name", "Estudante Saebom")
         return canonicalize_student_name(raw)
 
-    def set_student_name(self, name: str):
-        """Define e canonicaliza o nome do aluno."""
+    def set_student_name(self, name: str) -> str:
+        """Define, canonicaliza e persiste o nome do aluno no perfil e client_storage."""
         canonical = canonicalize_student_name(name)
         self._store["student_name"] = canonical
         ProgressService._save_to_disk(self._session_id, self._store)
+        try:
+            if hasattr(self.page, "client_storage") and self.page.client_storage:
+                self.page.client_storage.set("saebom_student_name", canonical)
+                self.page.client_storage.set("sejong_student_name", canonical)
+        except Exception:
+            pass
+        return canonical
 
     @staticmethod
     def generate_recovery_code() -> str:
@@ -712,18 +719,6 @@ class ProgressService:
         resolved_id = target_data.get("student_id") or os.path.basename(target_file)[:-5]
         resolved_name = target_data.get("student_name", "Aluno Saebom")
         return True, resolved_id, resolved_name, "Perfil e progresso restaurados com sucesso!"
-
-    def set_student_name(self, name: str) -> str:
-        """Atualiza o nome do aluno no perfil e sincroniza."""
-        clean_name = name.strip() or "Estudante Saebom"
-        self._store["student_name"] = clean_name
-        ProgressService._save_to_disk(self._session_id, self._store)
-        try:
-            if hasattr(self.page, "client_storage") and self.page.client_storage:
-                self.page.client_storage.set("sejong_student_name", clean_name)
-        except Exception:
-            pass
-        return clean_name
 
     def export_backup(self) -> str:
         """Exporta o progresso completo e nós de memória em formato JSON string."""
@@ -1624,7 +1619,10 @@ class AdminService:
         avg_retention = (total_retention / len(students_with_memory)) if students_with_memory else 0.0
         total_nodes = sum(s["memory_nodes_count"] for s in students)
 
-        telemetry_events = TelemetryService.get_events()
+        telemetry_events = [
+            e for e in TelemetryService.get_events()
+            if e.event_type != "security_audit"
+        ]
         telemetry_analysis = PedagogicalAnalyzer.analyze(telemetry_events)
 
         return {
@@ -1640,7 +1638,10 @@ class AdminService:
     @classmethod
     def get_pedagogical_diagnostics(cls) -> Dict[str, Any]:
         """Retorna a análise diagnóstica consolidada de telemetria pedagógica."""
-        events = TelemetryService.get_events()
+        events = [
+            e for e in TelemetryService.get_events()
+            if e.event_type != "security_audit"
+        ]
         return PedagogicalAnalyzer.analyze(events)
 
     @classmethod

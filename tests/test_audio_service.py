@@ -1,4 +1,5 @@
 import os
+import tempfile
 import unittest
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -103,6 +104,43 @@ class TestAudioService(unittest.IsolatedAsyncioTestCase):
         await self.service._play_file("audio_cache/missing.mp3")
 
         self.service.player.play.assert_not_awaited()
+
+    async def test_play_file_uses_bytes_when_only_in_mutable_cache_dir(self):
+        """Quando o áudio existe apenas em cache_dir (e não em assets/audio_cache), envia bytes."""
+        with tempfile.TemporaryDirectory() as bundled_dir, tempfile.TemporaryDirectory() as cache_dir:
+            self.service.cache_dir = cache_dir
+            local_file = os.path.join(cache_dir, "runtime_only.mp3")
+            expected_bytes = b"ID3-runtime-audio-bytes"
+            with open(local_file, "wb") as f:
+                f.write(expected_bytes)
+
+            with patch.object(AudioService, "get_bundled_assets_audio_dir", return_value=bundled_dir):
+                await self.service._play_file("audio_cache/runtime_only.mp3")
+
+            self.assertIsInstance(self.service.player.src, bytes)
+            self.assertEqual(self.service.player.src, expected_bytes)
+            self.assertEqual(self.service.player.volume, 1.0)
+            self.service.player.update.assert_called_once()
+            self.service.player.play.assert_awaited_once()
+
+    async def test_play_korean_uses_bundled_asset_without_synthesizing(self):
+        """Se o arquivo existir em assets/audio_cache, não deve sintetizar em runtime."""
+        with tempfile.TemporaryDirectory() as bundled_dir, tempfile.TemporaryDirectory() as cache_dir:
+            self.service.cache_dir = cache_dir
+            filename = self.service._cache_filename("안녕하세요")
+            bundled_file = os.path.join(bundled_dir, filename)
+            with open(bundled_file, "wb") as f:
+                f.write(b"ID3-bundled-audio")
+
+            with (
+                patch.object(AudioService, "get_bundled_assets_audio_dir", return_value=bundled_dir),
+                patch.object(self.service, "_synthesize_to_cache") as mock_synth,
+            ):
+                await self.service.play_korean_async("안녕하세요")
+
+            mock_synth.assert_not_called()
+            self.assertEqual(self.service.player.src, f"audio_cache/{filename}")
+            self.service.player.play.assert_awaited_once()
 
 
 if __name__ == "__main__":

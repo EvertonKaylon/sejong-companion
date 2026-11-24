@@ -1,5 +1,7 @@
+import errno
 import os
 import json
+import threading
 import uuid
 from datetime import datetime
 from typing import List, Dict, Any, Optional
@@ -10,10 +12,17 @@ class AnnouncementService:
     """Serviço de gerenciamento do Mural de Avisos da Professora e Notificações Pedagógicas."""
 
     _DATA_FILE_NAME = "announcements.json"
+    _LOCK = threading.RLock()
 
     @classmethod
     def _get_data_path(cls) -> str:
-        """Retorna o caminho seguro para o arquivo de avisos dentro de data/."""
+        """Retorna o caminho seguro para o arquivo de avisos dentro de data/ ou SAEBOM_ANNOUNCEMENTS_PATH."""
+        env_path = os.environ.get("SAEBOM_ANNOUNCEMENTS_PATH", "").strip()
+        if env_path:
+            parent_dir = os.path.dirname(os.path.abspath(env_path))
+            if parent_dir:
+                os.makedirs(parent_dir, exist_ok=True)
+            return env_path
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         data_dir = os.path.join(base_dir, "data")
         os.makedirs(data_dir, exist_ok=True)
@@ -22,30 +31,57 @@ class AnnouncementService:
     @classmethod
     def get_announcements(cls, active_only: bool = True) -> List[Dict[str, Any]]:
         """Lê todos os avisos registrados no servidor."""
-        path = cls._get_data_path()
-        if not os.path.exists(path):
-            return []
-        try:
-            with open(path, "r", encoding="utf-8") as f:
-                data = json.load(f)
-                if not isinstance(data, list):
-                    return []
-                if active_only:
-                    return [item for item in data if item.get("active", True)]
-                return data
-        except Exception:
-            return []
+        with cls._LOCK:
+            path = cls._get_data_path()
+            if not os.path.exists(path):
+                return []
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    if not isinstance(data, list):
+                        return []
+                    if active_only:
+                        return [item for item in data if item.get("active", True)]
+                    return data
+            except Exception:
+                return []
 
     @classmethod
     def _save_announcements(cls, announcements: List[Dict[str, Any]]) -> bool:
-        """Persiste a lista de avisos de forma atômica."""
-        path = cls._get_data_path()
-        try:
-            with open(path, "w", encoding="utf-8") as f:
-                json.dump(announcements, f, ensure_ascii=False, indent=2)
-            return True
-        except Exception:
-            return False
+        """Persiste a lista de avisos de forma thread-safe e atômica."""
+        with cls._LOCK:
+            path = cls._get_data_path()
+            parent_dir = os.path.dirname(os.path.abspath(path))
+            if parent_dir:
+                os.makedirs(parent_dir, exist_ok=True)
+
+            tmp_path = f"{path}.tmp.{uuid.uuid4().hex[:8]}"
+            try:
+                with open(tmp_path, "w", encoding="utf-8") as f:
+                    json.dump(announcements, f, ensure_ascii=False, indent=2)
+                os.replace(tmp_path, path)
+                return True
+            except OSError as exc:
+                if os.path.exists(tmp_path):
+                    try:
+                        os.remove(tmp_path)
+                    except OSError:
+                        pass
+                if exc.errno == errno.EBUSY:
+                    try:
+                        with open(path, "w", encoding="utf-8") as f:
+                            json.dump(announcements, f, ensure_ascii=False, indent=2)
+                        return True
+                    except Exception:
+                        return False
+                return False
+            except Exception:
+                if os.path.exists(tmp_path):
+                    try:
+                        os.remove(tmp_path)
+                    except OSError:
+                        pass
+                return False
 
     MAX_TITLE_LENGTH: int = 120
     MAX_CONTENT_LENGTH: int = 1000
@@ -82,9 +118,12 @@ class AnnouncementService:
             "badge_color": badge_color,
         }
 
-        current = cls.get_announcements(active_only=False)
-        current.insert(0, announcement)
-        if cls._save_announcements(current):
+        with cls._LOCK:
+            current = cls.get_announcements(active_only=False)
+            current.insert(0, announcement)
+            saved = cls._save_announcements(current)
+
+        if saved:
             # Se a página fornecer pubsub, notificar todos os clientes conectados em tempo real
             if page is not None and hasattr(page, "pubsub") and page.pubsub:
                 try:
@@ -102,15 +141,16 @@ class AnnouncementService:
         """Marca um anúncio como inativo/removido."""
         if not announcement_id:
             return False
-        current = cls.get_announcements(active_only=False)
-        updated = False
-        for item in current:
-            if item.get("id") == announcement_id:
-                item["active"] = False
-                updated = True
-                break
-        if updated:
-            return cls._save_announcements(current)
+        with cls._LOCK:
+            current = cls.get_announcements(active_only=False)
+            updated = False
+            for item in current:
+                if item.get("id") == announcement_id:
+                    item["active"] = False
+                    updated = True
+                    break
+            if updated:
+                return cls._save_announcements(current)
         return False
 
     @classmethod

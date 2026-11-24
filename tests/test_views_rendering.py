@@ -156,3 +156,34 @@ def test_lesson_view_unit_03_mounts_spatial_stage():
 
     assert found_spatial is True, "SpatialStage DEVE estar montado na gramática da Lição 03"
 
+
+def test_hangul_view_calligraphy_buttons_use_saebom_brand_chars():
+    """Valida que os botões de caligrafia do /hangul usam 새/봄 e não contêm 세/종."""
+    page = MockPage(theme_mode=ft.ThemeMode.DARK)
+    router = Router(page)
+    page.router = router
+
+    view = APP_ROUTES["/hangul"](page)
+    button_labels = []
+
+    def collect_texts(ctrl):
+        if isinstance(ctrl, ft.Text) and ctrl.value:
+            button_labels.append(ctrl.value)
+        if hasattr(ctrl, "controls") and isinstance(ctrl.controls, list):
+            for ch in ctrl.controls:
+                collect_texts(ch)
+        elif hasattr(ctrl, "content") and ctrl.content:
+            collect_texts(ctrl.content)
+        if hasattr(ctrl, "data") and isinstance(ctrl.data, list):
+            for ch in ctrl.data:
+                collect_texts(ch)
+
+    for c in view.controls:
+        collect_texts(c)
+
+    single_chars = {lbl for lbl in button_labels if len(lbl) == 1}
+    assert "새" in single_chars
+    assert "봄" in single_chars
+    assert "세" not in single_chars
+    assert "종" not in single_chars
+

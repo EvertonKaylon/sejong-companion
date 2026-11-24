@@ -129,8 +129,68 @@ def test_number_training_dialpad():
     assert training.buffer == ""
 
 
+def test_number_training_native_mode_and_free_ok_playback():
+    """Valida modo nativo (0, 10, compostos 10-99, >99/zeros à esquerda) e OK em modo livre."""
+    spoken = []
+    training = NumberTraining(
+        is_dark=True,
+        system="sino",
+        on_complete=lambda txt: spoken.append(txt),
+    )
+
+    # Alternância visual de sistema
+    training.set_system("native")
+    assert training.system == "native"
+    sino_btn, native_btn = training.system_selector.controls
+    assert native_btn.style.bgcolor == training.colors["primary"]
+    assert sino_btn.style.bgcolor == training.colors["surface"]
+
+    # 0 -> 영
+    training.press_key("0")
+    assert training.translation_text.value == "영"
+
+    # 10 -> 열
+    training.press_key("C")
+    training.press_key("1")
+    training.press_key("0")
+    assert training.translation_text.value == "열"
+
+    # 11 -> 열하나
+    training.press_key("C")
+    training.press_key("1")
+    training.press_key("1")
+    assert training.translation_text.value == "열하나"
+
+    # 20 -> 스물
+    training.press_key("C")
+    training.press_key("2")
+    training.press_key("0")
+    assert training.translation_text.value == "스물"
+
+    # 25 -> 스물다섯 e OK em modo livre chama on_complete
+    training.press_key("C")
+    training.press_key("2")
+    training.press_key("5")
+    assert training.translation_text.value == "스물다섯"
+    training.press_key("OK")
+    assert training.feedback_text.value == "🔊 스물다섯"
+    assert spoken == ["스물다섯"]
+
+    # Zeros à esquerda e >= 100 permanecem dígito-a-dígito
+    training.press_key("C")
+    training.press_key("0")
+    training.press_key("5")
+    assert training.translation_text.value == "영 다섯"
+
+    training.press_key("C")
+    training.press_key("1")
+    training.press_key("2")
+    training.press_key("3")
+    assert training.translation_text.value == "하나 둘 셋"
+
+
 def test_spatial_stage_diorama():
-    """Valida diorama 2D de postposições espaciais e caminhos canônicos '/spatial/...':"""
+    """Valida diorama 2D de postposições espaciais, movimentação de object_img e next_challenge."""
     stage = SpatialStage(is_dark=True)
 
     # Conferir caminhos dos assets
@@ -138,13 +198,99 @@ def test_spatial_stage_diorama():
         assert ch["object_asset"].startswith("/spatial/"), f"Asset {ch['object_asset']} deve começar com '/'"
         assert ch["base_asset"].startswith("/spatial/"), f"Asset {ch['base_asset']} deve começar com '/'"
 
+    # Validar que object_container (com object_img) está dentro do ft.Stack
+    stacks = []
+    def find_stacks(ctrl):
+        if isinstance(ctrl, ft.Stack):
+            stacks.append(ctrl)
+        if hasattr(ctrl, "controls") and isinstance(ctrl.controls, list):
+            for c in ctrl.controls:
+                find_stacks(c)
+        elif hasattr(ctrl, "content") and ctrl.content:
+            find_stacks(ctrl.content)
+
+    find_stacks(stage)
+    assert len(stacks) == 1
+    assert stage.object_container in stacks[0].controls
+    assert stage.object_container.content is stage.object_img
+
+    initial_pos = (stage.object_container.top, stage.object_container.left)
+
     # Primeiro desafio (가방 + 책상 -> target: 위)
     assert stage.current_challenge["target_pos"] == "위"
 
-    # Posição incorreta: 아래
+    # Posição incorreta: 아래 (deve mover o objeto para a coordenada de 아래)
     stage.select_position("아래")
     assert "❌" in stage.feedback_text.value
+    assert (stage.object_container.top, stage.object_container.left) == SpatialStage.POSITION_COORDS["아래"]
 
-    # Posição correta: 위
+    # Posição correta: 위 (deve mover o objeto para 위)
     stage.select_position("위")
     assert "✅" in stage.feedback_text.value
+    assert (stage.object_container.top, stage.object_container.left) == SpatialStage.POSITION_COORDS["위"]
+
+    # Botão Próximo Desafio deve avançar e resetar posição
+    assert hasattr(stage, "next_btn") and isinstance(stage.next_btn, ft.Button)
+    stage.next_btn.on_click(None)
+    assert stage.current_idx == 1
+    assert stage.feedback_text.value == ""
+    assert (stage.object_container.top, stage.object_container.left) == initial_pos
+
+
+def test_lesson_view_spatial_stage_plays_audio_on_completion():
+    """Valida que SpatialStage na unit_03 dispara play_korean(prompt_kr) ao acertar posição."""
+    from src.views.lesson_view import lesson_view
+    from src.router import Router
+
+    played = []
+
+    class MockAudio:
+        def play_korean(self, text):
+            played.append(text)
+
+    class MockPage:
+        def __init__(self, audio_service=None):
+            self.theme_mode = ft.ThemeMode.DARK
+            self.width = 400
+            self.views = []
+            self.overlay = []
+            self.services = []
+            self.client_storage = None
+            self.audio_service = audio_service
+
+        def update(self):
+            pass
+
+        def run_task(self, fn, *args, **kwargs):
+            pass
+
+    def find_spatial(ctrl):
+        if isinstance(ctrl, SpatialStage):
+            return ctrl
+        if hasattr(ctrl, "controls") and isinstance(ctrl.controls, list):
+            for ch in ctrl.controls:
+                res = find_spatial(ch)
+                if res is not None:
+                    return res
+        if hasattr(ctrl, "content") and ctrl.content:
+            return find_spatial(ctrl.content)
+        return None
+
+    page = MockPage(audio_service=MockAudio())
+    page.router = Router(page)
+    page.router.current_unit_id = "unit_03"
+    view = lesson_view(page)
+
+    spatial = find_spatial(view)
+    assert spatial is not None
+    spatial.select_position(spatial.current_challenge["target_pos"])
+    assert played == [spatial.current_challenge["prompt_kr"]]
+
+    # Sem audio_service não deve levantar exceção
+    page_no_audio = MockPage(audio_service=None)
+    page_no_audio.router = Router(page_no_audio)
+    page_no_audio.router.current_unit_id = "unit_03"
+    view_no_audio = lesson_view(page_no_audio)
+    spatial_no_audio = find_spatial(view_no_audio)
+    assert spatial_no_audio is not None
+    spatial_no_audio.select_position(spatial_no_audio.current_challenge["target_pos"])

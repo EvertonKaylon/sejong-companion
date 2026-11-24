@@ -64,3 +64,15 @@ def test_apply_app_theme_sets_saebom_title():
     apply_app_theme(mock_page)
     assert f"Saebom Companion v{__version__}" in mock_page.title
     assert "Sejong" not in mock_page.title, "O nome 'Sejong' foi proibido e não deve constar no título da página"
+
+
+def test_apply_app_theme_uses_100_percent_local_fonts():
+    """Garante que page.fonts usa exclusivamente fontes locais sem URLs externas do Google Fonts."""
+    mock_page = MagicMock()
+    apply_app_theme(mock_page)
+
+    assert "Noto Sans KR" not in mock_page.fonts
+    assert "Inter" not in mock_page.fonts
+    for font_name, font_path in mock_page.fonts.items():
+        assert not font_path.startswith("http"), f"Fonte externa detectada em {font_name}: {font_path}"
+        assert font_path.startswith("fonts/"), f"Fonte {font_name} deve apontar para assets locais: {font_path}"

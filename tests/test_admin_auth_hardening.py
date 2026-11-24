@@ -113,3 +113,45 @@ def test_admin_session_revocation():
     assert AdminService.validate_session(token) is False
     assert AdminService.validate_session(None) is False
     assert AdminService.validate_session("") is False
+
+
+def test_resolve_admin_client_key_isolates_sessions_without_global_fallback():
+    """Valida que _resolve_admin_client_key isola páginas distintas e respeita a ordem de prioridade."""
+    from src.views.admin_view import _resolve_admin_client_key
+
+    class BarePage:
+        pass
+
+    p1 = BarePage()
+    p2 = BarePage()
+    k1 = _resolve_admin_client_key(p1)
+    k2 = _resolve_admin_client_key(p2)
+
+    assert k1 != "admin_client"
+    assert k2 != "admin_client"
+    assert k1.startswith("anon_")
+    assert k2.startswith("anon_")
+    assert k1 != k2
+    # Chamadas subsequentes na mesma página preservam a chave em cache
+    assert _resolve_admin_client_key(p1) == k1
+
+    # Bloqueio de p1 não pode afetar p2
+    for _ in range(5):
+        AdminService.login("wrong_pin", client_key=k1)
+    assert AdminService.get_lockout_remaining(k1) > 0.0
+    assert AdminService.get_lockout_remaining(k2) == 0.0
+    ok, _, _ = AdminService.login("sejong_secure_pin_2026", client_key=k2)
+    assert ok is True
+    AdminService.reset_rate_limit(k1)
+    AdminService.reset_rate_limit(k2)
+
+    # Ordem de prioridade: client_ip > session_id > _saebom_student_id/_sejong_student_id > anon
+    p_std = BarePage()
+    p_std._sejong_student_id = "student_legacy"
+    assert _resolve_admin_client_key(p_std) == "std_student_legacy"
+    p_std._saebom_student_id = "student_new"
+    assert _resolve_admin_client_key(p_std) == "std_student_new"
+    p_std.session_id = "sess_abc"
+    assert _resolve_admin_client_key(p_std) == "sess_sess_abc"
+    p_std.client_ip = "203.0.113.42"
+    assert _resolve_admin_client_key(p_std) == "ip_203.0.113.42"

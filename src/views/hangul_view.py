@@ -586,6 +586,7 @@ def hangul_view(page: ft.Page) -> ft.View:
     number_training_widget = NumberTraining(
         is_dark=is_dark,
         system="sino",
+        on_complete=lambda text: page.audio_service.play_korean(text) if hasattr(page, "audio_service") and page.audio_service else None,
     )
 
     syllables_col = ft.Container(
@@ -626,7 +627,7 @@ def hangul_view(page: ft.Page) -> ft.View:
         on_completed=on_calligraphy_completed,
     )
 
-    sample_chars = ["가", "나", "다", "한", "글", "세", "종", "ㄱ", "ㄴ", "ㄷ", "ㅏ", "ㅓ", "ㅗ"]
+    sample_chars = ["가", "나", "다", "한", "글", "새", "봄", "ㄱ", "ㄴ", "ㄷ", "ㅏ", "ㅓ", "ㅗ"]
 
     preview_char_title = ft.Text(
         f"Praticando: {calligraphy_widget.target_char}",

@@ -145,3 +145,49 @@ def test_admin_export_report_markdown(tmp_path):
     assert "`s1`" in md
     assert "Indicadores Globais" in md
     assert "Roster de Alunos" in md
+
+
+def test_admin_kpis_and_diagnostics_ignore_security_audit_events(tmp_path, monkeypatch):
+    """Valida que eventos security_audit não inflam KPIs nem diagnósticos pedagógicos."""
+    monkeypatch.setattr(TelemetryService, "_get_telemetry_dir", lambda: str(tmp_path))
+
+    # Registrar eventos de auditoria de segurança
+    for idx in range(4):
+        TelemetryService.record(
+            session_id="audit_ip_1",
+            event=PedagogicalEvent(
+                event_type="security_audit",
+                unit_id="admin_auth_barrier",
+                item_id=f"login_failed_{idx}",
+                payload={"action": "failed_attempt"},
+            ),
+        )
+
+    # Registrar 2 eventos pedagógicos reais
+    TelemetryService.record(
+        session_id="student_ped_1",
+        event=PedagogicalEvent(
+            event_type="quiz_completed",
+            unit_id="unit_01",
+            item_id="quiz_u01",
+            payload={"score": 1.0},
+        ),
+    )
+    TelemetryService.record(
+        session_id="student_ped_1",
+        event=PedagogicalEvent(
+            event_type="review_completed",
+            unit_id="unit_01",
+            item_id="rev_u01",
+            payload={},
+        ),
+    )
+
+    kpis = AdminService.get_global_kpis(sessions_dir=str(tmp_path))
+    diagnostics = AdminService.get_pedagogical_diagnostics()
+
+    assert kpis["total_telemetry_events"] == 2
+    assert kpis["total_quizzes_completed"] == 1
+    assert kpis["total_reviews_completed"] == 1
+    assert diagnostics["total_events"] == 2
+    assert all(u["unit_id"] != "admin_auth_barrier" for u in diagnostics["drop_off_units"])

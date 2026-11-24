@@ -24,6 +24,12 @@ class AudioService:
     REQUEST_TIMEOUT = (5, 60)
 
     @classmethod
+    def get_bundled_assets_audio_dir(cls) -> str:
+        """Retorna o diretório somente-leitura de áudios pré-empacotados em assets/."""
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        return os.path.join(base_dir, "assets", "audio_cache")
+
+    @classmethod
     def get_cache_dir(cls) -> str:
         """Retorna o diretório isolado de cache de áudio mutável."""
         env_dir = os.environ.get("SAEBOM_AUDIO_CACHE_DIR") or os.environ.get("SEJONG_AUDIO_CACHE_DIR")
@@ -92,8 +98,12 @@ class AudioService:
     async def _play_korean_async_inner(self, text: str):
         filename = self._cache_filename(text)
         local_file_path = os.path.join(self.cache_dir, filename)
+        bundled_file_path = os.path.join(self.get_bundled_assets_audio_dir(), filename)
 
-        if not os.path.exists(local_file_path):
+        has_local = os.path.exists(local_file_path)
+        has_bundled = os.path.exists(bundled_file_path)
+
+        if not has_local and not has_bundled:
             # requests is synchronous. Running it in a worker keeps Flet's
             # event loop free to register the Audio service and handle its
             # invoke-method reply instead of producing a playback timeout.
@@ -101,11 +111,13 @@ class AudioService:
             if not fetched:
                 self._show_audio_error(text)
                 return
+            has_local = True
 
         # Asset paths are relative to assets_dir; a leading slash is an HTTP
         # path and can bypass Flet's asset resolver on web clients.
         if self._use_native_windows_player:
-            await self._play_native_file(local_file_path)
+            target_path = local_file_path if has_local else bundled_file_path
+            await self._play_native_file(target_path)
         else:
             await self._play_file(f"audio_cache/{filename}")
 
@@ -280,13 +292,32 @@ class AudioService:
     async def _play_file(self, src_path: str):
         assert self.player is not None
 
-        # Sanity check *before* touching Flet at all: rules out "the file
-        # doesn't exist / is empty / never finished writing" as a cause,
-        # which looks identical to a playback timeout from the outside
-        # (no sound, no crash) but has nothing to do with the Audio service.
-        local_path = os.path.join(self.cache_dir, os.path.basename(src_path))
-        if not os.path.exists(local_path) or os.path.getsize(local_path) == 0:
-            print(f"Audio playback error: arquivo ausente/vazio em {local_path!r}")
+        # (a) Priorizar asset pré-empacotado em assets/audio_cache via caminho relativo
+        # (preserva resolução estática do Flutter Web e mocks de os.path.exists/getsize).
+        filename = os.path.basename(src_path)
+        bundled_path = os.path.join(self.get_bundled_assets_audio_dir(), filename)
+        local_path = os.path.join(self.cache_dir, filename)
+
+        if os.path.exists(bundled_path) and os.path.getsize(bundled_path) > 0:
+            target_src: str | bytes = src_path
+        elif os.path.exists(local_path) and os.path.getsize(local_path) > 0:
+            # (b) Áudio sintetizado em runtime no cache mutável (data/cache/audio):
+            # carregar bytes diretamente porque assets/ é read-only no container.
+            try:
+                with open(local_path, "rb") as f:
+                    audio_bytes = f.read()
+                if not audio_bytes:
+                    print(f"Audio playback error: arquivo vazio em {local_path!r}")
+                    self._show_audio_error()
+                    return
+                target_src = audio_bytes
+            except OSError as error:
+                print(f"Audio playback error: falha ao ler {local_path!r}: {error}")
+                self._show_audio_error()
+                return
+        else:
+            # (c) Ausente ou vazio em ambos os diretórios
+            print(f"Audio playback error: arquivo ausente/vazio em {bundled_path!r} e {local_path!r}")
             self._show_audio_error()
             return
 
@@ -296,7 +327,7 @@ class AudioService:
             self.player.volume = 1.0
             self._audio_unlocked = True
 
-        self.player.src = src_path
+        self.player.src = target_src
         self._flush()
 
         try:

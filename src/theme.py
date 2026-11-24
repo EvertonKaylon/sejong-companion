@@ -284,8 +284,6 @@ def apply_app_theme(page: ft.Page):
         "Pretendard": "fonts/Pretendard-Regular.otf",
         "Pretendard-Bold": "fonts/Pretendard-Bold.otf",
         "Kyobo Handwriting": "fonts/KyoboHandwriting2025lyb.otf",
-        "Noto Sans KR": "https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap",
-        "Inter": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
         "Seollip-che": "fonts/establish_retrosans.ttf",
         "establish Retrosans": "fonts/establish_retrosans.ttf",
     }

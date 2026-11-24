@@ -4,13 +4,22 @@ Componente interativo para fixação de postposições espaciais (위, 아래, �
 da Unidade 03, utilizando paleta Brand Book v3.1 e assets vetoriais canônicos.
 """
 
-from typing import Optional, Callable, List, Dict
+from typing import Optional, Callable, List, Dict, Tuple
 import flet as ft
 from ..theme import get_theme_colors, Styles
 
 
 class SpatialStage(ft.Container):
     """Diorama interativo 2D de relações e postposições espaciais."""
+
+    DEFAULT_OBJECT_POS: Tuple[int, int] = (8, 12)
+    POSITION_COORDS: Dict[str, Tuple[int, int]] = {
+        "위": (36, 135),
+        "아래": (152, 135),
+        "옆": (75, 48),
+        "앞": (136, 135),
+        "뒤": (62, 200),
+    }
 
     def __init__(
         self,
@@ -92,7 +101,7 @@ class SpatialStage(ft.Container):
             text_align=ft.TextAlign.CENTER,
         )
 
-        # Imagem do Objeto Móvel e Objeto Base
+        # Imagem do Objeto Móvel (posicionável no Stack) e Objeto Base
         self.object_img = ft.Image(
             src=self.current_challenge["object_asset"],
             width=50,
@@ -100,11 +109,28 @@ class SpatialStage(ft.Container):
             fit=ft.BoxFit.CONTAIN,
         )
 
+        self.object_container = ft.Container(
+            content=self.object_img,
+            top=self.DEFAULT_OBJECT_POS[0],
+            left=self.DEFAULT_OBJECT_POS[1],
+            animate_position=200,
+        )
+
         self.base_img = ft.Image(
             src=self.current_challenge["base_asset"],
             width=110,
             height=110,
             fit=ft.BoxFit.CONTAIN,
+        )
+
+        self.next_btn = ft.Button(
+            "Próximo Desafio →",
+            on_click=lambda _: self.next_challenge(),
+            style=ft.ButtonStyle(
+                bgcolor=self.colors["primary"],
+                color=ft.Colors.WHITE,
+                shape=ft.RoundedRectangleBorder(radius=Styles.BORDER_RADIUS_SM),
+            ),
         )
 
         # Construção do palco com slots clicáveis
@@ -126,6 +152,7 @@ class SpatialStage(ft.Container):
                         height=260,
                     ),
                     self.feedback_text,
+                    self.next_btn,
                 ],
                 alignment=ft.MainAxisAlignment.CENTER,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -166,6 +193,7 @@ class SpatialStage(ft.Container):
                 slot_top,
                 slot_back,
                 base_container,
+                self.object_container,
                 slot_left,
                 slot_front,
                 slot_bottom,
@@ -177,6 +205,10 @@ class SpatialStage(ft.Container):
     def select_position(self, pos: str):
         """Seleciona a posição espacial para testar contra o alvo do desafio."""
         self.placed_pos = pos
+        top, left = self.POSITION_COORDS.get(pos, self.DEFAULT_OBJECT_POS)
+        self.object_container.top = top
+        self.object_container.left = left
+
         target = self.current_challenge["target_pos"]
 
         if pos == target:
@@ -202,6 +234,7 @@ class SpatialStage(ft.Container):
         self.current_challenge = self.challenges[self.current_idx]
         self.placed_pos = None
 
+        self.object_container.top, self.object_container.left = self.DEFAULT_OBJECT_POS
         self.prompt_text.value = self.current_challenge["prompt_kr"]
         self.feedback_text.value = ""
         self.object_img.src = self.current_challenge["object_asset"]

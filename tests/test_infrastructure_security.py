@@ -9,7 +9,10 @@ Valida:
 6. Sanitização de Anúncios: Limitação de tamanho e expurgo de caracteres nulos (OWASP A03, A04 / MITRE T1499).
 """
 
+import errno
+import json
 import os
+import re
 import pytest
 from src.services import AdminService, TelemetryService, AnnouncementService
 from src import __version__
@@ -147,4 +150,121 @@ def test_announcement_service_enforces_length_limits_and_null_byte_sanitization(
     assert len(ann["content"]) == AnnouncementService.MAX_CONTENT_LENGTH
     assert "\x00" not in ann["author"]
     assert ann["author"] == "ProfessoraHacker"
+
+
+def test_caddyfile_separates_http_redirect_from_https_hsts_and_csp():
+    """Valida que :80 não emite HSTS, HTTPS emite HSTS, e CSP cobre CanvasKit/Wasm/Mídia."""
+    caddyfile_path = os.path.join(PROJECT_ROOT, "Caddyfile")
+    with open(caddyfile_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    # Separar bloco :80 do bloco HTTPS saebomcompanion.duckdns.org
+    http_match = re.search(r":80\s*\{(.*?)\n\}", content, re.DOTALL)
+    assert http_match is not None, "Bloco HTTP :80 não encontrado no Caddyfile"
+    http_block = http_match.group(1)
+    assert "redir https://saebomcompanion.duckdns.org{uri} permanent" in http_block
+    assert "Strict-Transport-Security" not in http_block, (
+        "RFC 6797 §7.2: HSTS não deve ser emitido em respostas HTTP :80"
+    )
+
+    https_idx = content.find("saebomcompanion.duckdns.org {")
+    assert https_idx != -1, "Bloco HTTPS saebomcompanion.duckdns.org não encontrado no Caddyfile"
+    https_block = content[https_idx:]
+    assert "Strict-Transport-Security" in https_block
+
+    # Diretivas CSP exigidas pelo Flutter CanvasKit / Skwasm e Audio/Media
+    for directive in (
+        "'wasm-unsafe-eval'",
+        "https://www.gstatic.com",
+        "worker-src 'self' blob:",
+        "media-src 'self' data: blob:",
+    ):
+        assert directive in https_block, f"Diretiva CSP obrigatória ausente: {directive}"
+
+
+def test_docker_compose_named_volumes_fail_closed_pin_and_announcements_env():
+    """Valida named volumes, SAEBOM_ANNOUNCEMENTS_PATH e fail-closed SAEBOM_ADMIN_PIN:?."""
+    compose_path = os.path.join(PROJECT_ROOT, "docker-compose.yml")
+    with open(compose_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert "SAEBOM_ADMIN_PIN=${SAEBOM_ADMIN_PIN:?" in content
+    assert "SAEBOM_ANNOUNCEMENTS_PATH=/app/data/announcements/announcements.json" in content
+    assert "\n    ports:\n" not in content.split("caddy:")[0], (
+        "O serviço app não deve publicar portas diretamente no host (somente expose)"
+    )
+
+    for vol in (
+        "saebom_audio_cache",
+        "saebom_sessions",
+        "saebom_telemetry",
+        "saebom_reports",
+        "saebom_announcements",
+    ):
+        assert f"{vol}:" in content, f"Named volume '{vol}' deve ser declarado em docker-compose.yml"
+
+
+def test_setup_oci_script_firewall_and_rebranding():
+    """Valida que setup_oci_server.sh não abre porta 8554 e não usa marca 'Sejong Companion'."""
+    script_path = os.path.join(PROJECT_ROOT, "scripts", "setup_oci_server.sh")
+    with open(script_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert "8554" not in content, "Porta interna 8554 não deve ser exposta no firewall da OCI"
+    assert "sejong companion" not in content.lower(), "Marca legada detectada em setup_oci_server.sh"
+    assert "SAEBOM_ADMIN_PIN" in content, "Script de deploy deve validar SAEBOM_ADMIN_PIN no .env"
+
+
+def test_ci_workflow_rebranding_pin_and_playwright():
+    """Valida que o CI usa SAEBOM_ADMIN_PIN, nome Saebom Companion e executa Playwright Chromium."""
+    ci_path = os.path.join(PROJECT_ROOT, ".github", "workflows", "ci.yml")
+    with open(ci_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert "Saebom Companion" in content
+    assert "Sejong Companion" not in content
+    assert "SAEBOM_ADMIN_PIN" in content
+    assert "SEJONG_ADMIN_PIN" not in content
+    assert "playwright install --with-deps chromium" in content
+    assert "test_playwright_e2e.py" in content
+
+
+def test_announcement_service_env_path_and_atomic_persistence(tmp_path, monkeypatch):
+    """Valida suporte a SAEBOM_ANNOUNCEMENTS_PATH e persistência atômica (com fallback EBUSY)."""
+    target_file = tmp_path / "nested" / "announcements.json"
+    monkeypatch.setenv("SAEBOM_ANNOUNCEMENTS_PATH", str(target_file))
+
+    resolved = AnnouncementService._get_data_path()
+    assert resolved == str(target_file)
+    assert os.path.isdir(os.path.dirname(resolved))
+
+    ann = AnnouncementService.post_announcement(
+        title="Aviso OCI",
+        content="Persistência com volume nomeado.",
+        author="Professora",
+    )
+    assert ann is not None
+    assert target_file.exists()
+    with open(target_file, "r", encoding="utf-8") as f:
+        saved = json.load(f)
+    assert len(saved) == 1
+    assert saved[0]["title"] == "Aviso OCI"
+    # Nenhum arquivo temporário residual deve permanecer
+    leftovers = [p for p in os.listdir(target_file.parent) if ".tmp." in p]
+    assert leftovers == []
+
+    # Validar fallback seguro caso os.replace levante EBUSY (bind mount de arquivo único)
+    def raise_ebusy(src, dst):
+        raise OSError(errno.EBUSY, "Device or resource busy")
+
+    monkeypatch.setattr(os, "replace", raise_ebusy)
+    ann2 = AnnouncementService.post_announcement(
+        title="Aviso EBUSY",
+        content="Fallback in-place seguro.",
+        author="Professora",
+    )
+    assert ann2 is not None
+    active = AnnouncementService.get_announcements(active_only=True)
+    assert len(active) == 2
+    assert active[0]["title"] == "Aviso EBUSY"
 

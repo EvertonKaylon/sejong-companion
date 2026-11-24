@@ -1,4 +1,5 @@
 import os
+import uuid
 from datetime import datetime
 import flet as ft
 from ..components import centered_content, WhatsNewDialog
@@ -145,6 +146,31 @@ ADMIN_I18N = {
     }
 }
 
+def _resolve_admin_client_key(page) -> str:
+    """Resolve uma chave de cliente única por sessão para rate-limiting do /admin."""
+    if page is not None:
+        client_ip = getattr(page, "client_ip", None)
+        if isinstance(client_ip, (str, int)) and str(client_ip).strip():
+            return f"ip_{str(client_ip).strip()}"
+
+        session_id = getattr(page, "session_id", None)
+        if isinstance(session_id, (str, int)) and str(session_id).strip():
+            return f"sess_{str(session_id).strip()}"
+
+        student_id = getattr(page, "_saebom_student_id", None) or getattr(page, "_sejong_student_id", None)
+        if isinstance(student_id, str) and student_id.strip():
+            return f"std_{student_id.strip()}"
+
+        cached_key = getattr(page, "_admin_client_key", None)
+        if isinstance(cached_key, str) and cached_key.strip():
+            return cached_key
+
+    anon_key = f"anon_{uuid.uuid4().hex[:12]}"
+    if page is not None:
+        page._admin_client_key = anon_key
+    return anon_key
+
+
 def admin_view(page: ft.Page) -> ft.View:
     is_dark = page.theme_mode == ft.ThemeMode.DARK
     colors = get_theme_colors(is_dark)
@@ -166,8 +192,9 @@ def admin_view(page: ft.Page) -> ft.View:
         rebuild_view()
 
     def rebuild_view():
+        new_view = admin_view(page)
         page.views.clear()
-        page.views.append(admin_view(page))
+        page.views.append(new_view)
         page.update()
 
     # ─── 1. TELA DE LOGIN / AUTENTICAÇÃO POR PIN ───
@@ -212,7 +239,7 @@ def admin_view(page: ft.Page) -> ft.View:
 
         def handle_login(e):
             entered_pin = pin_input.value or ""
-            client_key = getattr(page, "_sejong_student_id", None) or "admin_client"
+            client_key = _resolve_admin_client_key(page)
             success, token, msg = AdminService.login(entered_pin, client_key=client_key)
             if success:
                 page._admin_authenticated = True

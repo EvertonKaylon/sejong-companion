@@ -3,7 +3,7 @@
 ## Identidade do Projeto
 - **Nome:** Saebom Companion (새봄 컴패니언)
 - **Stack:** Python + Flet (Flutter Engine) — Web, Android, iOS, Desktop
-- **Fase atual:** Alpha (`v0.3.6-alpha`)
+- **Fase atual:** Alpha (`v0.3.9-alpha`)
 - **Documentação oficial:** `Documentacao/` (estrutura Obsidian com wikilinks)
 
 ## Rebranding & Diretriz Pedagógica da Professora (Regras Invioláveis)
