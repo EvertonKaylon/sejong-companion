@@ -21,6 +21,16 @@ Pré-Alpha → Alpha → Beta → RC → RTM → GA
 | **RC** | `1.0.0-rc.1` | Feature-complete, testes E2E, zero bugs críticos |
 | **GA** | `1.0.0` | Pronto para distribuição pública |
 
+## [Unreleased]
+
+### Added — Pipelines Automatizados de Security QA e Design QA (`/saebom-security-qa` & `/saebom-design-qa`)
+- **Skill `/saebom-security-qa` (`.agents/skills/saebom-security-qa/SKILL.md`)** — Runbook operacional em 6 etapas (linhagem Git `security/hardening-v0.3.2`, proteção Zero-PII, auditoria local, SAST/SCA externos, bateria `pytest` de segurança e DAST Playwright) com topologia `/swarm`.
+- **Skill `/saebom-design-qa` (`.agents/skills/saebom-design-qa/SKILL.md`)** — Fluxo dual de planejamento pré-código (`Mobbin` + `StitchMCP` Projeto `10905381626038373944`) e auditoria automatizada pós-código no padrão Brand Book v3.1 (WCAG 2.1, invariantes Flet 0.85+ e regressão multi-viewport).
+- **Auditor Unificado de Segurança (`scripts/security_qa_audit.py`)** — CLI Python com saída humana e `--json` validando `git_security_lineage`, `zero_pii_tracked_files`, `secret_scan`, `python_sast_ast` (`eval`/`exec`/`pickle`/`yaml.load`/`shell=True`/escrita em `assets/`) e `crypto_and_infra_hardening` (`hmac.compare_digest`, `.dockerignore`, `Dockerfile`, `docker-compose.yml`, `Caddyfile`, `setup_oci_server.sh`).
+- **Auditor Unificado de Design (`scripts/design_qa_audit.py`)** — CLI Python validando sincronia dos 6 tokens mestres entre `DESIGN.md` e `src/theme.py`, cálculo de contraste sRGB WCAG 2.1 (hard gates + advisories), invariantes AST/regex Flet 0.85+ (`BUG-02`, `BUG-03`, `BUG-05` advisory, `BUG-11`, propriedade `self.page`, ausência de URLs Google Fonts externas e caracteres legados em `sample_chars`) e integridade de fontes/assets (`21` arquivos em `assets/branding/`).
+- **Novos Gates no CI (`.github/workflows/ci.yml`)** — Inclusão dos jobs `security-qa` (`scripts.security_qa_audit`, `bandit -r src main.py -lll -ii`, `pip-audit` advisory e bateria `pytest` de segurança) e `design-qa` (`scripts.design_qa_audit`, `test_theme.py`, `test_branding_assets.py` e `test_design_qa_pipeline.py`), exigidos antes de `e2e-playwright`.
+- **Suítes Automatizadas de Pipeline (`tests/test_security_qa_pipeline.py`, `tests/test_design_qa_pipeline.py`)** — 10 novos testes (5 + 5) cobrindo frontmatter das skills, matemática WCAG, execução real no repositório e testes negativos de SAST/segredos/invariantes Flet, elevando a suíte global para **483 testes aprovados + 21 subtestes em `41.55s`** (`0` falhas, `0` skipped, `0` warnings).
+
 ## [0.3.9-alpha] — 2026-11-24
 
 ### Classificação: Alpha (Fechamento de Segurança de Produção, Estabilização P0/P1, CI Playwright & Saneamento Documental)
