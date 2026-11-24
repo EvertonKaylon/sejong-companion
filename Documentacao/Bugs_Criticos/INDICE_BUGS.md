@@ -20,6 +20,7 @@ Este documento cataloga os bugs mais complexos e desafiadores identificados e re
 | **BUG-10** | Disputa de Gestos na Gesture Arena & Calibração Espacial de IoU no Wongoji Lab | 🔴 Crítica | Gestos / Motor de Caligrafia & Visão | [bug_10_disputa_gesture_arena_e_calibracao_iou_caligrafia.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Bugs_Criticos/bug_10_disputa_gesture_arena_e_calibracao_iou_caligrafia.md) |
 | **BUG-11** | Tela Preta no Flutter Web por Resolução Relativa de Imagens (`/`) e Esvaziamento de Views no Router | 🔴 Crítica | Flutter Web / Roteamento & Assets Estáticos | [bug_11_tela_preta_flutter_web_assets_e_views_router.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Bugs_Criticos/bug_11_tela_preta_flutter_web_assets_e_views_router.md) |
 | **BUG-12** | Deadlock de Pipe Anônimo no Windows em Testes E2E com Playwright | 🔴 Crítica | Infra / Testes E2E & Windows OS | [bug_12_deadlock_pipe_anonimo_windows_playwright_e2e.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Bugs_Criticos/bug_12_deadlock_pipe_anonimo_windows_playwright_e2e.md) |
+| **BUG-13** | Hardening OWASP Top 10 & MITRE ATT&CK (Container, Caddy, Auditoria, Sanitização e Lacunas Residuais v0.3.8) | 🔴 Crítica | Segurança / Infraestrutura, Proxy & Auditoria | [bug_13_hardening_owasp_mitre_container_caddy_auditoria.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Bugs_Criticos/bug_13_hardening_owasp_mitre_container_caddy_auditoria.md) |
 
 ---
 

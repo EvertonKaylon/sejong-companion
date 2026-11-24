@@ -3,7 +3,7 @@
 Este documento detalha o plano de implementação original da versão **`0.1.0-alpha`** do aplicativo **Sejong Companion**. Esta versão serviu como protótipo interativo para validar a experiência de uso, o design system e a viabilidade técnica de navegação e componentes no framework **Flet**.
 
 > [!NOTE]
-> Este documento é um registro histórico. O que era informalmente chamado de "Beta 0.1" corresponde, pela nomenclatura [SemVer](https://semver.org/lang/pt-BR/) adotada no projeto, à versão **`0.1.0-alpha`** — fase Alpha (software funcional mas incompleto, testado internamente). Consulte o [CHANGELOG.md](file:///c:/Users/Pichau/Documents/sejong_companion/CHANGELOG.md) para o histórico completo de versões.
+> Este documento é um registro histórico. O que era informalmente chamado de "Beta 0.1" corresponde, pela nomenclatura [SemVer](https://semver.org/lang/pt-BR/) adotada no projeto, à versão **`0.1.0-alpha`** — fase Alpha (software funcional mas incompleto, testado internamente). Consulte o [CHANGELOG.md](file:///c:/Users/Pichau/Documents/sejong_companion/Documentacao/Changelogs_e_Historico/CHANGELOG.md) para o histórico completo de versões.
 
 ## User Review Required
 
