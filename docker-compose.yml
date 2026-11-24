@@ -9,17 +9,18 @@ services:
       - no-new-privileges:true
     environment:
       - PORT=8554
-      - SAEBOM_ADMIN_PIN=${SAEBOM_ADMIN_PIN:-}
+      - SAEBOM_ADMIN_PIN=${SAEBOM_ADMIN_PIN:?SAEBOM_ADMIN_PIN environment variable is required}
+      - SAEBOM_ANNOUNCEMENTS_PATH=/app/data/announcements/announcements.json
       - TYPECAST_API_KEY=${TYPECAST_API_KEY:-}
     expose:
       - "8554"
     volumes:
-      # Volumes persistentes para que dados de estudo, comunicados e áudio nunca sejam perdidos
-      - ./data/cache/audio:/app/data/cache/audio
-      - ./data/sessions:/app/data/sessions
-      - ./data/telemetry:/app/data/telemetry
-      - ./data/reports:/app/data/reports
-      - ./data/announcements.json:/app/data/announcements.json
+      # Named volumes persistentes (evitam conflito de permissão UID 10001 e EBUSY em bind mounts)
+      - saebom_audio_cache:/app/data/cache/audio
+      - saebom_sessions:/app/data/sessions
+      - saebom_telemetry:/app/data/telemetry
+      - saebom_reports:/app/data/reports
+      - saebom_announcements:/app/data/announcements
 
   # Reverse Proxy Caddy para HTTPS automático com Let's Encrypt e compressão
   caddy:
@@ -32,12 +33,17 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
       - app
 
 volumes:
+  saebom_audio_cache:
+  saebom_sessions:
+  saebom_telemetry:
+  saebom_reports:
+  saebom_announcements:
   caddy_data:
   caddy_config:

@@ -29,8 +29,9 @@ COPY . .
 RUN groupadd -g 10001 saebom && \
     useradd -u 10001 -g saebom -s /bin/sh -m saebomuser
 
-# Criar e garantir permissões para os diretórios persistentes de dados e cache de áudio
-RUN mkdir -p /app/data/cache/audio /app/data/sessions /app/data/telemetry /app/data/reports && \
+# Criar e garantir permissões para os diretórios persistentes de dados, comunicados e cache de áudio
+RUN mkdir -p /app/data/cache/audio /app/data/sessions /app/data/telemetry /app/data/reports /app/data/announcements && \
+    if [ -f /app/data/announcements.json ]; then cp /app/data/announcements.json /app/data/announcements/announcements.json; fi && \
     chown -R saebomuser:saebom /app
 
 # Executar como usuário não-root

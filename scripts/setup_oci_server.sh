@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Script de Instalação e Deploy Automático — Sejong Companion na Oracle Cloud
+# Script de Instalação e Deploy Automático — Saebom Companion (새봄 컴패니언) na Oracle Cloud
 # Compatível com Ubuntu 22.04 / 24.04 LTS (ARM64 Ampere ou AMD64)
 # ==============================================================================
 
 set -e
 
 echo "======================================================================"
-echo " 🇰🇷 INICIANDO DEPLOY DO SEJONG COMPANION NA ORACLE CLOUD (OCI)"
+echo " 🇰🇷 INICIANDO DEPLOY DO SAEBOM COMPANION (새봄 컴패니언) NA ORACLE CLOUD (OCI)"
 echo "======================================================================"
 
 # 1. Atualizar repositórios e pacotes do sistema
@@ -15,11 +15,10 @@ echo "📦 1/5 Atualizando pacotes do sistema..."
 sudo apt-get update && sudo apt-get upgrade -y
 sudo apt-get install -y git curl ufw ca-certificates gnupg lsb-release
 
-# 2. Configurar Firewall do Ubuntu na OCI (Liberar Portas 80 e 443 no iptables nativo da Oracle)
+# 2. Configurar Firewall do Ubuntu na OCI (Liberar apenas Portas 80 e 443 no iptables nativo)
 echo "🛡️ 2/5 Configurando regras de firewall local..."
 sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT || true
 sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT || true
-sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 8554 -j ACCEPT || true
 sudo netfilter-persistent save 2>/dev/null || true
 
 # 3. Instalar Docker e Docker Compose Oficial
@@ -30,12 +29,12 @@ if ! command -v docker &> /dev/null; then
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
     sudo apt-get update
     sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
-    sudo usermod -aG docker $USER
+    sudo usermod -aG docker "$USER"
 fi
 
-# 4. Clonar ou Atualizar o Repositório do Sejong Companion
+# 4. Clonar ou Atualizar o Repositório do Saebom Companion (새봄 컴패니언)
 echo "📂 4/5 Obtendo o código-fonte mais recente..."
-REPO_DIR="$HOME/sejong-companion"
+REPO_DIR="$HOME/saebom-companion"
 if [ ! -d "$REPO_DIR" ]; then
     git clone https://github.com/EvertonKaylon/sejong-companion.git "$REPO_DIR"
     cd "$REPO_DIR"
@@ -45,16 +44,31 @@ else
     git pull origin develop
 fi
 
-# 5. Construir e Iniciar os Containers Docker
-echo "🚀 5/5 Construindo imagem e iniciando serviços (Flet + Caddy)..."
+# 5. Validar Configuração Obrigatória e Iniciar os Containers Docker
+echo "🔐 5/5 Validando .env e iniciando serviços (Flet + Caddy)..."
+if [ ! -f ".env" ]; then
+    echo "❌ ERRO: Arquivo .env não encontrado em $REPO_DIR."
+    echo "   Crie o arquivo .env com SAEBOM_ADMIN_PIN antes de subir os containers:"
+    echo "   echo 'SAEBOM_ADMIN_PIN=defina_um_pin_forte' > .env"
+    exit 1
+fi
+
+ADMIN_PIN_VALUE="$(grep -E '^[[:space:]]*SAEBOM_ADMIN_PIN=' .env | tail -n 1 | cut -d '=' -f 2- | tr -d '\r' | sed -E 's/^["'\'']|["'\'']$//g; s/^[[:space:]]+|[[:space:]]+$//g')"
+if [ -z "$ADMIN_PIN_VALUE" ]; then
+    echo "❌ ERRO: SAEBOM_ADMIN_PIN não está definido ou está vazio no arquivo .env."
+    echo "   O Saebom Companion opera em modo fail-closed e exige SAEBOM_ADMIN_PIN configurado."
+    exit 1
+fi
+unset ADMIN_PIN_VALUE
+
 sudo docker compose up -d --build
 
 echo ""
 echo "======================================================================"
-echo " ✅ SEJONG COMPANION ESTÁ ONLINE NA ORACLE CLOUD!"
+echo " ✅ SAEBOM COMPANION (새봄 컴패니언) ESTÁ ONLINE NA ORACLE CLOUD!"
 echo "======================================================================"
-echo " • Acesse pelo navegador: http://$(curl -s ifconfig.me)"
-echo " • Painel do Professor:   http://$(curl -s ifconfig.me)/admin"
+echo " • Acesse pelo navegador: https://saebomcompanion.duckdns.org"
+echo " • Painel do Professor:   https://saebomcompanion.duckdns.org/admin"
 echo " • Status dos containers: sudo docker compose ps"
 echo " • Logs em tempo real:   sudo docker compose logs -f"
 echo "======================================================================"

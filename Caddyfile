@@ -1,6 +1,11 @@
 # Configuração do Caddy para o Saebom Companion (새봄 컴패니언)
-# Suporta domínio oficial DuckDNS e acesso direto HTTP/HTTPS
-saebomcompanion.duckdns.org, :80, :443 {
+# HTTP (:80) redireciona permanentemente para HTTPS sem emitir HSTS em texto plano (RFC 6797 §7.2)
+:80 {
+    redir https://saebomcompanion.duckdns.org{uri} permanent
+}
+
+# Domínio oficial DuckDNS servido exclusivamente via HTTPS (Let's Encrypt automático)
+saebomcompanion.duckdns.org {
     # Proxy reverso para o container da aplicação com suporte a WebSockets Flet
     reverse_proxy app:8554 {
         header_up Host {host}
@@ -26,11 +31,11 @@ saebomcompanion.duckdns.org, :80, :443 {
         # Restrição de APIs de hardware e sensores
         Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
 
-        # Forçar HTTPS com HSTS (1 ano + subdomínios)
+        # Forçar HTTPS com HSTS apenas em TLS (1 ano + subdomínios)
         Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
 
-        # Política de Segurança de Conteúdo (CSP) compatível com Flet Web CanvasKit & WebSockets
-        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: https: blob:; connect-src 'self' ws: wss:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+        # Política de Segurança de Conteúdo (CSP) compatível com Flet Web CanvasKit/Skwasm, mídia e WebSockets
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' https://www.gstatic.com https://unpkg.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: https: blob:; media-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'self' ws: wss: https://www.gstatic.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
 
         # Ofuscação de assinatura de servidor web
         -Server

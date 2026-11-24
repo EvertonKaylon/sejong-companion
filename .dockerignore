@@ -49,3 +49,10 @@ WhatsApp*
 scratch/
 tests/screenshots/
 gabarito*
+
+# Documentação, Testes e Agentes (excluídos da imagem de runtime)
+Documentacao/
+tests/
+.agents/
+audit_report.md
+docs/
